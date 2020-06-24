@@ -19,9 +19,14 @@ VIA_DDRA = $A003      ; Port A Data Direction Register
 
 ; ACIA addresses
 UART_DATA_REG = $B000	; transmit/receive data register
-UART_STAT_REG = $B001
-UART_CMD_REG = $B002
-UART_CTRL_REG = $B003
+UART_STAT_REG = $B001 ; status register
+UART_CMD_REG = $B002  ; command register
+UART_CTRL_REG = $B003 ; control register
+; Following are values for the control register, all assuming eight data bits, 
+; no parity, 1 stop bit and use of the internal baud rate generator
+UART_8N1_2400 = %10011010
+UART_8N1_9600 = %10011110
+UART_8N1_19K2 = %10011111 
 
 ; LCD PANEL
 E  = %10000000    ; Toggling this bit high enables execution of byte in register
