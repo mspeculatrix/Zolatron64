@@ -17,6 +17,8 @@
 ;
 ; Write to EEPROM with:
 ; minipro -p AT28C256 -w z64-01.bin
+;
+; This code just prints a message to the LCD screen
 
 ; 6522 VIA register addresses
 PORTB = $A000     ; VIA Port B data/instruction register
@@ -25,9 +27,9 @@ DDRB = $A002      ; Port B Data Direction Register
 DDRA = $A003      ; Port A Data Direction Register
 
 ; LCD PANEL
-E  = %10000000    ; Toggling this bit high enables execution of byte in register
-RW = %01000000    ; Read/Write bit: 0 = read; 1 = write
-RS = %00100000    ; Register select bit: 0 = instruction reg; 1 = data reg
+EX  = %10000000    ; Toggling this bit high enables execution of byte in register
+RW  = %01000000    ; Read/Write bit: 0 = read; 1 = write
+RS  = %00100000    ; Register select bit: 0 = instruction reg; 1 = data reg
 BUSY_FLAG = %10000000 
 
 ; ---------PROGRAM START -------------------------------------------------
@@ -74,7 +76,7 @@ ORG $C000         ; This is where the actual code starts.
 .lcd_busy
   lda #RW
   sta PORTA
-  lda #(RW OR E)  ; keep RW bit & set enable bit. RS is 0 to access instr reg
+  lda #(RW OR EX)  ; keep RW bit & set enable bit. RS is 0 to access instr reg
   sta PORTA
   lda PORTB
   and #BUSY_FLAG  ; AND flag with A. Sets zero flag - non-0 if LCD busy flag set
@@ -102,7 +104,7 @@ ORG $C000         ; This is where the actual code starts.
   sta PORTB
   lda #RS         ; Set RS to data; Clears RW & E bits
   sta PORTA
-  lda #(RS OR E)  ; Keep RS & set E bit to send instruction
+  lda #(RS OR EX)  ; Keep RS & set E bit to send instruction
   sta PORTA
   lda #RS         ; Clear E bits
   sta PORTA
