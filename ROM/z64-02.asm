@@ -156,7 +156,7 @@ ORG $C000         ; This is where the actual code starts.
   sta VIA_PORTB   ; assumes command byte is in A
   lda #0          ; Clear RS/RW/E bits. With RS 0, we're writing to instr reg
   sta VIA_PORTA
-  lda #E          ; Set E bit to send instruction
+  lda #EX          ; Set E bit to send instruction
   sta VIA_PORTA
   lda #0          ; Clear RS/RW/E bits
   sta VIA_PORTA
