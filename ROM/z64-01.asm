@@ -52,7 +52,7 @@ ORG $C000         ; This is where the actual code starts.
   jsr lcd_cmd
   lda #%00001100  ; Display on; cursor off; blink off
   jsr lcd_cmd
-  lda #%00000001 ; clear display, reset display memory
+  lda #%00000001  ; clear display, reset display memory
   jsr lcd_cmd
 
 ; PRINT LOOP
@@ -76,7 +76,7 @@ ORG $C000         ; This is where the actual code starts.
 .lcd_busy
   lda #RW
   sta PORTA
-  lda #(RW OR EX)  ; keep RW bit & set enable bit. RS is 0 to access instr reg
+  lda #(RW OR EX) ; keep RW bit & set enable bit. RS is 0 to access instr reg
   sta PORTA
   lda PORTB
   and #BUSY_FLAG  ; AND flag with A. Sets zero flag - non-0 if LCD busy flag set
@@ -93,7 +93,7 @@ ORG $C000         ; This is where the actual code starts.
   sta PORTB       ; assumes command byte is in A
   lda #0          ; Clear RS/RW/E bits. With RS 0, we're writing to instr reg
   sta PORTA
-  lda #EX          ; Set E bit to send instruction
+  lda #EX         ; Set E bit to send instruction
   sta PORTA
   lda #0          ; Clear RS/RW/E bits
   sta PORTA
@@ -104,7 +104,7 @@ ORG $C000         ; This is where the actual code starts.
   sta PORTB
   lda #RS         ; Set RS to data; Clears RW & E bits
   sta PORTA
-  lda #(RS OR EX)  ; Keep RS & set E bit to send instruction
+  lda #(RS OR EX) ; Keep RS & set E bit to send instruction
   sta PORTA
   lda #RS         ; Clear E bits
   sta PORTA

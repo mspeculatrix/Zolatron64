@@ -83,10 +83,10 @@ ORG $C000         ; This is where the actual code starts.
   jsr lcd_cmd
   lda #%00001100  ; Display on; cursor off; blink off
   jsr lcd_cmd
-  lda #%00000001 ; clear display, reset display memory
+  lda #%00000001  ; clear display, reset display memory
   jsr lcd_cmd
 
-  cli            ; enable interrupts
+  cli             ; enable interrupts
 
 ; --------- MAIN PROGRAM -------------------------------------------------------
 
@@ -103,8 +103,8 @@ ORG $C000         ; This is where the actual code starts.
 ; SERIAL MESSAGE LOOP
   ldx #0              ; set message offset to 0
 .send_char
-  lda serial_msg,x
-  beq mainloop
+  lda serial_msg,x    ; load next char
+  beq mainloop        ; if char is 0, we've finished
   jsr acia_wait_send_clr
   sta ACIA_DATA_REG
   inx
@@ -114,9 +114,25 @@ ORG $C000         ; This is where the actual code starts.
 ; sta ACIA_DATA_REG
  
 .mainloop             ; we're done, so loop forever
+  jsr delay
+  jsr serial_msg_send
   jmp mainloop
 
 ; ---------SUBROUTINES----------------------------------------------------------
+
+.delay
+  sta $40 ; save the state of the A register in a handy zero-page location
+  lda #0  ; set A to 0
+  sta $41 ; using this location for the high byte of the loop
+.delayloop
+  adc #1  ; add 1 to A
+  bne delayloop  ; loop if zero bit not set (will be when A overflows)
+  clc     ; reset carry flag - this is the outer loop
+  inc $41
+  bne delayloop ; branches until incrementing $41 overflows and zero bit gets set
+  clc     ; clean up
+  lda $40  ; restore state of A
+  rts
 
 .acia_wait_send_clr
   pha
@@ -156,7 +172,7 @@ ORG $C000         ; This is where the actual code starts.
   sta VIA_PORTB   ; assumes command byte is in A
   lda #0          ; Clear RS/RW/E bits. With RS 0, we're writing to instr reg
   sta VIA_PORTA
-  lda #EX          ; Set E bit to send instruction
+  lda #EX         ; Set E bit to send instruction
   sta VIA_PORTA
   lda #0          ; Clear RS/RW/E bits
   sta VIA_PORTA
