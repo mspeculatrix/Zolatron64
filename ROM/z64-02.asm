@@ -1,6 +1,7 @@
 ; Zolatron 64
 ;
 ; Experimental ROM code for Zolatron 6502-based microcomputer.
+; *** WORKING ***
 ; This version:
 ;   - prints 'Zolatron 64' to the 16x2 LCD display
 ;   - sends a string across the serial port, repeatedly, in the main loop.
@@ -16,7 +17,7 @@
 ; beebasm -i z64-02.asm
 ;
 ; Write to EEPROM with:
-; minipro -p AT28C256 -w z64-02.bin
+; minipro -p AT28C256 -w z64-ROM-02.bin
 
 ; 6522 VIA register addresses
 VIA_PORTB = $A000     ; VIA Port B data/instruction register
@@ -261,4 +262,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "z64-02.bin", startrom, endrom
+SAVE "z64-ROM-02.bin", startrom, endrom

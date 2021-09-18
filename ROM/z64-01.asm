@@ -16,9 +16,10 @@
 ; beebasm -i z64-01.asm
 ;
 ; Write to EEPROM with:
-; minipro -p AT28C256 -w z64-01.bin
+; minipro -p AT28C256 -w z64-ROM-01.bin
 ;
 ; This code just prints a message to the LCD screen
+; *** WORKING ***
 
 ; 6522 VIA register addresses
 PORTB = $A000     ; VIA Port B data/instruction register
@@ -121,4 +122,4 @@ ORG $fffc         ; reset vector to start of code
 
 .endrom
 
-SAVE "z64-01.bin", startrom, endrom
+SAVE "z64-ROM-01.bin", startrom, endrom

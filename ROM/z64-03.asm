@@ -17,7 +17,7 @@
 ; beebasm -i z64-03.asm
 ;
 ; Write to EEPROM with:
-; minipro -p AT28C256 -w z64-03.bin
+; minipro -p AT28C256 -w z64-ROM-03.bin
 
 ; 6522 VIA register addresses
 VIA_PORTB = $A000     ; VIA Port B data/instruction register
@@ -262,4 +262,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "z64-02.bin", startrom, endrom
+SAVE "z64-ROM-03.bin", startrom, endrom
