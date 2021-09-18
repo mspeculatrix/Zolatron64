@@ -3,7 +3,10 @@
 ; Experimental ROM code for Zolatron 6502-based microcomputer.
 ; This version:
 ;   - prints 'Zolatron 64' to the 16x2 LCD display
-;   - sends the same string across the serial port
+;   - sends the same string across the serial port, repeatedly, in the
+;     main loop.
+;   - Serial receiving isn't enabled yet, which is also why interrupts are
+;     not yet enabled.
 ;
 ; GitHub: https://github.com/mspeculatrix/Zolatron64/
 ; Blog: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
@@ -86,7 +89,7 @@ ORG $C000         ; This is where the actual code starts.
   lda #%00000001  ; clear display, reset display memory
   jsr lcd_cmd
 
-  cli             ; enable interrupts
+;  cli             ; enable interrupts
 
 ; --------- MAIN PROGRAM -------------------------------------------------------
 
@@ -94,28 +97,17 @@ ORG $C000         ; This is where the actual code starts.
   ldx #0              ; set message offset to 0
 .print
   lda lcd_message,x   ; LDA sets zero flag if it's loaded with 0
-  beq serial_msg_send ; BEQ branches if zero flag set
+  beq mainloop        ; BEQ branches if zero flag set
   jsr lcd_prt_chr
   inx                 ; increment message offset
   jmp print           ; go around again
 
-.serial_msg_send
-; SERIAL MESSAGE LOOP
-  ldx #0              ; set message offset to 0
-.send_char
-  lda serial_msg,x    ; load next char
-  beq mainloop        ; if char is 0, we've finished
-  jsr acia_wait_send_clr
-  sta ACIA_DATA_REG
-  inx
-  jmp send_char
-
 ; receiving - after calling acia_wait_byte_recvd,
 ; sta ACIA_DATA_REG
  
-.mainloop             ; we're done, so loop forever
-  jsr delay
+.mainloop             ; loop forever
   jsr serial_msg_send
+  jsr delay
   jmp mainloop
 
 ; ---------SUBROUTINES----------------------------------------------------------
@@ -126,20 +118,45 @@ ORG $C000         ; This is where the actual code starts.
   sta $41 ; using this location for the high byte of the loop
 .delayloop
   adc #1  ; add 1 to A
-  bne delayloop  ; loop if zero bit not set (will be when A overflows)
+  bne delayloop  ; loop if zero bit not set (will be set when A overflows)
   clc     ; reset carry flag - this is the outer loop
   inc $41
   bne delayloop ; branches until incrementing $41 overflows and zero bit gets set
   clc     ; clean up
-  lda $40  ; restore state of A
+  lda $40 ; restore state of A
+  rts
+
+.serial_msg_send
+; SERIAL MESSAGE LOOP
+  ldx #0                  ; set message offset to 0
+.send_char
+  lda serial_msg,x        ; load next char
+  beq serial_send_end     ; if char is 0, we've finished
+  jsr acia_wait_send_clr
+  sta ACIA_DATA_REG
+  inx
+  jmp send_char
+.serial_send_end
   rts
 
 .acia_wait_send_clr
-  pha
-  lda ACIA_STAT_REG
-  and #ACIA_TX_RDY_BIT
-  beq acia_wait_send_clr
-  pla
+;  pha                   ; these five lines are how it should be done
+;  lda ACIA_STAT_REG        
+;  and #ACIA_TX_RDY_BIT
+;  beq acia_wait_send_clr
+;  pla
+; instead we're just using a clumsy delay loop
+  pha             ; preserve CPU state
+  txa             ;                
+  pha             ;
+  ldx #$f0        ; tried #$01, but too short
+.clumsy_delay_loop
+  dex
+  cpx #0
+  bne clumsy_delay_loop
+  pla             ; resume original CPU state
+  tax             ;
+  pla             ;
   rts
 
 .acia_wait_byte_recvd
@@ -191,10 +208,10 @@ ORG $C000         ; This is where the actual code starts.
 
 ; ---------INTERRUPT SERVICE ROUTINE (ISR)--------------------------------------
 .ISR_handler
-  pha             ; preserve CPU state
-  tax             ;                
+  pha             ; preserve CPU state on the stack
+  txa             ;                
   pha             ;
-  tay             ;
+  tya             ;
   pha             ;
   cld             ;
 
@@ -216,7 +233,6 @@ jmp exit_isr
   lda ACIA_STAT_REG   ; this also resets the interrupt bit
   ; rest to come....
 
-
 .exit_isr
   pla             ; resume original CPU state
   tay             ;
@@ -235,7 +251,7 @@ jmp exit_isr
 	equb 0
 
 .serial_msg
-  equs "Sending from Zolatron 64"
+  equs "Zolatron 64 serial message"
   equb 13
   equb 0
 
