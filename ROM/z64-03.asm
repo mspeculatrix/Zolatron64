@@ -5,8 +5,7 @@
 ; This version:
 ;   - prints 'Zolatron 64' to the 16x2 LCD display
 ;   - sends a string across the serial port, repeatedly, in the main loop.
-;   - Serial receiving isn't enabled yet, which is also why interrupts are
-;     not yet enabled.
+;   - Now working on serial receiving...
 ;
 ; GitHub: https://github.com/mspeculatrix/Zolatron64/
 ; Blog: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
@@ -89,7 +88,7 @@ ORG $C000         ; This is where the actual code starts.
   lda #%00000001  ; clear display, reset display memory
   jsr lcd_cmd
 
-;  cli             ; enable interrupts
+  cli             ; enable interrupts
 
 ; --------- MAIN PROGRAM -------------------------------------------------------
 
@@ -140,23 +139,24 @@ ORG $C000         ; This is where the actual code starts.
   rts
 
 .acia_wait_send_clr
-;  pha                   ; these five lines are how it should be done
-;  lda ACIA_STAT_REG        
-;  and #ACIA_TX_RDY_BIT
-;  beq acia_wait_send_clr
-;  pla
+  pha                   ; these five lines are how it should be done
+.acia_wait_send_loop        
+  lda ACIA_STAT_REG
+  and #ACIA_TX_RDY_BIT
+  beq acia_wait_send_loop
+  pla
 ; instead we're just using a clumsy delay loop
-  pha             ; preserve CPU state
-  txa             ;                
-  pha             ;
-  ldx #$f0        ; tried #$01, but too short
-.clumsy_delay_loop
-  dex
-  cpx #0
-  bne clumsy_delay_loop
-  pla             ; resume original CPU state
-  tax             ;
-  pla             ;
+;   pha             ; preserve CPU state
+;   txa             ;                
+;   pha             ;
+;   ldx #$f0        ; tried #$01, but too short
+; .clumsy_delay_loop
+;   dex
+;   cpx #0
+;   bne clumsy_delay_loop
+;   pla             ; resume original CPU state
+;   tax             ;
+;   pla             ;
   rts
 
 .acia_wait_byte_recvd

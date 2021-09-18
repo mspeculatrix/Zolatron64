@@ -141,9 +141,10 @@ ORG $C000         ; This is where the actual code starts.
 
 .acia_wait_send_clr
 ;  pha                   ; these five lines are how it should be done
+.acia_wait_send_loop
 ;  lda ACIA_STAT_REG        
 ;  and #ACIA_TX_RDY_BIT
-;  beq acia_wait_send_clr
+;  beq acia_wait_send_loop
 ;  pla
 ; instead we're just using a clumsy delay loop
   pha             ; preserve CPU state
