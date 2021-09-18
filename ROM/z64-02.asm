@@ -3,8 +3,7 @@
 ; Experimental ROM code for Zolatron 6502-based microcomputer.
 ; This version:
 ;   - prints 'Zolatron 64' to the 16x2 LCD display
-;   - sends the same string across the serial port, repeatedly, in the
-;     main loop.
+;   - sends a string across the serial port, repeatedly, in the main loop.
 ;   - Serial receiving isn't enabled yet, which is also why interrupts are
 ;     not yet enabled.
 ;
