@@ -1,7 +1,7 @@
 ; Zolatron 64
 ;
 ; Experimental ROM code for Zolatron 6502-based microcomputer.
-; *** WORKING ***
+; 
 ; This version:
 ;   - prints 'Zolatron 64' to the 16x2 LCD display
 ;   - sends a string across the serial port, repeatedly, in the main loop.
@@ -139,24 +139,12 @@ ORG $C000         ; This is where the actual code starts.
   rts
 
 .acia_wait_send_clr
-  pha                   ; these five lines are how it should be done
+  pha                   ; push A to stack to save it
 .acia_wait_send_loop        
   lda ACIA_STAT_REG
   and #ACIA_TX_RDY_BIT
   beq acia_wait_send_loop
   pla
-; instead we're just using a clumsy delay loop
-;   pha             ; preserve CPU state
-;   txa             ;                
-;   pha             ;
-;   ldx #$f0        ; tried #$01, but too short
-; .clumsy_delay_loop
-;   dex
-;   cpx #0
-;   bne clumsy_delay_loop
-;   pla             ; resume original CPU state
-;   tax             ;
-;   pla             ;
   rts
 
 .acia_wait_byte_recvd
@@ -252,7 +240,7 @@ jmp exit_isr
 
 .serial_msg
   equs "Zolatron 64 serial message"
-  equb 13
+  equb 10
   equb 0
 
 ORG $fffa
