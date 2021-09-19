@@ -6,5 +6,5 @@ I'm using a 32KB EEPROM chip, the AT28C256. So the code needs to sit in the top 
 
 Versions:
 * z64-01: Uses the VIA to print a message to the 16x2 LCD.
-* z64-02: As above, but also prints a message via the serial port. This uses a crude delay loop in the send routine to get around a bug in the 6551 ACIA.
+* z64-02: As above, but also prints a message via the serial port.
 * z64-03 - WORK IN PROGESS: I'll be trying to add serial receiving...
