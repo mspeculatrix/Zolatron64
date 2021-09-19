@@ -19,23 +19,23 @@
 ; minipro -p AT28C256 -w z64-ROM-03.bin
 
 ; 6522 VIA register addresses
-VIA_PORTB = $A000     ; VIA Port B data/instruction register
 VIA_PORTA = $A001     ; VIA Port A data/instruction register
-VIA_DDRB = $A002      ; Port B Data Direction Register
 VIA_DDRA = $A003      ; Port A Data Direction Register
+VIA_PORTB = $A000     ; VIA Port B data/instruction register
+VIA_DDRB = $A002      ; Port B Data Direction Register
 
 ; ACIA addresses
 ACIA_DATA_REG = $B000 ; transmit/receive data register
 ACIA_STAT_REG = $B001 ; status register
 ACIA_CMD_REG = $B002  ; command register
 ACIA_CTRL_REG = $B003 ; control register
-ACIA_RX_BUF = $0200   ; ??? don't know where this should go yet
-ACIA_TX_BUF = $0300   ; ??? don't know where this should go yet
-ACIA_RX_BUF_PTR = ACIA_RX_BUF
-ACIA_TX_BUF_PTR = ACIA_TX_BUF
-ACIA_RX_BUF_LEN = 128
-ACIA_TX_BUF_LEN = 128
-ACIA_INFO_REG = $0400 ; ??? don't know where this should go yet
+ACIA_RX_BUF = $0400   ; Serial receive buffer start address
+ACIA_TX_BUF = $0300   ; Serial send buffer start address
+ACIA_RX_IDX = $04FF   ; Location of RX buffer index
+ACIA_TX_IDX = $03FF   ; Location of TX buffer index
+ACIA_RX_BUF_LEN = 255
+ACIA_TX_BUF_LEN = 255
+; ACIA_INFO_REG = $0400 ; ??? don't know where this should go yet
 ; Following are values for the control register, setting eight data bits, 
 ; no parity, 1 stop bit and use of the internal baud rate generator
 ACIA_8N1_2400 = %10011010
@@ -73,12 +73,13 @@ ORG $C000         ; This is where the actual code starts.
 ; SETUP ACIA
   lda #0
   sta ACIA_STAT_REG   ; reset ACIA
-  sta ACIA_INFO_REG   ; also zero-out info register
+;  sta ACIA_INFO_REG   ; also zero-out info register
+  sta ACIA_RX_IDX     ; zero buffer index
+  sta ACIA_TX_IDX     ; zero buffer index
   lda #ACIA_8N1_9600  ; set control register config
   sta ACIA_CTRL_REG
   lda #ACIA_CMD_CFG   ; set command register config
   sta ACIA_CMD_REG
-  ; should probably ensure buffers are full of zeroes here
 
 ; SETUP LCD
   lda #%00111000  ; Set 8-bit mode; 2-line display; 5x8 font
@@ -109,8 +110,9 @@ ORG $C000         ; This is where the actual code starts.
   jsr delay
   jmp mainloop
 
-; ---------SUBROUTINES----------------------------------------------------------
-
+; ------------------------------------------------------------------------------
+; ----     SUBROUTINES                                                      ----
+; ------------------------------------------------------------------------------
 .delay
   sta $40 ; save the state of the A register in a handy zero-page location
   lda #0  ; set A to 0
@@ -125,7 +127,10 @@ ORG $C000         ; This is where the actual code starts.
   lda $40 ; restore state of A
   rts
 
+; ---------SERIAL SUBROUTINES---------------------------------------------------
+
 .serial_msg_send
+; This is for initial experiments only - will be dropped soon
 ; SERIAL MESSAGE LOOP
   ldx #0                  ; set message offset to 0
 .send_char
@@ -138,13 +143,31 @@ ORG $C000         ; This is where the actual code starts.
 .serial_send_end
   rts
 
+.serial_send_buffer         ; sends contents of send buffer and clears it
+  ldx #0                    ; offset index
+ .send_next_char
+  lda ACIA_TX_BUF,x         ; load next char
+  beq serial_send_buf_end   ; if char is 0, we've finished
+  jsr acia_wait_send_clr    ; wait until ACIA is ready for another byte
+  sta ACIA_DATA_REG         ; write to Data Reg. This sends the byte
+  inx                       ; increment offset index
+  cpx ACIA_TX_IDX           ; check if we're at the buffer index
+  beq serial_send_buf_end   ; if so, end it here
+  cpx #ACIA_TX_BUF_LEN      ; check against max buffer size, to prevent overrun
+  beq serial_send_buf_end   ; if so, end it here
+  jmp send_next_char        ; otherwise do the next char
+.serial_send_buf_end
+  lda #0
+  sta ACIA_TX_IDX           ; re-zero the index
+  rts
+
 .acia_wait_send_clr
-  pha                   ; push A to stack to save it
+  pha                     ; push A to stack to save it
 .acia_wait_send_loop        
-  lda ACIA_STAT_REG
-  and #ACIA_TX_RDY_BIT
-  beq acia_wait_send_loop
-  pla
+  lda ACIA_STAT_REG       ; get contents of status register
+  and #ACIA_TX_RDY_BIT    ; and with ready bit
+  beq acia_wait_send_loop ; if it's zero, we're not ready yet
+  pla                     ; recover A from stack
   rts
 
 .acia_wait_byte_recvd
@@ -153,6 +176,7 @@ ORG $C000         ; This is where the actual code starts.
   beq acia_wait_byte_recvd
   rts
 
+; ---------LCD SUBROUTINES------------------------------------------------------
 .lcd_wait         ; check to see if LCD is ready to receive next byte
   pha             ; save current contents of A in stack, so it isn't corrupted
   lda #%00000000  ; Set Port B as input
