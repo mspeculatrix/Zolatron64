@@ -140,24 +140,12 @@ ORG $C000         ; This is where the actual code starts.
   rts
 
 .acia_wait_send_clr
-;  pha                   ; these five lines are how it should be done
+  pha                      ; preserve A state on stack
 .acia_wait_send_loop
-;  lda ACIA_STAT_REG        
-;  and #ACIA_TX_RDY_BIT
-;  beq acia_wait_send_loop
-;  pla
-; instead we're just using a clumsy delay loop
-  pha             ; preserve CPU state
-  txa             ;                
-  pha             ;
-  ldx #$f0        ; tried #$01, but too short
-.clumsy_delay_loop
-  dex
-  cpx #0
-  bne clumsy_delay_loop
-  pla             ; resume original CPU state
-  tax             ;
-  pla             ;
+  lda ACIA_STAT_REG        ; get the status register state
+  and #ACIA_TX_RDY_BIT     ; compare with ready bit
+  beq acia_wait_send_loop  ; if not set, loop
+  pla                      ; recover state of A
   rts
 
 .acia_wait_byte_recvd
