@@ -2,10 +2,13 @@
 ;
 ; Experimental ROM code for Zolatron 6502-based microcomputer.
 ; 
+; *** WORK IN PROGRESS - NOT WORKING YET ***
+;
 ; This version:
 ;   - prints 'Zolatron 64' to the 16x2 LCD display
 ;   - sends a string across the serial port, repeatedly, in the main loop.
-;   - Now working on serial receiving...
+;   - Now working on serial receiving. Prints whatever comes down the line
+;     to the LCD.
 ;
 ; GitHub: https://github.com/mspeculatrix/Zolatron64/
 ; Blog: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
@@ -33,12 +36,12 @@ ACIA_RX_BUF = $0400   ; Serial receive buffer start address
 ACIA_TX_BUF = $0300   ; Serial send buffer start address
 ACIA_RX_IDX = $04FF   ; Location of RX buffer index
 ACIA_TX_IDX = $03FF   ; Location of TX buffer index
-ACIA_RX_BUF_LEN = 255
-ACIA_TX_BUF_LEN = 255
+ACIA_RX_BUF_LEN = $FF
+ACIA_TX_BUF_LEN = $FF
 
 ACIA_INFO_REG = $0205 ; memory byte we'll use to store various flags
 ; masks for setting/reading flags
-ACIA_FL_RX_BUF_DATA = %00000001   ; Receive buffer has data. Do something!
+;ACIA_FL_RX_BUF_DATA = %00000001   ; Receive buffer has data. NOT USING YET
 ACIA_FL_RX_NUL_RCVD = %00000010   ; we've received a null terminator
 ACIA_FL_RX_BUF_FULL = %00001000
 ACIA_CLEAR_RX_FLAGS = %11110000   ; to be ANDed with info reg to clear RX flags
@@ -122,14 +125,16 @@ ORG $C000         ; This is where the actual code starts.
   lda ACIA_INFO_REG         ; load our serial info register
   ora #ACIA_FL_RX_NUL_RCVD  ; have we received a null byte?
   bne process_rx            ; if so, deal with message
-  ora ACIA_FL_RX_BUF_FULL   ; is the buffer full?
+  ora #ACIA_FL_RX_BUF_FULL  ; is the buffer full?
   beq mainloop              ; if not, loop, otherwise...
+; the following is in the main loop for now while I'm experimenting. It'll be
+; moved to a more generalised subroutine eventually.
 .process_rx
   lda #%00000001            ; clear display, reset display memory
   jsr lcd_cmd
   jsr serial_msg_send       ; just for testing, let's send our standard msg
   lda ACIA_INFO_REG         ; get our info register
-  and ACIA_CLEAR_RX_FLAGS   ; reset the RX flags
+  and #ACIA_CLEAR_RX_FLAGS  ; reset the RX flags
   sta ACIA_INFO_REG         ; and re-save the register
   ldx #0                    ; our offset index
 .get_rx_char
@@ -177,24 +182,6 @@ ORG $C000         ; This is where the actual code starts.
   inx
   jmp send_char
 .serial_send_end
-  rts
-
-.serial_get_rx_data       ; we come here in response to ACIA_RDRF_BIT being set
-  ldx ACIA_RX_IDX         ; load the value of the buffer index
-  inx                     ; and increment it
-  lda ACIA_DATA_REG       ; load the byte in the data register
-  sta ACIA_RX_BUF,x       ; and store it in the buffer, at the offset
-  bne acia_rx_set_info    ; if not the 0 terminator, hop to next step
-  lda ACIA_INFO_REG       ; load our info register
-  and ACIA_FL_RX_NUL_RCVD ; set the null byte received bit
-.acia_rx_set_info
-  lda ACIA_INFO_REG       ; load our info register (again)
-  cpx ACIA_RX_BUF_LEN     ; are we at the maximum?
-  bne acia_rx_finish      ; if not, we're all done, otherwise...
-  ora ACIA_FL_RX_BUF_FULL ; flag buffer is full (info register is still in A)
-  sta ACIA_INFO_REG       ; and resave the info register
-.acia_rx_finish
-  stx ACIA_RX_IDX         ; store the index
   rts
 
 .serial_send_buffer         ; sends contents of send buffer and clears it
@@ -288,8 +275,8 @@ ORG $C000         ; This is where the actual code starts.
 ; effectively ANDs an address with the A reg, setting the Z flag if the result
 ; is zero. But we don't care about that. We want one of its other effects: it
 ; also copies bit 6 of the target address into the overflow flag (V) and
-; bit 7 - the one we care about - into the negative flag (N).
-
+; bit 7 - the one we care about - into the negative flag (N). It doesn't matter
+; what's in A.
 bit ACIA_STAT_REG ; if it was the ACIA that set IRQ low, the N flag is now set
 bne acia_isr
 ; do other checks here, branching as appropriate
@@ -301,8 +288,22 @@ jmp exit_isr
   beq exit_isr        ; No data. WTF. Let's get outta here...
   ; technically, we should also test aganst frame error and overrun error bits,
   ; but we'll do that in a future version
+  ldx ACIA_RX_IDX         ; load the value of the buffer index
+  lda ACIA_DATA_REG       ; load the byte in the data register
+  sta ACIA_RX_BUF,x       ; and store it in the buffer, at the offset
+  bne acia_rx_set_info    ; if byte is not the 0 terminator, hop to next step
   lda ACIA_INFO_REG       ; load our info register
-  ora ACIA_FL_RX_BUF_DATA ; set the bit to say we have data
+  and ACIA_FL_RX_NUL_RCVD ; set the null byte received bit
+.acia_rx_set_info
+  ;ora ACIA_FL_RX_BUF_DATA ; set the bit to say we have data - NOT USING THIS
+  inx                     ; increment index
+  cpx ACIA_RX_BUF_LEN     ; are we at the maximum?
+  bne acia_rx_finish      ; if not, we're all done, otherwise...
+  lda ACIA_INFO_REG       ; load our info register (again)
+  ora ACIA_FL_RX_BUF_FULL ; flag buffer is full
+  sta ACIA_INFO_REG       ; and resave the info register
+.acia_rx_finish
+  stx ACIA_RX_IDX         ; store the index
   sta ACIA_INFO_REG       ; and re-save the register
   jmp exit_isr
   ; there will be other stuff here one day, which is why we're jumping above
