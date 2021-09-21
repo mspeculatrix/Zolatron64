@@ -35,7 +35,17 @@ ACIA_RX_IDX = $04FF   ; Location of RX buffer index
 ACIA_TX_IDX = $03FF   ; Location of TX buffer index
 ACIA_RX_BUF_LEN = 255
 ACIA_TX_BUF_LEN = 255
-; ACIA_INFO_REG = $0400 ; ??? don't know where this should go yet
+
+ACIA_INFO_REG = $0205 ; memory byte we'll use to store various flags
+; masks for setting/reading flags
+ACIA_FL_RX_BUF_DATA = %00000001   ; Receive buffer has data. Do something!
+ACIA_FL_RX_NUL_RCVD = %00000010   ; we've received a null terminator
+ACIA_FL_RX_BUF_FULL = %00001000
+ACIA_CLEAR_RX_FLAGS = %11110000   ; to be ANDed with info reg to clear RX flags
+ACIA_FL_TX_BUF_DATA = %00010000   ; TX buffer has data to send
+ACIA_FL_TX_BUF_FULL = %10000000
+ACIA_CLEAR_TX_FLAGS = %00001111   ; to be ANDed with info reg to clear TX flags
+
 ; Following are values for the control register, setting eight data bits, 
 ; no parity, 1 stop bit and use of the internal baud rate generator
 ACIA_8N1_2400 = %10011010
@@ -43,9 +53,12 @@ ACIA_8N1_9600 = %10011110
 ACIA_8N1_19K2 = %10011111
 ; Value for the command register: No parity, echo normal, RTS low with no IRQ,
 ; IRQ enabled on receive, data terminal ready
-ACIA_CMD_CFG = %00001011
+ACIA_CMD_CFG = %00001001
 ; Mask values to be ANDed with status reg to check state of ACIA 
-ACIA_IRQ_SET = %10000000
+; ACIA_IRQ_SET = %10000000
+ACIA_RDRF_BIT = %00001000     ; Receive Data Register Full
+ACIA_OVRN_BIT = %00000100     ; Overrun error
+ACIA_FE_BIT   = %00000010     ; Frame error
 ACIA_TX_RDY_BIT = %00010000
 ACIA_RX_RDY_BIT = %00001000
 
@@ -73,7 +86,7 @@ ORG $C000         ; This is where the actual code starts.
 ; SETUP ACIA
   lda #0
   sta ACIA_STAT_REG   ; reset ACIA
-;  sta ACIA_INFO_REG   ; also zero-out info register
+  sta ACIA_INFO_REG   ; also zero-out our status register
   sta ACIA_RX_IDX     ; zero buffer index
   sta ACIA_TX_IDX     ; zero buffer index
   lda #ACIA_8N1_9600  ; set control register config
@@ -105,27 +118,50 @@ ORG $C000         ; This is where the actual code starts.
 ; receiving - after calling acia_wait_byte_recvd,
 ; sta ACIA_DATA_REG
  
-.mainloop             ; loop forever
-  jsr serial_msg_send
-  jsr delay
-  jmp mainloop
+.mainloop                   ; loop forever
+  lda ACIA_INFO_REG         ; load our serial info register
+  ora #ACIA_FL_RX_NUL_RCVD  ; have we received a null byte?
+  bne process_rx            ; if so, deal with message
+  ora ACIA_FL_RX_BUF_FULL   ; is the buffer full?
+  beq mainloop              ; if not, loop, otherwise...
+.process_rx
+  lda #%00000001            ; clear display, reset display memory
+  jsr lcd_cmd
+  jsr serial_msg_send       ; just for testing, let's send our standard msg
+  lda ACIA_INFO_REG         ; get our info register
+  and ACIA_CLEAR_RX_FLAGS   ; reset the RX flags
+  sta ACIA_INFO_REG         ; and re-save the register
+  ldx #0                    ; our offset index
+.get_rx_char
+  lda ACIA_RX_BUF,x     ; get the next byte in the buffer
+  beq end_process_rx    ; if it's a zero terminator, we're done
+  jsr lcd_prt_chr       ; otherwise, print char to LCD
+  inx                   ; increment index
+  cpx ACIA_RX_IDX       ; have we reached the last char?
+  beq end_process_rx    ; if so, we're done
+  cpx #ACIA_RX_BUF_LEN  ; are we at the end of the buffer?
+  bne get_rx_char       ; if not, get another char
+.end_process_rx
+  lda #0
+  sta ACIA_RX_IDX       ; reset buffer index
+  jmp mainloop          ; otherwise, we're done
 
 ; ------------------------------------------------------------------------------
 ; ----     SUBROUTINES                                                      ----
 ; ------------------------------------------------------------------------------
-.delay
-  sta $40 ; save the state of the A register in a handy zero-page location
-  lda #0  ; set A to 0
-  sta $41 ; using this location for the high byte of the loop
-.delayloop
-  adc #1  ; add 1 to A
-  bne delayloop  ; loop if zero bit not set (will be set when A overflows)
-  clc     ; reset carry flag - this is the outer loop
-  inc $41
-  bne delayloop ; branches until incrementing $41 overflows and zero bit gets set
-  clc     ; clean up
-  lda $40 ; restore state of A
-  rts
+; .delay    ; ONLY FOR TESTING/DEBUGGING
+;   sta $40 ; save the state of the A register in a handy zero-page location
+;   lda #0  ; set A to 0
+;   sta $41 ; using this location for the high byte of the loop
+; .delayloop
+;   adc #1  ; add 1 to A
+;   bne delayloop  ; loop if zero bit not set (will be set when A overflows)
+;   clc     ; reset carry flag - this is the outer loop
+;   inc $41
+;   bne delayloop ; branches until incrementing $41 overflows and zero bit gets set
+;   clc     ; clean up
+;   lda $40 ; restore state of A
+;   rts
 
 ; ---------SERIAL SUBROUTINES---------------------------------------------------
 
@@ -141,6 +177,24 @@ ORG $C000         ; This is where the actual code starts.
   inx
   jmp send_char
 .serial_send_end
+  rts
+
+.serial_get_rx_data       ; we come here in response to ACIA_RDRF_BIT being set
+  ldx ACIA_RX_IDX         ; load the value of the buffer index
+  inx                     ; and increment it
+  lda ACIA_DATA_REG       ; load the byte in the data register
+  sta ACIA_RX_BUF,x       ; and store it in the buffer, at the offset
+  bne acia_rx_set_info    ; if not the 0 terminator, hop to next step
+  lda ACIA_INFO_REG       ; load our info register
+  and ACIA_FL_RX_NUL_RCVD ; set the null byte received bit
+.acia_rx_set_info
+  lda ACIA_INFO_REG       ; load our info register (again)
+  cpx ACIA_RX_BUF_LEN     ; are we at the maximum?
+  bne acia_rx_finish      ; if not, we're all done, otherwise...
+  ora ACIA_FL_RX_BUF_FULL ; flag buffer is full (info register is still in A)
+  sta ACIA_INFO_REG       ; and resave the info register
+.acia_rx_finish
+  stx ACIA_RX_IDX         ; store the index
   rts
 
 .serial_send_buffer         ; sends contents of send buffer and clears it
@@ -170,8 +224,8 @@ ORG $C000         ; This is where the actual code starts.
   pla                     ; recover A from stack
   rts
 
-.acia_wait_byte_recvd
-  lda ACIA_STAT_REG
+.acia_wait_byte_recvd     ; not using this yet. Ever?
+  lda ACIA_STAT_REG       ; Possibly if I implement flow control
   and #ACIA_RX_RDY_BIT
   beq acia_wait_byte_recvd
   rts
@@ -243,8 +297,15 @@ jmp exit_isr
 
 .acia_isr
   lda ACIA_STAT_REG   ; this also resets the interrupt bit
-  ; rest to come....
-
+  and #ACIA_RDRF_BIT  ; is the Receive Data Register Full bit set?
+  beq exit_isr        ; No data. WTF. Let's get outta here...
+  ; technically, we should also test aganst frame error and overrun error bits,
+  ; but we'll do that in a future version
+  lda ACIA_INFO_REG       ; load our info register
+  ora ACIA_FL_RX_BUF_DATA ; set the bit to say we have data
+  sta ACIA_INFO_REG       ; and re-save the register
+  jmp exit_isr
+  ; there will be other stuff here one day, which is why we're jumping above
 .exit_isr
   pla             ; resume original CPU state
   tay             ;
