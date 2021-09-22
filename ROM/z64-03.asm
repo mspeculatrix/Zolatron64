@@ -32,28 +32,28 @@ ACIA_DATA_REG = $B000 ; transmit/receive data register
 ACIA_STAT_REG = $B001 ; status register
 ACIA_CMD_REG = $B002  ; command register
 ACIA_CTRL_REG = $B003 ; control register
-ACIA_RX_BUF = $0400   ; Serial receive buffer start address
-ACIA_TX_BUF = $0300   ; Serial send buffer start address
-ACIA_RX_IDX = $04FF   ; Location of RX buffer index
-ACIA_TX_IDX = $03FF   ; Location of TX buffer index
-ACIA_RX_BUF_LEN = $FF
-ACIA_TX_BUF_LEN = $FF
+UART_RX_BUF = $0400   ; Serial receive buffer start address
+UART_TX_BUF = $0300   ; Serial send buffer start address
+UART_RX_IDX = $04FF   ; Location of RX buffer index
+UART_TX_IDX = $03FF   ; Location of TX buffer index
+UART_RX_BUF_LEN = $FF
+UART_TX_BUF_LEN = $FF
 
-ACIA_INFO_REG = $0205 ; memory byte we'll use to store various flags
+UART_STATUS_REG = $0210 ; memory byte we'll use to store various flags
 ; masks for setting/reading flags
-;ACIA_FL_RX_BUF_DATA = %00000001   ; Receive buffer has data. NOT USING YET
-ACIA_FL_RX_NUL_RCVD = %00000010   ; we've received a null terminator
-ACIA_FL_RX_BUF_FULL = %00001000
-ACIA_CLEAR_RX_FLAGS = %11110000   ; to be ANDed with info reg to clear RX flags
-ACIA_FL_TX_BUF_DATA = %00010000   ; TX buffer has data to send
-ACIA_FL_TX_BUF_FULL = %10000000
-ACIA_CLEAR_TX_FLAGS = %00001111   ; to be ANDed with info reg to clear TX flags
+UART_FL_RX_BUF_DATA = %00000001   ; Receive buffer has data
+UART_FL_RX_NUL_RCVD = %00000010   ; we've received a null terminator
+UART_FL_RX_BUF_FULL = %00001000
+UART_CLEAR_RX_FLAGS = %11110000   ; to be ANDed with info reg to clear RX flags
+UART_FL_TX_BUF_DATA = %00010000   ; TX buffer has data to send
+UART_FL_TX_BUF_FULL = %10000000
+UART_CLEAR_TX_FLAGS = %00001111   ; to be ANDed with info reg to clear TX flags
 
 ; Following are values for the control register, setting eight data bits, 
 ; no parity, 1 stop bit and use of the internal baud rate generator
-ACIA_8N1_2400 = %10011010
-ACIA_8N1_9600 = %10011110
-ACIA_8N1_19K2 = %10011111
+UART_8N1_2400 = %10011010
+UART_8N1_9600 = %10011110
+UART_8N1_19K2 = %10011111
 ; Value for the command register: No parity, echo normal, RTS low with no IRQ,
 ; IRQ enabled on receive, data terminal ready
 ACIA_CMD_CFG = %00001001
@@ -89,10 +89,10 @@ ORG $C000         ; This is where the actual code starts.
 ; SETUP ACIA
   lda #0
   sta ACIA_STAT_REG   ; reset ACIA
-  sta ACIA_INFO_REG   ; also zero-out our status register
-  sta ACIA_RX_IDX     ; zero buffer index
-  sta ACIA_TX_IDX     ; zero buffer index
-  lda #ACIA_8N1_9600  ; set control register config
+  sta UART_STATUS_REG   ; also zero-out our status register
+  sta UART_RX_IDX     ; zero buffer index
+  sta UART_TX_IDX     ; zero buffer index
+  lda #UART_8N1_9600  ; set control register config
   sta ACIA_CTRL_REG
   lda #ACIA_CMD_CFG   ; set command register config
   sta ACIA_CMD_REG
@@ -122,33 +122,62 @@ ORG $C000         ; This is where the actual code starts.
 ; sta ACIA_DATA_REG
  
 .mainloop                   ; loop forever
-  lda ACIA_INFO_REG         ; load our serial info register
-  ora #ACIA_FL_RX_NUL_RCVD  ; have we received a null byte?
-  bne process_rx            ; if so, deal with message
-  ora #ACIA_FL_RX_BUF_FULL  ; is the buffer full?
-  beq mainloop              ; if not, loop, otherwise...
+  lda UART_STATUS_REG       ; load our serial info register
+  and #UART_FL_RX_BUF_DATA  ; is there data?
+  bne process_rx            ; yes
+  jmp mainloop
 ; the following is in the main loop for now while I'm experimenting. It'll be
 ; moved to a more generalised subroutine eventually.
 .process_rx
+  lda ACIA_STAT_REG   ; this also resets the interrupt bit
+  and #ACIA_RDRF_BIT  ; is the Receive Data Register Full bit set?
+  beq mainloop        ; No data. WTF. Let's get outta here...
+  ; technically, we should also test aganst frame error and overrun error bits,
+  ; but we'll do that in a future version
+  ldx UART_RX_IDX         ; load the value of the buffer index
+  lda ACIA_DATA_REG       ; load the byte in the data register
+  sta UART_RX_BUF,x       ; and store it in the buffer, at the offset
+  bne acia_rx_set_info    ; if byte is not the 0 terminator, hop to next step
+  lda UART_STATUS_REG     ; load our status register
+  and UART_FL_RX_NUL_RCVD ; set the null byte received bit
+  sta UART_STATUS_REG     ; re-save the status
+.acia_rx_set_info
+  inx                     ; increment index
+  cpx UART_RX_BUF_LEN     ; are we at the maximum?
+  bne acia_rx_finish      ; if not, we're all done, otherwise...
+  lda UART_STATUS_REG     ; load our info register (again)
+  ora UART_FL_RX_BUF_FULL ; flag buffer is full
+  sta UART_STATUS_REG     ; and re-save the status register
+.acia_rx_finish
+  stx UART_RX_IDX         ; store the index
+; at this point, if we've received a null byte or the buffer is full, we'll
+; use the buffer data and reset the buffer
+; The status register is still in A
+  ora #UART_FL_RX_NUL_RCVD  ; have we received a null byte?
+  bne print_rx              ; if so, deal with message
+  lda UART_STATUS_REG
+  ora #UART_FL_RX_BUF_FULL  ; is the buffer full?
+  beq mainloop              ; if not, loop, otherwise...
+.print_rx
   lda #%00000001            ; clear display, reset display memory
   jsr lcd_cmd
   jsr serial_msg_send       ; just for testing, let's send our standard msg
-  lda ACIA_INFO_REG         ; get our info register
-  and #ACIA_CLEAR_RX_FLAGS  ; reset the RX flags
-  sta ACIA_INFO_REG         ; and re-save the register
+  lda UART_STATUS_REG       ; get our info register
+  and #UART_CLEAR_RX_FLAGS  ; reset the RX flags
+  sta UART_STATUS_REG       ; and re-save the register
   ldx #0                    ; our offset index
 .get_rx_char
-  lda ACIA_RX_BUF,x     ; get the next byte in the buffer
+  lda UART_RX_BUF,x     ; get the next byte in the buffer
   beq end_process_rx    ; if it's a zero terminator, we're done
   jsr lcd_prt_chr       ; otherwise, print char to LCD
   inx                   ; increment index
-  cpx ACIA_RX_IDX       ; have we reached the last char?
+  cpx UART_RX_IDX       ; have we reached the last char?
   beq end_process_rx    ; if so, we're done
-  cpx #ACIA_RX_BUF_LEN  ; are we at the end of the buffer?
+  cpx #UART_RX_BUF_LEN  ; are we at the end of the buffer?
   bne get_rx_char       ; if not, get another char
 .end_process_rx
   lda #0
-  sta ACIA_RX_IDX       ; reset buffer index
+  sta UART_RX_IDX       ; reset buffer index
   jmp mainloop          ; otherwise, we're done
 
 ; ------------------------------------------------------------------------------
@@ -187,19 +216,19 @@ ORG $C000         ; This is where the actual code starts.
 .serial_send_buffer         ; sends contents of send buffer and clears it
   ldx #0                    ; offset index
  .send_next_char
-  lda ACIA_TX_BUF,x         ; load next char
+  lda UART_TX_BUF,x         ; load next char
   beq serial_send_buf_end   ; if char is 0, we've finished
   jsr acia_wait_send_clr    ; wait until ACIA is ready for another byte
   sta ACIA_DATA_REG         ; write to Data Reg. This sends the byte
   inx                       ; increment offset index
-  cpx ACIA_TX_IDX           ; check if we're at the buffer index
+  cpx UART_TX_IDX           ; check if we're at the buffer index
   beq serial_send_buf_end   ; if so, end it here
-  cpx #ACIA_TX_BUF_LEN      ; check against max buffer size, to prevent overrun
+  cpx #UART_TX_BUF_LEN      ; check against max buffer size, to prevent overrun
   beq serial_send_buf_end   ; if so, end it here
   jmp send_next_char        ; otherwise do the next char
 .serial_send_buf_end
   lda #0
-  sta ACIA_TX_IDX           ; re-zero the index
+  sta UART_TX_IDX           ; re-zero the index
   rts
 
 .acia_wait_send_clr
@@ -283,28 +312,9 @@ bne acia_isr
 jmp exit_isr
 
 .acia_isr
-  lda ACIA_STAT_REG   ; this also resets the interrupt bit
-  and #ACIA_RDRF_BIT  ; is the Receive Data Register Full bit set?
-  beq exit_isr        ; No data. WTF. Let's get outta here...
-  ; technically, we should also test aganst frame error and overrun error bits,
-  ; but we'll do that in a future version
-  ldx ACIA_RX_IDX         ; load the value of the buffer index
-  lda ACIA_DATA_REG       ; load the byte in the data register
-  sta ACIA_RX_BUF,x       ; and store it in the buffer, at the offset
-  bne acia_rx_set_info    ; if byte is not the 0 terminator, hop to next step
-  lda ACIA_INFO_REG       ; load our info register
-  and ACIA_FL_RX_NUL_RCVD ; set the null byte received bit
-.acia_rx_set_info
-  ;ora ACIA_FL_RX_BUF_DATA ; set the bit to say we have data - NOT USING THIS
-  inx                     ; increment index
-  cpx ACIA_RX_BUF_LEN     ; are we at the maximum?
-  bne acia_rx_finish      ; if not, we're all done, otherwise...
-  lda ACIA_INFO_REG       ; load our info register (again)
-  ora ACIA_FL_RX_BUF_FULL ; flag buffer is full
-  sta ACIA_INFO_REG       ; and resave the info register
-.acia_rx_finish
-  stx ACIA_RX_IDX         ; store the index
-  sta ACIA_INFO_REG       ; and re-save the register
+  lda UART_STATUS_REG       ; load our status register
+  ora #UART_FL_RX_BUF_DATA  ; set 'there be data' bit
+  sta UART_STATUS_REG
   jmp exit_isr
   ; there will be other stuff here one day, which is why we're jumping above
 .exit_isr
@@ -325,8 +335,8 @@ jmp exit_isr
 	equb 0
 
 .serial_msg
-  equs "Zolatron 64 serial message"
-  equb 10
+  equs "Z64>"
+;  equb 10
   equb 0
 
 ORG $fffa
