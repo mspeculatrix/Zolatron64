@@ -88,13 +88,13 @@ ORG $C000         ; This is where the actual code starts.
 
 ; SETUP ACIA
   lda #0
-  sta ACIA_STAT_REG   ; reset ACIA
+  sta ACIA_STAT_REG     ; reset ACIA
   sta UART_STATUS_REG   ; also zero-out our status register
-  sta UART_RX_IDX     ; zero buffer index
-  sta UART_TX_IDX     ; zero buffer index
-  lda #UART_8N1_9600  ; set control register config
+  sta UART_RX_IDX       ; zero buffer index
+  sta UART_TX_IDX       ; zero buffer index
+  lda #UART_8N1_9600    ; set control register config
   sta ACIA_CTRL_REG
-  lda #ACIA_CMD_CFG   ; set command register config
+  lda #ACIA_CMD_CFG     ; set command register config
   sta ACIA_CMD_REG
 
 ; SETUP LCD
@@ -109,7 +109,10 @@ ORG $C000         ; This is where the actual code starts.
 
 ; --------- MAIN PROGRAM -------------------------------------------------------
 
-; LCD PRINT LOOP
+  jsr serial_send_start_msg
+  jsr serial_send_prompt
+
+; Print initial message on LCD
   ldx #0              ; set message offset to 0
 .print
   lda lcd_message,x   ; LDA sets zero flag if it's loaded with 0
@@ -117,39 +120,43 @@ ORG $C000         ; This is where the actual code starts.
   jsr lcd_prt_chr
   inx                 ; increment message offset
   jmp print           ; go around again
-
-; receiving - after calling acia_wait_byte_recvd,
-; sta ACIA_DATA_REG
  
 .mainloop                   ; loop forever
   lda UART_STATUS_REG       ; load our serial info register
   and #UART_FL_RX_BUF_DATA  ; is there data?
   bne process_rx            ; yes
   jmp mainloop
+  
 ; the following is in the main loop for now while I'm experimenting. It'll be
 ; moved to a more generalised subroutine eventually.
 .process_rx
-  lda ACIA_STAT_REG   ; this also resets the interrupt bit
-  and #ACIA_RDRF_BIT  ; is the Receive Data Register Full bit set?
-  beq mainloop        ; No data. WTF. Let's get outta here...
+  lda ACIA_STAT_REG         ; this also resets the interrupt bit
+  and #ACIA_RDRF_BIT        ; is the Receive Data Register Full bit set?
+  beq mainloop              ; No data. WTF. Let's get outta here...
   ; technically, we should also test aganst frame error and overrun error bits,
   ; but we'll do that in a future version
-  ldx UART_RX_IDX         ; load the value of the buffer index
-  lda ACIA_DATA_REG       ; load the byte in the data register
-  sta UART_RX_BUF,x       ; and store it in the buffer, at the offset
-  bne acia_rx_set_info    ; if byte is not the 0 terminator, hop to next step
-  lda UART_STATUS_REG     ; load our status register
-  and UART_FL_RX_NUL_RCVD ; set the null byte received bit
-  sta UART_STATUS_REG     ; re-save the status
+  ldx UART_RX_IDX           ; load the value of the buffer index
+  lda ACIA_DATA_REG         ; load the byte in the data register into A
+  sta UART_RX_BUF,x         ; and store it in the buffer, at the offset
+  cmp #0                    ; is the byte value 0?
+  beq rx_set_null           ; if byte is the 0 terminator, set the nul flag
+  cmp #13                   ; or is is a carriage return?
+  bne acia_rx_set_info      ; if not 0 or CR, go to next step
+  lda #0                    ; if it's a carriage return, replace with null
+  sta UART_RX_BUF,x
+.rx_set_null
+  lda UART_STATUS_REG       ; load our status register
+  ora #UART_FL_RX_NUL_RCVD  ; set the null byte received bit
+  sta UART_STATUS_REG       ; re-save the status
 .acia_rx_set_info
-  inx                     ; increment index
-  cpx UART_RX_BUF_LEN     ; are we at the maximum?
-  bne acia_rx_finish      ; if not, we're all done, otherwise...
-  lda UART_STATUS_REG     ; load our info register (again)
-  ora UART_FL_RX_BUF_FULL ; flag buffer is full
-  sta UART_STATUS_REG     ; and re-save the status register
-.acia_rx_finish
-  stx UART_RX_IDX         ; store the index
+  inx                       ; increment index
+  stx UART_RX_IDX           ; store the index
+  cpx #UART_RX_BUF_LEN      ; are we at the maximum?
+  bne acia_rx_check_flags   ; if not, we're all done, otherwise...
+  lda UART_STATUS_REG       ; load our info register (again)
+  ora #UART_FL_RX_BUF_FULL  ; flag that buffer is full
+  sta UART_STATUS_REG       ; and re-save the status register
+.acia_rx_check_flags
 ; at this point, if we've received a null byte or the buffer is full, we'll
 ; use the buffer data and reset the buffer
 ; The status register is still in A
@@ -161,7 +168,7 @@ ORG $C000         ; This is where the actual code starts.
 .print_rx
   lda #%00000001            ; clear display, reset display memory
   jsr lcd_cmd
-  jsr serial_msg_send       ; just for testing, let's send our standard msg
+  jsr serial_send_prompt    ; send our standard prompt
   lda UART_STATUS_REG       ; get our info register
   and #UART_CLEAR_RX_FLAGS  ; reset the RX flags
   sta UART_STATUS_REG       ; and re-save the register
@@ -199,23 +206,45 @@ ORG $C000         ; This is where the actual code starts.
 
 ; ---------SERIAL SUBROUTINES---------------------------------------------------
 
-.serial_msg_send
-; This is for initial experiments only - will be dropped soon
-; SERIAL MESSAGE LOOP
-  ldx #0                  ; set message offset to 0
-.send_char
-  lda serial_msg,x        ; load next char
-  beq serial_send_end     ; if char is 0, we've finished
+.serial_send_start_msg
+  ldx #0
+.send_start_char
+  lda serial_start_msg,x
+  beq serial_send_start_end     ; if char is 0, we've finished
   jsr acia_wait_send_clr
   sta ACIA_DATA_REG
   inx
-  jmp send_char
-.serial_send_end
+  jmp send_start_char
+.serial_send_start_end
   rts
+
+.serial_send_prompt
+  ldx #0                      ; set message offset to 0
+.send_prompt_char
+  lda serial_prompt,x         ; load next char
+  beq serial_send_prompt_end  ; if char is 0, we've finished
+  jsr acia_wait_send_clr
+  sta ACIA_DATA_REG
+  inx
+  jmp send_prompt_char
+.serial_send_prompt_end
+  rts
+
+; .serial_send_startup        ; trying something different
+;   lda #<serial_start_msg
+; .next_char_to_buf
+;   lda serial_start_msg,x
+;   sta UART_TX_BUF,x
+;   cmp #0
+;   beq send_startup_end
+;   jmp next_char_to_buf
+; .send_startup_end
+;   jsr serial_send_buffer
+;   rts
 
 .serial_send_buffer         ; sends contents of send buffer and clears it
   ldx #0                    ; offset index
- .send_next_char
+ .serial_send_next_char
   lda UART_TX_BUF,x         ; load next char
   beq serial_send_buf_end   ; if char is 0, we've finished
   jsr acia_wait_send_clr    ; wait until ACIA is ready for another byte
@@ -225,7 +254,7 @@ ORG $C000         ; This is where the actual code starts.
   beq serial_send_buf_end   ; if so, end it here
   cpx #UART_TX_BUF_LEN      ; check against max buffer size, to prevent overrun
   beq serial_send_buf_end   ; if so, end it here
-  jmp send_next_char        ; otherwise do the next char
+  jmp serial_send_next_char ; otherwise do the next char
 .serial_send_buf_end
   lda #0
   sta UART_TX_IDX           ; re-zero the index
@@ -332,11 +361,18 @@ jmp exit_isr
 ; ---------DATA-----------------------------------------------------------------
 .lcd_message
 	equs "Zolatron 64"
-	equb 0
+  equb 0
 
-.serial_msg
+.serial_start_msg
+  equs "Zolatron 64"
+  equb 10
+  equs "Ready"
+  equb 10
+  equb 0
+
+.serial_prompt
+  equb 10
   equs "Z64>"
-;  equb 10
   equb 0
 
 ORG $fffa
