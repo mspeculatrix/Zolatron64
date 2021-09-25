@@ -139,7 +139,7 @@ ORG $C000         ; This is where the actual code starts.
   and #ACIA_RDRF_BIT        ; Is the Receive Data Register Full bit set?
   beq mainloop              ; No data. WTF. Let's get outta here...
   ; technically, we should also test aganst frame error and overrun error bits,
-  ; but we'll do that in a future version
+  ; but we'll do that in a future version, maybe
   ldx UART_RX_IDX           ; load the value of the buffer index
   lda ACIA_DATA_REG         ; load the byte in the data register into A
   sta UART_RX_BUF,x         ; and store it in the buffer, at the offset
