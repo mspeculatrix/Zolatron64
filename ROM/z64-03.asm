@@ -110,7 +110,7 @@ ORG $C000         ; This is where the actual code starts.
   cli             ; enable interrupts
 
 ; --------- MAIN PROGRAM -------------------------------------------------------
-
+.main
   jsr serial_send_start_msg
   jsr serial_send_prompt
 
@@ -126,14 +126,15 @@ ORG $C000         ; This is where the actual code starts.
 .mainloop                   ; loop forever
   lda UART_STATUS_REG       ; load our serial info register
   and #UART_FL_RX_BUF_DATA  ; is there new data?
-  bne process_rx            ; yes
-  jmp mainloop
+  bne process_rx            ; if yes, process it
+  jmp mainloop              ; otherwise loop
   
 ; the following is in the main loop for now while I'm experimenting. It'll be
 ; moved to a more generalised subroutine eventually.
 .process_rx
   lda UART_STATUS_REG       ; first reset the data bit, whatever happens
   ora #UART_FL_RX_DATA_RST  ;
+  sta UART_STATUS_REG
   lda ACIA_STAT_REG         ; Load status reg - also resets interrupt bit
   and #ACIA_RDRF_BIT        ; Is the Receive Data Register Full bit set?
   beq mainloop              ; No data. WTF. Let's get outta here...
@@ -346,7 +347,7 @@ jmp exit_isr
 
 .acia_isr
   lda UART_STATUS_REG       ; load our status register
-  ora #UART_FL_RX_BUF_DATA  ; set 'there be data' bit
+  ora #UART_FL_RX_BUF_DATA  ; set the 'there be data' bit
   sta UART_STATUS_REG
   jmp exit_isr
   ; there will be other stuff here one day, which is why we're jumping above
@@ -370,7 +371,7 @@ jmp exit_isr
   equs 10, 10, "Zolatron 64", 10, "Ready", 0
 
 .serial_prompt
-  equs 10, "Z64>", 0
+  equs 10, "Z>", 0
 
 ORG $fffa
   equw NMI_handler  ; vector for NMI
