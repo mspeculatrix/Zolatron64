@@ -112,7 +112,9 @@ ORG $C000         ; This is where the actual code starts.
 
   cli             ; enable interrupts
 
-; --------- MAIN PROGRAM -------------------------------------------------------
+; ------------------------------------------------------------------------------
+; ----     MAIN PROGRAM                                                     ----
+; ------------------------------------------------------------------------------
 .main
   jsr serial_send_start_msg
   jsr serial_send_prompt
@@ -126,10 +128,12 @@ ORG $C000         ; This is where the actual code starts.
   inx                 ; increment message offset
   jmp print           ; go around again
  
+ ; -------- MAIN LOOP ----------------------------------------------------------
 .mainloop                   ; loop forever
   lda UART_STATUS_REG       ; load our serial info register
   and #UART_FL_RX_BUF_DATA  ; is there new data?
   bne process_rx            ; if yes, process it
+; other tests may go here
   jmp mainloop              ; otherwise loop
   
 ; the following is in the main loop for now while I'm experimenting. It'll be
@@ -139,18 +143,18 @@ ORG $C000         ; This is where the actual code starts.
   lda ACIA_STAT_REG         ; Load status reg - also resets interrupt bit
   and #ACIA_RDRF_BIT        ; Is the Receive Data Register Full bit set?
   beq mainloop              ; No data. WTF. Let's get outta here...
-  jsr serial_rx_buffer_char ; put new char into the buffer
   ; technically, we should also test aganst frame error and overrun error bits,
   ; but we'll do that in a future version, maybe
+  jsr serial_rx_buffer_char ; put the new char into the buffer
   lda UART_STATUS_REG       ; load the status register to check the flags
   and #UART_FL_RX_NUL_RCVD  ; have we received a null byte?
   bne print_rx              ; if so, deal with message
-  lda UART_STATUS_REG
+  lda UART_STATUS_REG       ; reload the status register
   and #UART_FL_RX_BUF_FULL  ; is the buffer full?
   beq mainloop              ; if not, loop, otherwise...
 .print_rx
-  jsr serial_print_rx_buf
-  jmp mainloop              ; otherwise, we're done
+  jsr serial_print_rx_buf   ; print the buffer to the display
+  jmp mainloop              ; go around again
 
 ; ------------------------------------------------------------------------------
 ; ----     SUBROUTINES                                                      ----
@@ -178,8 +182,8 @@ ORG $C000         ; This is where the actual code starts.
   rts
 
 .serial_rx_buffer_char      ; transfer char from UART to RX buffer and set flags
-  lda UART_STATUS_REG       ; first reset the data waiting bit
-  ora #UART_FL_RX_DATA_RST  ;
+  lda UART_STATUS_REG       ; first, reset the data waiting bit
+  and #UART_FL_RX_DATA_RST  ;
   sta UART_STATUS_REG		    ;
   ldx UART_RX_IDX           ; load the value of the buffer index
   lda ACIA_DATA_REG         ; load the byte in the data register into A
@@ -196,8 +200,8 @@ ORG $C000         ; This is where the actual code starts.
   stx UART_RX_IDX           ; store the index
   cpx #UART_RX_BUF_LEN      ; are we at the maximum?
   bne end_rx_buffer_char    ; if not, we're all done, otherwise...
-  lda UART_STATUS_REG       ; load our info register
-  ora #UART_FL_RX_BUF_FULL  ; flag that buffer is full
+  lda UART_STATUS_REG       ; load our status register
+  ora #UART_FL_RX_BUF_FULL  ; flag that the buffer is full
   sta UART_STATUS_REG       ; and re-save the status register
 .end_rx_buffer_char
   rts
@@ -236,32 +240,20 @@ ORG $C000         ; This is where the actual code starts.
   ldx #0                    ; our offset index
 .get_rx_char
   lda UART_RX_BUF,x     ; get the next byte in the buffer
-  beq end_print_rx    ; if it's a zero terminator, we're done
+  beq end_print_rx      ; if it's a zero terminator, we're done
   jsr lcd_prt_chr       ; otherwise, print char to LCD
   inx                   ; increment index
   txa
   adc #48
   jsr lcd_prt_chr
   cpx UART_RX_IDX       ; have we reached the last char?
-  beq end_print_rx    ; if so, we're done
+  beq end_print_rx      ; if so, we're done
   cpx #UART_RX_BUF_LEN  ; or are we at the end of the buffer?
   bne get_rx_char       ; if not, get another char
 .end_print_rx
   ldx #0
   stx UART_RX_IDX       ; reset buffer index
   rts
-
-; .serial_send_startup        ; trying something different
-;   lda #<serial_start_msg
-; .next_char_to_buf
-;   lda serial_start_msg,x
-;   sta UART_TX_BUF,x
-;   cmp #0
-;   beq send_startup_end
-;   jmp next_char_to_buf
-; .send_startup_end
-;   jsr serial_send_buffer
-;   rts
 
 .serial_send_buffer         ; sends contents of send buffer and clears it
   ldx #0                    ; offset index
