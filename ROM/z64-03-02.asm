@@ -2,7 +2,8 @@
 ;
 ; Experimental ROM code for Zolatron 6502-based microcomputer.
 ; 
-; *** WORK IN PROGRESS - NOT WORKING YET ***
+; *** WORK IN PROGRESS - NOT WORKING YET                               ***
+; *** TRYING A DIFFERENT APPROACH WITH MORE WORK DONE IN THE ISR       ***
 
 ; This version is nearly working. It sends chars, but prints each one
 ; immediately to the LCD instead of buffering.
@@ -20,10 +21,10 @@
 ; Written for the Beebasm assembler
 ;
 ; Assemble with:
-; beebasm -i z64-03-01.asm
+; beebasm -i z64-03-02.asm
 ;
 ; Write to EEPROM with:
-; minipro -p AT28C256 -w z64-ROM-03-01.bin
+; minipro -p AT28C256 -w z64-ROM-03-02.bin
 
 ; 6522 VIA register addresses
 VIA_PORTA = $A001     ; VIA Port A data/instruction register
@@ -141,13 +142,7 @@ ORG $C000         ; This is where the actual code starts.
 ; the following is in the main loop for now while I'm experimenting. It'll be
 ; moved to a more generalised subroutine eventually.
 .process_rx  
-  ; we're here because the data waiting bit is set
-  lda ACIA_STAT_REG         ; Load status reg - also resets interrupt bit
-  and #ACIA_RDRF_BIT        ; Is the Receive Data Register Full bit set?
-  beq mainloop              ; No data. WTF. Let's get outta here...
-  ; technically, we should also test aganst frame error and overrun error bits,
-  ; but we'll do that in a future version, maybe
-  jsr serial_rx_buffer_char ; put the new char into the buffer
+  ; we're here because the data received bit is set
   lda UART_STATUS_REG       ; load the status register to check the flags
   and #UART_FL_RX_NUL_RCVD  ; have we received a null byte?
   bne print_rx              ; if so, deal with message
@@ -177,16 +172,7 @@ ORG $C000         ; This is where the actual code starts.
 
 ; ---------SERIAL SUBROUTINES---------------------------------------------------
 
-.serial_rx_set_null         ; set the 'we've received a null' flag
-  lda UART_STATUS_REG       ; load our status register
-  ora #UART_FL_RX_NUL_RCVD  ; set the null byte received bit
-  sta UART_STATUS_REG       ; re-save the status
-  rts
-
 .serial_rx_buffer_char      ; transfer char from UART to RX buffer and set flags
-  lda UART_STATUS_REG       ; reset the data waiting bit
-  and #UART_FL_RX_DATA_RST  ;
-  sta UART_STATUS_REG		    ;
   ldx UART_RX_IDX           ; load the value of the buffer index
   lda ACIA_DATA_REG         ; load the byte in the data register into A
   sta UART_RX_BUF,x         ; and store it in the buffer, at the offset
@@ -196,7 +182,9 @@ ORG $C000         ; This is where the actual code starts.
   lda #0                    ; if it's a carriage return, replace with null
   sta UART_RX_BUF,x			    ; overwrite the 13 we previously stored
 .acia_rx_set_null
-  jsr serial_rx_set_null    ;
+  lda UART_STATUS_REG       ; load our status register
+  ora #UART_FL_RX_NUL_RCVD  ; set the null byte received bit
+  sta UART_STATUS_REG       ; re-save the status
 .acia_rx_set_info
   inx                       ; increment index
   stx UART_RX_IDX           ; store the index
@@ -206,6 +194,9 @@ ORG $C000         ; This is where the actual code starts.
   ora #UART_FL_RX_BUF_FULL  ; flag that the buffer is full
   sta UART_STATUS_REG       ; and re-save the status register
 .end_rx_buffer_char
+  lda UART_STATUS_REG
+  and #UART_FL_RX_DATA_RST  ; ensure data received bit is set
+  sta UART_STATUS_REG
   rts
 
 .serial_send_start_msg
@@ -356,10 +347,15 @@ bne acia_isr
 jmp exit_isr
 
 .acia_isr
+  lda ACIA_STAT_REG         ; Load status reg - also resets interrupt bit
+  and #ACIA_RDRF_BIT        ; Is the Receive Data Register Full bit set?
+  beq exit_isr              ; No data. WTF. Let's get outta here...
   lda UART_STATUS_REG       ; load our status register
   ora #UART_FL_RX_BUF_DATA  ; set the 'there be data' bit
   sta UART_STATUS_REG
-  jmp exit_isr
+  ; technically, we should also test against frame error and overrun error bits,
+  ; but we'll do that in a future version, maybe
+  jsr serial_rx_buffer_char ; put the new char into the buffer  jmp exit_isr
   ; there will be other stuff here one day, which is why we're jumping above
 .exit_isr
   pla             ; resume original CPU state
@@ -390,4 +386,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "z64-ROM-03-01.bin", startrom, endrom
+SAVE "z64-ROM-03-02.bin", startrom, endrom
