@@ -1,0 +1,229 @@
+.startrom
+.startcode
+     C000   78         SEI
+     C001   D8         CLD
+     C002   A2 FF      LDX #&FF
+     C004   9A         TXS
+     C005   A9 FF      LDA #&FF
+     C007   8D 02 A0   STA &A002
+     C00A   A9 E0      LDA #&E0
+     C00C   8D 03 A0   STA &A003
+     C00F   A9 00      LDA #&00
+     C011   8D 01 B0   STA &B001
+     C014   8D 10 02   STA &0210
+     C017   8D FF 04   STA &04FF
+     C01A   8D FF 03   STA &03FF
+     C01D   A9 9E      LDA #&9E
+     C01F   8D 03 B0   STA &B003
+     C022   A9 09      LDA #&09
+     C024   8D 02 B0   STA &B002
+     C027   A9 38      LDA #&38
+     C029   20 16 C1   JSR &C116
+     C02C   A9 0C      LDA #&0C
+     C02E   20 16 C1   JSR &C116
+     C031   A9 01      LDA #&01
+     C033   20 16 C1   JSR &C116
+.main
+     C036   20 5F C0   JSR &C05F
+     C039   20 82 C0   JSR &C082
+     C03C   A9 00      LDA #&00
+     C03E   85 70      STA &70
+     C040   A9 C4      LDA #&C4
+     C042   85 71      STA &71
+     C044   20 42 C1   JSR &C142
+     C047   58         CLI
+.mainloop
+     C048   AD 10 02   LDA &0210
+     C04B   29 02      AND #&02
+     C04D   D0 0A      BNE &C059
+     C04F   AE FF 04   LDX &04FF
+     C052   E0 F0      CPX #&F0
+     C054   B0 03      BCS &C059
+     C056   4C 48 C0   JMP &C048
+.process_rx
+     C059   20 94 C0   JSR &C094
+     C05C   4C 48 C0   JMP &C048
+.serial_send_start_msg
+     C05F   A2 00      LDX #&00
+.send_start_char
+     C061   BD 0C C4   LDA &C40C,X
+     C064   F0 0A      BEQ &C070
+     C066   20 E1 C0   JSR &C0E1
+     C069   8D 00 B0   STA &B000
+     C06C   E8         INX
+     C06D   4C 61 C0   JMP &C061
+.serial_send_start_end
+     C070   60         RTS
+.serial_send_msg
+     C071   A2 00      LDX #&00
+.serial_send_msg_chr
+     C073   A1 70      LDA (&70,X)
+     C075   F0 0A      BEQ &C081
+     C077   20 E1 C0   JSR &C0E1
+     C07A   8D 00 B0   STA &B000
+     C07D   E8         INX
+     C07E   4C 73 C0   JMP &C073
+.serial_send_msg_end
+     C081   60         RTS
+.serial_send_prompt
+     C082   A2 00      LDX #&00
+.send_prompt_char
+     C084   BD 20 C4   LDA &C420,X
+     C087   F0 0A      BEQ &C093
+     C089   20 E1 C0   JSR &C0E1
+     C08C   8D 00 B0   STA &B000
+     C08F   E8         INX
+     C090   4C 84 C0   JMP &C084
+.serial_send_prompt_end
+     C093   60         RTS
+.serial_print_rx_buf
+     C094   A9 01      LDA #&01
+     C096   20 16 C1   JSR &C116
+     C099   20 82 C0   JSR &C082
+     C09C   AD 10 02   LDA &0210
+     C09F   29 F0      AND #&F0
+     C0A1   8D 10 02   STA &0210
+     C0A4   A2 00      LDX #&00
+.get_rx_char
+     C0A6   BD 00 04   LDA &0400,X
+     C0A9   F0 0D      BEQ &C0B8
+     C0AB   20 2C C1   JSR &C12C
+     C0AE   E8         INX
+     C0AF   EC FF 04   CPX &04FF
+     C0B2   F0 04      BEQ &C0B8
+     C0B4   E0 FF      CPX #&FF
+     C0B6   D0 EE      BNE &C0A6
+.end_print_rx
+     C0B8   A2 00      LDX #&00
+     C0BA   8E FF 04   STX &04FF
+     C0BD   8E 00 04   STX &0400
+     C0C0   60         RTS
+.serial_send_buffer
+     C0C1   A2 00      LDX #&00
+.serial_send_next_char
+     C0C3   BD 00 03   LDA &0300,X
+     C0C6   F0 13      BEQ &C0DB
+     C0C8   20 E1 C0   JSR &C0E1
+     C0CB   8D 00 B0   STA &B000
+     C0CE   E8         INX
+     C0CF   EC FF 03   CPX &03FF
+     C0D2   F0 07      BEQ &C0DB
+     C0D4   E0 F0      CPX #&F0
+     C0D6   F0 03      BEQ &C0DB
+     C0D8   4C C3 C0   JMP &C0C3
+.serial_send_buf_end
+     C0DB   A9 00      LDA #&00
+     C0DD   8D FF 03   STA &03FF
+     C0E0   60         RTS
+.acia_wait_send_clr
+     C0E1   48         PHA
+.acia_wait_send_loop
+     C0E2   AD 01 B0   LDA &B001
+     C0E5   29 10      AND #&10
+     C0E7   F0 F9      BEQ &C0E2
+     C0E9   68         PLA
+     C0EA   60         RTS
+.acia_wait_byte_recvd
+     C0EB   AD 01 B0   LDA &B001
+     C0EE   29 08      AND #&08
+     C0F0   F0 F9      BEQ &C0EB
+     C0F2   60         RTS
+.lcd_wait
+     C0F3   48         PHA
+     C0F4   A9 00      LDA #&00
+     C0F6   8D 02 A0   STA &A002
+.lcd_busy
+     C0F9   A9 40      LDA #&40
+     C0FB   8D 01 A0   STA &A001
+     C0FE   A9 C0      LDA #&C0
+     C100   8D 01 A0   STA &A001
+     C103   AD 00 A0   LDA &A000
+     C106   29 80      AND #&80
+     C108   D0 EF      BNE &C0F9
+     C10A   A9 40      LDA #&40
+     C10C   8D 01 A0   STA &A001
+     C10F   A9 FF      LDA #&FF
+     C111   8D 02 A0   STA &A002
+     C114   68         PLA
+     C115   60         RTS
+.lcd_cmd
+     C116   20 F3 C0   JSR &C0F3
+     C119   8D 00 A0   STA &A000
+     C11C   A9 00      LDA #&00
+     C11E   8D 01 A0   STA &A001
+     C121   A9 80      LDA #&80
+     C123   8D 01 A0   STA &A001
+     C126   A9 00      LDA #&00
+     C128   8D 01 A0   STA &A001
+     C12B   60         RTS
+.lcd_prt_chr
+     C12C   20 F3 C0   JSR &C0F3
+     C12F   8D 00 A0   STA &A000
+     C132   A9 20      LDA #&20
+     C134   8D 01 A0   STA &A001
+     C137   A9 A0      LDA #&A0
+     C139   8D 01 A0   STA &A001
+     C13C   A9 20      LDA #&20
+     C13E   8D 01 A0   STA &A001
+     C141   60         RTS
+.lcd_prt_msg
+     C142   A2 00      LDX #&00
+.lcd_prt_msg_chr
+     C144   A1 70      LDA (&70,X)
+     C146   F0 07      BEQ &C14F
+     C148   20 2C C1   JSR &C12C
+     C14B   E8         INX
+     C14C   4C 44 C1   JMP &C144
+.lcd_prt_msg_end
+     C14F   60         RTS
+.ISR_handler
+     C200   48         PHA
+     C201   8A         TXA
+     C202   48         PHA
+     C203   2C 01 B0   BIT &B001
+     C206   30 03      BMI &C20B
+     C208   4C 2B C2   JMP &C22B
+.acia_isr
+     C20B   AE FF 04   LDX &04FF
+.acia_rx_get_char
+     C20E   AD 00 B0   LDA &B000
+     C211   9D 00 04   STA &0400,X
+     C214   F0 09      BEQ &C21F
+     C216   C9 0D      CMP #&0D
+     C218   D0 0D      BNE &C227
+     C21A   A9 00      LDA #&00
+     C21C   9D 00 04   STA &0400,X
+.acia_rx_set_null
+     C21F   AD 10 02   LDA &0210
+     C222   09 02      ORA #&02
+     C224   8D 10 02   STA &0210
+.acia_isr_end
+     C227   E8         INX
+     C228   AD 01 B0   LDA &B001
+.exit_isr
+     C22B   68         PLA
+     C22C   AA         TAX
+     C22D   68         PLA
+     C22E   40         RTI
+.NMI_handler
+.exit_nmi
+     C300   40         RTI
+.lcd_start_message
+     C400   5A 6F 6C ...
+     C40B   00
+.serial_start_msg
+     C40C   0A
+     C40D   0A
+     C40E   5A 6F 6C ...
+     C419   0A
+     C41A   52 65 61 ...
+     C41F   00
+.serial_prompt
+     C420   0A
+     C421   5A 3E 
+     C423   00
+     FFFA   00 C3
+     FFFC   00 C0
+     FFFE   00 C2
+.endrom
+Saving file 'z64-ROM-04-dev.bin'

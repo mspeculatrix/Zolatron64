@@ -8,6 +8,7 @@ Versions:
 * z64-01: Uses the VIA to print a message to the 16x2 LCD.
 * z64-02: As above, but also prints a message via the serial port.
 * z64-03: Accepts input via serial and prints it to the LCD. Because of performance issues, the sending terminal needs to add a 10ms delay between chars, to avoid an overrun condition. Currently no checking for buffer overflows, so don't use this code in high-security environments <-=ahem=->.
+* *-dev.asm versions are development versions - ie, works in progress - and almost certainly don't work.
 
 The output-nn.txt files are the output from Beebasm when the code is assembled.
 
