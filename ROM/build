@@ -4,7 +4,10 @@ WRITE_ROM=1
 
 usage()
 {
-    echo "usage: build [[-v version] [-b]]"
+    echo "Error: Unknown option."
+    echo "Usage: build [[-v version] [-b]]"
+    echo " -b                  build only. Don't attempt to write to EEPROM"
+    echo " -v <code_version>   build this version - z64-<code_version>.asm"
 }
 
 while [ "$1" != "" ]; do

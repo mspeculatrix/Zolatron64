@@ -75,8 +75,8 @@ ACIA_CMD_CFG = %00001001
 ; Mask values to be ANDed with status reg to check state of ACIA 
 ; ACIA_IRQ_SET = %10000000
 ACIA_RDRF_BIT = %00001000     ; Receive Data Register Full
-ACIA_OVRN_BIT = %00000100     ; Overrun error
-ACIA_FE_BIT   = %00000010     ; Frame error
+; ACIA_OVRN_BIT = %00000100     ; Overrun error
+; ACIA_FE_BIT   = %00000010     ; Frame error
 ACIA_TX_RDY_BIT = %00010000
 ACIA_RX_RDY_BIT = %00001000
 
@@ -142,10 +142,7 @@ ORG $C000         ; This is where the actual code starts.
   inx                     ; increment message string offset
   jmp pr_init_msg_ch      ; go around again
 
-.breakpoint               ; TEMP DEBUGGING CODE --------------------------------
-  jmp breakpoint          ; ----------------------------------------------------
-  
- ; -------- MAIN LOOP ----------------------------------------------------------
+; --------- MAIN LOOP ----------------------------------------------------------
 .mainloop                   ; loop forever
   lda UART_STATUS_REG       ; load our serial status register
   and #UART_FL_RX_NUL_RCVD  ; is the 'null received' bit set?
@@ -312,20 +309,20 @@ ALIGN &100        ; start on new page
   sta UART_RX_BUF,X         ; and store it in the buffer, at the offset
   beq acia_rx_set_null      ; if byte is the 0 terminator, go set the null flag
   cmp #13                   ; or is it a carriage return?
-  bne acia_rx_set_info      ; if not 0 or CR, go to next step
+  bne acia_isr_end          ; if not 0 or CR, go to next step
   lda #0                    ; if it's a carriage return, replace the CR code
   sta UART_RX_BUF,X			    ; we previously stored with a null
 .acia_rx_set_null
   lda UART_STATUS_REG       ; load our status register
   ora #UART_FL_RX_NUL_RCVD  ; set the null byte received flag
   sta UART_STATUS_REG       ; re-save the status
-.acia_rx_set_info
+.acia_isr_end
   inx                       ; increment the index
-  lda ACIA_STAT_REG         ; Load ACIA status reg - also resets interrupt bit
-  and #ACIA_RDRF_BIT        ; Is the Receive Data Register Full bit set?
-  bne acia_rx_get_char      ; If so, we have more data
-  stx UART_RX_IDX           ; store the index
-  jmp exit_isr
+  lda ACIA_STAT_REG         ; Load ACIA status reg - resets interrupt bit
+;  and #ACIA_RDRF_BIT        ; Is the Receive Data Register Full bit set?
+;  bne acia_rx_get_char      ; If so, we have more data
+
+;  jmp exit_isr
   ; there will be other stuff here one day, which is why we're jumping above
 
 .exit_isr
