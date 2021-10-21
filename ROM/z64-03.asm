@@ -1,28 +1,37 @@
 ; Zolatron 64
 ;
 ; Experimental ROM code for Zolatron 6502-based microcomputer.
-; 
-; *** WORK IN PROGRESS - NOT WORKING YET ***
-;
-; This version is developed from z64-03-02.asm.
 ;
 ; This version:
-;   - prints 'Zolatron 64' to the 16x2 LCD display
-;   - sends a string across the serial port, repeatedly, in the main loop.
-;   - Now working on serial receiving. Prints whatever comes down the line
-;     to the LCD. Sent string can be terminated with either a null byte
-;     (ASCII 0) or a carriage return (ASCII 13).
+;   - prints 'Zolatron 64' to the 16x2 LCD display on start up
+;   - sends a start-up message and prompt across the serial connection
+;   - receives on the serial port. It prints incoming strings to the LCD.
+;     These strings should be terminated with a null (ASCII 0) or 
+;     carriage return (ASCII 13).
+;
+; BUT: There's no flow control. And because we're running on a 1MHz clock, it's
+; easily overwhelmed by incoming data. To make this work, the sending terminal
+; must have a delay between characters (easy to set in Minicom or CuteCom).
+; I'm currently using 10ms. I'm happy to live with this restriction for now.
+; This post was helpful: 
+; https://www.reddit.com/r/beneater/comments/qbilsu/6551_acia_question/
+;
+; TO DO:
+;   - Would be good to reduce the amount of processing going on inside the
+;     ISR if possible.
+;   - Need to implement a check for amount of data in receive buffer. Currently
+;     possible to overflow.
+;   - Maybe implement flow control to manage incoming data.
 ;
 ; GitHub: https://github.com/mspeculatrix/Zolatron64/
 ; Blog: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
 ;
 ; Written for the Beebasm assembler
-;
 ; Assemble with:
-; beebasm -i z64-03-04.asm
+; beebasm -v -i z64-03.asm > output-03.txt
 ;
 ; Write to EEPROM with:
-; minipro -p AT28C256 -w z64-ROM-03-04.bin
+; minipro -p AT28C256 -w z64-ROM-03.bin
 
 ; 6522 VIA register addresses
 VIA_PORTA = $A001     ; VIA Port A data/instruction register
@@ -44,7 +53,7 @@ UART_TX_BUF_LEN = $FF
 
 UART_STATUS_REG = $0210 ; memory byte we'll use to store various flags
 ; masks for setting/reading flags
-UART_FL_RX_BUF_DATA = %00000001   ; Receive buffer has data
+;UART_FL_RX_BUF_DATA = %00000001   ; Receive buffer has data
 ;UART_FL_RX_DATA_RST = %11111110   ; Reset mask
 UART_FL_RX_NUL_RCVD = %00000010   ; we've received a null terminator
 UART_FL_RX_BUF_FULL = %00001000
@@ -84,6 +93,7 @@ ORG $8000         ; Using only the top 16KB of a 32KB EEPROM.
 .startrom         ; This is where the ROM bytes start for the file, but...
 ORG $C000         ; This is where the actual code starts.
 .startcode
+  sei             ; don't interrupt me yet
   cld             ; clear decimal flag - don't want to work in BCD
   ldx #$ff        ; set stack pointer to $01FF - only need to set
   txs             ; LSB as MSB is assumed to be $01
@@ -95,7 +105,6 @@ ORG $C000         ; This is where the actual code starts.
   sta VIA_DDRA
 
 ; SETUP ACIA
-;  lda ACIA_STAT_REG     ; Reset any rogue interrupt bit ??????????
   lda #0
   sta ACIA_STAT_REG     ; reset ACIA
   sta UART_STATUS_REG   ; also zero-out our status register
@@ -118,6 +127,9 @@ ORG $C000         ; This is where the actual code starts.
 ; ----     MAIN PROGRAM                                                     ----
 ; ------------------------------------------------------------------------------
 .main
+
+  cli                     ; enable interrupts
+; Print initial message & prompt via serial
   jsr serial_send_start_msg
   jsr serial_send_prompt
 
@@ -130,8 +142,9 @@ ORG $C000         ; This is where the actual code starts.
   inx                     ; increment message string offset
   jmp pr_init_msg_ch      ; go around again
 
-  cli                     ; enable interrupts
-
+.breakpoint               ; TEMP DEBUGGING CODE --------------------------------
+  jmp breakpoint          ; ----------------------------------------------------
+  
  ; -------- MAIN LOOP ----------------------------------------------------------
 .mainloop                   ; loop forever
   lda UART_STATUS_REG       ; load our serial status register
@@ -139,7 +152,7 @@ ORG $C000         ; This is where the actual code starts.
   bne process_rx            ; if yes, process the buffer
 ; other tests may go here
   jmp mainloop              ; otherwise loop
-.process_rx  
+.process_rx
   ; we're here because the null received bit is set
   jsr serial_print_rx_buf   ; print the buffer to the display
   jmp mainloop              ; go around again
@@ -175,22 +188,22 @@ ORG $C000         ; This is where the actual code starts.
   rts
 
 .serial_print_rx_buf
-;   lda #%00000001            ; clear display, reset display memory
-;   jsr lcd_cmd
+  lda #%00000001            ; clear display, reset display memory
+  jsr lcd_cmd
   jsr serial_send_prompt    ; send our standard prompt
   lda UART_STATUS_REG       ; get our info register
   and #UART_CLEAR_RX_FLAGS  ; zero all the RX flags
   sta UART_STATUS_REG       ; and re-save the register
   ldx #0                    ; our buffer offset index
 .get_rx_char
-  lda UART_RX_BUF,x     ; get the next byte in the buffer
-  beq end_print_rx      ; if it's a zero terminator, we're done
-  jsr lcd_prt_chr       ; otherwise, print char to LCD
-  inx                   ; increment index
-  cpx UART_RX_IDX       ; have we reached the last char?
-  beq end_print_rx      ; if so, we're done
-  cpx #UART_RX_BUF_LEN  ; or are we at the end of the buffer?
-  bne get_rx_char       ; if not, get another char
+  lda UART_RX_BUF,x         ; get the next byte in the buffer
+  beq end_print_rx          ; if it's a zero terminator, we're done
+  jsr lcd_prt_chr           ; otherwise, print char to LCD
+  inx                       ; increment index
+  cpx UART_RX_IDX           ; have we reached the last char?
+  beq end_print_rx          ; if so, we're done
+  cpx #UART_RX_BUF_LEN      ; or are we at the end of the buffer?
+  bne get_rx_char           ; if not, get another char
 .end_print_rx
   ldx #0
   stx UART_RX_IDX       ; reset buffer index
@@ -278,9 +291,6 @@ ALIGN &100        ; start on new page
   pha             ; preserve CPU state on the stack
   txa             ;                
   pha             ;
-;   tya             ;
-;   pha             ;
-  cld             ;
   ; Check which device caused the interrupt.
   ; Most devices use the most significant bit (bit 7) of a register to indicate
   ; an interrupt has happened, and the 6551 ACIA is no different, with its
@@ -304,7 +314,7 @@ ALIGN &100        ; start on new page
   cmp #13                   ; or is it a carriage return?
   bne acia_rx_set_info      ; if not 0 or CR, go to next step
   lda #0                    ; if it's a carriage return, replace the CR code
-  sta UART_RX_BUF,X			; we previously stored with a null
+  sta UART_RX_BUF,X			    ; we previously stored with a null
 .acia_rx_set_null
   lda UART_STATUS_REG       ; load our status register
   ora #UART_FL_RX_NUL_RCVD  ; set the null byte received flag
@@ -320,8 +330,6 @@ ALIGN &100        ; start on new page
 
 .exit_isr
   pla             ; resume original register state
-;   tay             ;
-;   pla             ;
   tax             ;
   pla             ;
   rti
@@ -334,7 +342,7 @@ ALIGN &100        ; start on new page
 ; ---------DATA-----------------------------------------------------------------
 ALIGN &100        ; start on new page
 .lcd_start_message
-	equs "Z64", 0
+	equs "Zolatron 64", 0
 
 .serial_start_msg
   equs 10, 10, "Zolatron 64", 10, "Ready", 0
@@ -349,4 +357,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "z64-ROM-03-04.bin", startrom, endrom
+SAVE "z64-ROM-03.bin", startrom, endrom

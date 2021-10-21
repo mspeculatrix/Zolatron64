@@ -11,4 +11,6 @@ Versions:
 	- z64-03-02 - accepts input, but only the first character of each sent string is okay. Subsequent characters are mangled. Experimentation showed this to be an overrun condition.
 	- z64-03-04 - modified version above to keep looping inside the ISR whenever the Receive Data Register Full is still set in the ACIA's status register. But this is currently producing strange effects.
 
-The output.txt file is the output from Beebasm when the code is assembled.
+The output-nn.txt files are the output from Beebasm when the code is assembled.
+
+_build_ is just a small Bash script I use to save typing (and remembering) the commands to assemble the code and write it to the EEPROM.
