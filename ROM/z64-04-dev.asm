@@ -34,9 +34,9 @@
 
 ; 6522 VIA register addresses
 VIA_PORTA = $A001     ; VIA Port A data/instruction register
-VIA_DDRA = $A003      ; Port A Data Direction Register
+VIA_DDRA  = $A003     ; Port A Data Direction Register
 VIA_PORTB = $A000     ; VIA Port B data/instruction register
-VIA_DDRB = $A002      ; Port B Data Direction Register
+VIA_DDRB  = $A002     ; Port B Data Direction Register
 
 ; Vector addresses
 MSG_VEC = $70  ; Address of message to be printed. LSB is MSG_VEC, MSB is +1
@@ -51,9 +51,9 @@ UART_TX_BUF = $0300   ; Serial send buffer start address
 UART_RX_IDX = $04FF   ; Location of RX buffer index
 UART_TX_IDX = $03FF   ; Location of TX buffer index
 UART_RX_BUF_LEN = 240 ; size of buffers. We actually have 255 bytes available
-UART_RX_BUF_MAX = 255 ; but this leaves some headroom
-UART_TX_BUF_LEN = 240 ;       "
-UART_TX_BUF_MAX = 255 ;       "
+UART_RX_BUF_MAX = 255 ; but this leaves some headroom. The MAX values are for
+UART_TX_BUF_LEN = 240 ; use in output routines.
+UART_TX_BUF_MAX = 255 ; 
 
 UART_STATUS_REG = $0210 ; memory byte we'll use to store various flags
 ; masks for setting/reading flags
@@ -151,10 +151,10 @@ ORG $C000         ; This is where the actual code starts.
   and #UART_FL_RX_NUL_RCVD  ; is the 'null received' bit set?
   bne process_rx            ; if yes, process the buffer
   ldx UART_RX_IDX           ; load the value of the buffer index
-  cpx #UART_RX_BUF_LEN		; are we at the limit?
-  bcs process_rx			; branch if X >= UART_RX_BUF_LEN
+  cpx #UART_RX_BUF_LEN		  ; are we at the limit?
+  bcs process_rx			      ; branch if X >= UART_RX_BUF_LEN
 ; other tests may go here
-  jmp mainloop              ; otherwise loop
+  jmp mainloop              ; loop
 .process_rx
   ; we're here because the null received bit is set or buffer is full
   jsr serial_print_rx_buf   ; print the buffer to the display
@@ -187,13 +187,13 @@ ORG $C000         ; This is where the actual code starts.
 ;   rts
 
 .serial_send_msg
-  ldx #0                      ; set message offset to 0
+  ldy #0                      ; set message offset to 0
 .serial_send_msg_chr
-  lda (MSG_VEC,X)             ; load next char
+  lda (MSG_VEC),Y             ; load next char
   beq serial_send_msg_end     ; if char is 0, we've finished
   jsr acia_wait_send_clr      ; wait for serial port to be ready
   sta ACIA_DATA_REG           ; write to data register. This sends the byte
-  inx                         ; increment index
+  iny                         ; increment index
   jmp serial_send_msg_chr     ; go back for next character
 .serial_send_msg_end
   rts
@@ -209,6 +209,13 @@ ORG $C000         ; This is where the actual code starts.
   jmp send_prompt_char        ; go back for next character
 .serial_send_prompt_end
   rts
+; .serial_send_prompt
+;   lda #serial_prompt MOD 256
+;   sta MSG_VEC
+;   lda #serial_prompt DIV 256
+;   sta MSG_VEC+1
+;   jsr serial_send_msg
+;   rts
 
 .serial_print_rx_buf
   lda #%00000001            ; clear display, reset display memory
@@ -309,12 +316,12 @@ ORG $C000         ; This is where the actual code starts.
   rts 
 
 .lcd_prt_msg	  ; assumes LSB of msg address at MSG_VEC, MSB at MSG_VEC+1
-  ldx #0
+  ldy #0
 .lcd_prt_msg_chr
-  lda (MSG_VEC,X)         ; LDA sets zero flag if it's loaded with 0
+  lda (MSG_VEC),Y         ; LDA sets zero flag if it's loaded with 0
   beq lcd_prt_msg_end     ; BEQ branches if zero flag set
   jsr lcd_prt_chr         ; display the character
-  inx                     ; increment message string offset
+  iny                     ; increment message string offset
   jmp lcd_prt_msg_chr     ; go around again
 .lcd_prt_msg_end
   rts

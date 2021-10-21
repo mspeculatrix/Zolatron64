@@ -55,13 +55,13 @@
 .serial_send_start_end
      C070   60         RTS
 .serial_send_msg
-     C071   A2 00      LDX #&00
+     C071   A0 00      LDY #&00
 .serial_send_msg_chr
-     C073   A1 70      LDA (&70,X)
+     C073   B1 70      LDA (&70),Y
      C075   F0 0A      BEQ &C081
      C077   20 E1 C0   JSR &C0E1
      C07A   8D 00 B0   STA &B000
-     C07D   E8         INX
+     C07D   C8         INY
      C07E   4C 73 C0   JMP &C073
 .serial_send_msg_end
      C081   60         RTS
@@ -167,12 +167,12 @@
      C13E   8D 01 A0   STA &A001
      C141   60         RTS
 .lcd_prt_msg
-     C142   A2 00      LDX #&00
+     C142   A0 00      LDY #&00
 .lcd_prt_msg_chr
-     C144   A1 70      LDA (&70,X)
+     C144   B1 70      LDA (&70),Y
      C146   F0 07      BEQ &C14F
      C148   20 2C C1   JSR &C12C
-     C14B   E8         INX
+     C14B   C8         INY
      C14C   4C 44 C1   JMP &C144
 .lcd_prt_msg_end
      C14F   60         RTS
