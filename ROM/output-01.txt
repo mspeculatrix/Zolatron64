@@ -1,0 +1,68 @@
+.startrom
+.startcode
+     C000   A2 FF      LDX #&FF
+     C002   9A         TXS
+     C003   A9 FF      LDA #&FF
+     C005   8D 02 A0   STA &A002
+     C008   A9 E0      LDA #&E0
+     C00A   8D 03 A0   STA &A003
+     C00D   A9 38      LDA #&38
+     C00F   20 50 C0   JSR &C050
+     C012   A9 0C      LDA #&0C
+     C014   20 50 C0   JSR &C050
+     C017   A9 01      LDA #&01
+     C019   20 50 C0   JSR &C050
+     C01C   A2 00      LDX #&00
+.print
+     C01E   BD 7C C0   LDA &C07C,X
+     C021   F0 07      BEQ &C02A
+     C023   20 66 C0   JSR &C066
+     C026   E8         INX
+     C027   4C 1E C0   JMP &C01E
+.loop
+     C02A   4C 2A C0   JMP &C02A
+.lcd_wait
+     C02D   48         PHA
+     C02E   A9 00      LDA #&00
+     C030   8D 02 A0   STA &A002
+.lcd_busy
+     C033   A9 40      LDA #&40
+     C035   8D 01 A0   STA &A001
+     C038   A9 C0      LDA #&C0
+     C03A   8D 01 A0   STA &A001
+     C03D   AD 00 A0   LDA &A000
+     C040   29 80      AND #&80
+     C042   D0 EF      BNE &C033
+     C044   A9 40      LDA #&40
+     C046   8D 01 A0   STA &A001
+     C049   A9 FF      LDA #&FF
+     C04B   8D 02 A0   STA &A002
+     C04E   68         PLA
+     C04F   60         RTS
+.lcd_cmd
+     C050   20 2D C0   JSR &C02D
+     C053   8D 00 A0   STA &A000
+     C056   A9 00      LDA #&00
+     C058   8D 01 A0   STA &A001
+     C05B   A9 80      LDA #&80
+     C05D   8D 01 A0   STA &A001
+     C060   A9 00      LDA #&00
+     C062   8D 01 A0   STA &A001
+     C065   60         RTS
+.lcd_prt_chr
+     C066   20 2D C0   JSR &C02D
+     C069   8D 00 A0   STA &A000
+     C06C   A9 20      LDA #&20
+     C06E   8D 01 A0   STA &A001
+     C071   A9 A0      LDA #&A0
+     C073   8D 01 A0   STA &A001
+     C076   A9 20      LDA #&20
+     C078   8D 01 A0   STA &A001
+     C07B   60         RTS
+.message
+     C07C   5A 6F 6C ...
+     C087   00
+     FFFC   00 C0
+     FFFE   00 00
+.endrom
+Saving file 'z64-ROM-01.bin'
