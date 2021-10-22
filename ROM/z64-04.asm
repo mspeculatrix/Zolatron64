@@ -8,6 +8,7 @@
 ;   - receives on the serial port. It prints incoming strings to the LCD.
 ;     These strings should be terminated with a null (ASCII 0) or 
 ;     carriage return (ASCII 13).
+;	- checks for size of receive buffer, to prevent overflows. (NOT TESTED)
 ;
 ; BUT: There's no flow control. And because we're running on a 1MHz clock, it's
 ; easily overwhelmed by incoming data. To make this work, the sending terminal
@@ -19,8 +20,6 @@
 ; TO DO:
 ;   - Would be good to reduce the amount of processing going on inside the
 ;     ISR if possible.
-;   - Need to implement a check for amount of data in receive buffer. Currently
-;     possible to overflow.
 ;   - Maybe implement flow control to manage incoming data.
 ;
 ; GitHub: https://github.com/mspeculatrix/Zolatron64/
@@ -28,16 +27,19 @@
 ;
 ; Written for the Beebasm assembler
 ; Assemble with:
-; beebasm -v -i z64-03.asm > output-03.txt
+; beebasm -v -i z64-<version>.asm
 ;
 ; Write to EEPROM with:
-; minipro -p AT28C256 -w z64-ROM-03.bin
+; minipro -p AT28C256 -w z64-ROM-<version>.bin
 
 ; 6522 VIA register addresses
 VIA_PORTA = $A001     ; VIA Port A data/instruction register
-VIA_DDRA = $A003      ; Port A Data Direction Register
+VIA_DDRA  = $A003     ; Port A Data Direction Register
 VIA_PORTB = $A000     ; VIA Port B data/instruction register
-VIA_DDRB = $A002      ; Port B Data Direction Register
+VIA_DDRB  = $A002     ; Port B Data Direction Register
+
+; Vector addresses
+MSG_VEC = $70  ; Address of message to be printed. LSB is MSG_VEC, MSB is +1
 
 ; ACIA addresses
 ACIA_DATA_REG = $B000 ; transmit/receive data register
@@ -48,15 +50,17 @@ UART_RX_BUF = $0400   ; Serial receive buffer start address
 UART_TX_BUF = $0300   ; Serial send buffer start address
 UART_RX_IDX = $04FF   ; Location of RX buffer index
 UART_TX_IDX = $03FF   ; Location of TX buffer index
-UART_RX_BUF_LEN = $FF
-UART_TX_BUF_LEN = $FF
+UART_RX_BUF_LEN = 240 ; size of buffers. We actually have 255 bytes available
+UART_RX_BUF_MAX = 255 ; but this leaves some headroom. The MAX values are for
+UART_TX_BUF_LEN = 240 ; use in output routines.
+UART_TX_BUF_MAX = 255 ; 
 
 UART_STATUS_REG = $0210 ; memory byte we'll use to store various flags
 ; masks for setting/reading flags
 ;UART_FL_RX_BUF_DATA = %00000001   ; Receive buffer has data
 ;UART_FL_RX_DATA_RST = %11111110   ; Reset mask
 UART_FL_RX_NUL_RCVD = %00000010   ; we've received a null terminator
-UART_FL_RX_BUF_FULL = %00001000
+; UART_FL_RX_BUF_FULL = %00001000
 UART_CLEAR_RX_FLAGS = %11110000   ; to be ANDed with info reg to clear RX flags
 UART_FL_TX_BUF_DATA = %00010000   ; TX buffer has data to send
 UART_FL_TX_BUF_FULL = %10000000
@@ -128,29 +132,36 @@ ORG $C000         ; This is where the actual code starts.
 ; ------------------------------------------------------------------------------
 .main
 
-  cli                     ; enable interrupts
 ; Print initial message & prompt via serial
-  jsr serial_send_start_msg
+  lda #serial_start_msg MOD 256   ; LSB of message
+  sta MSG_VEC
+  lda #serial_start_msg DIV 256   ; MSB of message
+  sta MSG_VEC+1
+  jsr serial_send_msg
+;  jsr serial_send_start_msg
   jsr serial_send_prompt
 
 ; Print initial message on LCD
-  ldx #0                  ; set message string offset to 0
-.pr_init_msg_ch
-  lda lcd_start_message,X ; LDA sets zero flag if it's loaded with 0
-  beq mainloop            ; BEQ branches if zero flag set
-  jsr lcd_prt_chr         ; display the character
-  inx                     ; increment message string offset
-  jmp pr_init_msg_ch      ; go around again
+  lda #lcd_start_message MOD 256  ; LSB of message
+  sta MSG_VEC
+  lda #lcd_start_message DIV 256  ; MSB of message
+  sta MSG_VEC+1
+  jsr lcd_prt_msg
+
+  cli                     ; enable interrupts
 
 ; --------- MAIN LOOP ----------------------------------------------------------
 .mainloop                   ; loop forever
   lda UART_STATUS_REG       ; load our serial status register
   and #UART_FL_RX_NUL_RCVD  ; is the 'null received' bit set?
   bne process_rx            ; if yes, process the buffer
+  ldx UART_RX_IDX           ; load the value of the buffer index
+  cpx #UART_RX_BUF_LEN		  ; are we at the limit?
+  bcs process_rx			      ; branch if X >= UART_RX_BUF_LEN
 ; other tests may go here
-  jmp mainloop              ; otherwise loop
+  jmp mainloop              ; loop
 .process_rx
-  ; we're here because the null received bit is set
+  ; we're here because the null received bit is set or buffer is full
   jsr serial_print_rx_buf   ; print the buffer to the display
   jmp mainloop              ; go around again
 
@@ -160,28 +171,24 @@ ORG $C000         ; This is where the actual code starts.
 
 ; ---------SERIAL SUBROUTINES---------------------------------------------------
 
-.serial_send_start_msg
-  ldx #0						; set message offset to 0
-.send_start_char
-  lda serial_start_msg,X
-  beq serial_send_start_end     ; if char is 0, we've finished
-  jsr acia_wait_send_clr
-  sta ACIA_DATA_REG
-  inx
-  jmp send_start_char
-.serial_send_start_end
+.serial_send_msg
+  ldy #0                      ; set message offset to 0
+.serial_send_msg_chr
+  lda (MSG_VEC),Y             ; load next char
+  beq serial_send_msg_end     ; if char is 0, we've finished
+  jsr acia_wait_send_clr      ; wait for serial port to be ready
+  sta ACIA_DATA_REG           ; write to data register. This sends the byte
+  iny                         ; increment index
+  jmp serial_send_msg_chr     ; go back for next character
+.serial_send_msg_end
   rts
 
 .serial_send_prompt
-  ldx #0                      ; set message offset to 0
-.send_prompt_char
-  lda serial_prompt,X         ; load next char
-  beq serial_send_prompt_end  ; if char is 0, we've finished
-  jsr acia_wait_send_clr      ; wait for serial port to be ready
-  sta ACIA_DATA_REG           ; write to data register. This sends the byte
-  inx                         ; increment index
-  jmp send_prompt_char        ; go back for next character
-.serial_send_prompt_end
+  lda #serial_prompt MOD 256
+  sta MSG_VEC
+  lda #serial_prompt DIV 256
+  sta MSG_VEC+1
+  jsr serial_send_msg
   rts
 
 .serial_print_rx_buf
@@ -199,12 +206,12 @@ ORG $C000         ; This is where the actual code starts.
   inx                       ; increment index
   cpx UART_RX_IDX           ; have we reached the last char?
   beq end_print_rx          ; if so, we're done
-  cpx #UART_RX_BUF_LEN      ; or are we at the end of the buffer?
+  cpx #UART_RX_BUF_MAX      ; or are we at the end of the buffer?
   bne get_rx_char           ; if not, get another char
 .end_print_rx
   ldx #0
-  stx UART_RX_IDX       ; reset buffer index
-  stx UART_RX_BUF       ; and reset first byte in buffer to 0
+  stx UART_RX_IDX           ; reset buffer index
+  stx UART_RX_BUF           ; and reset first byte in buffer to 0
   rts
 
 .serial_send_buffer         ; sends contents of send buffer and clears it
@@ -282,6 +289,17 @@ ORG $C000         ; This is where the actual code starts.
   sta VIA_PORTA
   rts 
 
+.lcd_prt_msg	  ; assumes LSB of msg address at MSG_VEC, MSB at MSG_VEC+1
+  ldy #0
+.lcd_prt_msg_chr
+  lda (MSG_VEC),Y         ; LDA sets zero flag if it's loaded with 0
+  beq lcd_prt_msg_end     ; BEQ branches if zero flag set
+  jsr lcd_prt_chr         ; display the character
+  iny                     ; increment message string offset
+  jmp lcd_prt_msg_chr     ; go around again
+.lcd_prt_msg_end
+  rts
+
 ; ---------INTERRUPT SERVICE ROUTINE (ISR)--------------------------------------
 ALIGN &100        ; start on new page
 .ISR_handler
@@ -289,14 +307,6 @@ ALIGN &100        ; start on new page
   txa             ;                
   pha             ;
   ; Check which device caused the interrupt.
-  ; Most devices use the most significant bit (bit 7) of a register to indicate
-  ; an interrupt has happened, and the 6551 ACIA is no different, with its
-  ; status register. So there's a trick we can use here. The BIT operator
-  ; effectively ANDs an address with the A reg, setting the Z flag if the result
-  ; is zero. But we don't care about that. We want one of its other effects: it
-  ; also copies bit 6 of the target address into the overflow flag (V) and
-  ; bit 7 - the one we care about - into the negative flag (N). It doesn't 
-  ; matter what's actually in A.
   bit ACIA_STAT_REG ; if it was the ACIA that set IRQ low, the N flag is now set
   bmi acia_isr      ; branch if N flag set to 1
   ; do other checks here, branching as appropriate
@@ -304,7 +314,6 @@ ALIGN &100        ; start on new page
 
 .acia_isr
   ldx UART_RX_IDX           ; load the value of the buffer index
-.acia_rx_get_char
   lda ACIA_DATA_REG         ; load the byte in the data register into A
   sta UART_RX_BUF,X         ; and store it in the buffer, at the offset
   beq acia_rx_set_null      ; if byte is the 0 terminator, go set the null flag
@@ -317,13 +326,11 @@ ALIGN &100        ; start on new page
   ora #UART_FL_RX_NUL_RCVD  ; set the null byte received flag
   sta UART_STATUS_REG       ; re-save the status
 .acia_isr_end
-  inx                       ; increment the index
+  inx                       ; increment the index for next time
+  stx UART_RX_IDX           ; and save it
   lda ACIA_STAT_REG         ; Load ACIA status reg - resets interrupt bit
-  and #ACIA_RDRF_BIT        ; Is the Receive Data Register Full bit set?
-  bne acia_rx_get_char      ; If so, we have more data
-  stx UART_RX_IDX
 ;  jmp exit_isr
-  ; there will be other stuff here one day, which is why we're jumping above
+  ; when there is other stuff here, implement the jump above
 
 .exit_isr
   pla             ; resume original register state
@@ -354,4 +361,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "z64-ROM-03.bin", startrom, endrom
+SAVE "z64-ROM-04.bin", startrom, endrom

@@ -8,7 +8,7 @@
 ;   - receives on the serial port. It prints incoming strings to the LCD.
 ;     These strings should be terminated with a null (ASCII 0) or 
 ;     carriage return (ASCII 13).
-;	- checks for size of receive buffer, to prevent overflows.
+;	- checks for size of receive buffer, to prevent overflows. (NOT TESTED)
 ;
 ; BUT: There's no flow control. And because we're running on a 1MHz clock, it's
 ; easily overwhelmed by incoming data. To make this work, the sending terminal
@@ -27,18 +27,18 @@
 ;
 ; Written for the Beebasm assembler
 ; Assemble with:
-; beebasm -v -i z64-04-dev.asm
+; beebasm -v -i z64-<version>.asm
 ;
 ; Write to EEPROM with:
-; minipro -p AT28C256 -w z64-ROM-04-dev.bin
+; minipro -p AT28C256 -w z64-ROM-<version>.bin
 
 ; 6522 VIA register addresses
-VIA_PORTA = $A001     ; VIA Port A data/instruction register
-VIA_DDRA  = $A003     ; Port A Data Direction Register
-VIA_PORTB = $A000     ; VIA Port B data/instruction register
-VIA_DDRB  = $A002     ; Port B Data Direction Register
+VIA_A_PORTA = $A001     ; VIA Port A data/instruction register
+VIA_A_DDRA  = $A003     ; Port A Data Direction Register
+VIA_A_PORTB = $A000     ; VIA Port B data/instruction register
+VIA_A_DDRB  = $A002     ; Port B Data Direction Register
 
-; Vector addresses
+; Vector & other zero-page addresses
 MSG_VEC = $70  ; Address of message to be printed. LSB is MSG_VEC, MSB is +1
 
 ; ACIA addresses
@@ -56,7 +56,7 @@ UART_TX_BUF_LEN = 240 ; use in output routines.
 UART_TX_BUF_MAX = 255 ; 
 
 UART_STATUS_REG = $0210 ; memory byte we'll use to store various flags
-; masks for setting/reading flags
+; masks for setting/reading/resetting flags
 ;UART_FL_RX_BUF_DATA = %00000001   ; Receive buffer has data
 ;UART_FL_RX_DATA_RST = %11111110   ; Reset mask
 UART_FL_RX_NUL_RCVD = %00000010   ; we've received a null terminator
@@ -85,10 +85,16 @@ ACIA_TX_RDY_BIT = %00010000
 ACIA_RX_RDY_BIT = %00001000
 
 ; LCD PANEL
-EX = %10000000    ; Toggling this bit high enables execution of byte in register
-RW = %01000000    ; Read/Write bit: 0 = read; 1 = write
-RS = %00100000    ; Register select bit: 0 = instruction reg; 1 = data reg
-BUSY_FLAG = %10000000 
+LCD_CLS       = %00000001  ; Clear screen & reset display memory
+LCD_TYPE      = %00111000  ; Set 8-bit mode; 2-line display; 5x8 font
+LCD_MODE      = %00001100  ; Display on; cursor off; blink off
+LCD_CURS_HOME = %00000010  ; return cursor to home position
+LCD_CURS_L    = %00010000  ; shifts cursor to the left
+LCD_CURS_R    = %00010100  ; shifts cursor to the right
+LCD_EX = %10000000    ; Toggling this high enables execution of byte in register
+LCD_RW = %01000000    ; Read/Write bit: 0 = read; 1 = write
+LCD_RS = %00100000    ; Register select bit: 0 = instruction reg; 1 = data reg
+LCD_BUSY_FLAG = %10000000 
 
 ; CPU 1             ; use 65C02 instruction set - maybe later
 
@@ -104,9 +110,9 @@ ORG $C000         ; This is where the actual code starts.
 
 ; SETUP VIA
   lda #%11111111  ; Set all pins on port B to output
-  sta VIA_DDRB
+  sta VIA_A_DDRB
   lda #%11100000  ; Set top 3 pins on port A to output
-  sta VIA_DDRA
+  sta VIA_A_DDRA
 
 ; SETUP ACIA
   lda #0
@@ -120,11 +126,11 @@ ORG $C000         ; This is where the actual code starts.
   sta ACIA_CMD_REG
 
 ; SETUP LCD
-  lda #%00111000  ; Set 8-bit mode; 2-line display; 5x8 font
+  lda #LCD_TYPE   ; Set 8-bit mode; 2-line display; 5x8 font
   jsr lcd_cmd
-  lda #%00001100  ; Display on; cursor off; blink off
+  lda #LCD_MODE   ; Display on; cursor off; blink off
   jsr lcd_cmd
-  lda #%00000001  ; clear display, reset display memory
+  lda #LCD_CLS    ; clear display, reset display memory
   jsr lcd_cmd
 
 ; ------------------------------------------------------------------------------
@@ -133,7 +139,11 @@ ORG $C000         ; This is where the actual code starts.
 .main
 
 ; Print initial message & prompt via serial
-  jsr serial_send_start_msg
+  lda #serial_start_msg MOD 256   ; LSB of message
+  sta MSG_VEC
+  lda #serial_start_msg DIV 256   ; MSB of message
+  sta MSG_VEC+1
+  jsr serial_send_msg
   jsr serial_send_prompt
 
 ; Print initial message on LCD
@@ -143,16 +153,25 @@ ORG $C000         ; This is where the actual code starts.
   sta MSG_VEC+1
   jsr lcd_prt_msg
 
-  cli                     ; enable interrupts
+  ldx #0
+  ldy #1
+  jsr lcd_set_cursor
+  lda #version_string MOD 256  ; LSB of message
+  sta MSG_VEC
+  lda #version_string DIV 256  ; MSB of message
+  sta MSG_VEC+1
+  jsr lcd_prt_msg
+
+  cli                     	; enable interrupts
 
 ; --------- MAIN LOOP ----------------------------------------------------------
 .mainloop                   ; loop forever
   lda UART_STATUS_REG       ; load our serial status register
   and #UART_FL_RX_NUL_RCVD  ; is the 'null received' bit set?
   bne process_rx            ; if yes, process the buffer
-  ldx UART_RX_IDX           ; load the value of the buffer index
-  cpx #UART_RX_BUF_LEN		  ; are we at the limit?
-  bcs process_rx			      ; branch if X >= UART_RX_BUF_LEN
+  ldx UART_RX_IDX           ; load the value of the RX buffer index
+  cpx #UART_RX_BUF_LEN      ; are we at the limit?
+  bcs process_rx            ; branch if X >= UART_RX_BUF_LEN
 ; other tests may go here
   jmp mainloop              ; loop
 .process_rx
@@ -166,59 +185,23 @@ ORG $C000         ; This is where the actual code starts.
 
 ; ---------SERIAL SUBROUTINES---------------------------------------------------
 
-.serial_send_start_msg
-  ldx #0						; set message offset to 0
-.send_start_char
-  lda serial_start_msg,X
-  beq serial_send_start_end     ; if char is 0, we've finished
-  jsr acia_wait_send_clr
-  sta ACIA_DATA_REG
-  inx
-  jmp send_start_char
-.serial_send_start_end
+.acia_wait_send_clr
+  pha                     ; push A to stack to save it
+.acia_wait_send_loop        
+  lda ACIA_STAT_REG       ; get contents of status register
+  and #ACIA_TX_RDY_BIT    ; AND with ready bit
+  beq acia_wait_send_loop ; if it's zero, we're not ready yet
+  pla                     ; otherwise, recover A from stack
   rts
 
-; .serial_send_start_msg
-;   lda #serial_start_msg MOD 256
-;   sta MSG_VEC
-;   lda #serial_start_msg DIV 256
-;   sta MSG_VEC+1
-;   jsr serial_send_msg
-;   rts
-
-.serial_send_msg
-  ldy #0                      ; set message offset to 0
-.serial_send_msg_chr
-  lda (MSG_VEC),Y             ; load next char
-  beq serial_send_msg_end     ; if char is 0, we've finished
-  jsr acia_wait_send_clr      ; wait for serial port to be ready
-  sta ACIA_DATA_REG           ; write to data register. This sends the byte
-  iny                         ; increment index
-  jmp serial_send_msg_chr     ; go back for next character
-.serial_send_msg_end
+.acia_wait_byte_recvd     ; not using this yet. Ever?
+  lda ACIA_STAT_REG       ; Possibly if I implement flow control
+  and #ACIA_RX_RDY_BIT
+  beq acia_wait_byte_recvd
   rts
-
-.serial_send_prompt
-  ldx #0                      ; set message offset to 0
-.send_prompt_char
-  lda serial_prompt,X         ; load next char
-  beq serial_send_prompt_end  ; if char is 0, we've finished
-  jsr acia_wait_send_clr      ; wait for serial port to be ready
-  sta ACIA_DATA_REG           ; write to data register. This sends the byte
-  inx                         ; increment index
-  jmp send_prompt_char        ; go back for next character
-.serial_send_prompt_end
-  rts
-; .serial_send_prompt
-;   lda #serial_prompt MOD 256
-;   sta MSG_VEC
-;   lda #serial_prompt DIV 256
-;   sta MSG_VEC+1
-;   jsr serial_send_msg
-;   rts
 
 .serial_print_rx_buf
-  lda #%00000001            ; clear display, reset display memory
+  lda #LCD_CLS              ; clear display, reset display memory
   jsr lcd_cmd
   jsr serial_send_prompt    ; send our standard prompt
   lda UART_STATUS_REG       ; get our info register
@@ -236,8 +219,8 @@ ORG $C000         ; This is where the actual code starts.
   bne get_rx_char           ; if not, get another char
 .end_print_rx
   ldx #0
-  stx UART_RX_IDX       ; reset buffer index
-  stx UART_RX_BUF       ; and reset first byte in buffer to 0
+  stx UART_RX_IDX           ; reset buffer index
+  stx UART_RX_BUF           ; and reset first byte in buffer to 0
   rts
 
 .serial_send_buffer         ; sends contents of send buffer and clears it
@@ -258,61 +241,68 @@ ORG $C000         ; This is where the actual code starts.
   sta UART_TX_IDX           ; re-zero the index
   rts
 
-.acia_wait_send_clr
-  pha                     ; push A to stack to save it
-.acia_wait_send_loop        
-  lda ACIA_STAT_REG       ; get contents of status register
-  and #ACIA_TX_RDY_BIT    ; AND with ready bit
-  beq acia_wait_send_loop ; if it's zero, we're not ready yet
-  pla                     ; otherwise, recover A from stack
+.serial_send_msg
+  ldy #0                      ; set message offset to 0
+.serial_send_msg_chr
+  lda (MSG_VEC),Y             ; load next char
+  beq serial_send_msg_end     ; if char is 0, we've finished
+  jsr acia_wait_send_clr      ; wait for serial port to be ready
+  sta ACIA_DATA_REG           ; write to data register. This sends the byte
+  iny                         ; increment index
+  jmp serial_send_msg_chr     ; go back for next character
+.serial_send_msg_end
   rts
 
-.acia_wait_byte_recvd     ; not using this yet. Ever?
-  lda ACIA_STAT_REG       ; Possibly if I implement flow control
-  and #ACIA_RX_RDY_BIT
-  beq acia_wait_byte_recvd
+.serial_send_prompt
+  lda #serial_prompt MOD 256
+  sta MSG_VEC
+  lda #serial_prompt DIV 256
+  sta MSG_VEC+1
+  jsr serial_send_msg
   rts
 
 ; ---------LCD SUBROUTINES------------------------------------------------------
 .lcd_wait         ; check to see if LCD is ready to receive next byte
   pha             ; save current contents of A in stack, so it isn't corrupted
   lda #%00000000  ; Set Port B as input
-  sta VIA_DDRB
+  sta VIA_A_DDRB
 .lcd_busy
-  lda #RW
-  sta VIA_PORTA
-  lda #(RW OR EX) ; keep RW bit & set enable bit. RS is 0 to access instr reg
-  sta VIA_PORTA
-  lda VIA_PORTB
-  and #BUSY_FLAG  ; AND flag with A. Sets zero flag - non-0 if LCD busy flag set
-  bne lcd_busy    ; If result was non-0, keep looping
-  lda #RW
-  sta VIA_PORTA
+  lda #LCD_RW
+  sta VIA_A_PORTA
+  lda #(LCD_RW OR LCD_EX) ; keep RW, set enable. RS=0 to access instr reg
+  sta VIA_A_PORTA
+  lda VIA_A_PORTB
+  and #LCD_BUSY_FLAG  ; Sets zero flag - non-0 if LCD busy flag set
+  bne lcd_busy        ; If result was non-0, keep looping
+  lda #LCD_RW
+  sta VIA_A_PORTA
   lda #%11111111  ; Set Port B as output
-  sta VIA_DDRB
+  sta VIA_A_DDRB
   pla             ; pull previous A contents back from stack
   rts
 
-.lcd_cmd          ; send a command to the LCD
-  jsr lcd_wait    ; check LCD is ready to receive
-  sta VIA_PORTB   ; assumes command byte is in A
-  lda #0          ; Clear RS/RW/E bits. With RS 0, we're writing to instr reg
-  sta VIA_PORTA
-  lda #EX         ; Set E bit to send instruction
-  sta VIA_PORTA
-  lda #0          ; Clear RS/RW/E bits
-  sta VIA_PORTA
+.lcd_cmd            ; send a command to the LCD
+  pha
+  jsr lcd_wait      ; check LCD is ready to receive
+  sta VIA_A_PORTB   ; assumes command byte is in A
+  lda #0            ; Clear RS/RW/E bits. With RS 0, we're writing to instr reg
+  sta VIA_A_PORTA
+  lda #LCD_EX       ; Set E bit to send instruction
+  sta VIA_A_PORTA
+  lda #0            ; Clear RS/RW/E bits
+  sta VIA_A_PORTA
+  pla
   rts
 
 .lcd_prt_chr      ; assumes character is in A
   jsr lcd_wait    ; check LCD is ready to receive
-  sta VIA_PORTB
-  lda #RS         ; Set RS to data; Clears RW & E bits
-  sta VIA_PORTA
-  lda #(RS OR EX) ; Keep RS & set E bit to send instruction
-  sta VIA_PORTA
-  lda #RS         ; Clear E bits
-  sta VIA_PORTA
+  sta VIA_A_PORTB
+  lda #LCD_RS         ; Set RS to data; Clears RW & E bits
+  sta VIA_A_PORTA
+  lda #(LCD_RS OR LCD_EX) ; Keep RS & set E bit to send instruction
+  sta VIA_A_PORTA
+  lda #LCD_RS         ; Clear E bits
+  sta VIA_A_PORTA
   rts 
 
 .lcd_prt_msg	  ; assumes LSB of msg address at MSG_VEC, MSB at MSG_VEC+1
@@ -324,6 +314,29 @@ ORG $C000         ; This is where the actual code starts.
   iny                     ; increment message string offset
   jmp lcd_prt_msg_chr     ; go around again
 .lcd_prt_msg_end
+  rts
+
+.lcd_set_cursor	          ; assumes X & Y co-ords have been put in X and Y
+  lda LCD_CURS_HOME
+  jsr lcd_cmd
+  ; X should contain the X param in rangte 0-15.
+  ; Lines are numbered 0 and 1. If we want line 1, we do this by adding 43 to
+  ; the value of X (why? 43. I'm not sure. Datasheet says 40, although it does
+  ; start line numbering from 1, not 0. Assuming I have the right datasheet.)
+  cpy #1
+  bcc lcd_move_curs   ; Y is less than 1
+  txa                 ; otherwise, we want line 1. Put X value in A
+  adc #41             ; add 40. Should probably check for carry
+  tax                 ; store back in X
+.lcd_move_curs
+  lda #LCD_CURS_R     ; load A with move instruction
+.lcd_curs_next_move
+  cpx #0
+  beq lcd_set_curs_end ; end if X = LOOP_LIMIT
+  jsr lcd_cmd
+  dex
+  jmp lcd_curs_next_move
+.lcd_set_curs_end
   rts
 
 ; ---------INTERRUPT SERVICE ROUTINE (ISR)--------------------------------------
@@ -340,26 +353,23 @@ ALIGN &100        ; start on new page
 
 .acia_isr
   ldx UART_RX_IDX           ; load the value of the buffer index
-.acia_rx_get_char
   lda ACIA_DATA_REG         ; load the byte in the data register into A
   sta UART_RX_BUF,X         ; and store it in the buffer, at the offset
   beq acia_rx_set_null      ; if byte is the 0 terminator, go set the null flag
   cmp #13                   ; or is it a carriage return?
   bne acia_isr_end          ; if not 0 or CR, go to next step
   lda #0                    ; if it's a carriage return, replace the CR code
-  sta UART_RX_BUF,X			    ; we previously stored with a null
+  sta UART_RX_BUF,X			; we previously stored with a null
 .acia_rx_set_null
   lda UART_STATUS_REG       ; load our status register
   ora #UART_FL_RX_NUL_RCVD  ; set the null byte received flag
   sta UART_STATUS_REG       ; re-save the status
 .acia_isr_end
-  inx                       ; increment the index
+  inx                       ; increment the index for next time
+  stx UART_RX_IDX           ; and save it
   lda ACIA_STAT_REG         ; Load ACIA status reg - resets interrupt bit
-;  and #ACIA_RDRF_BIT        ; Is the Receive Data Register Full bit set?
-;  bne acia_rx_get_char      ; If so, we have more data
-
 ;  jmp exit_isr
-  ; there will be other stuff here one day, which is why we're jumping above
+  ; when there is other stuff here, implement the jump above
 
 .exit_isr
   pla             ; resume original register state
@@ -377,6 +387,9 @@ ALIGN &100        ; start on new page
 .lcd_start_message
 	equs "Zolatron 64", 0
 
+.version_string
+  equs "ROM v05", 0
+
 .serial_start_msg
   equs 10, 10, "Zolatron 64", 10, "Ready", 0
 
@@ -390,4 +403,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "z64-ROM-04-dev.bin", startrom, endrom
+SAVE "z64-ROM-05-dev.bin", startrom, endrom
