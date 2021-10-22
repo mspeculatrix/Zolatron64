@@ -8,7 +8,8 @@
 ;   - receives on the serial port. It prints incoming strings to the LCD.
 ;     These strings should be terminated with a null (ASCII 0) or 
 ;     carriage return (ASCII 13).
-;	- checks for size of receive buffer, to prevent overflows. (NOT TESTED)
+;	  - checks for size of receive buffer, to prevent overflows. (NOT TESTED)
+;   - has additional LCD print routines.
 ;
 ; BUT: There's no flow control. And because we're running on a 1MHz clock, it's
 ; easily overwhelmed by incoming data. To make this work, the sending terminal
@@ -153,8 +154,7 @@ ORG $C000         ; This is where the actual code starts.
   sta MSG_VEC+1
   jsr lcd_prt_msg
 
-  ldx #0
-  ldy #1
+  ldx #0 : ldy #1
   jsr lcd_set_cursor
   lda #version_string MOD 256  ; LSB of message
   sta MSG_VEC
@@ -254,10 +254,10 @@ ORG $C000         ; This is where the actual code starts.
   rts
 
 .serial_send_prompt
-  lda #serial_prompt MOD 256
-  sta MSG_VEC
-  lda #serial_prompt DIV 256
-  sta MSG_VEC+1
+  lda #serial_prompt MOD 256  ; get LSB of message
+  sta MSG_VEC                 ; save to message vector
+  lda #serial_prompt DIV 256  ; get MSB of message
+  sta MSG_VEC+1               ; save to message vector + 1
   jsr serial_send_msg
   rts
 
@@ -282,7 +282,7 @@ ORG $C000         ; This is where the actual code starts.
   rts
 
 .lcd_cmd            ; send a command to the LCD
-  pha
+  pha               ; preserve A on the stack
   jsr lcd_wait      ; check LCD is ready to receive
   sta VIA_A_PORTB   ; assumes command byte is in A
   lda #0            ; Clear RS/RW/E bits. With RS 0, we're writing to instr reg
@@ -291,17 +291,17 @@ ORG $C000         ; This is where the actual code starts.
   sta VIA_A_PORTA
   lda #0            ; Clear RS/RW/E bits
   sta VIA_A_PORTA
-  pla
+  pla               ; recover original value of A from stack
   rts
 
-.lcd_prt_chr      ; assumes character is in A
-  jsr lcd_wait    ; check LCD is ready to receive
+.lcd_prt_chr              ; assumes character is in A
+  jsr lcd_wait            ; check LCD is ready to receive
   sta VIA_A_PORTB
-  lda #LCD_RS         ; Set RS to data; Clears RW & E bits
+  lda #LCD_RS             ; Set RS to data; Clears RW & E bits
   sta VIA_A_PORTA
   lda #(LCD_RS OR LCD_EX) ; Keep RS & set E bit to send instruction
   sta VIA_A_PORTA
-  lda #LCD_RS         ; Clear E bits
+  lda #LCD_RS             ; Clear E bits
   sta VIA_A_PORTA
   rts 
 
@@ -319,23 +319,25 @@ ORG $C000         ; This is where the actual code starts.
 .lcd_set_cursor	          ; assumes X & Y co-ords have been put in X and Y
   lda LCD_CURS_HOME
   jsr lcd_cmd
-  ; X should contain the X param in rangte 0-15.
-  ; Lines are numbered 0 and 1. If we want line 1, we do this by adding 43 to
-  ; the value of X (why? 43. I'm not sure. Datasheet says 40, although it does
-  ; start line numbering from 1, not 0. Assuming I have the right datasheet.)
+  ; WARNING: Doing no error checking here for inappropriate values.
+  ; X should contain the X param in range 0-15.
+  ; Y should be 0 or 1.
+  ; If we want line 1, we do this by adding 43 to the value of X.
+  ; Why? 43. I'm not sure. Datasheet says 40, although it does start line 
+  ; numbering from 1, not 0. Assuming I have the right datasheet.
   cpy #1
-  bcc lcd_move_curs   ; Y is less than 1
-  txa                 ; otherwise, we want line 1. Put X value in A
-  adc #41             ; add 40. Should probably check for carry
-  tax                 ; store back in X
+  bcc lcd_move_curs       ; Y is less than 1
+  txa                     ; otherwise, we want line 1. Put X value in A
+  adc #43                 ; add 43 Should probably check for carry - one day
+  tax                     ; store back in X
 .lcd_move_curs
-  lda #LCD_CURS_R     ; load A with move instruction
+  lda #LCD_CURS_R         ; load A with move instruction
 .lcd_curs_next_move
   cpx #0
-  beq lcd_set_curs_end ; end if X = LOOP_LIMIT
-  jsr lcd_cmd
-  dex
-  jmp lcd_curs_next_move
+  beq lcd_set_curs_end    ; end if X = 0
+  jsr lcd_cmd             ; otherwise, executive the move cursor command
+  dex                     ; decrement X
+  jmp lcd_curs_next_move  ; go round again
 .lcd_set_curs_end
   rts
 
@@ -403,4 +405,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "z64-ROM-05-dev.bin", startrom, endrom
+SAVE "z64-ROM-05.bin", startrom, endrom

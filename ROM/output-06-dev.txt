@@ -24,7 +24,7 @@
      C031   A9 01      LDA #&01
      C033   20 18 C1   JSR &C118
 .main
-     C036   A9 14      LDA #&14
+     C036   A9 18      LDA #&18
      C038   85 70      STA &70
      C03A   A9 C4      LDA #&C4
      C03C   85 71      STA &71
@@ -119,7 +119,7 @@
 .serial_send_msg_end
      C0E8   60         RTS
 .serial_send_prompt
-     C0E9   A9 28      LDA #&28
+     C0E9   A9 2C      LDA #&2C
      C0EB   85 70      STA &70
      C0ED   A9 C4      LDA #&C4
      C0EF   85 71      STA &71
@@ -181,7 +181,7 @@
      C159   C0 01      CPY #&01
      C15B   90 04      BCC &C161
      C15D   8A         TXA
-     C15E   69 29      ADC #&29
+     C15E   69 2B      ADC #&2B
      C160   AA         TAX
 .lcd_move_curs
      C161   A9 14      LDA #&14
@@ -230,20 +230,20 @@
      C40B   00
 .version_string
      C40C   52 4F 4D ...
-     C413   00
+     C417   00
 .serial_start_msg
-     C414   0A
-     C415   0A
-     C416   5A 6F 6C ...
-     C421   0A
-     C422   52 65 61 ...
-     C427   00
-.serial_prompt
-     C428   0A
-     C429   5A 3E 
+     C418   0A
+     C419   0A
+     C41A   5A 6F 6C ...
+     C425   0A
+     C426   52 65 61 ...
      C42B   00
+.serial_prompt
+     C42C   0A
+     C42D   5A 3E 
+     C42F   00
      FFFA   00 C3
      FFFC   00 C0
      FFFE   00 C2
 .endrom
-Saving file 'z64-ROM-05-dev.bin'
+Saving file 'z64-ROM-06-dev.bin'
