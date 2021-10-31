@@ -520,8 +520,8 @@ ALIGN &100        ; start on new page
   equb EOCMD_SECTION
 .cmd_tbl_ASCV               ; commands starting 'V'
 .cmd_VERS
-  equs "ERBOSE", CMD_TKN_VERBOSE 
-  equs "ERS", CMD_TKN_VERS  ; VERS
+  equs "ERBOSE", CMD_TKN_VERBOSE  ; VERBOSE
+  equs "ERS", CMD_TKN_VERS        ; VERS
   equb EOCMD_SECTION
 
 ;---- SCRATCHPAD ---------------------------------------------------------------
