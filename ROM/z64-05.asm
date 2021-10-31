@@ -423,4 +423,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "z64-ROM-05.bin", startrom, endrom
+SAVE "bin/z64-ROM-05.bin", startrom, endrom
