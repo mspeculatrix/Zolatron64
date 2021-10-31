@@ -141,12 +141,18 @@ ORG $C000         ; This is where the actual code starts.
 .main
 
 ; Print initial message & prompt via serial
-  lda UART_LINE_END         ; start with a couple of line feeds
+  lda #UART_LINE_END        ; start with a couple of line feeds
   jsr serial_send_char
   jsr serial_send_char
   lda #start_msg MOD 256    ; LSB of message
   sta MSG_VEC
   lda #start_msg DIV 256    ; MSB of message
+  sta MSG_VEC+1
+  jsr serial_send_msg
+  jsr serial_send_lineend
+  lda #version_str MOD 256    ; LSB of message
+  sta MSG_VEC
+  lda #version_str DIV 256    ; MSB of message
   sta MSG_VEC+1
   jsr serial_send_msg
   jsr serial_send_prompt
@@ -247,6 +253,12 @@ ORG $C000         ; This is where the actual code starts.
 
 .serial_send_char             ; send a single char - assumes char is in A
   jsr acia_wait_send_clr
+  sta ACIA_DATA_REG           ; write to data register. This sends the byte
+  rts
+
+.serial_send_lineend
+  lda #UART_LINE_END
+  jsr acia_wait_send_clr      ; wait for serial port to be ready
   sta ACIA_DATA_REG           ; write to data register. This sends the byte
   rts
 

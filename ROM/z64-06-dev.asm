@@ -2,7 +2,7 @@
 ;
 ; Experimental ROM code for Zolatron 6502-based microcomputer.
 ;
-; This version:
+; From previous versions:
 ;   - prints 'Zolatron 64' to the 16x2 LCD display on start up
 ;   - sends a start-up message and prompt across the serial connection
 ;   - receives on the serial port. It prints incoming strings to the LCD.
@@ -10,6 +10,8 @@
 ;     carriage return (ASCII 13).
 ;	  - checks for size of receive buffer, to prevent overflows. (NOT TESTED)
 ;   - has additional LCD print routines.
+; In this version:
+;   - added the byte_to_hex_str subroutine
 ;   - WORK IN PROGRESS:
 ;     - Adding command parsing
 ;
@@ -49,8 +51,14 @@ VIA_A_DDRA  = $A003     ; Port A Data Direction Register
 VIA_A_PORTB = $A000     ; VIA Port B data/instruction register
 VIA_A_DDRB  = $A002     ; Port B Data Direction Register
 
-; Vector & other zero-page addresses
+; Vectors & other zero-page addresses
+TEST_VAL = $50
+FUNC_RESULT = $60
 MSG_VEC = $70  ; Address of message to be printed. LSB is MSG_VEC, MSB is +1
+TBL_VEC = $72  ; table vector - for searching tables
+
+TEXT_BUF = $07A0      ; general-purpose buffer/scratchpad
+TEXT_BUF_SIZE = $40   ; 64 bytes
 
 ; ACIA addresses
 ACIA_DATA_REG = $B000 ; transmit/receive data register
@@ -65,9 +73,12 @@ UART_RX_BUF_LEN = 240 ; size of buffers. We actually have 255 bytes available
 UART_RX_BUF_MAX = 255 ; but this leaves some headroom. The MAX values are for
 UART_TX_BUF_LEN = 240 ; use in output routines.
 UART_TX_BUF_MAX = 255 ; 
-UART_LINE_END   = 10  ; ASCII code for line end - here we're using line feed
 
-UART_STATUS_REG = $0210 ; memory byte we'll use to store various flags
+CHR_LINEEND   = 10  ; ASCII code for line end - here we're using line feed
+CHR_SPACE     = 32
+CHR_NUL       = 0
+
+UART_STATUS_REG = $02A0 ; memory byte we'll use to store various flags
 ; masks for setting/reading/resetting flags
 ;UART_FL_RX_BUF_DATA = %00000001   ; Receive buffer has data
 ;UART_FL_RX_DATA_RST = %11111110   ; Reset mask
@@ -151,32 +162,48 @@ ORG $C000         ; This is where the actual code starts.
 .main
 
 ; Print initial message & prompt via serial
-  lda UART_LINE_END         ; start with a couple of line feeds
+  lda #CHR_LINEEND          ; start with a couple of line feeds
   jsr serial_send_char
   jsr serial_send_char
-  lda #start_msg MOD 256    ; LSB of message
+  lda #<start_msg             ; LSB of message
   sta MSG_VEC
-  lda #start_msg DIV 256    ; MSB of message
+  lda #>start_msg             ; MSB of message
+  sta MSG_VEC+1
+  jsr serial_send_msg
+  jsr serial_send_lineend
+  lda #<version_str           ; LSB of message
+  sta MSG_VEC
+  lda #>version_str           ; MSB of message
   sta MSG_VEC+1
   jsr serial_send_msg
   jsr serial_send_prompt
 
 ; Print initial message on LCD
-  lda #start_msg MOD 256  ; LSB of message
+  lda #<start_msg             ; LSB of message
   sta MSG_VEC
-  lda #start_msg DIV 256  ; MSB of message
+  lda #>start_msg             ; MSB of message
   sta MSG_VEC+1
   jsr lcd_prt_msg
 
   ldx #0 : ldy #1             ; print version string on 2nd line of LCD
   jsr lcd_set_cursor
-  lda #version_str MOD 256    ; LSB of message
+  lda #<version_str           ; LSB of message
   sta MSG_VEC
-  lda #version_str DIV 256    ; MSB of message
+  lda #>version_str           ; MSB of message
   sta MSG_VEC+1
   jsr lcd_prt_msg
 
-  cli                     	; enable interrupts
+  lda #$f6                    ; just a test of the byte_to_hex_str subroutine
+  jsr byte_to_hex_str
+  lda #<TEXT_BUF
+  sta MSG_VEC
+  lda #>TEXT_BUF
+  sta MSG_VEC+1
+  jsr serial_send_msg
+
+  jsr serial_send_prompt
+
+  cli                     	  ; enable interrupts
 
 ; --------- MAIN LOOP ----------------------------------------------------------
 .mainloop                   ; loop forever
@@ -190,7 +217,17 @@ ORG $C000         ; This is where the actual code starts.
   jmp mainloop              ; loop
 .process_rx
   ; we're here because the null received bit is set or buffer is full
-  jsr serial_print_rx_buf   ; print the buffer to the display
+  ; jsr serial_print_rx_buf   ; print the buffer to the display
+  ;jsr parse_rx_buffer
+  jsr parse_input            ; puts command token in FUNC_RESULT
+  lda FUNC_RESULT            ; just a test of the byte_to_hex_str subroutine
+  jsr byte_to_hex_str
+  lda #<TEXT_BUF
+  sta MSG_VEC
+  lda #>TEXT_BUF
+  sta MSG_VEC+1
+  jsr serial_send_msg
+  jsr serial_send_prompt
   jmp mainloop              ; go around again
 
 ; ------------------------------------------------------------------------------
@@ -208,8 +245,8 @@ ORG $C000         ; This is where the actual code starts.
   pla                     ; otherwise, recover A from stack
   rts
 
-.acia_wait_byte_recvd     ; not using this yet. Ever?
-  lda ACIA_STAT_REG       ; Possibly if I implement flow control
+.acia_wait_byte_recvd       ; not using this yet. Ever?
+  lda ACIA_STAT_REG         ; Possibly if I implement flow control
   and #ACIA_RX_RDY_BIT
   beq acia_wait_byte_recvd
   rts
@@ -251,12 +288,18 @@ ORG $C000         ; This is where the actual code starts.
   beq serial_send_buf_end   ; if so, end it here
   jmp serial_send_next_char ; otherwise do the next char
 .serial_send_buf_end
-  lda #0
+  lda #CHR_NUL
   sta UART_TX_IDX           ; re-zero the index
   rts
 
 .serial_send_char             ; send a single char - assumes char is in A
   jsr acia_wait_send_clr
+  sta ACIA_DATA_REG           ; write to data register. This sends the byte
+  rts
+
+.serial_send_lineend
+  lda #CHR_LINEEND
+  jsr acia_wait_send_clr      ; wait for serial port to be ready
   sta ACIA_DATA_REG           ; write to data register. This sends the byte
   rts
 
@@ -273,9 +316,9 @@ ORG $C000         ; This is where the actual code starts.
   rts
 
 .serial_send_prompt
-  lda #serial_prompt MOD 256  ; get LSB of message
+  lda #<prompt_msg         ; get LSB of message
   sta MSG_VEC                 ; save to message vector
-  lda #serial_prompt DIV 256  ; get MSB of message
+  lda #>prompt_msg         ; get MSB of message
   sta MSG_VEC+1               ; save to message vector + 1
   jsr serial_send_msg
   rts
@@ -360,6 +403,30 @@ ORG $C000         ; This is where the actual code starts.
 .lcd_set_curs_end
   rts
 
+; ---------TEXT SUBROUTINES-----------------------------------------------------
+
+.byte_to_hex_str              ; convert 1-byte value to 2-char hex string
+  ; assumes that number to be converted is in A
+  tax                         ; keep a copy of A in X for later
+  ldy #4                      ; we're going to shift right 4 times
+.hexstr_shift_rt     
+  lsr A                       ; logical shift right
+  dey
+  cpy #0                      ; is our counter at 0?
+  bne hexstr_shift_rt
+  ; at this point A contains upper nibble of value
+  tay                         ; put in Y to act as offset
+  lda hex_chr_tbl,Y           ; load A with appropriate char from lookup table
+  sta TEXT_BUF                ; and stash that in the text buffer
+  txa                         ; recover original value of A
+  and #%00001111              ; mask to get lower nibble value
+  tay                         ; again, put in Y to act as offset
+  lda hex_chr_tbl,Y           ; load A with appropriate char from lookup table
+  sta TEXT_BUF+1              ; and stash that in the next byte of the buffer
+  lda #CHR_NUL                ; and end with a null byte
+  sta TEXT_BUF+2
+  rts
+
 ; ---------INTERRUPT SERVICE ROUTINE (ISR)--------------------------------------
 ALIGN &100        ; start on new page
 .ISR_handler
@@ -377,9 +444,9 @@ ALIGN &100        ; start on new page
   lda ACIA_DATA_REG         ; load the byte in the data register into A
   sta UART_RX_BUF,X         ; and store it in the buffer, at the offset
   beq acia_rx_set_null      ; if byte is the 0 terminator, go set the null flag
-  cmp #13                   ; or is it a carriage return?
+  cmp #CHR_LINEEND          ; or is it a line end?
   bne acia_isr_end          ; if not 0 or CR, go to next step
-  lda #0                    ; if it's a carriage return, replace the CR code
+  lda #CHR_NUL                    ; if it's a carriage return, replace the CR code
   sta UART_RX_BUF,X			; we previously stored with a null
 .acia_rx_set_null
   lda UART_STATUS_REG       ; load our status register
@@ -407,17 +474,22 @@ ALIGN &100        ; start on new page
 ALIGN &100        ; start on new page
 
 ; COMMAND PARSING
-; parsing routine will compare the first char of the command to the entries
+; Inspired by keyword parsing in EhBASIC:
+; https://github.com/Klaus2m5/6502_EhBASIC_V2.22/blob/master/patched/basic.asm
+; (see line 8273 onward)
+;
+; Parsing routine will compare the first char of the command to the entries
 ; starting at cmd_ch1_tbl, using an offset counter to remember which one it's
-; matching against.
-; if it finds a match, it calculates the address for the next operation using:
-;    cmd_ptrs + (offset * 2)
-; it then starts matching using the next char from this new address.
-; We'll have stored this first address - for the table section.
-; A separate comparison loop will cycle through the commands in each section.
-; If it hits a token (ie, has value $80 or above) then it has matched.
-; As soon as it doesn't match, it loops until it hits a token - incrementing
-; the offet - & then starts again. If it hits EOCMD_SECTION then the match
+; matching against. If we hit EOTBL_MKR, then matching has failed and we issue
+; a syntax error.
+; if it finds a match, it calculates the address for the next step using:
+;    lookup_address = cmd_ptrs + (offset_counter * 2)
+; 
+; It then starts matching starting with the next char from lookup_addr.
+; If it hits a token (ie, has value $80 or above) then it has matched. The
+; token is the value we're seeking.
+; The first time it doesn't match, it loops until it hits a token - incrementing
+; the offset - & then starts again. If it hits EOCMD_SECTION then the match
 ; has failed and we issue a syntax error.
 
 .cmd_ch1_tbl              ; table of command first characters
@@ -452,17 +524,86 @@ ALIGN &100        ; start on new page
   equs "ERS", CMD_TKN_VERS  ; VERS
   equb EOCMD_SECTION
 
+;---- SCRATCHPAD ---------------------------------------------------------------
+.parse_input 
+  lda #0                    ; a value of 0 for the token represents a failure
+  sta FUNC_RESULT           ; we'll use this as the default
+  lda UART_RX_BUF           ; load first char in buffer
+  sta TEST_VAL              ; store it somewhere handy
+  ldx #0                    ; offset counter
+.parse_next_test
+  lda cmd_ch1_tbl,X         ; get next char from table of cmd 1st chars
+  cmp #EOTBL_MKR            ; is it the end of table marker?
+  beq parse_1st_char_fail   ; if so, parsing has failed to find a match
+  cmp TEST_VAL              ; otherwise compare against our input char
+  beq parse_1st_char_match  ; if it matches, on to the next step
+  inx                       ; otherwise, time to test next char in table
+  jmp parse_next_test
+.parse_1st_char_fail
+  jmp parse_end
+.parse_1st_char_match
+  ; at this point, X holds the offset we need to look up an address in cmd_ptrs
+  ; although we need to multiply it by 2
+  stx TEST_VAL        ; tmp store x in handy location - repurposing TEST_VAL
+  txa                 ; also put the value in A
+  adc TEST_VAL        ; add the two together
+  tax                 ; and put back in X
+  lda <cmd_ptrs, X    ; get the relevant address from the cmd_ptrs table
+  sta TBL_VEC         ; and put in TBL_VEC 
+  lda >cmd_ptrs, X
+  sta TBL_VEC+1
+  ; we now have the start address for the relevant section of the command table
+  ; in TBL_VEC and we've already matched on the first char
+  ldy #0          ; offset for the command table
+  ldx #1          ; offset for the input buffer, starting with 2nd char
+.parse_next_chr
+  lda UART_RX_BUF,X   ; get next char from buffer
+  sta TEST_VAL        ; and put it somewhere handy - repurposing TEST_VAL again
+  lda (TBL_VEC), Y    ; load the next test char from our command table
+  cmp #$80            ; does it have a value $80 or more?
+  bcs parse_token_found ; if >= $80, it's a token - success!
+  cmp #EOCMD_SECTION  ; have we got to the end of the section without a match?
+  beq parse_end       ; if so, we've failed, time to leave
+  ; at this point, we've matched neither a token nor end of section marker.
+  ; so it's time to test the buffer char itself - table char is still in A
+  cmp TEST_VAL
+  bne parse_next_cmd  ; if it's not equal, this isn't the right command
+  inx                 ; otherwise, if it is equal, let's test the next buffer 
+  iny                 ; char against the next command char
+  jmp parse_next_chr
+.parse_token_found
+  sta FUNC_RESULT
+  jmp parse_end
+.parse_next_cmd
+  ; that command didn't match, so let's spin ahead to the next one.
+  ; X should stay the same, it's Y that needs to be incremented
+.parse_next_cmd_chr
+  iny                     ; increment offset
+  lda (TBL_VEC), Y        ; load next char from cmd table
+  cmp #$80                ; is it a token?
+  bcs parse_next_cmd_jmp  ; if so, we're done
+  jmp parse_next_cmd_chr  ; otherwise, loop
+.parse_next_cmd_jmp
+  iny                     ; one more for luck
+  jmp parse_next_chr      ; now let's try again
+.parse_end
+  rts
+;-------------------------------------------------------------------------------
+
+.hex_chr_tbl                ; hex character table
+  equs "0123456789ABCDEF"
+
 .err_msg_syntax
-  equs "Say what?", 0
+  equs "What?", 0
+
+.prompt_msg
+  equs CHR_LINEEND, "Z>", 0
 
 .start_msg
 	equs "Zolatron 64", 0
 
 .version_str
   equs "ROM v06-dev", 0
-
-.serial_prompt
-  equs 10, "Z>", 0
 
 ORG $fffa
   equw NMI_handler  ; vector for NMI
