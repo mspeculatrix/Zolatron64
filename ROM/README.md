@@ -14,6 +14,6 @@ Versions:
 
 (*-dev.asm versions are development versions - ie, works in progress - and almost certainly don't work.)
 
-The output-nn.txt files are the output from Beebasm when the code is assembled.
+The output-nn.txt files in the output folder are the output from Beebasm when the code is assembled.
 
 _build_ is just a small Bash script I use to save typing (and remembering) the commands to assemble the code and write it to the EEPROM.
