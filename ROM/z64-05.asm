@@ -55,6 +55,7 @@ UART_RX_BUF_LEN = 240 ; size of buffers. We actually have 255 bytes available
 UART_RX_BUF_MAX = 255 ; but this leaves some headroom. The MAX values are for
 UART_TX_BUF_LEN = 240 ; use in output routines.
 UART_TX_BUF_MAX = 255 ; 
+UART_LINE_END   = 10  ; ASCII code for line end - here we're using line feed
 
 UART_STATUS_REG = $0210 ; memory byte we'll use to store various flags
 ; masks for setting/reading/resetting flags
@@ -140,29 +141,32 @@ ORG $C000         ; This is where the actual code starts.
 .main
 
 ; Print initial message & prompt via serial
-  lda #serial_start_msg MOD 256   ; LSB of message
+  lda UART_LINE_END         ; start with a couple of line feeds
+  jsr serial_send_char
+  jsr serial_send_char
+  lda #start_msg MOD 256    ; LSB of message
   sta MSG_VEC
-  lda #serial_start_msg DIV 256   ; MSB of message
+  lda #start_msg DIV 256    ; MSB of message
   sta MSG_VEC+1
   jsr serial_send_msg
   jsr serial_send_prompt
 
 ; Print initial message on LCD
-  lda #lcd_start_message MOD 256  ; LSB of message
+  lda #start_msg MOD 256  ; LSB of message
   sta MSG_VEC
-  lda #lcd_start_message DIV 256  ; MSB of message
+  lda #start_msg DIV 256  ; MSB of message
   sta MSG_VEC+1
   jsr lcd_prt_msg
 
-  ldx #0 : ldy #1
+  ldx #0 : ldy #1             ; print version string on 2nd line of LCD
   jsr lcd_set_cursor
-  lda #version_string MOD 256  ; LSB of message
+  lda #version_str MOD 256    ; LSB of message
   sta MSG_VEC
-  lda #version_string DIV 256  ; MSB of message
+  lda #version_str DIV 256    ; MSB of message
   sta MSG_VEC+1
   jsr lcd_prt_msg
 
-  cli                     	; enable interrupts
+  cli                     	  ; enable interrupts
 
 ; --------- MAIN LOOP ----------------------------------------------------------
 .mainloop                   ; loop forever
@@ -194,8 +198,8 @@ ORG $C000         ; This is where the actual code starts.
   pla                     ; otherwise, recover A from stack
   rts
 
-.acia_wait_byte_recvd     ; not using this yet. Ever?
-  lda ACIA_STAT_REG       ; Possibly if I implement flow control
+.acia_wait_byte_recvd       ; not using this yet. Ever?
+  lda ACIA_STAT_REG         ; Possibly if I implement flow control
   and #ACIA_RX_RDY_BIT
   beq acia_wait_byte_recvd
   rts
@@ -239,6 +243,11 @@ ORG $C000         ; This is where the actual code starts.
 .serial_send_buf_end
   lda #0
   sta UART_TX_IDX           ; re-zero the index
+  rts
+
+.serial_send_char             ; send a single char - assumes char is in A
+  jsr acia_wait_send_clr
+  sta ACIA_DATA_REG           ; write to data register. This sends the byte
   rts
 
 .serial_send_msg
@@ -386,14 +395,11 @@ ALIGN &100        ; start on new page
 
 ; ---------DATA-----------------------------------------------------------------
 ALIGN &100        ; start on new page
-.lcd_start_message
+.start_msg
 	equs "Zolatron 64", 0
 
-.version_string
+.version_str
   equs "ROM v05", 0
-
-.serial_start_msg
-  equs 10, 10, "Zolatron 64", 10, "Ready", 0
 
 .serial_prompt
   equs 10, "Z>", 0

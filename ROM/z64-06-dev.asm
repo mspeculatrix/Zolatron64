@@ -10,6 +10,8 @@
 ;     carriage return (ASCII 13).
 ;	  - checks for size of receive buffer, to prevent overflows. (NOT TESTED)
 ;   - has additional LCD print routines.
+;   - WORK IN PROGRESS:
+;     - Adding command parsing
 ;
 ; BUT: There's no flow control. And because we're running on a 1MHz clock, it's
 ; easily overwhelmed by incoming data. To make this work, the sending terminal
@@ -31,6 +33,16 @@
 ; Write to EEPROM with:
 ; minipro -p AT28C256 -w z64-ROM-<version>.bin
 
+; command token values
+CMD_TKN_STAR = $80                  ; ??
+CMD_TKN_LM = CMD_TKN_STAR + 1       ; list memory
+CMD_TKN_PRT = CMD_TKN_LM + 1        ; print string to LCD
+CMD_TKN_VERBOSE = CMD_TKN_PRT +  1
+CMD_TKN_VERS = CMD_TKN_VERBOSE + 1  ; show version
+
+EOCMD_SECTION = 0              ; end of command section marker for command table
+EOTBL_MKR = 255                ; end of table marker
+
 ; 6522 VIA register addresses
 VIA_A_PORTA = $A001     ; VIA Port A data/instruction register
 VIA_A_DDRA  = $A003     ; Port A Data Direction Register
@@ -41,48 +53,42 @@ VIA_A_DDRB  = $A002     ; Port B Data Direction Register
 MSG_VEC = $70  ; Address of message to be printed. LSB is MSG_VEC, MSB is +1
 
 ; ACIA addresses
-ACIA_DATA_REG = $B000   ; transmit/receive data register
-ACIA_STAT_REG = $B001   ; status register
-ACIA_CMD_REG  = $B002   ; command register
-ACIA_CTRL_REG = $B003   ; control register
-UART_RX_BUF = $0400     ; Serial receive buffer start address
-UART_TX_BUF = $0300     ; Serial send buffer start address
-UART_RX_IDX = $04FF     ; Location of RX buffer index
-UART_TX_IDX = $03FF     ; Location of TX buffer index
-UART_RX_BUF_LEN = 240   ; size of buffers. We actually have 255 bytes available
-UART_RX_BUF_MAX = 255   ; but this leaves some headroom. The MAX value is for
-UART_TX_BUF_LEN = 255   ; use in output routines.
+ACIA_DATA_REG = $B000 ; transmit/receive data register
+ACIA_STAT_REG = $B001 ; status register
+ACIA_CMD_REG = $B002  ; command register
+ACIA_CTRL_REG = $B003 ; control register
+UART_RX_BUF = $0400   ; Serial receive buffer start address
+UART_TX_BUF = $0300   ; Serial send buffer start address
+UART_RX_IDX = $04FF   ; Location of RX buffer index
+UART_TX_IDX = $03FF   ; Location of TX buffer index
+UART_RX_BUF_LEN = 240 ; size of buffers. We actually have 255 bytes available
+UART_RX_BUF_MAX = 255 ; but this leaves some headroom. The MAX values are for
+UART_TX_BUF_LEN = 240 ; use in output routines.
+UART_TX_BUF_MAX = 255 ; 
+UART_LINE_END   = 10  ; ASCII code for line end - here we're using line feed
 
 UART_STATUS_REG = $0210 ; memory byte we'll use to store various flags
 ; masks for setting/reading/resetting flags
 ;UART_FL_RX_BUF_DATA = %00000001   ; Receive buffer has data
 ;UART_FL_RX_DATA_RST = %11111110   ; Reset mask
-UART_FL_RX_NUL_RCVD = %00000010   ; we've received a terminator (null or CR)
+UART_FL_RX_NUL_RCVD = %00000010   ; we've received a null terminator
 ; UART_FL_RX_BUF_FULL = %00001000
-UART_CLEAR_RX_FLAGS = %11110000   ; AND with UART_STATUS_REG to clear RX flags
-; UART_FL_TX_BUF_DATA = %00010000   ; TX buffer has data to send
-; UART_FL_TX_BUF_FULL = %10000000
-UART_CLEAR_TX_FLAGS = %00001111   ; AND with UART_STATUS_REG to clear TX flags
-UART_RTS_HIGH = %11110011         ; AND with ACIA_CMD_REG to set RTS line HIGH
-UART_RTS_LOW  = %00001000         ; ORA with ACIA_CMD_REG to set RTS line LOW
+UART_CLEAR_RX_FLAGS = %11110000   ; to be ANDed with info reg to clear RX flags
+UART_FL_TX_BUF_DATA = %00010000   ; TX buffer has data to send
+UART_FL_TX_BUF_FULL = %10000000
+UART_CLEAR_TX_FLAGS = %00001111   ; to be ANDed with info reg to clear TX flags
 
 ; Following are values for the control register, setting eight data bits, 
-; no parity, 1 stop bit and use of the internal baud rate generator at
-; various baud rates
+; no parity, 1 stop bit and use of the internal baud rate generator
 UART_8N1_0300 = %10010110
 UART_8N1_1200 = %10011000
 UART_8N1_2400 = %10011010
 UART_8N1_9600 = %10011110
 UART_8N1_19K2 = %10011111
-; Value for the command register - bits from left to right:
-; 00 - N/A (parity settings but we're disabling that next)
-; 0  - no parity
-; 0  - echo normal
-; 10 - RTS set low with transmit IRQ disabled
-; 0  - IRQ enabled on receive
-; 1  - DTR (data terminal ready) set to 'ready' (signal low)
+; Value for the command register: No parity, echo normal, RTS low with no 
+; transmit IRQ, IRQ enabled on receive, data terminal ready
 ACIA_CMD_CFG = %00001001
-; Mask values to be ANDed with ACIA_STAT_REG to check state of ACIA 
+; Mask values to be ANDed with status reg to check state of ACIA 
 ; ACIA_IRQ_SET = %10000000
 ACIA_RDRF_BIT = %00001000     ; Receive Data Register Full
 ; ACIA_OVRN_BIT = %00000100     ; Overrun error
@@ -95,8 +101,8 @@ LCD_CLS       = %00000001  ; Clear screen & reset display memory
 LCD_TYPE      = %00111000  ; Set 8-bit mode; 2-line display; 5x8 font
 LCD_MODE      = %00001100  ; Display on; cursor off; blink off
 LCD_CURS_HOME = %00000010  ; return cursor to home position
-LCD_CURS_L    = %00010000  ; shift cursor to the left
-LCD_CURS_R    = %00010100  ; shift cursor to the right
+LCD_CURS_L    = %00010000  ; shifts cursor to the left
+LCD_CURS_R    = %00010100  ; shifts cursor to the right
 LCD_EX = %10000000    ; Toggling this high enables execution of byte in register
 LCD_RW = %01000000    ; Read/Write bit: 0 = read; 1 = write
 LCD_RS = %00100000    ; Register select bit: 0 = instruction reg; 1 = data reg
@@ -145,31 +151,28 @@ ORG $C000         ; This is where the actual code starts.
 .main
 
 ; Print initial message & prompt via serial
-  lda #serial_start_msg MOD 256   ; LSB of message
+  lda UART_LINE_END         ; start with a couple of line feeds
+  jsr serial_send_char
+  jsr serial_send_char
+  lda #start_msg MOD 256    ; LSB of message
   sta MSG_VEC
-  lda #serial_start_msg DIV 256   ; MSB of message
-  sta MSG_VEC+1
-  jsr serial_send_msg 
-  lda #version_string MOD 256   ; LSB of message
-  sta MSG_VEC
-  lda #version_string DIV 256   ; MSB of message
+  lda #start_msg DIV 256    ; MSB of message
   sta MSG_VEC+1
   jsr serial_send_msg
   jsr serial_send_prompt
 
 ; Print initial message on LCD
-  lda #lcd_start_message MOD 256  ; LSB of message
+  lda #start_msg MOD 256  ; LSB of message
   sta MSG_VEC
-  lda #lcd_start_message DIV 256  ; MSB of message
+  lda #start_msg DIV 256  ; MSB of message
   sta MSG_VEC+1
   jsr lcd_prt_msg
 
-  ; print version string on second line of LCD  
-  ldx #0 : ldy #1               ; set X,Y coordinates
+  ldx #0 : ldy #1             ; print version string on 2nd line of LCD
   jsr lcd_set_cursor
-  lda #version_string MOD 256   ; LSB of message
+  lda #version_str MOD 256    ; LSB of message
   sta MSG_VEC
-  lda #version_string DIV 256   ; MSB of message
+  lda #version_str DIV 256    ; MSB of message
   sta MSG_VEC+1
   jsr lcd_prt_msg
 
@@ -182,31 +185,19 @@ ORG $C000         ; This is where the actual code starts.
   bne process_rx            ; if yes, process the buffer
   ldx UART_RX_IDX           ; load the value of the RX buffer index
   cpx #UART_RX_BUF_LEN      ; are we at the limit?
-  bcs process_rx            ; process if X >= UART_RX_BUF_LEN
-; other tests will go here
+  bcs process_rx            ; branch if X >= UART_RX_BUF_LEN
+; other tests may go here
   jmp mainloop              ; loop
 .process_rx
   ; we're here because the null received bit is set or buffer is full
   jsr serial_print_rx_buf   ; print the buffer to the display
-  jmp mainloop              ; loop
+  jmp mainloop              ; go around again
 
 ; ------------------------------------------------------------------------------
 ; ----     SUBROUTINES                                                      ----
 ; ------------------------------------------------------------------------------
 
 ; ---------SERIAL SUBROUTINES---------------------------------------------------
-
-.acia_set_rts_high        ; set RTS high when ready to receive data.
-  lda ACIA_CMD_REG
-  and UART_RTS_HIGH
-  sta ACIA_CMD_REG
-  rts
-
-.acia_set_rts_low         ; set RTS low when you don't want the other device
-  lda ACIA_CMD_REG        ; to send data to you.
-  ora UART_RTS_LOW
-  sta ACIA_CMD_REG
-  rts
 
 .acia_wait_send_clr
   pha                     ; push A to stack to save it
@@ -217,14 +208,13 @@ ORG $C000         ; This is where the actual code starts.
   pla                     ; otherwise, recover A from stack
   rts
 
-; .acia_wait_byte_recvd     ; not using this yet. Ever?
-;   lda ACIA_STAT_REG       ; Possibly if I implement flow control
-;   and #ACIA_RX_RDY_BIT
-;   beq acia_wait_byte_recvd
-;   rts
+.acia_wait_byte_recvd     ; not using this yet. Ever?
+  lda ACIA_STAT_REG       ; Possibly if I implement flow control
+  and #ACIA_RX_RDY_BIT
+  beq acia_wait_byte_recvd
+  rts
 
 .serial_print_rx_buf
-  jsr acia_set_rts_low
   lda #LCD_CLS              ; clear display, reset display memory
   jsr lcd_cmd
   jsr serial_send_prompt    ; send our standard prompt
@@ -245,11 +235,9 @@ ORG $C000         ; This is where the actual code starts.
   ldx #0
   stx UART_RX_IDX           ; reset buffer index
   stx UART_RX_BUF           ; and reset first byte in buffer to 0
-  jsr acia_set_rts_high
   rts
 
 .serial_send_buffer         ; sends contents of send buffer and clears it
-  jsr acia_set_rts_low
   ldx #0                    ; offset index
  .serial_send_next_char
   lda UART_TX_BUF,X         ; load next char
@@ -265,7 +253,11 @@ ORG $C000         ; This is where the actual code starts.
 .serial_send_buf_end
   lda #0
   sta UART_TX_IDX           ; re-zero the index
-  jsr acia_set_rts_high
+  rts
+
+.serial_send_char             ; send a single char - assumes char is in A
+  jsr acia_wait_send_clr
+  sta ACIA_DATA_REG           ; write to data register. This sends the byte
   rts
 
 .serial_send_msg
@@ -303,9 +295,9 @@ ORG $C000         ; This is where the actual code starts.
   bne lcd_busy        ; If result was non-0, keep looping
   lda #LCD_RW
   sta VIA_A_PORTA
-  lda #%11111111      ; Set Port B as output
+  lda #%11111111  ; Set Port B as output
   sta VIA_A_DDRB
-  pla                 ; pull previous A contents back from stack
+  pla             ; pull previous A contents back from stack
   rts
 
 .lcd_cmd            ; send a command to the LCD
@@ -321,10 +313,10 @@ ORG $C000         ; This is where the actual code starts.
   pla               ; recover original value of A from stack
   rts
 
-.lcd_prt_chr              ; print character - assumes character is in A
+.lcd_prt_chr              ; assumes character is in A
   jsr lcd_wait            ; check LCD is ready to receive
   sta VIA_A_PORTB
-  lda #LCD_RS             ; Set RS to data - Clears RW & E bits
+  lda #LCD_RS             ; Set RS to data; Clears RW & E bits
   sta VIA_A_PORTA
   lda #(LCD_RS OR LCD_EX) ; Keep RS & set E bit to send instruction
   sta VIA_A_PORTA
@@ -332,7 +324,7 @@ ORG $C000         ; This is where the actual code starts.
   sta VIA_A_PORTA
   rts 
 
-.lcd_prt_msg	        ; assumes LSB of msg address at MSG_VEC, MSB at MSG_VEC+1
+.lcd_prt_msg	  ; assumes LSB of msg address at MSG_VEC, MSB at MSG_VEC+1
   ldy #0
 .lcd_prt_msg_chr
   lda (MSG_VEC),Y         ; LDA sets zero flag if it's loaded with 0
@@ -350,12 +342,8 @@ ORG $C000         ; This is where the actual code starts.
   ; X should contain the X param in range 0-15.
   ; Y should be 0 or 1.
   ; If we want line 1, we do this by adding 43 to the value of X.
-  ; Why? 43. I'm not sure. Datasheet says 40. 
-  ; Also, on some occasions the Zolatron has started with the second line 
-  ; printed 3 spaces too far to the right, which is the behaviour I would 
-  ; expect from using a value of 43. But then a restart puts it all back in the 
-  ; right place.
-  ; There's something going on here I haven't grasped yet.
+  ; Why? 43. I'm not sure. Datasheet says 40, although it does start line 
+  ; numbering from 1, not 0. Assuming I have the right datasheet.
   cpy #1
   bcc lcd_move_curs       ; Y is less than 1
   txa                     ; otherwise, we want line 1. Put X value in A
@@ -375,9 +363,9 @@ ORG $C000         ; This is where the actual code starts.
 ; ---------INTERRUPT SERVICE ROUTINE (ISR)--------------------------------------
 ALIGN &100        ; start on new page
 .ISR_handler
-  pha             ; preserve register states on the stack
-  tya : pha       ;
-  txa : pha       ;                
+  pha             ; preserve CPU state on the stack
+  txa             ;                
+  pha             ;
   ; Check which device caused the interrupt.
   bit ACIA_STAT_REG ; if it was the ACIA that set IRQ low, the N flag is now set
   bmi acia_isr      ; branch if N flag set to 1
@@ -405,8 +393,8 @@ ALIGN &100        ; start on new page
   ; when there is other stuff here, implement the jump above
 
 .exit_isr
-  pla : tax       ; resume original register states
-  pla : tay       ;
+  pla             ; resume original register state
+  tax             ;
   pla             ;
   rti
 
@@ -417,17 +405,64 @@ ALIGN &100        ; start on new page
 
 ; ---------DATA-----------------------------------------------------------------
 ALIGN &100        ; start on new page
-.lcd_start_message
+
+; COMMAND PARSING
+; parsing routine will compare the first char of the command to the entries
+; starting at cmd_ch1_tbl, using an offset counter to remember which one it's
+; matching against.
+; if it finds a match, it calculates the address for the next operation using:
+;    cmd_ptrs + (offset * 2)
+; it then starts matching using the next char from this new address.
+; We'll have stored this first address - for the table section.
+; A separate comparison loop will cycle through the commands in each section.
+; If it hits a token (ie, has value $80 or above) then it has matched.
+; As soon as it doesn't match, it loops until it hits a token - incrementing
+; the offet - & then starts again. If it hits EOCMD_SECTION then the match
+; has failed and we issue a syntax error.
+
+.cmd_ch1_tbl              ; table of command first characters
+  equb "*"
+  equb "L"
+  equb "P"
+  equb "V"
+  equb EOTBL_MKR          ; end of table marker
+
+.cmd_ptrs                 ; pointers to command table entries
+  equw cmd_tbl_STAR       ; commands starting '*'
+  equw cmd_tbl_ASCL       ; commands starting 'L'
+  equw cmd_tbl_ASCP       ; commands starting 'P'
+  equw cmd_tbl_ASCV       ; commands starting 'V'
+
+; Command table
+.cmd_tbl_STAR               ; commands starting '*'
+.cmd_STAR
+  equb CMD_TKN_STAR         ; not sure what I'm using this for yet
+  equb EOCMD_SECTION        ; comes at end of each section
+.cmd_tbl_ASCL               ; commands starting 'L'
+.cmd_LM
+  equs "M", CMD_TKN_LM      ; LM  
+  equb EOCMD_SECTION
+.cmd_tbl_ASCP               ; commands starting 'P'
+.cmd_PRT
+  equs "RT", CMD_TKN_PRT    ; PRT
+  equb EOCMD_SECTION
+.cmd_tbl_ASCV               ; commands starting 'V'
+.cmd_VERS
+  equs "ERBOSE", CMD_TKN_VERBOSE 
+  equs "ERS", CMD_TKN_VERS  ; VERS
+  equb EOCMD_SECTION
+
+.err_msg_syntax
+  equs "Say what?", 0
+
+.start_msg
 	equs "Zolatron 64", 0
 
-.serial_start_msg
-  equs 10, 10, "Zolatron 64", 10, 0
+.version_str
+  equs "ROM v06-dev", 0
 
 .serial_prompt
   equs 10, "Z>", 0
-
-.version_string
-  equs "ROM v06-dev", 0
 
 ORG $fffa
   equw NMI_handler  ; vector for NMI
