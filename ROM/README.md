@@ -10,10 +10,12 @@ Versions:
 * z64-03: Accepts input via serial and prints it to the LCD. Because of performance issues, the sending terminal needs to add a 10ms delay between chars, to avoid an overrun condition. Currently no checking for buffer overflows, so don't use this code in high-security environments <-=ahem=->.
 * z64-04: Some tidying up. Added check for size of receive buffer (although not tested). Removed the looping within the ISR.
 * z64-05: Added some additional LCD printing options. At this point, we have a system that seems to reliably accept serial input and prints it to the LCD.
-* z64-06-dev: WORK IN PROGRESS: Now attempting to do parsing of commands received via serial.
+* z64-06-dev: WORK IN PROGRESS: Now attempting to do parsing of commands received via serial. Also has a routine for converting a one-byte value to a hex string representation, which I'll be needing for a planned memory monitor.
 
 (*-dev.asm versions are development versions - ie, works in progress - and almost certainly don't work.)
 
-The output-nn.txt files in the output folder are the output from Beebasm when the code is assembled.
+The output-nn.txt files in the _output_ folder are the output from Beebasm when the code is assembled. Just in case.
 
-_build_ is just a small Bash script I use to save typing (and remembering) the commands to assemble the code and write it to the EEPROM.
+_build_ is just a small Bash script I use to save typing (and remembering) the commands to assemble the code and write it to the EEPROM. Documentation is in the script itself.
+
+As the source file was starting to get rather long, and I got tired of scrolling, I've now carved out certain discrete parts of the code and have put them in include files, in the _include_ directory.
