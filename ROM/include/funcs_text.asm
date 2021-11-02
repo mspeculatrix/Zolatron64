@@ -1,24 +1,112 @@
 ; ---------TEXT SUBROUTINES-----------------------------------------------------
 
-.byte_to_hex_str              ; convert 1-byte value to 2-char hex string
-  ; assumes that number to be converted is in A
+; convert 1-byte value to 2-char hex string
+.byte_to_hex_str              ; assumes that number to be converted is in A
   tax                         ; keep a copy of A in X for later
-  ldy #4                      ; we're going to shift right 4 times
-.hexstr_shift_rt     
-  lsr A                       ; logical shift right
-  dey
-  cpy #0                      ; is our counter at 0?
-  bne hexstr_shift_rt
-  ; at this point A contains upper nibble of value
+  lsr A                       ; logical shift right 4 bits
+  lsr A
+  lsr A
+  lsr A                       ; A now contains upper nibble of value
   tay                         ; put in Y to act as offset
   lda hex_chr_tbl,Y           ; load A with appropriate char from lookup table
-  sta TEXT_BUF                ; and stash that in the text buffer
+  sta TMP_TEXT_BUF            ; and stash that in the text buffer
   txa                         ; recover original value of A
   and #%00001111              ; mask to get lower nibble value
   tay                         ; again, put in Y to act as offset
   lda hex_chr_tbl,Y           ; load A with appropriate char from lookup table
-  sta TEXT_BUF+1              ; and stash that in the next byte of the buffer
+  sta TMP_TEXT_BUF+1          ; and stash that in the next byte of the buffer
   lda #CHR_NUL                ; and end with a null byte
-  sta TEXT_BUF+2
+  sta TMP_TEXT_BUF+2
+  rts
+
+.hex_str_to_byte              ; assumes text in BYTE_CONV_H and BYTE_CONV_L
+  lda BYTE_CONV_H             ; load the high nibble character
+  jsr asc_hex_to_bin          ; convert to number - result is in A
+  asl A                       ; shift to high nibble
+  asl A 
+  asl A 
+  asl A
+  sta FUNC_RESULT             ; and store temporarily
+  lda BYTE_CONV_L             ; get the low nibble character
+  jsr asc_hex_to_bin          ; convert to number - result is in A
+  ora FUNC_RESULT
+  sta FUNC_RESULT
+  rts
+
+.asc_hex_to_bin               ; assumes ASCII char val in A
+  sec
+  sbc #$30                    ; subtract $30 - this is good for 0-9
+  cmp #10                     ; is value more than 10?
+  bcc asc_hex_to_bin_end      ; if not, we're okay
+  sbc #$07                    ; otherwise subtract another $07 for A-F
+.asc_hex_to_bin_end
+  rts                         ; value is returned in A
+
+; COMMAND PARSING
+; Inspired by keyword parsing in EhBASIC:
+; https://github.com/Klaus2m5/6502_EhBASIC_V2.22/blob/master/patched/basic.asm
+; (see line 8273 onward)
+.parse_input 
+  lda #0                    ; a value of 0 for the token represents a failure
+  sta FUNC_RESULT           ; we'll use this as the default
+  lda UART_RX_BUF           ; load first char in buffer
+  sta TEST_VAL              ; store it somewhere handy
+  ldx #0                    ; offset counter
+.parse_next_test
+  lda cmd_ch1_tbl,X         ; get next char from table of cmd 1st chars
+  cmp #EOTBL_MKR            ; is it the end of table marker?
+  beq parse_1st_char_fail   ; if so, parsing has failed to find a match
+  cmp TEST_VAL              ; otherwise compare against our input char
+  beq parse_1st_char_match  ; if it matches, on to the next step
+  inx                       ; otherwise, time to test next char in table
+  jmp parse_next_test
+.parse_1st_char_fail
+  jmp parse_end
+.parse_1st_char_match
+  ; at this point, X holds the offset we need to look up an address in cmd_ptrs
+  ; although we need to multiply it by 2
+  stx TEST_VAL        ; tmp store x in handy location - repurposing TEST_VAL
+  txa                 ; also put the value in A
+  adc TEST_VAL        ; add the two together
+  tax                 ; and put back in X
+  lda <cmd_ptrs, X    ; get the relevant address from the cmd_ptrs table
+  sta TBL_VEC         ; and put in TBL_VEC 
+  lda >cmd_ptrs, X
+  sta TBL_VEC+1
+  ; we now have the start address for the relevant section of the command table
+  ; in TBL_VEC and we've already matched on the first char
+  ldy #0          ; offset for the command table
+  ldx #1          ; offset for the input buffer, starting with 2nd char
+.parse_next_chr
+  lda UART_RX_BUF,X   ; get next char from buffer
+  sta TEST_VAL        ; and put it somewhere handy - repurposing TEST_VAL again
+  lda (TBL_VEC), Y    ; load the next test char from our command table
+  cmp #$80            ; does it have a value $80 or more?
+  bcs parse_token_found ; if >= $80, it's a token - success!
+  cmp #EOCMD_SECTION  ; have we got to the end of the section without a match?
+  beq parse_end       ; if so, we've failed, time to leave
+  ; at this point, we've matched neither a token nor end of section marker.
+  ; so it's time to test the buffer char itself - table char is still in A
+  cmp TEST_VAL
+  bne parse_next_cmd  ; if it's not equal, this isn't the right command
+  inx                 ; otherwise, if it is equal, let's test the next buffer 
+  iny                 ; char against the next command char
+  jmp parse_next_chr
+.parse_token_found
+  sta FUNC_RESULT
+  jmp parse_end
+.parse_next_cmd
+  ; that command didn't match, so let's spin ahead to the next one.
+  ; X should stay the same, it's Y that needs to be incremented
+.parse_next_cmd_chr
+  iny                     ; increment offset
+  lda (TBL_VEC), Y        ; load next char from cmd table
+  cmp #$80                ; is it a token?
+  bcs parse_next_cmd_jmp  ; if so, we're done
+  jmp parse_next_cmd_chr  ; otherwise, loop
+.parse_next_cmd_jmp
+  iny                     ; one more for luck
+  jmp parse_next_chr      ; now let's try again
+.parse_end
   rts
   
