@@ -36,7 +36,7 @@
 ; minipro -p AT28C256 -w z64-ROM-<version>.bin
 
 ; command token values
-CMD_TKN_STAR = $80                  ; ??
+CMD_TKN_STAR = $80                  ; not sure what this is for yet
 CMD_TKN_LM = CMD_TKN_STAR + 1       ; list memory
 CMD_TKN_PRT = CMD_TKN_LM + 1        ; print string to LCD
 CMD_TKN_VERBOSE = CMD_TKN_PRT +  1
@@ -140,7 +140,14 @@ ORG $C000         ; This is where the actual code starts.
   sta MSG_VEC+1
   jsr serial_send_msg
 
+  lda #'3'                  ; just a test of the hex_str_to_byte subroutine
+  sta BYTE_CONV_H
+  lda #'D'
+  sta BYTE_CONV_L
+  jsr hex_str_to_byte       ; result is in FUNC_RESULT
+  lda FUNC_RESULT
   jsr serial_send_prompt
+  jsr serial_send_char      ; should appear as '='
 
   cli                     	  ; enable interrupts
 
@@ -157,9 +164,12 @@ ORG $C000         ; This is where the actual code starts.
 .process_rx
   ; we're here because the null received bit is set or buffer is full
   ; jsr serial_print_rx_buf   ; print the buffer to the display
-  ;jsr parse_rx_buffer
-  jsr parse_input            ; puts command token in FUNC_RESULT
-  lda FUNC_RESULT            ; just a test of the byte_to_hex_str subroutine
+  ; jsr parse_rx_buffer
+  lda UART_STATUS_REG        ; get our info register
+  and #UART_CLEAR_RX_FLAGS   ; zero all the RX flags
+  sta UART_STATUS_REG        ; and re-save the register
+  lda #0                     ; reset RX buffer index
+  lda FUNC_RESULT            ; get the result so we can print it
   jsr byte_to_hex_str        ; puts string in TMP_TEXT_BUF buffer.
   lda #<TMP_TEXT_BUF
   sta MSG_VEC
@@ -167,6 +177,8 @@ ORG $C000         ; This is where the actual code starts.
   sta MSG_VEC+1
   jsr serial_send_msg
   jsr serial_send_prompt
+  sta UART_RX_IDX            ; ** MIGHT WANT TO MOVE THIS ***
+  jsr parse_input            ; puts command token in FUNC_RESULT
   jmp mainloop              ; go around again
 
 INCLUDE "include/data_tables.asm"
@@ -186,7 +198,7 @@ ALIGN &100        ; start on new page
 ;-------------------------------------------------------------------------------
 
 .version_str
-  equs "ROM v06-dev", 0
+  equs "ZolOS v06-dev", 0
 
 ORG $fffa
   equw NMI_handler  ; vector for NMI

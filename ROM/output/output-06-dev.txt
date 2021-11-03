@@ -70,21 +70,21 @@
      C097   B0 03      BCS &C09C
      C099   4C 8B C0   JMP &C08B
 .process_rx
-     C09C   20 89 C2   JSR &C289
-     C09F   A5 60      LDA &60
-     C0A1   20 4E C2   JSR &C24E
-     C0A4   A9 A0      LDA #&A0
-     C0A6   85 70      STA &70
-     C0A8   A9 07      LDA #&07
-     C0AA   85 71      STA &71
-     C0AC   20 B7 C1   JSR &C1B7
-     C0AF   20 C8 C1   JSR &C1C8
-     C0B2   4C 8B C0   JMP &C08B
+     C09C   AD A0 02   LDA &02A0
+     C09F   29 F0      AND #&F0
+     C0A1   8D A0 02   STA &02A0
+     C0A4   20 89 C2   JSR &C289
+     C0A7   A5 60      LDA &60
+     C0A9   20 4E C2   JSR &C24E
+     C0AC   A9 A0      LDA #&A0
+     C0AE   85 70      STA &70
+     C0B0   A9 07      LDA #&07
+     C0B2   85 71      STA &71
+     C0B4   20 B7 C1   JSR &C1B7
+     C0B7   20 C8 C1   JSR &C1C8
+     C0BA   4C 8B C0   JMP &C08B
 .cmd_ch1_tbl
-     C100   2A 
-     C101   4C 
-     C102   50 
-     C103   56 
+     C100   2A 4C 50 ...
      C104   FF
 .cmd_ptrs
      C105   0D C1
@@ -106,9 +106,10 @@
      C114   82
      C115   00
 .cmd_tbl_ASCV
-.cmd_VERS
+.cmd_VERBOSE
      C116   45 52 42 ...
      C11C   83
+.cmd_VERS
      C11D   45 52 53 
      C120   84
      C121   00
@@ -317,53 +318,55 @@
      C292   A2 00      LDX #&00
 .parse_next_test
      C294   BD 00 C1   LDA &C100,X
-     C297   C9 FF      CMP #&FF
-     C299   F0 08      BEQ &C2A3
-     C29B   C5 50      CMP &50
-     C29D   F0 07      BEQ &C2A6
-     C29F   E8         INX
-     C2A0   4C 94 C2   JMP &C294
+     C297   20 A7 C1   JSR &C1A7
+     C29A   C9 FF      CMP #&FF
+     C29C   F0 08      BEQ &C2A6
+     C29E   C5 50      CMP &50
+     C2A0   F0 07      BEQ &C2A9
+     C2A2   E8         INX
+     C2A3   4C 94 C2   JMP &C294
 .parse_1st_char_fail
-     C2A3   4C E3 C2   JMP &C2E3
+     C2A6   4C E8 C2   JMP &C2E8
 .parse_1st_char_match
-     C2A6   86 50      STX &50
-     C2A8   8A         TXA
-     C2A9   65 50      ADC &50
+     C2A9   8A         TXA
+     C2AA   0A         ASL A
      C2AB   AA         TAX
-     C2AC   B5 05      LDA &05,X
-     C2AE   85 72      STA &72
-     C2B0   B5 C1      LDA &C1,X
-     C2B2   85 73      STA &73
-     C2B4   A0 00      LDY #&00
-     C2B6   A2 01      LDX #&01
+     C2AC   BD 05 C1   LDA &C105,X
+     C2AF   85 72      STA &72
+     C2B1   BD 06 C1   LDA &C106,X
+     C2B4   85 73      STA &73
+     C2B6   A0 00      LDY #&00
+     C2B8   A2 01      LDX #&01
 .parse_next_chr
-     C2B8   BD 00 04   LDA &0400,X
-     C2BB   85 50      STA &50
-     C2BD   B1 72      LDA (&72),Y
-     C2BF   C9 80      CMP #&80
-     C2C1   B0 0D      BCS &C2D0
-     C2C3   C9 00      CMP #&00
-     C2C5   F0 1C      BEQ &C2E3
-     C2C7   C5 50      CMP &50
-     C2C9   D0 0A      BNE &C2D5
-     C2CB   E8         INX
-     C2CC   C8         INY
-     C2CD   4C B8 C2   JMP &C2B8
+     C2BA   BD 00 04   LDA &0400,X
+     C2BD   85 50      STA &50
+     C2BF   B1 72      LDA (&72),Y
+     C2C1   20 A7 C1   JSR &C1A7
+     C2C4   C9 80      CMP #&80
+     C2C6   B0 0D      BCS &C2D5
+     C2C8   C9 00      CMP #&00
+     C2CA   F0 1C      BEQ &C2E8
+     C2CC   C5 50      CMP &50
+     C2CE   D0 0A      BNE &C2DA
+     C2D0   E8         INX
+     C2D1   C8         INY
+     C2D2   4C BA C2   JMP &C2BA
 .parse_token_found
-     C2D0   85 60      STA &60
-     C2D2   4C E3 C2   JMP &C2E3
+     C2D5   85 60      STA &60
+     C2D7   4C E8 C2   JMP &C2E8
 .parse_next_cmd
-.parse_next_cmd_chr
-     C2D5   C8         INY
-     C2D6   B1 72      LDA (&72),Y
-     C2D8   C9 80      CMP #&80
-     C2DA   B0 03      BCS &C2DF
-     C2DC   4C D5 C2   JMP &C2D5
+     C2DA   C8         INY
+     C2DB   B1 72      LDA (&72),Y
+     C2DD   C9 80      CMP #&80
+     C2DF   B0 03      BCS &C2E4
+     C2E1   4C DA C2   JMP &C2DA
 .parse_next_cmd_jmp
-     C2DF   C8         INY
-     C2E0   4C B8 C2   JMP &C2B8
+     C2E4   C8         INY
+     C2E5   4C BA C2   JMP &C2BA
 .parse_end
-     C2E3   60         RTS
+     C2E8   A9 00      LDA #&00
+     C2EA   8D FF 04   STA &04FF
+     C2ED   60         RTS
 .ISR_handler
      C300   48         PHA
      C301   8A         TXA

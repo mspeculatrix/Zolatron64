@@ -3,10 +3,7 @@ ALIGN &100        ; start on new page
 
 ; Command tables
 .cmd_ch1_tbl              ; table of command first characters
-  equb "*"
-  equb "L"
-  equb "P"
-  equb "V"
+  equs "*LPV" 
   equb EOTBL_MKR          ; end of table marker
 
 .cmd_ptrs                 ; pointers to command table entries
@@ -29,8 +26,9 @@ ALIGN &100        ; start on new page
   equs "RT", CMD_TKN_PRT    ; PRT
   equb EOCMD_SECTION
 .cmd_tbl_ASCV               ; commands starting 'V'
-.cmd_VERS
+.cmd_VERBOSE
   equs "ERBOSE", CMD_TKN_VERBOSE  ; VERBOSE
+.cmd_VERS
   equs "ERS", CMD_TKN_VERS        ; VERS
   equb EOCMD_SECTION
 
