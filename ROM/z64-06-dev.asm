@@ -146,9 +146,10 @@ ORG $C000         ; This is where the actual code starts.
   sta BYTE_CONV_L
   jsr hex_str_to_byte       ; result is in FUNC_RESULT
   lda FUNC_RESULT
-  jsr serial_send_prompt
   jsr serial_send_char      ; should appear as '='
-
+  
+  jsr serial_send_prompt
+  
   cli                     	  ; enable interrupts
 
 ; --------- MAIN LOOP ----------------------------------------------------------
@@ -168,7 +169,7 @@ ORG $C000         ; This is where the actual code starts.
   lda UART_STATUS_REG        ; get our info register
   and #UART_CLEAR_RX_FLAGS   ; zero all the RX flags
   sta UART_STATUS_REG        ; and re-save the register
-  lda #0                     ; reset RX buffer index
+  jsr parse_input            ; puts command token in FUNC_RESULT
   lda FUNC_RESULT            ; get the result so we can print it
   jsr byte_to_hex_str        ; puts string in TMP_TEXT_BUF buffer.
   lda #<TMP_TEXT_BUF
@@ -177,8 +178,8 @@ ORG $C000         ; This is where the actual code starts.
   sta MSG_VEC+1
   jsr serial_send_msg
   jsr serial_send_prompt
+  lda #0                     ; reset RX buffer index
   sta UART_RX_IDX            ; ** MIGHT WANT TO MOVE THIS ***
-  jsr parse_input            ; puts command token in FUNC_RESULT
   jmp mainloop              ; go around again
 
 INCLUDE "include/data_tables.asm"

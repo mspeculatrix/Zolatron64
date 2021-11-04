@@ -26,14 +26,14 @@
   asl A 
   asl A 
   asl A
-  sta FUNC_RESULT             ; and store temporarily
+  sta FUNC_RESULT             ; and store
   lda BYTE_CONV_L             ; get the low nibble character
   jsr asc_hex_to_bin          ; convert to number - result is in A
-  ora FUNC_RESULT
-  sta FUNC_RESULT
+  ora FUNC_RESULT             ; OR with previous result
+  sta FUNC_RESULT             ; and store final result
   rts
 
-.asc_hex_to_bin               ; assumes ASCII char val in A
+.asc_hex_to_bin               ; assumes ASCII char val is in A
   sec
   sbc #$30                    ; subtract $30 - this is good for 0-9
   cmp #10                     ; is value more than 10?
@@ -82,13 +82,13 @@
   lda UART_RX_BUF,X   ; get next char from buffer
   sta TEST_VAL        ; and put it somewhere handy - repurposing TEST_VAL
   lda (TBL_VEC_L),Y     ; load the next test char from our command table
-  jsr serial_send_char      ; FOR DEBUGGING ONLY
   cmp #$80            ; does it have a value $80 or more?
   bcs parse_token_found ; if >= $80, it's a token - success!
   cmp #EOCMD_SECTION  ; have we got to the end of the section without a match?
   beq parse_end       ; if so, we've failed, time to leave
-  ; at this point, we've matched neither a token nor end of section marker.
+  ; at this point, we've matched neither a token nor an end of section marker.
   ; so it's time to test the buffer char itself - table char is still in A
+  ; and buffer char in TEST_VAL
   cmp TEST_VAL
   bne parse_next_cmd  ; if it's not equal, this isn't the right command
   inx                 ; otherwise, if it is equal, let's test the next buffer 

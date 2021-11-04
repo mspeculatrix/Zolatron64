@@ -59,30 +59,39 @@
      C080   A9 07      LDA #&07
      C082   85 71      STA &71
      C084   20 B7 C1   JSR &C1B7
-     C087   20 C8 C1   JSR &C1C8
-     C08A   58         CLI
+     C087   A9 33      LDA #&33
+     C089   85 64      STA &64
+     C08B   A9 44      LDA #&44
+     C08D   85 63      STA &63
+     C08F   20 6A C2   JSR &C26A
+     C092   A5 60      LDA &60
+     C094   20 A7 C1   JSR &C1A7
+     C097   20 C8 C1   JSR &C1C8
+     C09A   58         CLI
 .mainloop
-     C08B   AD A0 02   LDA &02A0
-     C08E   29 02      AND #&02
-     C090   D0 0A      BNE &C09C
-     C092   AE FF 04   LDX &04FF
-     C095   E0 F0      CPX #&F0
-     C097   B0 03      BCS &C09C
-     C099   4C 8B C0   JMP &C08B
+     C09B   AD A0 02   LDA &02A0
+     C09E   29 02      AND #&02
+     C0A0   D0 0A      BNE &C0AC
+     C0A2   AE FF 04   LDX &04FF
+     C0A5   E0 F0      CPX #&F0
+     C0A7   B0 03      BCS &C0AC
+     C0A9   4C 9B C0   JMP &C09B
 .process_rx
-     C09C   AD A0 02   LDA &02A0
-     C09F   29 F0      AND #&F0
-     C0A1   8D A0 02   STA &02A0
-     C0A4   20 89 C2   JSR &C289
-     C0A7   A5 60      LDA &60
-     C0A9   20 4E C2   JSR &C24E
-     C0AC   A9 A0      LDA #&A0
-     C0AE   85 70      STA &70
-     C0B0   A9 07      LDA #&07
-     C0B2   85 71      STA &71
-     C0B4   20 B7 C1   JSR &C1B7
-     C0B7   20 C8 C1   JSR &C1C8
-     C0BA   4C 8B C0   JMP &C08B
+     C0AC   AD A0 02   LDA &02A0
+     C0AF   29 F0      AND #&F0
+     C0B1   8D A0 02   STA &02A0
+     C0B4   20 89 C2   JSR &C289
+     C0B7   A5 60      LDA &60
+     C0B9   20 4E C2   JSR &C24E
+     C0BC   A9 A0      LDA #&A0
+     C0BE   85 70      STA &70
+     C0C0   A9 07      LDA #&07
+     C0C2   85 71      STA &71
+     C0C4   20 B7 C1   JSR &C1B7
+     C0C7   20 C8 C1   JSR &C1C8
+     C0CA   A9 00      LDA #&00
+     C0CC   8D FF 04   STA &04FF
+     C0CF   4C 9B C0   JMP &C09B
 .cmd_ch1_tbl
      C100   2A 4C 50 ...
      C104   FF
@@ -255,12 +264,12 @@
 .lcd_prt_msg_end
      C232   60         RTS
 .lcd_set_cursor
-     C233   A5 02      LDA &02
+     C233   A9 02      LDA #&02
      C235   20 F7 C1   JSR &C1F7
      C238   C0 01      CPY #&01
      C23A   90 04      BCC &C240
      C23C   8A         TXA
-     C23D   69 2B      ADC #&2B
+     C23D   69 27      ADC #&27
      C23F   AA         TAX
 .lcd_move_curs
      C240   A9 14      LDA #&14
@@ -318,55 +327,54 @@
      C292   A2 00      LDX #&00
 .parse_next_test
      C294   BD 00 C1   LDA &C100,X
-     C297   20 A7 C1   JSR &C1A7
-     C29A   C9 FF      CMP #&FF
-     C29C   F0 08      BEQ &C2A6
-     C29E   C5 50      CMP &50
-     C2A0   F0 07      BEQ &C2A9
-     C2A2   E8         INX
-     C2A3   4C 94 C2   JMP &C294
+     C297   C9 FF      CMP #&FF
+     C299   F0 08      BEQ &C2A3
+     C29B   C5 50      CMP &50
+     C29D   F0 07      BEQ &C2A6
+     C29F   E8         INX
+     C2A0   4C 94 C2   JMP &C294
 .parse_1st_char_fail
-     C2A6   4C E8 C2   JMP &C2E8
+     C2A3   4C E4 C2   JMP &C2E4
 .parse_1st_char_match
-     C2A9   8A         TXA
-     C2AA   0A         ASL A
-     C2AB   AA         TAX
-     C2AC   BD 05 C1   LDA &C105,X
-     C2AF   85 72      STA &72
-     C2B1   BD 06 C1   LDA &C106,X
-     C2B4   85 73      STA &73
-     C2B6   A0 00      LDY #&00
-     C2B8   A2 01      LDX #&01
+     C2A6   8A         TXA
+     C2A7   0A         ASL A
+     C2A8   AA         TAX
+     C2A9   BD 05 C1   LDA &C105,X
+     C2AC   85 72      STA &72
+     C2AE   BD 06 C1   LDA &C106,X
+     C2B1   85 73      STA &73
+     C2B3   A0 00      LDY #&00
+     C2B5   A2 01      LDX #&01
 .parse_next_chr
-     C2BA   BD 00 04   LDA &0400,X
-     C2BD   85 50      STA &50
-     C2BF   B1 72      LDA (&72),Y
-     C2C1   20 A7 C1   JSR &C1A7
-     C2C4   C9 80      CMP #&80
-     C2C6   B0 0D      BCS &C2D5
-     C2C8   C9 00      CMP #&00
-     C2CA   F0 1C      BEQ &C2E8
-     C2CC   C5 50      CMP &50
-     C2CE   D0 0A      BNE &C2DA
-     C2D0   E8         INX
-     C2D1   C8         INY
-     C2D2   4C BA C2   JMP &C2BA
+     C2B7   BD 00 04   LDA &0400,X
+     C2BA   85 50      STA &50
+     C2BC   B1 72      LDA (&72),Y
+     C2BE   C9 80      CMP #&80
+     C2C0   B0 0D      BCS &C2CF
+     C2C2   C9 00      CMP #&00
+     C2C4   F0 1E      BEQ &C2E4
+     C2C6   C5 50      CMP &50
+     C2C8   D0 0A      BNE &C2D4
+     C2CA   E8         INX
+     C2CB   C8         INY
+     C2CC   4C B7 C2   JMP &C2B7
 .parse_token_found
-     C2D5   85 60      STA &60
-     C2D7   4C E8 C2   JMP &C2E8
+     C2CF   85 60      STA &60
+     C2D1   4C E4 C2   JMP &C2E4
 .parse_next_cmd
-     C2DA   C8         INY
-     C2DB   B1 72      LDA (&72),Y
-     C2DD   C9 80      CMP #&80
-     C2DF   B0 03      BCS &C2E4
-     C2E1   4C DA C2   JMP &C2DA
+     C2D4   A2 01      LDX #&01
+.parse_fast_forward
+     C2D6   C8         INY
+     C2D7   B1 72      LDA (&72),Y
+     C2D9   C9 80      CMP #&80
+     C2DB   B0 03      BCS &C2E0
+     C2DD   4C D6 C2   JMP &C2D6
 .parse_next_cmd_jmp
-     C2E4   C8         INY
-     C2E5   4C BA C2   JMP &C2BA
+     C2E0   C8         INY
+     C2E1   4C B7 C2   JMP &C2B7
 .parse_end
-     C2E8   A9 00      LDA #&00
-     C2EA   8D FF 04   STA &04FF
-     C2ED   60         RTS
+     C2E4   86 65      STX &65
+     C2E6   60         RTS
 .ISR_handler
      C300   48         PHA
      C301   8A         TXA
@@ -400,8 +408,8 @@
 .exit_nmi
      C400   40         RTI
 .version_str
-     C401   52 4F 4D ...
-     C40C   00
+     C401   5A 6F 6C ...
+     C40E   00
      FFFA   00 C4
      FFFC   00 C0
      FFFE   00 C3
