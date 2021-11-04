@@ -8,4 +8,4 @@ BYTE_CONV_H = BYTE_CONV_L+1
 BUF_PTR     = $65   ; multi-purpose buffer pointer
 MSG_VEC     = $70   ; Message to be printed. LSB is MSG_VEC, MSB is +1
 TBL_VEC_L   = $72   ; table vector - for searching tables
-TBL_VEC_H	  = TBL_VEC_L+1
+TBL_VEC_H	= TBL_VEC_L+1

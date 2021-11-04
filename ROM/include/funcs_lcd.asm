@@ -56,12 +56,9 @@
 .lcd_set_cursor	          ; assumes X & Y co-ords have been put in X and Y
   lda #LCD_CURS_HOME      ; send instruction to move the cursor to the home
   jsr lcd_cmd             ; position. Doesn't affect existing text
-  ; WARNING: Doing no error checking here for inappropriate values.
   ; X should contain the X param in range 0-15.
   ; Y should be 0 or 1.
   ; If we want line 1, we do this by adding 39 to the value of X.
-  ; Why 39? I'm not sure. Datasheet suggests 40, although it does start line 
-  ; numbering from 1, not 0. Assuming I have the right datasheet.
   cpy #1
   bcc lcd_move_curs       ; Y is less than 1
   txa                     ; otherwise, we want line 1. Put X value in A

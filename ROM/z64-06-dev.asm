@@ -164,8 +164,6 @@ ORG $C000         ; This is where the actual code starts.
   jmp mainloop              ; loop
 .process_rx
   ; we're here because the null received bit is set or buffer is full
-  ; jsr serial_print_rx_buf   ; print the buffer to the display
-  ; jsr parse_rx_buffer
   lda UART_STATUS_REG        ; get our info register
   and #UART_CLEAR_RX_FLAGS   ; zero all the RX flags
   sta UART_STATUS_REG        ; and re-save the register
@@ -180,7 +178,7 @@ ORG $C000         ; This is where the actual code starts.
   jsr serial_send_prompt
   lda #0                     ; reset RX buffer index
   sta UART_RX_IDX            ; ** MIGHT WANT TO MOVE THIS ***
-  jmp mainloop              ; go around again
+  jmp mainloop               ; go around again
 
 INCLUDE "include/data_tables.asm"
 
