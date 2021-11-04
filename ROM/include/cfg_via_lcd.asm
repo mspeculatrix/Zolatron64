@@ -1,3 +1,6 @@
+; VIA & LCD CONFIG -- cfg_via_lcd.asm ------------------------------------------
+; v06 - 04 Nov 2021
+;
 ; 6522 VIA register addresses
 VIA_A_PORTA = $A001     ; VIA Port A data/instruction register
 VIA_A_DDRA  = $A003     ; Port A Data Direction Register

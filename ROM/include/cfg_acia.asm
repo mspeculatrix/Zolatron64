@@ -1,3 +1,6 @@
+; ACIA CONFIG -- cfg_acia.asm --------------------------------------------------
+; v06 - 04 Nov 2021
+;
 ; ACIA addresses
 ACIA_DATA_REG = $B000 ; transmit/receive data register
 ACIA_STAT_REG = $B001 ; status register

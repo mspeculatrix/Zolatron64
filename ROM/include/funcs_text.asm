@@ -1,4 +1,6 @@
-; ---------TEXT SUBROUTINES-----------------------------------------------------
+; FUNCTIONS: TEXT -- funcs_text.asm --------------------------------------------
+; v07 - 05 Nov 2021
+;
 
 ; convert 1-byte value to 2-char hex string
 .byte_to_hex_str              ; assumes that number to be converted is in A
@@ -48,10 +50,12 @@
 ; https://github.com/Klaus2m5/6502_EhBASIC_V2.22/blob/master/patched/basic.asm
 ; (see line 8273 onward)
 .parse_input 
-  lda #0                    ; a value of 0 for the token represents a failure
-  sta FUNC_RESULT           ; we'll use this as the default
+  lda #CMD_TKN_FAIL         ; we'll use this as the default result
+  sta FUNC_RESULT           ; 
   lda UART_RX_BUF           ; load first char in buffer
-  sta TEST_VAL              ; store it somewhere handy
+  cmp #CHR_NUL              ; if it's a zero, the buffer is empty
+  beq parse_cmd_nul
+  sta TEST_VAL              ; store buffer char somewhere handy
   ldx #0                    ; init offset counter
 .parse_next_test
   lda cmd_ch1_tbl,X         ; get next char from table of cmd 1st chars
@@ -61,6 +65,9 @@
   beq parse_1st_char_match  ; if it matches, on to the next step
   inx                       ; otherwise, time to test next char in table
   jmp parse_next_test
+.parse_cmd_nul
+  lda #CMD_TKN_NUL
+  sta FUNC_RESULT 
 .parse_1st_char_fail
   jmp parse_end
 .parse_1st_char_match

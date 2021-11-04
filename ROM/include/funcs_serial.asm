@@ -1,4 +1,6 @@
-; ---------SERIAL SUBROUTINES---------------------------------------------------
+; FUNCTIONS: SERIAL -- funcs_serial.asm ----------------------------------------
+; v06 - 04 Nov 2021
+;
 
 .acia_wait_send_clr
   pha                     ; push A to stack to save it

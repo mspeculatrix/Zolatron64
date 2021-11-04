@@ -1,3 +1,6 @@
+; ZERO PAGE CONFIG -- cfg_zero_page.asm ----------------------------------------
+; v06 - 04 Nov 2021
+;
 ; Zero-page addresses
 TEST_VAL    = $50
 FUNC_RESULT = $60   ; to hold the result of a subroutine

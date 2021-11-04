@@ -36,6 +36,8 @@
 ; minipro -p AT28C256 -w z64-ROM-<version>.bin
 
 ; command token values
+CMD_TKN_NUL = $00                   ; This is what happens when you just hit RTN
+CMD_TKN_FAIL = $01                  ; syntax error & whatnot
 CMD_TKN_STAR = $80                  ; not sure what this is for yet
 CMD_TKN_LM = CMD_TKN_STAR + 1       ; list memory
 CMD_TKN_PRT = CMD_TKN_LM + 1        ; print string to LCD
@@ -131,22 +133,6 @@ ORG $C000         ; This is where the actual code starts.
   lda #>version_str           ; MSB of message
   sta MSG_VEC+1
   jsr lcd_prt_msg
-
-  lda #$f6                    ; just a test of the byte_to_hex_str subroutine
-  jsr byte_to_hex_str
-  lda #<TMP_TEXT_BUF
-  sta MSG_VEC
-  lda #>TMP_TEXT_BUF
-  sta MSG_VEC+1
-  jsr serial_send_msg
-
-  lda #'3'                  ; just a test of the hex_str_to_byte subroutine
-  sta BYTE_CONV_H
-  lda #'D'
-  sta BYTE_CONV_L
-  jsr hex_str_to_byte       ; result is in FUNC_RESULT
-  lda FUNC_RESULT
-  jsr serial_send_char      ; should appear as '='
   
   jsr serial_send_prompt
   
@@ -164,22 +150,79 @@ ORG $C000         ; This is where the actual code starts.
   jmp mainloop              ; loop
 .process_rx
   ; we're here because the null received bit is set or buffer is full
+  sei
   lda UART_STATUS_REG        ; get our info register
   and #UART_CLEAR_RX_FLAGS   ; zero all the RX flags
   sta UART_STATUS_REG        ; and re-save the register
   jsr parse_input            ; puts command token in FUNC_RESULT
   lda FUNC_RESULT            ; get the result so we can print it
-  jsr byte_to_hex_str        ; puts string in TMP_TEXT_BUF buffer.
-  lda #<TMP_TEXT_BUF
+
+  cmp #CMD_TKN_NUL
+  beq process_input_nul
+
+  cmp #CMD_TKN_FAIL          ; this means a syntax error
+  beq process_input_fail
+  ; anything other than CMD_TKN_NUL and CMD_TKN_FAIL should be a valid cmd token
+  sec
+  sbc $80                     ; this turns the token into an offset for our
+  asl A                       ; cmd_proc_ptrs table, once multiplied by 2
+  tay
+  lda cmd_proc_ptrs,Y
+  sta TBL_VEC_L
+  lda cmd_proc_ptrs+1,Y
+  sta TBL_VEC_H
+  jmp (TBL_VEC_L)
+
+.process_input_fail
+  lda #<err_msg_syntax        ; LSB of message
   sta MSG_VEC
-  lda #>TMP_TEXT_BUF
+  lda #>err_msg_syntax        ; MSB of message
   sta MSG_VEC+1
   jsr serial_send_msg
+.process_input_nul
   jsr serial_send_prompt
+  jmp process_rx_done
+
+; COMMAND POINTER TABLE
+.cmd_proc_ptrs               ; these entries need to be in the same order as
+  equw cmd_proc_STAR         ; the CMD_TKN_* definitions
+  equw cmd_proc_LM
+  equw cmd_proc_PRT
+  equw cmd_proc_VERBOSE
+  equw cmd_proc_VERS
+
+; COMMAND PROCESS TABLE
+.cmd_proc_STAR
+  jmp cmd_proc_end
+.cmd_proc_LM
+  jmp cmd_proc_end
+.cmd_proc_PRT
+  jmp cmd_proc_end
+.cmd_proc_VERBOSE
+  jmp cmd_proc_end
+.cmd_proc_VERS
+  lda #<version_str        ; LSB of message
+  sta MSG_VEC
+  lda #>version_str        ; MSB of message
+  sta MSG_VEC+1
+  jsr serial_send_msg
+.cmd_proc_end
+  jsr serial_send_prompt
+  
+.process_rx_done
+;  jsr byte_to_hex_str        ; puts string in TMP_TEXT_BUF buffer.
+;  lda #<TMP_TEXT_BUF
+;  sta MSG_VEC
+;  lda #>TMP_TEXT_BUF
+;  sta MSG_VEC+1
+;  jsr serial_send_msg
+;  jsr serial_send_prompt
   lda #0                     ; reset RX buffer index
   sta UART_RX_IDX            ; ** MIGHT WANT TO MOVE THIS ***
+  cli
   jmp mainloop               ; go around again
 
+;INCLUDE "include/cmd_proc.asm"
 INCLUDE "include/data_tables.asm"
 
 INCLUDE "include/funcs_serial.asm"
@@ -197,7 +240,7 @@ ALIGN &100        ; start on new page
 ;-------------------------------------------------------------------------------
 
 .version_str
-  equs "ZolOS v06-dev", 0
+  equs "ZolOS v07-dev", 0
 
 ORG $fffa
   equw NMI_handler  ; vector for NMI
@@ -206,4 +249,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "bin/z64-ROM-06-dev.bin", startrom, endrom
+SAVE "bin/z64-ROM-07-dev.bin", startrom, endrom

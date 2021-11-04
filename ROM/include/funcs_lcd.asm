@@ -1,4 +1,6 @@
-; ---------LCD SUBROUTINES------------------------------------------------------
+; FUNCTIONS: LCD -- funcs_lcd.asm ----------------------------------------------
+; v06 - 04 Nov 2021
+;
 .lcd_wait         ; check to see if LCD is ready to receive next byte
   pha             ; save current contents of A in stack, so it isn't corrupted
   lda #%00000000  ; Set Port B as input

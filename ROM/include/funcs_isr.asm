@@ -1,4 +1,6 @@
-; ---------INTERRUPT SERVICE ROUTINE (ISR)--------------------------------------
+; FUNCTIONS: INTERRUPT SERVICE ROUTINE (ISR) -- funcs_isr.asm ------------------
+; v06 - 04 Nov 2021
+;
 ALIGN &100        ; start on new page
 .ISR_handler
   pha             ; preserve CPU state on the stack
