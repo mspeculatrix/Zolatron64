@@ -37,7 +37,7 @@ if [ $result -eq 0 ]; then
     if [ $WRITE_ROM -eq 1 ]; then    
         echo "Writing to EEPROM..."
         echo "- minipro -p AT28C256 -w z64-ROM-${CODE_VERSION}.bin"
-        minipro -p AT28C256 -w bin/z64-ROM-${CODE_VERSION}.bin
+        minipro -p AT28C256 -w ../bin/z64-ROM-${CODE_VERSION}.bin
     fi
 else
     echo "*** ERROR *** Code failed to assemble. Huh."

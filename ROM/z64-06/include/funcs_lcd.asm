@@ -55,24 +55,36 @@
 .lcd_prt_msg_end
   rts
 
-.lcd_set_cursor	          ; assumes X & Y co-ords have been put in X and Y
-  lda #LCD_CURS_HOME      ; send instruction to move the cursor to the home
-  jsr lcd_cmd             ; position. Doesn't affect existing text
+;.lcd_set_cursor	          ; assumes X & Y co-ords have been put in X and Y
+;  lda #LCD_CURS_HOME      ; send instruction to move the cursor to the home
+;  jsr lcd_cmd             ; position. Doesn't affect existing text
   ; X should contain the X param in range 0-15.
   ; Y should be 0 or 1.
   ; If we want line 1, we do this by adding 39 to the value of X.
+;  cpy #1
+;  bcc lcd_move_curs       ; Y is less than 1
+;  txa                     ; otherwise, we want line 1. Put X value in A
+;  adc #39                 ; add 39
+;  tax                     ; store back in X
+;.lcd_move_curs
+;  lda #LCD_CURS_R         ; load A with 'move cursor right' instruction
+;.lcd_curs_next_move
+;  cpx #0
+;  beq lcd_set_curs_end    ; end if X = 0
+;  jsr lcd_cmd             ; otherwise, executive the move cursor command
+;  dex                     ; decrement X
+;  jmp lcd_curs_next_move  ; go round again
+;.lcd_set_curs_end
+;  rts
+
+.lcd_set_cursor	          ; assumes X & Y co-ords have been put in X and Y
+  ; X should contain the X param in range 0-15.
+  ; Y should be 0 or 1.
+  txa                     ; A now contains X position
   cpy #1
   bcc lcd_move_curs       ; Y is less than 1
-  txa                     ; otherwise, we want line 1. Put X value in A
-  adc #39                 ; add 39
-  tax                     ; store back in X
+  adc $40                 ; if we want second line, add $40
 .lcd_move_curs
-  lda #LCD_CURS_R         ; load A with 'move cursor right' instruction
-.lcd_curs_next_move
-  cpx #0
-  beq lcd_set_curs_end    ; end if X = 0
-  jsr lcd_cmd             ; otherwise, executive the move cursor command
-  dex                     ; decrement X
-  jmp lcd_curs_next_move  ; go round again
-.lcd_set_curs_end
+  ora #LCD_SET_DDRAM      ; OR with LCD_SET_DDRAM command byte
+  jsr lcd_cmd
   rts
