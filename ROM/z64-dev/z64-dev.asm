@@ -240,7 +240,7 @@ ALIGN &100        ; start on new page
 ;-------------------------------------------------------------------------------
 
 .version_str
-  equs "ZolOS v07-dev", 0
+  equs "ZolOS dev", 0
 
 ORG $fffa
   equw NMI_handler  ; vector for NMI
@@ -249,4 +249,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "../bin/z64-ROM-07-dev.bin", startrom, endrom
+SAVE "../bin/z64-ROM-dev.bin", startrom, endrom
