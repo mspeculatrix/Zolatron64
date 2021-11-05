@@ -249,4 +249,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "bin/z64-ROM-07-dev.bin", startrom, endrom
+SAVE "../bin/z64-ROM-07-dev.bin", startrom, endrom

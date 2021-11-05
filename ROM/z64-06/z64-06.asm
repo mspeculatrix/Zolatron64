@@ -36,6 +36,8 @@
 ; minipro -p AT28C256 -w z64-ROM-<version>.bin
 
 ; command token values
+CMD_TKN_NUL = $00                   ; This is what happens when you just hit RTN
+CMD_TKN_FAIL = $01                  ; syntax error & whatnot
 CMD_TKN_STAR = $80                  ; not sure what this is for yet
 CMD_TKN_LM = CMD_TKN_STAR + 1       ; list memory
 CMD_TKN_PRT = CMD_TKN_LM + 1        ; print string to LCD
@@ -206,4 +208,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "bin/z64-ROM-06.bin", startrom, endrom
+SAVE "../bin/z64-ROM-06.bin", startrom, endrom

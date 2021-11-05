@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CODE_VERSION="07-dev"
+CODE_VERSION="dev"
 WRITE_ROM=1
 
 usage()
@@ -23,10 +23,12 @@ while [ "$1" != "" ]; do
     shift
 done
 
+cd z64-${CODE_VERSION}
+
 echo "Assembling z64-${CODE_VERSION}.asm..."
 echo "- creating binary file: z64-ROM-${CODE_VERSION}.bin"
 echo "- saving Beebasm output to: output-${CODE_VERSION}.txt"
-beebasm -v -i z64-${CODE_VERSION}.asm > output/output-${CODE_VERSION}.txt
+beebasm -v -i z64-${CODE_VERSION}.asm > ../output/output-${CODE_VERSION}.txt
 
 # Get return code of last command
 result=$?
@@ -41,5 +43,7 @@ else
     echo "*** ERROR *** Code failed to assemble. Huh."
     exit 1
 fi
+
+cd ..
 
 exit 0
