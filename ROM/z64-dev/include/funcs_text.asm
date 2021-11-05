@@ -52,11 +52,11 @@
 .parse_input 
   lda #CMD_TKN_FAIL         ; we'll use this as the default result
   sta FUNC_RESULT           ; 
+  ldx #0                    ; init offset counter
   lda UART_RX_BUF           ; load first char in buffer
   cmp #CHR_NUL              ; if it's a zero, the buffer is empty
   beq parse_cmd_nul
   sta TEST_VAL              ; store buffer char somewhere handy
-  ldx #0                    ; init offset counter
 .parse_next_test
   lda cmd_ch1_tbl,X         ; get next char from table of cmd 1st chars
   cmp #EOTBL_MKR            ; is it the end of table marker?
@@ -66,7 +66,7 @@
   inx                       ; otherwise, time to test next char in table
   jmp parse_next_test
 .parse_cmd_nul
-  lda #CMD_TKN_NUL
+;  lda #CMD_TKN_NUL
   sta FUNC_RESULT 
 .parse_1st_char_fail
   jmp parse_end
