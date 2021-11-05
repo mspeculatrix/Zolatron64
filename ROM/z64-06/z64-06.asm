@@ -199,7 +199,7 @@ ALIGN &100        ; start on new page
   rti
 
 .version_str
-  equs "ZolOS v06", 0
+  equs "ROM v06", 0
 
 ORG $fffa
   equw NMI_handler  ; vector for NMI

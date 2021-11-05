@@ -83,7 +83,7 @@
   txa                     ; A now contains X position
   cpy #1
   bcc lcd_move_curs       ; Y is less than 1
-  adc $40                 ; if we want second line, add $40
+  adc #$3F                 ; if we want second line, add $40
 .lcd_move_curs
   ora #LCD_SET_DDRAM      ; OR with LCD_SET_DDRAM command byte
   jsr lcd_cmd
