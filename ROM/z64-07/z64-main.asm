@@ -134,8 +134,6 @@ ORG $C000         ; This is where the actual code starts.
   sta MSG_VEC+1
   jsr lcd_prt_msg
   
-  jsr serial_send_prompt
-  
   cli                     	  ; enable interrupts
 
 ; --------- MAIN LOOP ----------------------------------------------------------
@@ -143,6 +141,7 @@ ORG $C000         ; This is where the actual code starts.
   lda UART_STATUS_REG       ; load our serial status register
   and #UART_FL_RX_NUL_RCVD  ; is the 'null received' bit set?
   bne process_rx            ; if yes, process the buffer
+  clc
   ldx UART_RX_IDX           ; load the value of the RX buffer index
   cpx #UART_RX_BUF_LEN      ; are we at the limit?
   bcs process_rx            ; branch if X >= UART_RX_BUF_LEN
@@ -155,7 +154,7 @@ ORG $C000         ; This is where the actual code starts.
   and #UART_CLEAR_RX_FLAGS   ; zero all the RX flags
   sta UART_STATUS_REG        ; and re-save the register
   jsr parse_input            ; puts command token in FUNC_RESULT
-  lda FUNC_RESULT            ; get the result so we can print it
+  lda FUNC_RESULT            ; get the result
 
   cmp #CMD_TKN_NUL
   beq process_input_nul
@@ -164,14 +163,14 @@ ORG $C000         ; This is where the actual code starts.
   beq process_input_fail
   ; anything other than CMD_TKN_NUL and CMD_TKN_FAIL should be a valid cmd token
   sec
-  sbc $80                     ; this turns the token into an offset for our
-  asl A                       ; cmd_proc_ptrs table, once multiplied by 2
-  tay
-  lda cmd_proc_ptrs,Y
-  sta TBL_VEC_L
-  lda cmd_proc_ptrs+1,Y
-  sta TBL_VEC_H
-  jmp (TBL_VEC_L)
+  sbc #$80                    ; this turns the token into an offset for our
+  asl A                       ; cmd_proc_ptrs table, once it's multiplied by 2
+  tay                         ; transfor to Y to use as an offset
+  lda cmd_proc_ptrs,Y         ; load LSB of pointer
+  sta TBL_VEC_L               ; and store in our table vector
+  lda cmd_proc_ptrs+1,Y       ; load MSB of pointer
+  sta TBL_VEC_H               ; also store in table vector
+  jmp (TBL_VEC_L)             ; now jump to location indicated by pointer
 
 .process_input_fail
   lda #<err_msg_syntax        ; LSB of message
@@ -183,7 +182,7 @@ ORG $C000         ; This is where the actual code starts.
   jsr serial_send_prompt
   jmp process_rx_done
 
-; COMMAND POINTER TABLE
+; COMMAND POINTER JUMP TABLE
 .cmd_proc_ptrs               ; these entries need to be in the same order as
   equw cmd_proc_STAR         ; the CMD_TKN_* definitions
   equw cmd_proc_LM
@@ -194,21 +193,20 @@ ORG $C000         ; This is where the actual code starts.
 ; COMMAND PROCESS TABLE
 .cmd_proc_STAR
   jmp cmd_proc_end
-.cmd_proc_LM
+.cmd_proc_LM                ; list memory
   jmp cmd_proc_end
 .cmd_proc_PRT
   jmp cmd_proc_end
 .cmd_proc_VERBOSE
   jmp cmd_proc_end
-.cmd_proc_VERS
-  lda #<version_str        ; LSB of message
+.cmd_proc_VERS              ; print firmware version to serial
+  lda #<version_str         ; LSB of message
   sta MSG_VEC
-  lda #>version_str        ; MSB of message
+  lda #>version_str         ; MSB of message
   sta MSG_VEC+1
   jsr serial_send_msg
 .cmd_proc_end
   jsr serial_send_prompt
-  
 .process_rx_done
 ;  jsr byte_to_hex_str        ; puts string in TMP_TEXT_BUF buffer.
 ;  lda #<TMP_TEXT_BUF
@@ -240,7 +238,7 @@ ALIGN &100        ; start on new page
 ;-------------------------------------------------------------------------------
 
 .version_str
-  equs "ZolOS dev", 0
+  equs "ZolOS 07", 0
 
 ORG $fffa
   equw NMI_handler  ; vector for NMI
@@ -249,4 +247,4 @@ ORG $fffa
 
 .endrom
 
-SAVE "../bin/z64-ROM-dev.bin", startrom, endrom
+SAVE "../bin/z64-ROM-07.bin", startrom, endrom

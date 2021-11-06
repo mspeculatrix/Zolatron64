@@ -28,7 +28,7 @@ cd z64-${CODE_VERSION}
 echo "Assembling z64-${CODE_VERSION}.asm..."
 echo "- creating binary file: z64-ROM-${CODE_VERSION}.bin"
 echo "- saving Beebasm output to: output-${CODE_VERSION}.txt"
-beebasm -v -i z64-${CODE_VERSION}.asm > ../output/output-${CODE_VERSION}.txt
+beebasm -v -i z64-main.asm > ../output/output-${CODE_VERSION}.txt
 
 # Get return code of last command
 result=$?
