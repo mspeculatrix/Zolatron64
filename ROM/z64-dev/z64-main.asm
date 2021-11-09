@@ -49,8 +49,15 @@ EOTBL_MKR = 255                ; end of table marker
 
 INCLUDE "include/cfg_zero_page.asm"
 
-TMP_TEXT_BUF = $07A0      ; general-purpose buffer/scratchpad
-TMP_TEXT_BUF_SIZE = $40   ; 64 bytes
+TMP_BUF = $07A0      ; general-purpose buffer/scratchpad
+TMP_BUF_SIZE = $40   ; 64 bytes
+TMP_IDX = TMP_BUF + TMP_BUF_SIZE + 1
+TMP_OFFSET = TMP_IDX + 1
+TMP_COUNT = TMP_OFFSET + 1
+TMP_CHR = TMP_COUNT + 1
+STR_BUF = TMP_CHR + 1
+STR_BUF_SZ = $80    ; 128 bytes
+LOOP_COUNT = STR_BUF + STR_BUF_SZ + 1
 
 INCLUDE "include/cfg_acia.asm"
 
@@ -193,8 +200,104 @@ ORG $C000         ; This is where the actual code starts.
 ; COMMAND PROCESS TABLE
 .cmd_proc_STAR
   jmp cmd_proc_end
+
+; ----- WORK IN PROGRESS -------------------------------------------------------
 .cmd_proc_LM                ; list memory
+  ; should be followed by 2 addresses, optionally separated by a space.
+  ; That's a total of eight ASCII bytes in the buffer, which we need to read
+  ; as pairs of characters which will be converted to their numeric equivalents.
+  ; As the addresses will be written as big-endian, we also need to convert to
+  ; little-endian format.
+  ; X currently contains the BUF_PTR for the rest of the text in the RX buffer
+  ; (after the command), although the first char is likely to be a space.
+  lda #0                    
+  sta TMP_COUNT             ; keep track of how many PAIRS of bytes we've read
+  sta LOOP_COUNT            ; & how many times through the loop
+  lda #1                    ; offset for LSB/MSB, to reverse order of bytes
+  sta TMP_OFFSET            ; - needs to be 1 then 0 for each pair
+.cmd_proc_LM_next2          ; get next pair of chars from buffer
+  ldy #1                    ; offset for where we're storing each byte from buf
+.cmd_proc_LM_next_byte
+  lda UART_RX_BUF,X         ; get next byte from serial buffer
+  ; somewhere in here we should probably check that these incoming chars
+  ; are in the range 0-9 A-F
+  inx                       ; increment for next time
+  cmp #0                    ; is the buffer char a null? Shouldn't be
+  beq cmd_proc_LM_fail      ; - that's an error
+  cmp #$20                  ; if it's a space, ignore it & get next byte
+  beq cmd_proc_LM_next_byte
+  sta BYTE_CONV_L,Y         ; store in BYTE_CONV buffer, high byte first
+  cpy #0                    ; if 0, we've now got the second of the 2 bytes
+  beq cmd_proc_LM_conv
+  dey                       ; otherwise go get low byte
+  jmp cmd_proc_LM_next_byte
+.cmd_proc_LM_conv           ; convert character pair to int byte value
+  ; we've got our pair of bytes in BYTE_CONV_L and BYTE_CONV_L+1
+  jsr hex_str_to_byte       ; convert them - result is in FUNC_RESULT
+  ; calculate offset for where want want to store this byte
+  ; it will be TMP_OFFSET + TMP_COUNT
+  lda TMP_OFFSET            ; starts at 1. Toggles between 0 and 1 each time
+  clc
+  adc TMP_COUNT             ; is 0 for first two passes, then 2 for second two
+  tay                       ; transfer to Y to use as offset
+  lda FUNC_RESULT           ; load the result from the previous conversion
+  sta TMP_BUF,Y             ; store in buffer, with offset
+  ; update counters
+  lda TMP_OFFSET            ; toggle between 0 & 1. Do this by EORing with 1
+  eor #1 
+  sta TMP_OFFSET
+  inc LOOP_COUNT            ; update counter
+  lda LOOP_COUNT            ; TMP_COUNT needs to be 0 when LOOP_COUNT is 0
+  and #%00000010            ; or 1, and 2 when LOOP_COUNT is 2 or 3. Do this
+  sta TMP_COUNT             ; by ANDing with 2.
+  lda #4
+  cmp LOOP_COUNT
+  beq cmd_proc_LM_output
+  jmp cmd_proc_LM_next2
+.cmd_proc_LM_output
+  ; check that there's nothing left in the RX buffer
+  lda UART_RX_BUF,X         ; should be null. Anything else is a mistake
+  cmp #0
+  beq cmd_proc_LM_o_ok
+  jmp cmd_proc_LM_fail
+
+
+
+.cmd_proc_LM_o_ok
+  ldy #0
+.cmd_proc_LM_o_next
+  lda TMP_BUF,Y 
+  sta TMP_CHR
+  jsr byte_to_hex_str       ; string version now in STR_BUF
+  lda #<STR_BUF             ; LSB of message
+  sta MSG_VEC
+  lda #>STR_BUF             ; MSB of message
+  sta MSG_VEC+1
+  jsr serial_send_msg
+  lda #$20  
+  jsr serial_send_char
+  cpy #3
+  beq cmd_proc_LM_o_end
+  iny
+  jmp cmd_proc_LM_o_next
+.cmd_proc_LM_o_end
+  lda #10
+  jsr serial_send_char
+  jmp cmd_proc_LM_end
+.cmd_proc_LM_chk
+  ; subtract one number from the other to check we have sensible numbers
+  ; see: https://retro64.altervista.org/blog/an-introduction-to-6502-math-addiction-subtraction-and-more/
+
+
+.cmd_proc_LM_fail
+  lda #<err_msg_cmd             ; LSB of message
+  sta MSG_VEC
+  lda #>err_msg_cmd             ; MSB of message
+  sta MSG_VEC+1
+  jsr serial_send_msg
+.cmd_proc_LM_end
   jmp cmd_proc_end
+; ------------------------------------------------------------------------------
 .cmd_proc_PRT
   jmp cmd_proc_end
 .cmd_proc_VERBOSE

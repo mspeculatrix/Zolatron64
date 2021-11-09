@@ -3,7 +3,9 @@
 ;
 
 ; convert 1-byte value to 2-char hex string
-.byte_to_hex_str              ; assumes that number to be converted is in A
+.byte_to_hex_str              ; assumes that byte to be converted is in TMP_CHR
+  pha : txa : pha : tya : pha
+  lda TMP_CHR
   tax                         ; keep a copy of A in X for later
   lsr A                       ; logical shift right 4 bits
   lsr A
@@ -11,17 +13,19 @@
   lsr A                       ; A now contains upper nibble of value
   tay                         ; put in Y to act as offset
   lda hex_chr_tbl,Y           ; load A with appropriate char from lookup table
-  sta TMP_TEXT_BUF            ; and stash that in the text buffer
+  sta STR_BUF            ; and stash that in the text buffer
   txa                         ; recover original value of A
   and #%00001111              ; mask to get lower nibble value
   tay                         ; again, put in Y to act as offset
   lda hex_chr_tbl,Y           ; load A with appropriate char from lookup table
-  sta TMP_TEXT_BUF+1          ; and stash that in the next byte of the buffer
+  sta STR_BUF+1          ; and stash that in the next byte of the buffer
   lda #CHR_NUL                ; and end with a null byte
-  sta TMP_TEXT_BUF+2
+  sta STR_BUF+2
+  pla : tay : pla : tax : pla
   rts
 
 .hex_str_to_byte              ; assumes text is in BYTE_CONV_H and BYTE_CONV_L
+  pha
   lda BYTE_CONV_H             ; load the high nibble character
   jsr asc_hex_to_bin          ; convert to number - result is in A
   asl A                       ; shift to high nibble
@@ -33,6 +37,7 @@
   jsr asc_hex_to_bin          ; convert to number - result is in A
   ora FUNC_RESULT             ; OR with previous result
   sta FUNC_RESULT             ; and store final result
+  pla
   rts
 
 .asc_hex_to_bin               ; assumes ASCII char val is in A
@@ -130,6 +135,7 @@
   iny                     ; one more for luck - or to move to start of next cmd
   jmp parse_next_chr      ; now let's try again
 .parse_end
-  stx BUF_PTR             ; for use parsing rest of input
+  ; buffer pointer is still in X
+  ; stx BUF_PTR             ; for use parsing rest of input
   rts
   

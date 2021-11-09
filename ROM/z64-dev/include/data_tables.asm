@@ -39,7 +39,9 @@ ALIGN &100        ; start on new page
 
 .err_msg_syntax
   equs "What?", 0
-
+.err_msg_cmd
+  equs "Bad command! Bad, bad command!", 0
+  
 .prompt_msg
   equs CHR_LINEEND, "Z>", 0
 

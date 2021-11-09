@@ -66,9 +66,9 @@
 .serial_send_hexval           ; assumes byte value is in A
   pha : txa : pha : tya : pha ; preserve registers
   jsr byte_to_hex_str
-  lda #<TMP_TEXT_BUF
+  lda #<TMP_BUF
   sta MSG_VEC
-  lda #>TMP_TEXT_BUF
+  lda #>TMP_BUF
   sta MSG_VEC+1
   jsr serial_send_msg
   pla : tay : pla : tax : pla ; restore registers
@@ -81,6 +81,7 @@
   rts
 
 .serial_send_msg
+  pha : tya : pha
   ldy #0                      ; set message offset to 0
 .serial_send_msg_chr
   lda (MSG_VEC),Y             ; load next char
@@ -90,6 +91,7 @@
   iny                         ; increment index
   jmp serial_send_msg_chr     ; go back for next character
 .serial_send_msg_end
+  pla : tay : pla
   rts
 
 .serial_send_prompt
