@@ -1,10 +1,10 @@
 ; FUNCTIONS: TEXT -- funcs_text.asm --------------------------------------------
-; v07 - 05 Nov 2021
+; v08 - 10 Nov 2021
 ;
 
 ; convert 1-byte value to 2-char hex string
 .byte_to_hex_str              ; assumes that byte to be converted is in TMP_CHR
-  pha : txa : pha : tya : pha
+  pha : phx : phy
   lda TMP_CHR
   tax                         ; keep a copy of A in X for later
   lsr A                       ; logical shift right 4 bits
@@ -21,7 +21,7 @@
   sta STR_BUF+1          ; and stash that in the next byte of the buffer
   lda #CHR_NUL                ; and end with a null byte
   sta STR_BUF+2
-  pla : tay : pla : tax : pla
+  ply : plx : pla
   rts
 
 .hex_str_to_byte              ; assumes text is in BYTE_CONV_H and BYTE_CONV_L

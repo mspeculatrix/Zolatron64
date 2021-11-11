@@ -1,5 +1,5 @@
 ; FUNCTIONS: LCD -- funcs_lcd.asm ----------------------------------------------
-; v07 - 05 Nov 2021
+; v08 - 10 Nov 2021
 ;
 .lcd_wait         ; check to see if LCD is ready to receive next byte
   pha             ; save current contents of A in stack, so it isn't corrupted
@@ -24,12 +24,10 @@
   pha               ; preserve A on the stack
   jsr lcd_wait      ; check LCD is ready to receive
   sta VIA_A_PORTB   ; assumes command byte is in A
-  lda #0            ; Clear RS/RW/E bits. With RS 0, we're writing to instr reg
-  sta VIA_A_PORTA
+  stz VIA_A_PORTA   ; Clear RS/RW/E bits. With RS 0, we're writing to instr reg
   lda #LCD_EX       ; Set E bit to send instruction
-  sta VIA_A_PORTA
-  lda #0            ; Clear RS/RW/E bits
-  sta VIA_A_PORTA
+  sta VIA_A_PORTA            
+  stz VIA_A_PORTA   ; Clear RS/RW/E bits
   pla               ; recover original value of A from stack
   rts
 

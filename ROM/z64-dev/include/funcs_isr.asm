@@ -1,11 +1,9 @@
 ; FUNCTIONS: INTERRUPT SERVICE ROUTINE (ISR) -- funcs_isr.asm ------------------
-; v06 - 04 Nov 2021
+; v07 - 10 Nov 2021
 ;
-ALIGN &100        ; start on new page
+ALIGN &100                ; start on new page
 .ISR_handler
-  pha             ; preserve CPU state on the stack
-  txa             ;                
-  pha             ;
+  pha : phx : phy         ; preserve CPU state on the stack
   ; Check which device caused the interrupt.
   bit ACIA_STAT_REG ; if it was the ACIA that set IRQ low, the N flag is now set
   bmi acia_isr      ; branch if N flag set to 1
@@ -19,8 +17,7 @@ ALIGN &100        ; start on new page
   beq acia_rx_set_null      ; if byte is the 0 terminator, go set the null flag
   cmp #CHR_LINEEND          ; or is it a line end?
   bne acia_isr_end          ; if not 0 or CR, go to next step
-  lda #CHR_NUL                    ; if it's a carriage return, replace the CR code
-  sta UART_RX_BUF,X			; we previously stored with a null
+  stz UART_RX_BUF,X			    ; if CR, replace with NULL
 .acia_rx_set_null
   lda UART_STATUS_REG       ; load our status register
   ora #UART_FL_RX_NUL_RCVD  ; set the null byte received flag
@@ -33,8 +30,6 @@ ALIGN &100        ; start on new page
   ; when there is other stuff here, implement the jump above
 
 .exit_isr
-  pla             ; resume original register state
-  tax             ;
-  pla             ;
+  ply : plx : pla           ; resume original register state
   rti
   

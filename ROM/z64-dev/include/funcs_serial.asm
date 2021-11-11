@@ -1,5 +1,5 @@
 ; FUNCTIONS: SERIAL -- funcs_serial.asm ----------------------------------------
-; v06 - 04 Nov 2021
+; v07 - 10 Nov 2021
 ;
 
 .acia_wait_send_clr
@@ -26,7 +26,7 @@
   sta UART_STATUS_REG       ; and re-save the register
   ldx #0                    ; our buffer offset index
 .get_rx_char
-  lda UART_RX_BUF,x         ; get the next byte in the buffer
+  lda UART_RX_BUF,X         ; get the next byte in the buffer
   beq end_print_rx          ; if it's a zero terminator, we're done
   jsr lcd_prt_chr           ; otherwise, print char to LCD
   inx                       ; increment index
@@ -35,9 +35,8 @@
   cpx #UART_RX_BUF_MAX      ; or are we at the end of the buffer?
   bne get_rx_char           ; if not, get another char
 .end_print_rx
-  ldx #0
-  stx UART_RX_IDX           ; reset buffer index
-  stx UART_RX_BUF           ; and reset first byte in buffer to 0
+  stz UART_RX_IDX           ; reset buffer index
+  stz UART_RX_BUF           ; and reset first byte in buffer to 0
   rts
 
 .serial_send_buffer         ; sends contents of send buffer and clears it
@@ -64,14 +63,14 @@
   rts
 
 .serial_send_hexval           ; assumes byte value is in A
-  pha : txa : pha : tya : pha ; preserve registers
+  pha : phx : phy ; preserve registers
   jsr byte_to_hex_str
   lda #<TMP_BUF
   sta MSG_VEC
   lda #>TMP_BUF
   sta MSG_VEC+1
   jsr serial_send_msg
-  pla : tay : pla : tax : pla ; restore registers
+  ply : plx : pla ; restore registers
   rts
 
 .serial_send_lineend

@@ -21,7 +21,9 @@ ALIGN &100        ; start on new page
   equb EOCMD_SECTION        ; comes at end of each section
 .cmd_tbl_ASCL               ; commands starting 'L'
 .cmd_LM
-  equs "M", CMD_TKN_LM      ; LM  
+  equs "M", CMD_TKN_LM      ; LM
+.cmd_LP 
+  equs "P", CMD_TKN_LP      ; LP
   equb EOCMD_SECTION
 .cmd_tbl_ASCP               ; commands starting 'P'
 .cmd_PRT
