@@ -1,5 +1,5 @@
 ; ACIA CONFIG -- cfg_acia.asm --------------------------------------------------
-; v07 - 24 Nov 2021
+; v06 - 04 Nov 2021
 ;
 ; ACIA addresses
 ACIA_DATA_REG = $B000 ; transmit/receive data register
@@ -15,16 +15,16 @@ UART_RX_BUF_MAX = 255 ; but this leaves some headroom. The MAX values are for
 UART_TX_BUF_LEN = 240 ; use in output routines.
 UART_TX_BUF_MAX = 255 ; 
 
-; see: cfg_page_2.asm for declaration of UART_STATUS_REG
+UART_STATUS_REG = $02A0 ; memory byte we'll use to store various flags
 ; masks for setting/reading/resetting flags
 ;UART_FL_RX_BUF_DATA = %00000001   ; Receive buffer has data
 ;UART_FL_RX_DATA_RST = %11111110   ; Reset mask
 UART_FL_RX_NUL_RCVD = %00000010   ; we've received a null terminator
 ; UART_FL_RX_BUF_FULL = %00001000
-UART_CLEAR_RX_FLAGS = %11110000   ; to be ANDed with reg to clear RX flags
+UART_CLEAR_RX_FLAGS = %11110000   ; to be ANDed with info reg to clear RX flags
 UART_FL_TX_BUF_DATA = %00010000   ; TX buffer has data to send
 UART_FL_TX_BUF_FULL = %10000000
-UART_CLEAR_TX_FLAGS = %00001111   ; to be ANDed with reg to clear TX flags
+UART_CLEAR_TX_FLAGS = %00001111   ; to be ANDed with info reg to clear TX flags
 
 ; Following are values for the control register, setting eight data bits, 
 ; no parity, 1 stop bit and use of the internal baud rate generator

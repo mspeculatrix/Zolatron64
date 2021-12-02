@@ -53,7 +53,8 @@
   beq serial_send_buf_end   ; if so, end it here
   jmp serial_send_next_char ; otherwise do the next char
 .serial_send_buf_end
-  stz UART_TX_IDX           ; re-zero the index
+  lda #CHR_NUL
+  sta UART_TX_IDX           ; re-zero the index
   rts
 
 .serial_send_char             ; send a single char - assumes char is in A
@@ -79,7 +80,7 @@
   rts
 
 .serial_send_msg
-  pha : phy
+  pha : tya : pha
   ldy #0                      ; set message offset to 0
 .serial_send_msg_chr
   lda (MSG_VEC),Y             ; load next char
@@ -89,13 +90,13 @@
   iny                         ; increment index
   jmp serial_send_msg_chr     ; go back for next character
 .serial_send_msg_end
-  ply : pla
+  pla : tay : pla
   rts
 
 .serial_send_prompt
-  lda #<prompt_msg            ; get LSB of message
+  lda #<prompt_msg         ; get LSB of message
   sta MSG_VEC                 ; save to message vector
-  lda #>prompt_msg            ; get MSB of message
+  lda #>prompt_msg         ; get MSB of message
   sta MSG_VEC+1               ; save to message vector + 1
   jsr serial_send_msg
   rts

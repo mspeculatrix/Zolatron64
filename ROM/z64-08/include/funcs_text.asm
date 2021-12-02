@@ -1,5 +1,5 @@
 ; FUNCTIONS: TEXT -- funcs_text.asm --------------------------------------------
-; v09 - 25 Nov 2021
+; v08 - 10 Nov 2021
 ;
 
 ; convert 1-byte value to 2-char hex string
@@ -19,7 +19,8 @@
   tay                         ; again, put in Y to act as offset
   lda hex_chr_tbl,Y           ; load A with appropriate char from lookup table
   sta STR_BUF+1               ; and stash that in the next byte of the buffer
-  stz STR_BUF+2               ; end with a null byte
+  lda #CHR_NUL                ; and end with a null byte
+  sta STR_BUF+2
   ply : plx
   rts
 
@@ -48,24 +49,6 @@
 .asc_hex_to_bin_end
   rts                         ; value is returned in A
 
-.res_word_to_hex_str          ; takes the 16-bit value in FUNC_RES_L/H and
-  pha                         ; converts to a four-byte hex string stored 
-  lda FUNC_RES_L              ; in STR_BUF
-  jsr byte_to_hex_str
-  lda STR_BUF                 ; STR_BUF contains the two chars for the low byte, 
-  sta TMP_WORD_L              ; but at locations 0 & 1.
-  lda STR_BUF + 1             ; Put these in temporary locations
-  sta TMP_WORD_H
-  lda FUNC_RES_H              ; Now process the high byte
-  jsr byte_to_hex_str         ; This is now in STR_BUF
-  lda TMP_WORD_L              ; Move our previous results into the appropriate
-  sta STR_BUF + 2             ; locations in STR_BUF
-  lda TMP_WORD_H
-  sta STR_BUF + 3
-  stz STR_BUF + 4             ; Null terminator
-  pla
-  rts
-
 ; ------------------------------------------------------------------------------
 ; COMMAND INPUT PARSING
 ; Inspired by keyword parsing in EhBASIC:
@@ -76,7 +59,7 @@
   sta FUNC_RESULT           ; 
   ldx #0                    ; init offset counter
   lda UART_RX_BUF           ; load first char in buffer
-  cmp #0                    ; if it's a zero, the buffer is empty
+  cmp #CHR_NUL              ; if it's a zero, the buffer is empty
   beq parse_cmd_nul
   sta TEST_VAL              ; store buffer char somewhere handy
 .parse_next_test
@@ -110,9 +93,8 @@
   lda UART_RX_BUF,X   ; get next char from buffer
   sta TEST_VAL        ; and put it somewhere handy - repurposing TEST_VAL
   lda (TBL_VEC_L),Y   ; load the next test char from our command table
-  bmi parse_token_found ; bit 7 will be set if this is a token - $80 or more
-;  cmp #$80            ; does it have a value $80 or more?
-;  bcs parse_token_found ; if >= $80, it's a token - success!
+  cmp #$80            ; does it have a value $80 or more?
+  bcs parse_token_found ; if >= $80, it's a token - success!
   cmp #EOCMD_SECTION  ; have we got to the end of the section without a match?
   beq parse_end       ; if so, we've failed, time to leave
   ; at this point, we've matched neither a token nor an end of section marker.
