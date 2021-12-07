@@ -16,7 +16,8 @@ Versions:
 * z64-05: Added some additional LCD printing options. At this point, we have a system that seems to reliably accept serial input and prints it to the LCD.
 * z64-06: Added parsing of commands received via serial. The commands are parsed, but nothing is done with them yet. All it does is print the token value for the command via serial. Also has routines for converting a one-byte value to a hex string representation, which I'll be needing for a planned memory monitor, and the opposite (string to byte).
 * z64-07: Implemented the commands that have been parsed - or, at least, stubs for them. Only one is actually working (VERS).
-* z64-dev: WORK IN PROGRESS:
+* z64-08: Some tidying up from v07. Basically consolidating stuff, so this should be regarded as a landmark version.
+* z64-dev: WORK IN PROGRESS.
 
 The output-nn.txt files in the _output_ folder are the output from Beebasm when the code is assembled. Just in case.
 
