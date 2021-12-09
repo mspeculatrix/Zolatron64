@@ -108,7 +108,7 @@ ORG $C000         ; This is where the actual code starts.
 .main
 
 ; Print initial message & prompt via serial
-  lda #CHR_LINEEND          ; start with a couple of line feeds
+  lda #CHR_LINEEND            ; start with a couple of line feeds
   jsr serial_send_char
   jsr serial_send_char
   lda #<start_msg             ; LSB of message
@@ -146,7 +146,7 @@ ORG $C000         ; This is where the actual code starts.
   lda UART_STATUS_REG         ; load our serial status register
   and #UART_FL_RX_NUL_RCVD    ; is the 'null received' bit set?
   bne process_rx              ; if yes, process the buffer
-  clc
+  clc                         ; is this necessary?  
   ldx UART_RX_IDX             ; load the value of the RX buffer index
   cpx #UART_RX_BUF_LEN        ; are we at the limit?
   bcs process_rx              ; branch if X >= UART_RX_BUF_LEN
@@ -171,9 +171,9 @@ ORG $C000         ; This is where the actual code starts.
   sbc #$80                    ; this turns the token into an offset for our
   asl A                       ; cmdprcptrs table, once it's multiplied by 2
   tay                         ; transfer to Y to use as an offset
-  lda cmdprcptrs,Y         ; load LSB of pointer
+  lda cmdprcptrs,Y            ; load LSB of pointer
   sta TBL_VEC_L               ; and store in our table vector
-  lda cmdprcptrs+1,Y       ; load MSB of pointer
+  lda cmdprcptrs+1,Y          ; load MSB of pointer
   sta TBL_VEC_H               ; also store in table vector
   jmp (TBL_VEC_L)             ; now jump to location indicated by pointer
 
@@ -253,7 +253,7 @@ ORG $C000         ; This is where the actual code starts.
   cmp LOOP_COUNT
   beq cmdprcLM_check
   jmp cmdprcLM_next2
-.cmdprcLM_check          ; check that values are sane
+.cmdprcLM_check             ; check that values are sane
   ; the four bytes defining the memory range are in the four bytes starting
   ; at TMP_ADDR_A. The MSB of the start address must be less than or equal to
   ; the MSB of the end address. If it's less than, the LSB value doesn't matter.
