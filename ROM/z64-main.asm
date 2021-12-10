@@ -1,45 +1,20 @@
-; Zolatron 64
-;
-; Experimental ROM code for Zolatron 6502-based microcomputer.
-;
-; From previous versions:
-;   - prints 'Zolatron 64' to the 16x2 LCD display on start up
-;   - sends a start-up message and prompt across the serial connection
-;   - receives on the serial port. It prints incoming strings to the LCD.
-;     These strings should be terminated with a null (ASCII 0) or 
-;     carriage return (ASCII 13).
-;	  - checks for size of receive buffer, to prevent overflows. (NOT TESTED)
-;   - has additional LCD print routines.
-; In this version:
-;   - added the byte_to_hex_str subroutine
-;   - WORK IN PROGRESS:
-;     - Adding command parsing
-;
-; BUT: There's no flow control. And because we're running on a 1MHz clock, it's
-; easily overwhelmed by incoming data. To make this work, the sending terminal
-; must have a delay between characters (easy to set in Minicom or CuteCom).
-; I'm currently using 10ms. I'm happy to live with this restriction for now.
-; This post was helpful: 
-; https://www.reddit.com/r/beneater/comments/qbilsu/6551_acia_question/
-;
-; TO DO:
-;   - Maybe implement flow control to manage incoming data.
+; ROM code for Zolatron 64 6502-based microcomputer.
 ;
 ; GitHub: https://github.com/mspeculatrix/Zolatron64/
 ; Blog: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
 ;
 ; Written for the Beebasm assembler
 ; Assemble with:
-; beebasm -v -i z64-<version>.asm
+; beebasm -v -i z64-main.asm
 ;
 ; Write to EEPROM with:
-; minipro -p AT28C256 -w z64-ROM-<version>.bin
+; minipro -p AT28C256 -w z64-ROM-dev.bin
 
 CPU 1                               ; use 65C02 instruction set
 
 ; COMMAND TOKENS
 ; These should be in alphabetical order. Where two or more commands share the
-; same few chars at the start, the longer commands should come first
+; same few chars at the start, the longer commands should come first.
 CMD_TKN_NUL = $00                   ; This is what happens when you just hit RTN
 CMD_TKN_FAIL = $01                  ; syntax error & whatnot
 CMD_TKN_STAR = $80                  ; *
@@ -52,6 +27,7 @@ CMD_TKN_VERS = CMD_TKN_VERBOSE + 1  ; VERS - show version
 EOCMD_SECTION = 0                   ; end of section marker for command table
 EOTBL_MKR = 255                     ; end of table marker
 
+; Include memory assignments etc
 INCLUDE "include/cfg_page_0.asm"
 ; PAGE 1 is the STACK
 INCLUDE "include/cfg_page_2.asm"
