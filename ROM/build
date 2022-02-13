@@ -20,8 +20,8 @@ while [ "$1" != "" ]; do
 done
 
 echo "Assembling z64-main.asm..."
-echo "beebasm -v -i z64-main-${CODE_VERSION}.asm > output/output-${CODE_VERSION}.txt"
-beebasm -v -i z64-main-${CODE_VERSION}.asm > output/output-${CODE_VERSION}.txt
+echo "beebasm -v -i z64-main.asm > output/output-${CODE_VERSION}.txt"
+beebasm -v -i z64-main.asm > output/output-${CODE_VERSION}.txt
 
 # Get return code of last command
 result=$?
