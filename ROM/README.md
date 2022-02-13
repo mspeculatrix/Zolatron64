@@ -7,7 +7,7 @@ I'm using a 32KB EEPROM chip, the AT28C256. So the code needs to sit in the top 
 Communication with the Zolatron is via serial at 9600 baud 8N1. As we're not using any form of flow control (yet) any terminal that connects to the Zolatron needs to have a slight delay after sending each character. I'm currently using 30ms, but will experiment with that. Data sent to the Zolatron should be terminated with a null character (ASCII 0) or the line end character – currently I'm using linefeed (ASCII 10, $0A).
 
 The branches are:
-* _unstable_: This is work in progress. It will contain code that is incomplete and/or buggy. It's what I'm working on at any given time.
+* _unstable_: This is work in progress. It will contain code that is incomplete and/or buggy. It's what I'm working on at any given time and so nothing is guaranteed to function.
 * _dev_: When each new feature is reasonably stable and complete, it gets merged back into this branch. The 'dev' branch should work reasonably well - as well as any of this is likely to work. But it may still have features (such as commands) that are incomplete, although they shouldn't cause problems.
 * _main_: Any time the 'dev' branch is acceptably stable and all current features are complete, they get merged back into 'main'. This won't happen frequently, so the 'main' branch will lag well behind.
 
