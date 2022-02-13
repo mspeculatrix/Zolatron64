@@ -34,19 +34,33 @@ ALIGN &100        ; start on new page
   equs "ERS", CMD_TKN_VERS        ; VERS
   equb EOCMD_SECTION
 
-; ===== MISC TABLES ============================================================
+; ===== ERROR TABLES ===========================================================
+
+.err_ptrs
+  equw err_msg_cmd
+  equw err_msg_hex_bin_conv
+  equw err_msg_read_hexbyte
+  equw err_msg_syntax
+
+.err_msg_cmd
+  equs "Bad command! Bad, bad command!", 0
+.err_msg_hex_bin_conv
+  equs "Error converting hex chars to byte",0
+.err_msg_read_hexbyte
+  equs "Error reading hex byte from input.",0
+.err_msg_syntax
+  equs "What?", 0
+
+; ===== MISC TABLES & STRINGS ==================================================
 
 ; HEX CHARACTER TABLE
 .hex_chr_tbl
   equs "0123456789ABCDEF"
 
-; ERROR MESSAGES
-.err_msg_syntax
-  equs "What?", 0
-.err_msg_cmd
-  equs "Bad command! Bad, bad command!", 0
-
 ; MESSAGES
+.memory_header
+  equs "ADDR  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F",0
+
 .prompt_msg
   equs CHR_LINEEND, "Z>", 0
 

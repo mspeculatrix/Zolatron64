@@ -176,6 +176,6 @@
   jmp parse_next_chr      ; now let's try again
 .parse_end
   ; buffer pointer is still in X
-  stx BUF_PTR             ; for use parsing rest of input
+  stx UART_RX_IDX         ; for other routines to use for parsing rest of input
   rts
   

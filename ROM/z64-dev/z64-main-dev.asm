@@ -15,6 +15,7 @@ CPU 1                               ; use 65C02 instruction set
 ; COMMAND TOKENS
 ; These should be in alphabetical order. Where two or more commands share the
 ; same few chars at the start, the longer commands should come first.
+; The order also has to be the same as that in data_tables.asm.
 CMD_TKN_NUL = $00                   ; This is what happens when you just hit RTN
 CMD_TKN_FAIL = $01                  ; syntax error & whatnot
 CMD_TKN_STAR = $80                  ; *
@@ -23,10 +24,12 @@ CMD_TKN_LP = CMD_TKN_LM + 1         ; LP - list memory page
 CMD_TKN_PRT = CMD_TKN_LP + 1        ; PRT - print string to LCD
 CMD_TKN_VERS = CMD_TKN_PRT + 1      ; VERS - show version
 
-; ERROR CODES
-READ_HEXBYTE_ERR    = $E0
-READ_ADDR_ERR       = $E1
-HEX_TO_BIN_ERR_CODE = $EE
+; ERROR CODES: must be in the same order as the error tables in data_tables.asm.
+; Must also be sequential, starting at 1.
+COMMAND_ERR_CODE      = 1
+HEX_TO_BIN_ERR_CODE   = COMMAND_ERR_CODE+1
+READ_HEXBYTE_ERR_CODE = HEX_TO_BIN_ERR_CODE+1
+SYNTAX_ERR_CODE       = READ_HEXBYTE_ERR_CODE+1
 
 EOCMD_SECTION = 0                   ; end of section marker for command table
 EOTBL_MKR = 255                     ; end of table marker
@@ -158,11 +161,10 @@ ORG $C000         ; This is where the actual code starts.
   jmp (TBL_VEC_L)             ; now jump to location indicated by pointer
 
 .process_input_fail
-  lda #<err_msg_syntax        ; LSB of message
-  sta MSG_VEC
-  lda #>err_msg_syntax        ; MSB of message
-  sta MSG_VEC+1
-  jsr serial_send_msg
+  lda SYNTAX_ERR_CODE
+  sta FUNC_ERR
+  jsr print_error
+
 .process_input_nul
   jsr serial_send_prompt
   jmp process_rx_done
@@ -191,19 +193,9 @@ ORG $C000         ; This is where the actual code starts.
 .cmdprcLM
   ; LM should be followed by 2 16-bit addresses in hex, optionally separated by 
   ; a space.
-  ; That's a total of eight ASCII chars in the buffer, which we need to read
-  ; as pairs of characters which will be converted to their numeric equivalents.
-  ; As the addresses will be written as big-endian, we also need to convert to
-  ; little-endian format.
-  ; X currently contains the BUF_PTR for the rest of the text in the RX buffer
-  ; (after the command), although the first char is likely to be a space.
-  ;stz TMP_COUNT             ; keep track of how many PAIRS of bytes we've read
-  ;stz LOOP_COUNT            ; & how many times through the loop
+  ; X currently contains the buffer index for the rest of the text in the RX 
+  ; buffer (after the command), although the first char is likely to be a space.
   stz FUNC_ERR
-  ;lda #0                    ; offset for TMP_ADDR_A
-  ;sta TMP_OFFSET            ; - needs to be 0 then 2
-  ;ldx BUF_PTR              ; not really needed
-  ;stz FUNC_RESULT
 ; --- GET & CONVERT HEX VALUE PAIRS --------------------------------------------
 ; Get the two, 4-char addresses.
 ; The byte values are stored at the four locations starting at TMP_ADDR_A
@@ -221,9 +213,6 @@ ORG $C000         ; This is where the actual code starts.
   beq cmdprcLM_check
   iny
   jmp cmdprcLM_next_addr
-
-
-
 ; --- CHECK VALUES: Check that values obtained are sane ------------------------
 ; The four bytes defining the memory range are in the four bytes starting
 ; at TMP_ADDR_A. The MSB of the start address must be less than or equal to
@@ -250,100 +239,6 @@ ORG $C000         ; This is where the actual code starts.
   jsr display_memory
   jmp cmdprc_end
 
-; ------------------------------------------------------------------------------
-; --- DISPLAY MEMORY                                                         ---
-; ------------------------------------------------------------------------------
-.display_memory
-; The start and end addresses must be stored at TMP_ADDR_A and TMP_ADDR_B.
-; We'll leave TMP_ADDR_B alone, but increment TMP_ADDR_B until the two match.
-
-; --- TEMP ROUTINE : print reversed (little-endian) numbers to serial ----------
-ldy #0
-.cmdprcLM_tmp
-  lda TMP_ADDR_A,Y 
-  jsr byte_to_hex_str        ; string version now in STR_BUF
-  lda #<STR_BUF              ; LSB of message
-  sta MSG_VEC
-  lda #>STR_BUF              ; MSB of message
-  sta MSG_VEC+1
-  jsr serial_send_msg
-  lda #$20  
-  jsr serial_send_char
-  cpy #3
-  beq cmdprcLM_tmp_end
-  iny
-  jmp cmdprcLM_tmp
-.cmdprcLM_tmp_end
-  lda #CHR_LINEEND
-  jsr serial_send_char
-; --- END OF TEMP SECTION ------------------------------------------------------
-
-  stz TMP_COUNT                 ; keep track how many bytes printed in each row
-.display_mem_next_line
-  lda TMP_ADDR_A_L             ; load the value of the byte at addr
-  sta FUNC_RES_L           ; puts ASCII string in STR_BUF
-  lda TMP_ADDR_A_H
-  sta FUNC_RES_H           ; puts ASCII string in STR_BUF
-  jsr res_word_to_hex_str ; creates ASCII hex string starting at STR_BUF
-  lda #$20
-  sta STR_BUF + 4
-  stz STR_BUF + 5
-  jsr serial_send_str_buf
-
-.display_mem_next_addr
-  ldx #0
-  lda (TMP_ADDR_A)              ; load the value of the byte at addr
-  jsr byte_to_hex_str           ; puts ASCII string in STR_BUF
-  lda STR_BUF                   ; transferring STR_BUF to UART buffer
-  sta UART_TX_BUF,X             ;     "           "     "   "
-  inx                           ;     "           "     "   "
-  lda STR_BUF+1                 ;     "           "     "   "
-  sta UART_TX_BUF,X             ;     "           "     "   "
-  inx                           ;     "           "     "   "
-  lda #$20                      ; followed by a space
-  sta UART_TX_BUF,X
-  inx
-  stz UART_TX_BUF,X             ; followed by null terminator
-  jsr serial_send_buffer
-  inc TMP_COUNT
-  lda TMP_COUNT
-  cmp #$10                      ; have we got to 16?
-  beq display_mem_endline
-  jmp display_mem_chk_MSB
-.display_mem_endline      ; start a new line of output
-  lda #CHR_LINEEND
-  jsr serial_send_char
-  stz TMP_COUNT                 ; reset to 0 for next line
-.display_mem_chk_MSB
-  lda TMP_ADDR_A_H              ; compare the MSBs of the addresses
-  cmp TMP_ADDR_B_H
-  beq display_mem_chk_LSB          ; if equal, go on to check LSBs
-  jmp display_mem_inc_LSB          ; otherwise, go get the next byte from memory
-.display_mem_chk_LSB
-  lda TMP_ADDR_A_L              ; compare the LSBs
-  cmp TMP_ADDR_B_L
-  beq display_mem_output_end       ; if they're also equal, we're done
-.display_mem_inc_LSB
-  inc TMP_ADDR_A_L              ; increment LSB of start address
-  lda TMP_ADDR_A_L
-  cmp #$00                      ; has it rolled over?
-  bne display_mem_loopback     ; if not, go get next byte
-  inc TMP_ADDR_A_H              ; if it has rolled over, increment MSB
-.display_mem_loopback
-  lda TMP_COUNT
-  cmp #$00
-  beq display_mem_next_line
-  jmp display_mem_next_addr
-.display_mem_output_end
-  lda #CHR_LINEEND
-  jsr serial_send_char
-  jmp display_mem_end
-; ------------------------------------------------------------------------------
-.display_mem_fail
-  jsr cmd_proc_err_msg
-.display_mem_end
-  rts
-
 ;-------------------------------------------------------------------------------
 ; --- CMD: LP  : list memory page                                            ---
 ;-------------------------------------------------------------------------------
@@ -362,7 +257,7 @@ ldy #0
   jsr display_memory
   jmp cmdprcLP_end
 .cmdprcLP_fail
-  jsr cmd_proc_err_msg
+  jmp cmdprc_fail
 .cmdprcLP_end
   jmp cmdprc_end
 ;-------------------------------------------------------------------------------
@@ -382,7 +277,7 @@ ldy #0
   jmp cmdprc_end
 
 .cmdprc_fail
-  jsr cmd_proc_err_msg
+  jsr print_error
 .cmdprc_end
   jsr serial_send_prompt
 
@@ -407,7 +302,7 @@ ALIGN &100        ; start on new page
   rti
 
 .version_str
-  equs "ZolOS v.10", 0
+  equs "ZolOS v.11", 0
 
 ORG $fffa
   equw NMI_handler  ; vector for NMI
