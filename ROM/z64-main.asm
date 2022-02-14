@@ -28,7 +28,8 @@ CMD_TKN_VERS = CMD_TKN_PRT + 1      ; VERS - show version
 ; Must also be sequential, starting at 1.
 COMMAND_ERR_CODE      = 1
 HEX_TO_BIN_ERR_CODE   = COMMAND_ERR_CODE+1
-READ_HEXBYTE_ERR_CODE = HEX_TO_BIN_ERR_CODE+1
+PARSE_ERR_CODE        = HEX_TO_BIN_ERR_CODE+1
+READ_HEXBYTE_ERR_CODE = PARSE_ERR_CODE+1
 SYNTAX_ERR_CODE       = READ_HEXBYTE_ERR_CODE+1
 
 EOCMD_SECTION = 0                   ; end of section marker for command table
@@ -44,9 +45,9 @@ INCLUDE "include/cfg_page_2.asm"
 ; PAGE 4 is used as a serial RX buffer
 INCLUDE "include/cfg_page_5.asm"
 
-; Settings and address reservations for serial.
-INCLUDE "include/cfg_acia.asm"
-INCLUDE "include/cfg_via_lcd.asm"
+; Settings and address reservations for peripherals.
+INCLUDE "include/cfg_6551_acia.asm"
+INCLUDE "include/cfg_via_2x16_lcd.asm"
 
 
 ; --------- INITIALISATION -----------------------------------------------------
@@ -149,6 +150,10 @@ ORG $C000         ; This is where the actual code starts.
 
   cmp #CMD_TKN_FAIL           ; this means a syntax error
   beq process_input_fail
+
+  cmp #PARSE_ERR_CODE         ; this means a syntax error
+  beq process_input_fail
+
   ; anything other than CMD_TKN_NUL and CMD_TKN_FAIL should be a valid cmd token
   sec
   sbc #$80                    ; this turns the token into an offset for our
@@ -161,7 +166,7 @@ ORG $C000         ; This is where the actual code starts.
   jmp (TBL_VEC_L)             ; now jump to location indicated by pointer
 
 .process_input_fail
-  lda SYNTAX_ERR_CODE
+  lda #PARSE_ERR_CODE
   sta FUNC_ERR
   jsr print_error
 
@@ -220,6 +225,9 @@ ORG $C000         ; This is where the actual code starts.
 ; If it's equal, then the LSB of the start address must be less than that of
 ; the end address.
 .cmdprcLM_check
+  lda #0
+  cmp FUNC_ERR
+  bne cmdprcLM_chk_fail
   lda TMP_ADDR_B_H          ; MSB of end address
   cmp TMP_ADDR_A_H          ; MSB of start address
   beq cmdprcLM_chk_lsb      ; they're equal, so now check LSB
@@ -231,6 +239,8 @@ ORG $C000         ; This is where the actual code starts.
   beq cmdprcLM_chk_fail     ; if equal, then both addresses are same - an error
   bcs cmdprcLM_chk_nul
 .cmdprcLM_chk_fail
+  lda #SYNTAX_ERR_CODE
+  sta FUNC_ERR
   jmp cmdprc_fail
 .cmdprcLM_chk_nul           ; check there's nothing left in the RX buffer
   lda UART_RX_BUF,X         ; should be null. Anything else is a mistake
@@ -247,6 +257,10 @@ ORG $C000         ; This is where the actual code starts.
   lda #0                    ; check for error
   cmp FUNC_ERR
   bne cmdprcLP_fail
+.cmdprcLP_chk_nul           ; check there's nothing left in the RX buffer
+  lda UART_RX_BUF,X         ; should be null. Anything else is a mistake
+  cmp #0
+  bne cmdprcLP_input_fail
   lda FUNC_RESULT
   sta TMP_ADDR_A_H
   sta TMP_ADDR_B_H
@@ -256,15 +270,20 @@ ORG $C000         ; This is where the actual code starts.
   sta TMP_ADDR_B_L
   jsr display_memory
   jmp cmdprcLP_end
+.cmdprcLP_input_fail
+  lda #SYNTAX_ERR_CODE
+  sta FUNC_ERR
 .cmdprcLP_fail
   jmp cmdprc_fail
 .cmdprcLP_end
   jmp cmdprc_end
+
 ;-------------------------------------------------------------------------------
 ; --- CMD: PRT  :                                                            ---
 ;-------------------------------------------------------------------------------
 .cmdprcPRT
   jmp cmdprc_end
+  
 ;-------------------------------------------------------------------------------
 ; --- CMD: VERS  : print firmware version to serial                          ---
 ;-------------------------------------------------------------------------------
@@ -288,12 +307,12 @@ ORG $C000         ; This is where the actual code starts.
   jmp mainloop                  ; go around again
 
 ;INCLUDE "include/cmd_proc.asm"
+INCLUDE "include/funcs_conv.asm"
 INCLUDE "include/funcs_io.asm"
 INCLUDE "include/funcs_isr.asm"
-INCLUDE "include/funcs_lcd.asm"
 INCLUDE "include/funcs_math.asm"
 INCLUDE "include/funcs_serial.asm"
-INCLUDE "include/funcs_text.asm"
+INCLUDE "include/funcs_via_2x16_lcd.asm"
 INCLUDE "include/data_tables.asm"
 
 ALIGN &100        ; start on new page

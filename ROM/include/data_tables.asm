@@ -39,6 +39,7 @@ ALIGN &100        ; start on new page
 .err_ptrs
   equw err_msg_cmd
   equw err_msg_hex_bin_conv
+  equw err_msg_parse
   equw err_msg_read_hexbyte
   equw err_msg_syntax
 
@@ -46,8 +47,10 @@ ALIGN &100        ; start on new page
   equs "Bad command! Bad, bad command!", 0
 .err_msg_hex_bin_conv
   equs "Error converting hex chars to byte",0
+.err_msg_parse
+  equs "Huh! What was that?",0
 .err_msg_read_hexbyte
-  equs "Error reading hex byte from input.",0
+  equs "Having trouble reading hex byte from input",0
 .err_msg_syntax
   equs "What?", 0
 
@@ -59,7 +62,7 @@ ALIGN &100        ; start on new page
 
 ; MESSAGES
 .memory_header
-  equs "ADDR  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F",0
+  equs "ADDR  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F",10,0
 
 .prompt_msg
   equs CHR_LINEEND, "Z>", 0
