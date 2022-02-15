@@ -17,16 +17,6 @@
   beq acia_wait_byte_recvd
   rts
 
-.cmd_proc_err_msg
-  pha
-  lda #<err_msg_cmd             ; LSB of message
-  sta MSG_VEC
-  lda #>err_msg_cmd             ; MSB of message
-  sta MSG_VEC+1
-  jsr serial_send_msg
-  pla
-  rts
-
 .serial_print_rx_buf
   lda #LCD_CLS              ; clear display, reset display memory
   jsr lcd_cmd
