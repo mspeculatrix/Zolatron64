@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+CODE_VERSION="11"
+WRITE_ROM=1
+
+usage()
+{
+    echo "Error: Unknown option."
+    echo "Usage: build [[-v version] [-b]]"
+    echo "    -b build only. Don't attempt to write to EEPROM"
+}
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -b )    WRITE_ROM=0
+                ;;
+        * )     usage
+                exit 1
+    esac
+    shift
+done
+
+echo "Assembling z64-main.asm..."
+echo "beebasm -v -i z64-main.asm > output/output-${CODE_VERSION}.txt"
+beebasm -v -i z64-main.asm > output/output-${CODE_VERSION}.txt
+
+# Get return code of last command
+result=$?
+
+if [ $result -eq 0 ]; then
+    echo "- created binary file : bin/z64-ROM-${CODE_VERSION}.bin"
+    echo "- saved Beebasm output: output/output-${CODE_VERSION}.txt"
+    if [ $WRITE_ROM -eq 1 ]; then    
+        echo "Writing to EEPROM..."
+        echo "- minipro -p AT28C256 -w bin/z64-ROM-${CODE_VERSION}.bin"
+        minipro -p AT28C256 -w bin/z64-ROM-${CODE_VERSION}.bin
+    fi
+else
+    echo "*** ERROR *** Code failed to assemble. Huh."
+    exit 1
+fi
+
+exit 0
