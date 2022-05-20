@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
+<<<<<<< HEAD
 
 CODE_VERSION="21"
+=======
+CODE_VERSION="11"
+>>>>>>> e853aa37500bdedde611b732996f55e234f8d23a
 WRITE_ROM=1
 
 usage()
 {
     echo "Error: Unknown option."
+<<<<<<< HEAD
     echo "Usage: build [-b]"
+=======
+    echo "Usage: build [[-v version] [-b]]"
+>>>>>>> e853aa37500bdedde611b732996f55e234f8d23a
     echo "    -b build only. Don't attempt to write to EEPROM"
 }
 

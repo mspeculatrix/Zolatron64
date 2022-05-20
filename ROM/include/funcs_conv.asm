@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ; FUNCTIONS: Conversions -- funcs_conv.asm -------------------------------------
 ;
 
@@ -10,6 +11,15 @@
 ; ON EXIT : String in three bytes starting at STR_BUF. Third byte is a null
 ;           terminator.
 .byte_to_hex_str              
+=======
+; FUNCTIONS: TEXT -- funcs_text.asm --------------------------------------------
+; v09 - 25 Nov 2021
+;
+
+; Convert 1-byte value to 2-char hex string representation. Stores result in
+; three bytes starting at STR_BUF. Third byte is a null terminator.
+.byte_to_hex_str              ; assumes that byte to be converted is in A
+>>>>>>> e853aa37500bdedde611b732996f55e234f8d23a
   phx : phy
   tax                         ; keep a copy of A in X for later
   lsr A                       ; logical shift right 4 bits
@@ -25,6 +35,7 @@
   lda hex_chr_tbl,Y           ; load A with appropriate char from lookup table
   sta STR_BUF+1               ; and stash that in the next byte of the buffer
   stz STR_BUF+2               ; end with a null byte
+<<<<<<< HEAD
   txa                         ; Restore A to original value.
   ply : plx
   rts
@@ -42,6 +53,17 @@
   stz FUNC_RESULT             ; Zero-out return result
   lda BYTE_CONV_H             ; Load the high nibble character
   jsr asc_hex_to_bin          ; Convert to number - result is in A
+=======
+  ply : plx
+  rts
+  
+.hex_str_to_byte              ; assumes text is in BYTE_CONV_H and BYTE_CONV_L
+  pha : phx
+  stz FUNC_ERR                ; zero out function error
+  stz FUNC_RESULT             ; zero-out return result
+  lda BYTE_CONV_H             ; load the high nibble character
+  jsr asc_hex_to_bin          ; convert to number - result is in A
+>>>>>>> e853aa37500bdedde611b732996f55e234f8d23a
   ldx #$0
   cpx FUNC_ERR
   bne hex_str_to_byte_err
