@@ -2,6 +2,9 @@
 
 ; All subroutines to start with 'zd'
 
+\ ------------------------------------------------------------------------------
+\ --- ZD_INIT
+\ ------------------------------------------------------------------------------
 .zd_init 
   lda #ZD_CTRL_PINDIR               ; set pin directions
   sta ZD_CTRL_DDR
@@ -21,6 +24,9 @@
   ZD_SET_CR_OFF                     ; Takes line high
   rts
 
+\ ------------------------------------------------------------------------------
+\ --- ZD_INIT_PROCESS
+\ ------------------------------------------------------------------------------
 \ This provides the first communications with the RPi, sending a code
 \ designating what action is required.
 \ ON ENTRY: The relevant opcode should be in A.
@@ -49,6 +55,9 @@
 .zd_svr_resp_init_end
   rts
 
+\ ------------------------------------------------------------------------------
+\ --- ZD_RCV_DATA
+\ ------------------------------------------------------------------------------
 \ This receives data from the server and stores it starting at the address
 \ specified by TEMP_ADDR_A.
 \ ON ENTRY: TEMP_ADDR_A_L and TEMP_ADDR_A_H must contain the 16-bit address
@@ -58,9 +67,8 @@
   LED_ON LED_FILE_ACT
   jsr zd_waitForSA            ; Wait for /SA signal to go low
   lda FUNC_ERR             
-  bne zd_rcv_data_end          ; If this is anything but 0, that's an error
-  ; READ LOOP ------------------------------------------------------------------
-.zd_rcv_data_loop
+  bne zd_rcv_data_end         ; If this is anything but 0, that's an error
+.zd_rcv_data_loop             ; READ LOOP
   jsr zd_waitForSR            ; Wait for server to say there's a byte ready
   lda FUNC_ERR             
   bne zd_rcv_data_chkSA       ; If not 0, might be error or loading complete
@@ -79,7 +87,6 @@
   and #ZD_SA_MASK             ; If /SA is still low, this returns 0
   bne zd_rcv_data_end         ; If not 0, then we're done, otherwise...
   jmp zd_rcv_data_loop        ; Go around for the next byte
-  ; end of read loop -----------------------------------------------------------
 .zd_rcv_data_chkSA
   jsr zd_strobeDelay
   jsr zd_waitForSAoff
@@ -87,38 +94,9 @@
   LED_OFF LED_FILE_ACT
   rts
 
-\ Get a response code from the server. It's actually looking for an error code,
-\ which is why we're storing the result in FUNC_ERR. If it returns a 0, that
-\ means no error.
-\ ON ENTRY: You need to have set the appropriate data direction on the data
-\ port - eg, with the macro ZD_SET_DATADIR_INPUT.
-\ ON EXIT: FUNC_ERR contains an error code - 0 for success.
-.zd_svr_resp
-  ldx #128                    ; For longer timeout counter
-.zd_svr_resp_SA_waitloop
-  jsr zd_waitForSA            ; Wait for server's response - extended wait
-  lda FUNC_ERR             
-  beq zd_svr_resp_nextwait
-  dex
-  bne zd_svr_resp_SA_waitloop
-  jmp zd_svr_resp_svr_end      ; If this is anything but 0, that's an error
-.zd_svr_resp_nextwait
-  ZD_SET_CR_ON                ; Take /CR low
-  jsr zd_waitForSR            ; Wait for server's response
-  lda FUNC_ERR             
-  bne zd_svr_resp_svr_end      ; If this is anything but 0, that's an error
-  lda ZD_DATA_PORT            ; Read code
-  bne zd_svr_resp_resp_err     ; Anything but 0 is an error
-  ZD_SET_CR_OFF
-  sta BARLED_DAT
-  jmp zd_svr_resp_svr_end
-.zd_svr_resp_resp_err
-  sta FUNC_ERR                ; Store error code from server
-  sta VIAC_PORTA
-.zd_svr_resp_svr_end
-  rts
-
-
+\ ------------------------------------------------------------------------------
+\ --- ZD_SEND_STRBUF
+\ ------------------------------------------------------------------------------
 \ Send the contents of STR_BUF via the ZD data port. This feels like it might
 \ want to grow up to be an OS call someday.
 \ This can be used for sending things like a filename (the read_filename
@@ -140,7 +118,7 @@
   sta BARLED_DAT              ; Just for fun
   ZD_SET_CR_ON                ; Take /CR low - signals that we're ready to rock
   jsr zd_signalDelay          ; Slight pause to settle down
-  jsr zd_waitForSR            ; Wait for server's response - might need a long wait
+  jsr zd_waitForSR            ; Wait for server response - might need long wait
   lda FUNC_ERR
   bne zd_sendstrbuf_end
   ZD_SET_CR_OFF
@@ -150,8 +128,12 @@
   ZD_SET_CA_OFF
   rts
 
-.zd_signalDelay                     ; Pause to allow signals to stabilise
-  lda #%11000000		; setting bit 7 enables interrupts and bit 6 enables Timer 1
+\ ------------------------------------------------------------------------------
+\ --- ZD_SIGNALDELAY
+\ ------------------------------------------------------------------------------
+\ Pause to allow signals to stabilise
+.zd_signalDelay
+  lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
   sta ZD_IER
   lda #%00000000                    ; set timer to one-shot mode
   sta ZD_ACL
@@ -166,10 +148,13 @@
   lda ZD_T1CL                       ; Clears interrupt flag
   rts
 
+\ ------------------------------------------------------------------------------
+\ --- ZD_STROBEDELAY
+\ ------------------------------------------------------------------------------
 .zd_strobeDelay
-  lda #%11000000		; setting bit 7 enables interrupts and bit 6 enables Timer 1
+  lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
   sta ZD_IER
-  lda #%00000000                    ; set timer to one-shot mode
+  lda #%00000000                    ; Set timer to one-shot mode
   sta ZD_ACL
   lda #<ZD_STROBETIME               ; Set timer delay
   sta ZD_T1CL
@@ -182,6 +167,76 @@
   lda ZD_T1CL                       ; Clears interrupt flag
   rts
 
+\ ------------------------------------------------------------------------------
+\ --- ZD_SVR_RESP
+\ ------------------------------------------------------------------------------
+\ Get a response code from the server. It's actually looking for an error code,
+\ which is why we're storing the result in FUNC_ERR. If it returns a 0, that
+\ means no error.
+\ ON ENTRY: You need to have set the appropriate data direction on the data
+\ port - eg, with the macro ZD_SET_DATADIR_INPUT.
+\ ON EXIT: FUNC_ERR contains an error code - 0 for success.
+.zd_svr_resp
+  ldx #128                    ; For longer timeout counter
+.zd_svr_resp_SA_waitloop
+  jsr zd_waitForSA            ; Wait for server's response - extended wait
+  lda FUNC_ERR             
+  beq zd_svr_resp_nextwait
+  dex
+  bne zd_svr_resp_SA_waitloop
+  jmp zd_svr_resp_svr_end     ; If this is anything but 0, that's an error
+.zd_svr_resp_nextwait
+  ZD_SET_CR_ON                ; Take /CR low
+  jsr zd_waitForSR            ; Wait for server's response
+  lda FUNC_ERR             
+  bne zd_svr_resp_svr_end     ; If this is anything but 0, that's an error
+  lda ZD_DATA_PORT            ; Read code
+  bne zd_svr_resp_resp_err    ; Anything but 0 is an error
+  ZD_SET_CR_OFF
+  sta BARLED_DAT
+  jmp zd_svr_resp_svr_end
+.zd_svr_resp_resp_err
+  sta FUNC_ERR                ; Store error code from server
+  sta VIAC_PORTA
+.zd_svr_resp_svr_end
+  rts
+
+\ ------------------------------------------------------------------------------
+\ --- TIMER FUNCTIONS
+\ ------------------------------------------------------------------------------
+\ Check to see if the counter has incremented
+.zd_chk_timer
+  sei                           ; to the same value as the set limit. This is
+  pha                           ; basically a standard 16-bit comparison.
+  lda ZD_TIMER_COUNT + 1        ; compare the high bytes first as if they aren't
+  cmp #>ZD_TIMEOUT_LIMIT        ; equal, we don't need to compare the low bytes
+  bcc zd_chk_timer_less_than    ; count is less than limit
+  bne zd_chk_timer_more_than    ; count is more than limit
+  lda ZD_TIMER_COUNT            ; high bytes were equal - what about low bytes?
+  cmp #<ZD_TIMEOUT_LIMIT
+  bcc zd_chk_timer_less_than
+  bne zd_chk_timer_more_than
+  lda #EQUAL				            ; COUNT = LIMIT - this what we're looking for.
+  jmp zd_chk_timer_end
+.zd_chk_timer_less_than
+  lda #LESS_THAN			          ; COUNT < LIMIT - counter isn't big enough yet
+  jmp zd_chk_timer_end          ; so let's bug out.
+.zd_chk_timer_more_than
+  lda #MORE_THAN			          ; COUNT > LIMIT - shouldn't happen, but still...
+.zd_chk_timer_end
+  sta FUNC_RESULT
+  pla
+  cli
+  rts
+
+\ Stop timer running
+.zd_timer1_stop
+  lda ZD_IER
+  and #%10111111	; Setting bit 7 enables interrupts and bit 6 disables Timer 1
+  sta ZD_IER
+  rts
+
+\ Start timeoout timer
 .zd_timeout_timer_start
   stz ZD_TIMER_COUNT
   stz ZD_TIMER_COUNT + 1
@@ -195,12 +250,9 @@
   sta ZD_T1CH                       ; Starts timer
   rts
 
-.zd_timer1_stop
-  lda ZD_IER
-  and #%10111111	; Setting bit 7 enables interrupts and bit 6 disables Timer 1
-  sta ZD_IER
-  rts
-
+\ ------------------------------------------------------------------------------
+\ --- FLOW CONTROL FUNCTIONS
+\ ------------------------------------------------------------------------------
 .zd_waitForSA
   pha : phx
   jsr zd_timeout_timer_start
@@ -275,30 +327,7 @@
   plx : pla
   rts
 
-.zd_chk_timer                   ; check to see if the counter has incremented
-  sei                           ; to the same value as the set limit. This is
-  pha                           ; basically a standard 16-bit comparison.
-  lda ZD_TIMER_COUNT + 1        ; compare the high bytes first as if they aren't
-  cmp #>ZD_TIMEOUT_LIMIT        ; equal, we don't need to compare the low bytes
-  bcc zd_chk_timer_less_than    ; count is less than limit
-  bne zd_chk_timer_more_than    ; count is more than limit
-  lda ZD_TIMER_COUNT            ; high bytes were equal - what about low bytes?
-  cmp #<ZD_TIMEOUT_LIMIT
-  bcc zd_chk_timer_less_than
-  bne zd_chk_timer_more_than
-  lda #EQUAL				            ; COUNT = LIMIT - this what we're looking for.
-  jmp zd_chk_timer_end
-.zd_chk_timer_less_than
-  lda #LESS_THAN			          ; COUNT < LIMIT - counter isn't big enough yet
-  jmp zd_chk_timer_end          ; so let's bug out.
-.zd_chk_timer_more_than
-  lda #MORE_THAN			          ; COUNT > LIMIT - shouldn't happen, but still...
-.zd_chk_timer_end
-  sta FUNC_RESULT
-  pla
-  cli
-  rts
-
+\ --- DATA ---------------------------------------------------------------------
 .load_msg
   equs "Loading...",0
 .load_complete_msg

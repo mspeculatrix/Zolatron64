@@ -1,6 +1,6 @@
 ; FUNCTIONS: LCD -- funcs_lcd.asm ----------------------------------------------
 
-.lcd_clear_buf                ; fill LCD buffer with spaces
+.lcd_clear_buf                ; Fill the LCD buffer with spaces
   ldy #0
   lda #CHR_SPACE
 .lcd_clear_buf_next
@@ -43,9 +43,10 @@
 ;  pla
   rts
 
-; ------------------------------------------------------------------------------
-;  lcd_prt_linebuf  :  print a line from the buffer to the LCD           ---
-; ------------------------------------------------------------------------------
+\ ------------------------------------------------------------------------------
+\ ---  LCD_PRT_LINEBUF
+\ ------------------------------------------------------------------------------
+\ Print a line from the buffer to the LCD
 .lcd_prt_linebuf
 ; Prints a line's worth from the LCD_BUF buffer. Which line is determined by the
 ; offset, which should be in Y (0 or 1 for a 2-line display, 0-3 for a 4-line).
@@ -202,18 +203,18 @@
   jsr lcd_prt_chr
   rts
 
-; ------------------------------------------------------------------------------
-;  lcd_set_cursor  :  SET CURSOR
-;  Implements: OSLCDSC
-;  - Assumes X & Y co-ords have been put in X and Y.
-;  - X should contain the X param in range 0-15.
-;  - Y should be 0 or 1.
-; ------------------------------------------------------------------------------
+\ ------------------------------------------------------------------------------
+\ ---  LCD_SET_CURSOR
+\ ---  Implements: OSLCDSC
+\ ------------------------------------------------------------------------------
+\ ON ENTRY: X & Y co-ords have been put in X and Y.
+\           - X should contain the X param in range 0-15.
+\           - Y should be 0 or 1.
 .lcd_set_cursor
   txa                     ; A now contains X position
   cpy #1
   bcc lcd_move_curs       ; Y is less than 1
-  ora #$40                ; if we want second line, add $40 by setting bit 6
+  ora #$40                ; If we want second line, add $40 by setting bit 6
 .lcd_move_curs
   ora #LCD_SET_DDRAM      ; OR with LCD_SET_DDRAM command byte
   jsr lcd_cmd
