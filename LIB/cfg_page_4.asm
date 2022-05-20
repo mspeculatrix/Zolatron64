@@ -1,0 +1,60 @@
+; Addresses for PAGE 4 - buffers and misc storage locations
+
+\TMP_BUF_SZ = $20            ; 32 bytes
+STR_BUF_SZ = $20            ; 32 bytes
+
+\ The purpose of the following variables is to provide tempoary storage within
+\ subroutines/functions, as entry parameters for functions or to hold the
+\ results of functions. You should not assume they have any reliable value 
+\ outside of functions other than immediate return values.
+\TMP_BUF = $0400                       ; General-purpose buffer/scratchpad
+TEST_VAL    = $0400
+TMP_VAL     = TEST_VAL + 1 
+TMP_IDX     = TMP_VAL + 1            ; Index for use with buffers, loops
+\TMP_OFFSET = TMP_IDX + 1  
+\TMP_COUNT = TMP_OFFSET + 1            ; For misc temporary counters
+TMP_COUNT   = TMP_IDX + 1            ; For misc temporary counters
+\LOOP_COUNT = TMP_COUNT + 1 				    ; General-purpose loop counter
+\TMP_WORD_L  = LOOP_COUNT+1		        ; For temporary storage of 16-bit values
+TMP_WORD_L  = TMP_COUNT + 1		       ; For temporary storage of 16-bit values
+TMP_WORD_H  = TMP_WORD_L + 1
+
+FUNC_RESULT = TMP_WORD_H + 1       ; to hold the 8-bit result of a subroutine
+FUNC_ERR    = FUNC_RESULT + 1	   ; store an error code for functions
+BYTE_CONV_L = FUNC_ERR + 1       ; for converting bytes between num & string
+BYTE_CONV_H = BYTE_CONV_L + 1
+\BUF_PTR     = BYTE_CONV_H + 1    ; multi-purpose buffer pointer
+
+STR_BUF = BYTE_CONV_H + 1
+
+MATH_TMP16  = STR_BUF + STR_BUF_SZ + 1
+MATH_TMP_A  = MATH_TMP16			          ; Alias
+MATH_TMP_B  = MATH_TMP_A + 2
+
+PRG_EXIT_CODE = MATH_TMP_B + 2
+
+; Stream Select Register
+STREAM_SELECT_REG = PRG_EXIT_CODE + 1
+
+VIAA_TIMER_COUNT = STREAM_SELECT_REG + 1  ; times timer interrupt has triggered
+VIAA_TIMER_INTVL = VIAA_TIMER_COUNT + 2   ; value for interval - 2 bytes
+
+LCD_BUF  = VIAA_TIMER_INTVL + 2   ; *** REPLACE WITH STDOUT_BUF ***
+; next will be LCD_BUF + LCD_BUF_SZ
+
+
+; Variables for holding multi-byte vaues for math routines such as
+; comparing two numbers.
+;INT32uA = STREAM_SELECT_REG + 1  	; 32-bit unsigned INT - 4 bytes
+;INT32uB = INT32uA + 4  	  	      ; 32-bit unsigned INT - 4 bytes
+;INT16uA = INT32uB + 4	            ; 16-bit unsigned INT - 2 bytes
+;INT16uB = INT16uA + 2	            ; 16-bit unsigned INT - 2 bytes
+
+
+;ZD_TIMER_COUNT = LCD_BUF + LCD_BUF_SZ  ; DEFINED IN cfg_VIAB_ZolaDOS.asm
+
+;BARLED = VIAA_TIMER_INTVL + 2				      ; for the bar LED display
+;BARLED_L = BARLED
+;BARLED_H = BARLED + 1
+
+
