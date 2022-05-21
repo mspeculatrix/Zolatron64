@@ -3,8 +3,9 @@
 \ ------------------------------------------------------------------------------
 \ ---  DELAY
 \ ------------------------------------------------------------------------------
-\ General-purpose delay function. Assumes a 16-bit value in VIAA_TIMER_INTVL.
-\ This number should be the length of the desired delay in milliseconds.
+\ General-purpose delay function. 
+\ ON ENTRY: Assumes a 16-bit value in VIAA_TIMER_INTVL. This number should be 
+\           the length of the desired delay in milliseconds.
 .delay
   pha
   stz VIAA_TIMER_COUNT		    ; Zero-out counter

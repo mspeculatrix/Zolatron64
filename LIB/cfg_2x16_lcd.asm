@@ -1,11 +1,11 @@
-; LCD CONFIG -- cfg_2x16_lcd.asm ------------------------------------------
-;
-; Port B of the VIA is used for the Data pins on the LCD display.
-; Three pins on Port A are used for signal pins on the LCD:
-; - PA5	  RS		Register select
-;	- PA6	  RW		Read/Write
-;	- PA7	  E		  Execute
-; The other 5 pins - PA0-PA4  - are used for the LEDs.
+\ LCD CONFIG -- cfg_2x16_lcd.asm -----------------------------------------------
+\
+\ Port B of the VIA is used for the Data pins on the LCD display.
+\ Three pins on Port A are used for signal pins on the LCD:
+\ - PA5	  RS		Register select
+\	- PA6	  RW		Read/Write
+\	- PA7	  E		  Execute
+\ The other 5 pins - PA0-PA4  - are used for the LEDs.
 
 LED_ERR      = 0
 LED_BUSY	   = 1

@@ -1,23 +1,16 @@
-; FUNCTIONS: SERIAL -- funcs_6551_acia.asm -------------------------------------
-.uart_6551_init
-  stz ACIA_STAT_REG     ; reset ACIA
-  stz STDIN_STATUS_REG   ; also zero-out our status register
-  stz STDIN_IDX         ; zero buffer index
-  stz STDOUT_IDX        ; zero buffer index
-  stz PROC_REG          ; initialised process register
-  lda #ACIA_8N1_9600    ; set control register config - set speed & 8N1
-  sta ACIA_CTRL_REG
-  lda #ACIA_CMD_CFG     ; set command register config
-  sta ACIA_CMD_REG
-  rts
-  
+; 6551 ACIA SERIAL FUNCTIONS -- funcs_6551_acia.asm ----------------------------
+
+\ ------------------------------------------------------------------------------
+\ ---  ACIA_WAIT_SEND_CLR
+\ ------------------------------------------------------------------------------
+\ Pause until ACIA is able to receive more input. Blocking!
 .acia_wait_send_clr
-  pha                          ; push A to stack to save it
+  pha                          ; Push A to stack to save it
 .acia_wait_send_loop        
-  lda ACIA_STAT_REG            ; get contents of status register
+  lda ACIA_STAT_REG            ; Get contents of status register
   and #ACIA_TX_RDY_BIT         ; AND with ready bit
-  beq acia_wait_send_loop      ; if it's zero, we're not ready yet
-  pla                          ; otherwise, recover A from stack
+  beq acia_wait_send_loop      ; If it's zero, we're not ready yet
+  pla                          ; Otherwise, recover A from stack
   rts
 
 ;.acia_wait_byte_recvd          ; not using this yet. Ever?
@@ -36,6 +29,10 @@
 ;  ply : plx : pla ; restore registers
 ;  rts
 
+\ ------------------------------------------------------------------------------
+\ ---  ACIA_PRTERR
+\ ------------------------------------------------------------------------------
+\ ON ENTRY: Assumes error code in FUNC_ERR
 .acia_prterr                 ; mainly for debugging
   pha
   lda FUNC_ERR
@@ -44,39 +41,40 @@
   pla
   rts
 
-.acia_prtprompt               ; print the standard prompt
+\ ------------------------------------------------------------------------------
+\ ---  ACIA_PRTPROMPT
+\ ------------------------------------------------------------------------------
+\ Print the standard prompt.
+\ Should probably just replace this with the macro wherever it's used.
+.acia_prtprompt
   PRT_MSG prompt_msg, acia_println
   rts
 
 \ ------------------------------------------------------------------------------
+\ ---  UART_6551_INIT
+\ ------------------------------------------------------------------------------
+\ Initialise 6551 ACIA
+.uart_6551_init
+  stz ACIA_STAT_REG             ; Reset ACIA
+  stz STDIN_STATUS_REG          ; Also zero-out our status register
+  stz STDIN_IDX                 ; Zero buffer index
+  stz STDOUT_IDX                ; Zero buffer index
+  stz PROC_REG                  ; Initialise process register
+  lda #ACIA_8N1_9600            ; Set control register config - set speed & 8N1
+  sta ACIA_CTRL_REG
+  lda #ACIA_CMD_CFG             ; Set command register config
+  sta ACIA_CMD_REG
+  rts
+  
+\ ------------------------------------------------------------------------------
 \ ---  OS API Functions
 \ ------------------------------------------------------------------------------
 
-; Implements: OSWRCH
-.acia_writechar                ; Assumes ASCII code in A
-  jsr acia_wait_send_clr       ; Wait until ACIA is ready for another byte
-  sta ACIA_DATA_REG            ; Write to Data Reg. This sends the byte
-  rts
-
-; Implements: OSWRBUF
-.acia_sendbuf                  ; sends contents of send buffer and clears it
-  ldx #0                       ; offset index
- .acia_sendbuf_next_char
-  lda STDOUT_BUF,X             ; load next char
-  beq acia_sendbuf_end         ; if char is 0, we've finished
-  jsr acia_wait_send_clr       ; wait until ACIA is ready for another byte
-  sta ACIA_DATA_REG            ; write to Data Reg. This sends the byte
-  inx                          ; increment offset index
-  cpx STDOUT_IDX               ; check if we're at the buffer index
-  beq acia_sendbuf_end         ; if so, end it here
-  cpx #STR_BUF_LEN             ; check against max size, to prevent overrun
-  beq acia_sendbuf_end         ; if so, end it here
-  jmp acia_sendbuf_next_char   ; otherwise do the next char
-.acia_sendbuf_end
-  stz STDOUT_IDX               ; re-zero the index
-  rts
-
-; Implements: OSWRMSG
+\ ------------------------------------------------------------------------------
+\ ---  ACIA_PRINTLN
+\ ---  Implements: OSWRMSG
+\ ------------------------------------------------------------------------------
+\ ON ENTRY: Vector address to message string must be in MSG_VEC, MSG_VEC+1
 .acia_println
   pha : phy
   ldy #0                       ; Set message offset to 0
@@ -95,7 +93,11 @@
   ply : pla
   rts
 
-; Implements: OSWRSBUF
+\ ------------------------------------------------------------------------------
+\ ---  ACIA_PRT_STRBUF
+\ ---  Implements: OSWRSBUF
+\ ------------------------------------------------------------------------------
+\ ON ENTRY: Text to be send must be in STR_BUF and mul-terminated.
 .acia_prt_strbuf
   pha
   lda #<STR_BUF                              ; LSB of message
@@ -105,3 +107,38 @@
   jsr acia_println
   pla
   rts
+
+\ ------------------------------------------------------------------------------
+\ ---  ACIA_SENDBUF
+\ ---  Implements: OSWRBUF
+\ ------------------------------------------------------------------------------
+\ Sends contents of STDOUT_BUF buffer and clears it.
+\ ON ENTRY: Text to be send must be in STDOUT_BUF and mul-terminated.
+.acia_sendbuf
+  ldx #0                          ; Offset index
+ .acia_sendbuf_next_char
+  lda STDOUT_BUF,X                ; Load next char
+  beq acia_sendbuf_end            ; If char is 0, we've finished
+  jsr acia_wait_send_clr          ; Wait until ACIA is ready for another byte
+  sta ACIA_DATA_REG               ; Write to Data Reg. This sends the byte
+  inx                             ; Increment offset index
+  cpx STDOUT_IDX                  ; Check if we're at the buffer index
+  beq acia_sendbuf_end            ; If so, end it here
+  cpx #STR_BUF_LEN                ; Check against max size, to prevent overrun
+  beq acia_sendbuf_end            ; If so, end it here
+  jmp acia_sendbuf_next_char      ; Otherwise do the next char
+.acia_sendbuf_end
+  stz STDOUT_IDX                  ; Re-zero the index
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  ACIA_WRITECHAR
+\ ---  Implements: OSWRCH
+\ ------------------------------------------------------------------------------
+\ Write a single character to out stream.
+\ ON ENTRY: Char must be in A.
+.acia_writechar
+  jsr acia_wait_send_clr          ; Wait until ACIA is ready for another byte
+  sta ACIA_DATA_REG               ; Write to Data Reg. This sends the byte
+  rts
+

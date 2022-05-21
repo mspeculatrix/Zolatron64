@@ -18,3 +18,7 @@ CMD_TKN_PRT  = CMD_TKN_POKE + 1       ; PRT - print string to LCD
 CMD_TKN_RUN  = CMD_TKN_PRT + 1        ; RUN - run user program
 CMD_TKN_SAVE = CMD_TKN_RUN + 1        ; SAVE
 CMD_TKN_VERS = CMD_TKN_SAVE + 1       ; VERS - show version
+
+
+CMD_MAX_LEN = 8            ; Max number of chars in command names
+CMDS_PER_LINE = 6          ; Number of cmds we'll print per line when using HELP

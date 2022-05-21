@@ -1,12 +1,12 @@
 \-------------------------------------------------------------------------------
-\ --- CMD: LM  :  LIST MEMORY                                                ---
+\ --- CMD: LM  :  LIST MEMORY
 \-------------------------------------------------------------------------------
-; Expects two, two-byte hex addresses and prints the memory contents in that 
-; range. So the format is:
-;     LM hhhh hhhh
-; The first address must be lower than the second. The two addresses can be
-; optionally separated by a space.
-; Variables used: BYTE_CONV_L, TMP_OFFSET, TMP_COUNT, LOOP_COUNT, FUNC_RESULT
+\ Expects two, two-byte hex addresses and prints the memory contents in that 
+\ range. So the format is:
+\     LM hhhh hhhh
+\ The first address must be lower than the second. The two addresses can be
+\ optionally separated by a space.
+\ Variables used: BYTE_CONV_L, TMP_OFFSET, TMP_COUNT, LOOP_COUNT, FUNC_RESULT
 .cmdprcLM
   ; X currently contains the buffer index for the rest of the text in the RX 
   ; buffer (after the command), although the first char is likely to be a space.
@@ -15,19 +15,19 @@
 ; Get the two, 4-char addresses.
 ; The byte values are stored at the four locations starting at TMP_ADDR_A
 ; (which encompasses TMP_ADDR_A and TMP_ADDR_B).
-  ldy #0
-.cmdprcLM_next_addr         ; get next address from buffer
-  jsr read_hex_addr         ; puts bytes in FUNC_RES_L, FUNC_RES_H
+  ldy #0                        ; Offset from TMP_ADDR_A
+.cmdprcLM_next_addr             ; Get next address from buffer
+  jsr read_hex_addr             ; Puts bytes in FUNC_RES_L, FUNC_RES_H
   lda FUNC_ERR
   bne cmdprcLM_rd_addr_fail
-  lda FUNC_RES_L            ; starts at 1. Toggles between 0 and 1 each time
+  lda FUNC_RES_L
   sta TMP_ADDR_A,Y
-  iny                       ; inc Y to store the high byte
+  iny                           ; Increment Y to store the high byte
   lda FUNC_RES_H
   sta TMP_ADDR_A,Y
-  cpy #3
+  cpy #3                        ; If 3, then we've got all four bytes
   beq cmdprcLM_check
-  iny
+  iny                           ; Otherwise, get next byte
   jmp cmdprcLM_next_addr
 .cmdprcLM_rd_addr_fail
   jmp cmdprc_fail
@@ -42,8 +42,8 @@
   bne cmdprcLM_chk_fail
   lda TMP_ADDR_B_H          ; MSB of end address
   cmp TMP_ADDR_A_H          ; MSB of start address
-  beq cmdprcLM_chk_lsb      ; they're equal, so now check LSB
-  bcc cmdprcLM_chk_fail     ; start is more than end
+  beq cmdprcLM_chk_lsb      ; They're equal, so now check LSB
+  bcc cmdprcLM_chk_fail     ; Start is more than end
   jmp cmdprcLM_chk_nul
 .cmdprcLM_chk_lsb
   lda TMP_ADDR_B_L          ; LSB of end address
@@ -51,7 +51,7 @@
   beq cmdprcLM_chk_fail     ; If equal, then both addresses are same - an error
   bcs cmdprcLM_chk_nul
 .cmdprcLM_chk_fail
-  lda #SYNTAX_ERR_CODE
+  lda #SYNTAX_ERR_CODE      ; We'll return a syntax error
   sta FUNC_ERR
   jmp cmdprc_fail
 .cmdprcLM_chk_nul           ; Check there's nothing left in the RX buffer
@@ -60,9 +60,9 @@
   jsr display_memory
   jmp cmdprc_end
 
-\-------------------------------------------------------------------------------
-\ --- CMD: LOAD  : load file                                                 ---
-\-------------------------------------------------------------------------------
+\ ------------------------------------------------------------------------------
+\ --- CMD: LOAD  :  LOAD FILE
+\ ------------------------------------------------------------------------------
 .cmdprcLOAD
 ; ----- INITIATE ---------------------------------
   lda #ZD_OPCODE_LOAD         ; Tell ZolaDOS device we want to perform a LOAD
@@ -76,10 +76,10 @@
   jsr read_filename           ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne cmdprcLOAD_send_fn_err
-  jsr zd_send_strbuf
+  jsr zd_send_strbuf          ; Send the filename over the ZolaDOS port
   lda FUNC_ERR
   bne cmdprcLOAD_send_fn_err
-  jmp cmdprcLOAD_svr_resp
+  jmp cmdprcLOAD_svr_resp     ; If no errors, get the server's response
 .cmdprcLOAD_send_fn_err
   jmp cmdprcLOAD_err
 .cmdprcLOAD_svr_resp          ; ----- SERVER RESPONSE --------------------------
@@ -116,28 +116,28 @@
   ZD_SET_DATADIR_OUTPUT
   jmp cmdprc_end
 
-\-------------------------------------------------------------------------------
-\ --- CMD: LP  : list memory page                                            ---
-\-------------------------------------------------------------------------------
-; Expects a two-character hex byte in the input buffer. It uses this as the
-; high byte of an address and prints out the memory contents for that page (256
-; bytes). EG: if you enter 'C0', it gives the memory contents for the range
-; C000-C0FF.
+\ ------------------------------------------------------------------------------
+\ --- CMD: LP  :  LIST MEMORY PAGE
+\ ------------------------------------------------------------------------------
+\ Expects a two-character hex byte in the input buffer. It uses this as the
+\ high byte of an address and prints out the memory contents for that page (256
+\ bytes). EG: if you enter 'C0', it gives the memory contents for the range
+\ C000-C0FF.
 .cmdprcLP
-  jsr read_hex_byte         ; read 2 hex chars from input: result in FUNC_RESULT
-  lda FUNC_ERR              ; check for error
+  jsr read_hex_byte         ; Read 2 hex chars from input: result in FUNC_RESULT
+  lda FUNC_ERR              ; Check for error
   bne cmdprcLP_fail
-.cmdprcLP_chk_nul           ; check there's nothing left in the RX buffer
-  lda STDIN_BUF,X           ; should be null. Anything else is a mistake
+.cmdprcLP_chk_nul           ; Check there's nothing left in the RX buffer
+  lda STDIN_BUF,X           ; Should be null. Anything else is a mistake
   bne cmdprcLP_input_fail
-  lda FUNC_RESULT
-  sta TMP_ADDR_A_H
-  sta TMP_ADDR_B_H
-  lda #0
+  lda FUNC_RESULT           ; Get the result from jsr read_hex_byte
+  sta TMP_ADDR_A_H          ; Put the same byte in the high bytes of both
+  sta TMP_ADDR_B_H          ; the start address and end address
+  lda #0                    ; The low byte of the start address is 0
   sta TMP_ADDR_A_L
-  lda #$FF 
+  lda #$FF                  ; The low byte of the end address is $FF
   sta TMP_ADDR_B_L
-  jsr display_memory
+  jsr display_memory        ; Use our display memory routine to display
   jmp cmdprcLP_end
 .cmdprcLP_input_fail
   lda #SYNTAX_ERR_CODE
@@ -147,11 +147,15 @@
 .cmdprcLP_end
   jmp cmdprc_end
 
-\-------------------------------------------------------------------------------
-\ --- CMD: LS  : list storage                                                ---
-\-------------------------------------------------------------------------------
+\ ------------------------------------------------------------------------------
+\ --- CMD: LS  :  LIST STORAGE
+\ ------------------------------------------------------------------------------
+\ Inspired by the Unix ls command. Gets a list of available files from the
+\ ZolaDOS server. The files are shown without their '.BIN' suffixes because,
+\ when loading, we only use the main part of the filename with the LOAD command.
 .cmdprcLS
-  lda #ZD_OPCODE_LS
+  LED_ON LED_FILE_ACT
+  lda #ZD_OPCODE_LS           ; Start a ZolaDOS process with the code for LS
   jsr zd_init_process
   lda FUNC_ERR
   beq cmdprcLS_rcv_data       ; If result is 0, that's OK
@@ -212,4 +216,5 @@
   jmp cmdprcLS_show_loopback  ; On to next filename
 .cmdprcLS_end
   ZD_SET_DATADIR_OUTPUT
+  LED_OFF LED_FILE_ACT
   jmp cmdprc_end

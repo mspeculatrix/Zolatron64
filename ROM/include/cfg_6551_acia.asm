@@ -1,6 +1,5 @@
 ; ACIA CONFIG -- cfg_acia.asm --------------------------------------------------
 ; For 6551 ACIA
-; v07 - 24 Nov 2021
 ;
 ; ACIA addresses
 ACIA_DATA_REG = $B000 ; transmit/receive data register
@@ -39,7 +38,7 @@ UART_8N1_19K2 = %10011111
 ACIA_CMD_CFG = %00001001
 ; Mask values to be ANDed with status reg to check state of ACIA 
 ; ACIA_IRQ_SET = %10000000
-ACIA_RDRF_BIT = %00001000     ; Receive Data Register Full
+ACIA_RDRF_BIT = %00001000      ; Receive Data Register Full
 ; ACIA_OVRN_BIT = %00000100     ; Overrun error
 ; ACIA_FE_BIT   = %00000010     ; Frame error
 ACIA_TX_RDY_BIT = %00010000

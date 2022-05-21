@@ -1,79 +1,59 @@
-<<<<<<< HEAD
 ; FUNCTIONS: Conversions -- funcs_conv.asm -------------------------------------
 ;
 
-; ------------------------------------------------------------------------------
-; ---  BYTE TO HEX                                                           ---
-; ---  Implements: OSB2HEX                                                   ---
-; ------------------------------------------------------------------------------
-; Convert 1-byte value to 2-char hex string representation.
-; ON ENTRY: Byte to be converted must be in A.
-; ON EXIT : String in three bytes starting at STR_BUF. Third byte is a null
-;           terminator.
+\ ------------------------------------------------------------------------------
+\ ---  BYTE_TO_HEX_STR
+\ ---  Implements: OSB2HEX
+\ ------------------------------------------------------------------------------
+\ Convert 1-byte value to 2-char hex string representation.
+\ ON ENTRY: Byte to be converted must be in A.
+\ ON EXIT : String in three bytes starting at STR_BUF. Third byte is a null
+\           terminator.
 .byte_to_hex_str              
-=======
-; FUNCTIONS: TEXT -- funcs_text.asm --------------------------------------------
-; v09 - 25 Nov 2021
-;
-
-; Convert 1-byte value to 2-char hex string representation. Stores result in
-; three bytes starting at STR_BUF. Third byte is a null terminator.
-.byte_to_hex_str              ; assumes that byte to be converted is in A
->>>>>>> e853aa37500bdedde611b732996f55e234f8d23a
   phx : phy
-  tax                         ; keep a copy of A in X for later
-  lsr A                       ; logical shift right 4 bits
+  tax                         ; Keep a copy of A in X for later
+  lsr A                       ; Logical shift right 4 bits
   lsr A
   lsr A
   lsr A                       ; A now contains upper nibble of value
-  tay                         ; put in Y to act as offset
-  lda hex_chr_tbl,Y           ; load A with appropriate char from lookup table
+  tay                         ; Put in Y to act as offset
+  lda hex_chr_tbl,Y           ; Load A with appropriate char from lookup table
   sta STR_BUF                 ; and stash that in the text buffer
-  txa                         ; recover original value of A
-  and #%00001111              ; mask to get lower nibble value
-  tay                         ; again, put in Y to act as offset
-  lda hex_chr_tbl,Y           ; load A with appropriate char from lookup table
+  txa                         ; Recover original value of A
+  and #%00001111              ; Mask to get lower nibble value
+  tay                         ; Again, put in Y to act as offset
+  lda hex_chr_tbl,Y           ; Load A with appropriate char from lookup table
   sta STR_BUF+1               ; and stash that in the next byte of the buffer
-  stz STR_BUF+2               ; end with a null byte
-<<<<<<< HEAD
+  stz STR_BUF+2               ; End with a null byte
   txa                         ; Restore A to original value.
   ply : plx
   rts
   
-; ------------------------------------------------------------------------------
-; ---  HEX TO BYTE                                                           ---
-; ---  Implements: OSHEX2B                                                   ---
-; ------------------------------------------------------------------------------
-; Convert 1-byte value to 2-char hex string representation.
-; ON ENTRY: ASCII codes for hex value must be in BYTE_CONV_H and BYTE_CONV_L.
-; ON EXIT : Byte value is in FUNC_RESULT. Error code in FUNC_ERR.
+\ ------------------------------------------------------------------------------
+\ ---  HEX_STR_TO_BYTE
+\ ---  Implements: OSHEX2B
+\ ------------------------------------------------------------------------------
+\ Converts 1-byte value to 2-char hex string representation.
+\ ON ENTRY: ASCII codes for hex value must be in BYTE_CONV_H and BYTE_CONV_L.
+\ ON EXIT : - Byte value is in FUNC_RESULT. 
+\           - Error in FUNC_ERR
+
 .hex_str_to_byte              ; assumes text is in BYTE_CONV_H and BYTE_CONV_L
   pha : phx
   stz FUNC_ERR                ; Zero out function error
   stz FUNC_RESULT             ; Zero-out return result
   lda BYTE_CONV_H             ; Load the high nibble character
   jsr asc_hex_to_bin          ; Convert to number - result is in A
-=======
-  ply : plx
-  rts
-  
-.hex_str_to_byte              ; assumes text is in BYTE_CONV_H and BYTE_CONV_L
-  pha : phx
-  stz FUNC_ERR                ; zero out function error
-  stz FUNC_RESULT             ; zero-out return result
-  lda BYTE_CONV_H             ; load the high nibble character
-  jsr asc_hex_to_bin          ; convert to number - result is in A
->>>>>>> e853aa37500bdedde611b732996f55e234f8d23a
   ldx #$0
   cpx FUNC_ERR
   bne hex_str_to_byte_err
-  asl A                       ; shift to high nibble
+  asl A                       ; Shift to high nibble
   asl A 
   asl A 
   asl A
-  sta FUNC_RESULT             ; and store
-  lda BYTE_CONV_L             ; get the low nibble character
-  jsr asc_hex_to_bin          ; convert to number - result is in A
+  sta FUNC_RESULT             ; And store
+  lda BYTE_CONV_L             ; Get the low nibble character
+  jsr asc_hex_to_bin          ; Convert to number - result is in A
   ldx #$00
   cpx FUNC_ERR
   bne hex_str_to_byte_err
@@ -86,28 +66,42 @@
   plx : pla
   rts
 
-.asc_hex_to_bin               ; assumes ASCII char val is in A
+\ ------------------------------------------------------------------------------
+\ ---  ASC_HEX_TO_BIN
+\ ------------------------------------------------------------------------------
+\ Converts 1-byte integer representing an ASCII value for a hex character -
+\ ie, '0' to 'F' and returns the corresponding one-byte numerical value -
+\ ie, 0 to 15.
+\ ON ENTRY: A contains ASCII character value
+\ ON EXIT : - A contains corresponding numeric value
+\           - Error in FUNC_ERR
+.asc_hex_to_bin
   phx
-  stz FUNC_ERR                ; zero-out error
+  stz FUNC_ERR                ; Zero-out error
   sec
-  sbc #$30                    ; subtract $30 - this is good for 0-9
-  cmp #10                     ; is value more than 10?
-  bcc asc_hex_to_bin_end      ; if not, we're okay
-;  sec
-  sbc #$07                    ; otherwise subtract further for A-F
-  cmp #16                     ; result should be less than 16
+  sbc #$30                    ; Subtract $30 - this is good for 0-9
+  cmp #10                     ; Ss value more than 10?
+  bcc asc_hex_to_bin_end      ; If not, we're okay
+  sbc #$07                    ; Otherwise subtract further for A-F
+  cmp #16                     ; Result should be less than 16
   bcc asc_hex_to_bin_end
 .asc_hex_to_bin_err
-  ldx #HEX_TO_BIN_ERR_CODE    ; set error code
+  ldx #HEX_TO_BIN_ERR_CODE    ; Set error code
   stx FUNC_ERR
-  ; jsr serial_prt_err        ; FOR DEBUGGING ONLY
 .asc_hex_to_bin_end
   plx
-  rts                         ; value is returned in A
+  rts
 
-.res_word_to_hex_str          ; takes the 16-bit value in FUNC_RES_L/H and
-  pha                         ; converts to a four-byte hex string stored 
-  lda FUNC_RES_L              ; in STR_BUF
+\ ------------------------------------------------------------------------------
+\ ---  RES_WORD_TO_HEX_STR
+\ ------------------------------------------------------------------------------
+\ Takes the 16-bit value in FUNC_RES_L/H and converts it to a four-char
+\ hex string.
+\ ON ENTRY: 16-bit value expected in FUNC_RES_L, FUNC_RES_H
+\ ON EXIT : Hex string in STR_BUF
+.res_word_to_hex_str
+  pha 
+  lda FUNC_RES_L
   jsr byte_to_hex_str
   lda STR_BUF                 ; STR_BUF contains the two chars for the low byte, 
   sta TMP_WORD_L              ; but at locations 0 & 1.
@@ -119,6 +113,6 @@
   sta STR_BUF + 2             ; locations in STR_BUF
   lda TMP_WORD_H
   sta STR_BUF + 3
-  stz STR_BUF + 4             ; Null terminator
+  stz STR_BUF + 4             ; Add a null terminator
   pla
   rts

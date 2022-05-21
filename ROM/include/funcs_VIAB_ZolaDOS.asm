@@ -3,16 +3,17 @@
 ; All subroutines to start with 'zd'
 
 \ ------------------------------------------------------------------------------
-\ --- ZD_INIT
+\ ---  ZD_INIT
 \ ------------------------------------------------------------------------------
+\ Set up the VIA.
 .zd_init 
-  lda #ZD_CTRL_PINDIR               ; set pin directions
+  lda #ZD_CTRL_PINDIR               ; Set pin directions
   sta ZD_CTRL_DDR
-  lda #ZD_DATA_SET_OUT              ; set data port to output
+  lda #ZD_DATA_SET_OUT              ; Set data port to output
   sta ZD_DATA_DDR
   stz ZD_DATA_PORT
   ; Initialise timeout & delay timer - using Timer 1
-  lda #%11000000		; setting bit 7 enables interrupts and bit 6 enables Timer 1
+  lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
   ZD_SET_CO_ON                      ; Signal to server that Z64 is online. 
   sta ZD_IER
   lda #%00000000                    ; Set timer to one-shot mode
@@ -25,12 +26,12 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ --- ZD_INIT_PROCESS
+\ ---  ZD_INIT_PROCESS
 \ ------------------------------------------------------------------------------
-\ This provides the first communications with the RPi, sending a code
-\ designating what action is required.
-\ ON ENTRY: The relevant opcode should be in A.
-\ ON EXIT: FUNC_ERR contains an error code - 0 for success.
+\ When intiating a specific process, this provides the first communications with
+\ the RPi, sending a code designating which action is required.
+\ ON ENTRY: The relevant opcode must be in A.
+\ ON EXIT : FUNC_ERR contains an error code - 0 for success.
 .zd_init_process
   pha
   lda #ZD_DATA_SET_OUT
@@ -56,13 +57,13 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ --- ZD_RCV_DATA
+\ ---  ZD_RCV_DATA
 \ ------------------------------------------------------------------------------
 \ This receives data from the server and stores it starting at the address
 \ specified by TEMP_ADDR_A.
 \ ON ENTRY: TEMP_ADDR_A_L and TEMP_ADDR_A_H must contain the 16-bit address
-\ for where to store the data.
-\ ON EXIT: FUNC_ERR contains an error code - 0 for success.
+\           for where to store the data.
+\ ON EXIT : FUNC_ERR contains an error code - 0 for success.
 .zd_rcv_data
   LED_ON LED_FILE_ACT
   jsr zd_waitForSA            ; Wait for /SA signal to go low
@@ -95,14 +96,14 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ --- ZD_SEND_STRBUF
+\ ---  ZD_SEND_STRBUF
 \ ------------------------------------------------------------------------------
 \ Send the contents of STR_BUF via the ZD data port. This feels like it might
 \ want to grow up to be an OS call someday.
 \ This can be used for sending things like a filename (the read_filename
 \ function puts the filename into STR_BUF).
 \ ON ENTRY: The data needs to be in STR_BUF with a null terminator.
-\ ON EXIT: FUNC_ERR contains an error code - 0 for success.
+\ ON EXIT : FUNC_ERR contains an error code - 0 for success.
 .zd_send_strbuf
   ldx #0                      ; Offset for STR_BUF
   ZD_SET_CA_ON                ; Take /CA low
@@ -129,7 +130,7 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ --- ZD_SIGNALDELAY
+\ ---  ZD_SIGNALDELAY
 \ ------------------------------------------------------------------------------
 \ Pause to allow signals to stabilise
 .zd_signalDelay
@@ -149,7 +150,7 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ --- ZD_STROBEDELAY
+\ ---  ZD_STROBEDELAY
 \ ------------------------------------------------------------------------------
 .zd_strobeDelay
   lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
@@ -168,14 +169,14 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ --- ZD_SVR_RESP
+\ ---  ZD_SVR_RESP
 \ ------------------------------------------------------------------------------
 \ Get a response code from the server. It's actually looking for an error code,
 \ which is why we're storing the result in FUNC_ERR. If it returns a 0, that
 \ means no error.
-\ ON ENTRY: You need to have set the appropriate data direction on the data
-\ port - eg, with the macro ZD_SET_DATADIR_INPUT.
-\ ON EXIT: FUNC_ERR contains an error code - 0 for success.
+\ ON ENTRY: Must have set the appropriate data direction on the data port - 
+\           eg, with the macro ZD_SET_DATADIR_INPUT.
+\ ON EXIT : FUNC_ERR contains an error code - 0 for success.
 .zd_svr_resp
   ldx #128                    ; For longer timeout counter
 .zd_svr_resp_SA_waitloop
@@ -202,7 +203,7 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ --- TIMER FUNCTIONS
+\ ---  TIMER FUNCTIONS
 \ ------------------------------------------------------------------------------
 \ Check to see if the counter has incremented
 .zd_chk_timer
@@ -236,7 +237,7 @@
   sta ZD_IER
   rts
 
-\ Start timeoout timer
+\ Start timeout timer
 .zd_timeout_timer_start
   stz ZD_TIMER_COUNT
   stz ZD_TIMER_COUNT + 1
@@ -328,7 +329,5 @@
   rts
 
 \ --- DATA ---------------------------------------------------------------------
-.load_msg
-  equs "Loading...",0
 .load_complete_msg
   equs "Loading complete",0

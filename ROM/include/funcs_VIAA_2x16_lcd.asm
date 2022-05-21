@@ -1,6 +1,10 @@
-; FUNCTIONS: LCD -- funcs_lcd.asm ----------------------------------------------
+\ LCD FUNCTIONS -- funcs_lcd.asm -----------------------------------------------
 
-.lcd_clear_buf                ; Fill the LCD buffer with spaces
+\ ------------------------------------------------------------------------------
+\ ---  LCD_CLEAR_BUF
+\ ------------------------------------------------------------------------------
+\ Fill the LCD buffer with spaces
+.lcd_clear_buf
   ldy #0
   lda #CHR_SPACE
 .lcd_clear_buf_next
@@ -10,30 +14,22 @@
   bne lcd_clear_buf_next
   rts
 
-.lcd_wait         ; check to see if LCD is ready to receive next byte
-  pha             ; save current contents of A in stack, so it isn't corrupted
-  lda #%00000000  ; Set Port B as input
-  sta VIAA_DDRB
-.lcd_busy
-  LCD_SET_CTL LCD_RW
-  ora #(LCD_RW OR LCD_EX)
-  sta VIAA_PORTA
-  lda VIAA_PORTB
-  and #LCD_BUSY_FLAG      ; Sets zero flag - non-0 if LCD busy flag set
-  bne lcd_busy            ; If result was non-0, keep looping
-  LCD_SET_CTL LCD_RW
-  lda #%11111111          ; Set Port B as output
-  sta VIAA_DDRB
-  pla                     ; pull previous A contents back from stack
-  rts
-
-.lcd_clear_sig                      ; clear the RS, RW & E bits on PORT A
+\ ------------------------------------------------------------------------------
+\ ---  LCD_CLEAR_SIG
+\ ------------------------------------------------------------------------------
+\ Clear the RS, RW & E bits on PORT A
+.lcd_clear_sig
   lda VIAA_PORTA
   and #%00011111
   sta VIAA_PORTA
   rts
 
-.lcd_cmd                            ; send a command to the LCD
+\ ------------------------------------------------------------------------------
+\ ---  LCD_CMD
+\ ------------------------------------------------------------------------------
+\ Send a command to the LCD
+\ ON ENTRY: A must contain command byte
+.lcd_cmd
 ;  pha                              ; preserve A on the stack
   jsr lcd_wait                      ; check LCD is ready to receive
   sta VIAA_PORTB                    ; assumes command byte is in A
@@ -46,10 +42,10 @@
 \ ------------------------------------------------------------------------------
 \ ---  LCD_PRT_LINEBUF
 \ ------------------------------------------------------------------------------
-\ Print a line from the buffer to the LCD
+\ Prints a line's worth from the LCD_BUF buffer.
+\ ON ENTRY: Y must contain line index - 0 or 1 for a 2-line display, 
+\                                       0-3 for a 4-line display
 .lcd_prt_linebuf
-; Prints a line's worth from the LCD_BUF buffer. Which line is determined by the
-; offset, which should be in Y (0 or 1 for a 2-line display, 0-3 for a 4-line).
   pha : phx : phy
   ldx #0                      ; Set cursor to start of line
   jsr lcd_set_cursor          ; Now done with X
@@ -77,6 +73,26 @@
   ply : plx : pla
   rts
 
+\ ------------------------------------------------------------------------------
+\ ---  LCD_WAIT
+\ ------------------------------------------------------------------------------
+\ Wait until LCD is ready to receive next byte. Blocking!
+.lcd_wait         ; Check to see if LCD is ready to receive next byte
+  pha             ; Save current contents of A in stack, so it isn't corrupted
+  lda #%00000000  ; Set Port B as input
+  sta VIAA_DDRB
+.lcd_busy
+  LCD_SET_CTL LCD_RW
+  ora #(LCD_RW OR LCD_EX)
+  sta VIAA_PORTA
+  lda VIAA_PORTB
+  and #LCD_BUSY_FLAG      ; Sets zero flag - non-0 if LCD busy flag set
+  bne lcd_busy            ; If result was non-0, keep looping
+  LCD_SET_CTL LCD_RW
+  lda #%11111111          ; Set Port B as output
+  sta VIAA_DDRB
+  pla                     ; pull previous A contents back from stack
+  rts
 
 ;.lcd_prt_msg	            ; assumes LSB of msg address at MSG_VEC
 ;  ldy #0                  ; and MSB at MSG_VEC+1
@@ -89,59 +105,43 @@
 ;.lcd_prt_msg_end
 ;  rts
 
-; ------------------------------------------------------------------------------
-;  OS API Functions
-; ------------------------------------------------------------------------------
+\ ------------------------------------------------------------------------------
+\ ---  OS API Functions
+\ ------------------------------------------------------------------------------
 
-; ------------------------------------------------------------------------------
-;  lcd_prt_chr  :  PRINT CHARACTER
-;  Implements: OSLCDCH
-; ------------------------------------------------------------------------------
-.lcd_prt_chr                        ; assumes character is in A
-  pha
-  jsr lcd_wait                      ; check LCD is ready to receive
-  sta VIAA_PORTB
-  LCD_SET_CTL LCD_RS 
-  LCD_SET_CTL (LCD_RS OR LCD_EX)    ; Keep RS & set E bit to send instruction
-  LCD_SET_CTL LCD_RS                ; Clear E bits
-  pla
-  rts 
-
-; ------------------------------------------------------------------------------
-;  lcd_cls  :  CLEAR SCREEN
-;  Implements: OSLCDCLS
-; ------------------------------------------------------------------------------
+\ ------------------------------------------------------------------------------
+\ ---  LCD_CLS
+\ ---  Implements: OSLCDCLS
+\ ------------------------------------------------------------------------------
+\ Clear the LCD screen
 .lcd_cls
   jsr lcd_clear_buf
   lda #LCD_CLS          ; clear display, reset display memory
   jsr lcd_cmd
   rts
 
-; ------------------------------------------------------------------------------
-;  lcd_prt_err  :  PRINT ERROR
-;  Implements: OSLCDERR
-;  - Assumes error code is in FUNC_ERR
-; ------------------------------------------------------------------------------
-.lcd_prt_err
-  lda FUNC_ERR
-  dec A                   ; to get offset for table
-  asl A                   ; shift left to multiply by 2
-  tax                     ; move to X to use as offset
-  lda err_ptrs,X          ; get LSB of relevant address from the cmd_ptrs table
-  sta MSG_VEC             ; and put in MSG_VEC
-  lda err_ptrs+1,X        ; get MSB
-  sta MSG_VEC+1           ; and put in MSG_VEC high byte
-  jsr lcd_println
+\ ------------------------------------------------------------------------------
+\ ---  LCD_PRINT_BYTE
+\ ---  Implements: OSLCDPRB
+\ ------------------------------------------------------------------------------
+\ ON ENTRY: A must contain value of byte to be printed.
+.lcd_print_byte
+  jsr byte_to_hex_str               ; Result in three bytes starting at STR_BUF
+  lda STR_BUF
+  jsr lcd_prt_chr
+  lda STR_BUF + 1
+  jsr lcd_prt_chr
   rts
 
-; ------------------------------------------------------------------------------
-;  lcd_println  :  PRINT LINE
-;  Implements: OSLCDMSG
-;  Prints text to the LCD. The address of the text to be printed is assumed
-;  to be pointed to by MSG_VEC. The text is also written to the first line's
-;  worth of the LCD_BUF buffer, with other lines first being moved down a 
-;  line's worth. The last line's worth of existing text is overwritten.
-; ------------------------------------------------------------------------------
+\ ------------------------------------------------------------------------------
+\ ---  LCD_PRINTLN
+\ ---  Implements: OSLCDMSG
+\ ------------------------------------------------------------------------------
+\ Prints text to the LCD. The address of the text to be printed is assumed
+\ to be pointed to by MSG_VEC. The text is also written to the first line's
+\ worth of the LCD_BUF buffer, with other lines first being moved down a 
+\ line's worth. The last line's worth of existing text is overwritten.
+\ ON ENTRY: Vector address to mesg text in MSG_VEC
 .lcd_println
   pha : phx : phy
   ; First, we'll copy existing data in the buffer, so that each byte gets
@@ -190,17 +190,35 @@
   ply : plx : pla
   rts
 
-; ------------------------------------------------------------------------------
-;  lcd_print_byte  :  PRINT BYTE
-;  Implements: OSLCDPRB
-;  - Assumes byte value to be printed is in A. A is preserved.
-; ------------------------------------------------------------------------------
-.lcd_print_byte
-  jsr byte_to_hex_str               ; Result in three bytes starting at STR_BUF
-  lda STR_BUF
-  jsr lcd_prt_chr
-  lda STR_BUF + 1
-  jsr lcd_prt_chr
+\ ------------------------------------------------------------------------------
+\ ---  LCD_PRT_CHR
+\ ---  Implements: OSLCDCH
+\ ------------------------------------------------------------------------------
+.lcd_prt_chr                        ; assumes character is in A
+  pha
+  jsr lcd_wait                      ; check LCD is ready to receive
+  sta VIAA_PORTB
+  LCD_SET_CTL LCD_RS 
+  LCD_SET_CTL (LCD_RS OR LCD_EX)    ; Keep RS & set E bit to send instruction
+  LCD_SET_CTL LCD_RS                ; Clear E bits
+  pla
+  rts 
+
+\ ------------------------------------------------------------------------------
+\ ---  LCD_PRT_ERR
+\ ---  Implements: OSLCDERR
+\ ------------------------------------------------------------------------------
+\ ON ENTRY: Assumes error code in FUNC_ERR
+.lcd_prt_err
+  lda FUNC_ERR
+  dec A                   ; to get offset for table
+  asl A                   ; shift left to multiply by 2
+  tax                     ; move to X to use as offset
+  lda err_ptrs,X          ; get LSB of relevant address from the cmd_ptrs table
+  sta MSG_VEC             ; and put in MSG_VEC
+  lda err_ptrs+1,X        ; get MSB
+  sta MSG_VEC+1           ; and put in MSG_VEC high byte
+  jsr lcd_println
   rts
 
 \ ------------------------------------------------------------------------------
