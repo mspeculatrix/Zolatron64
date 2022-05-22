@@ -43,7 +43,7 @@ ORG ROMSTART          ; This is where the actual code starts.
 
   stz TIMER_STATUS_REG
 
-; ----- SETUP OS CALL VECTORS --------------------------------------------------
+\ ----- SETUP OS CALL VECTORS --------------------------------------------------
   lda #<read_hex_byte       ; OSRDHBYTE
   sta OSRDHBYTE_VEC
   lda #>read_hex_byte
@@ -147,12 +147,12 @@ ORG ROMSTART          ; This is where the actual code starts.
 \ ----     MAIN PROGRAM                                                     ----
 \ ------------------------------------------------------------------------------
 .main
-  LED_ON 0
-  LED_ON 1
-  LED_ON 2
-  LED_ON 3
-  LED_ON 4
-
+  LED_ON LED_ERR
+  LED_ON LED_BUSY
+  LED_ON LED_OK
+  LED_ON LED_FILE_ACT
+  LED_ON LED_DEBUG
+ 
 ; Print initial message & prompt via serial
   lda #CHR_LINEEND                  ; start with a couple of line feeds
   jsr OSWRCH
@@ -173,23 +173,23 @@ ORG ROMSTART          ; This is where the actual code starts.
   
 ;  jsr uart_SC28L92_test_msg
   jsr delay
-  LED_OFF 0
+  LED_OFF LED_ERR
   jsr delay
-  LED_OFF 1
+  LED_OFF LED_BUSY
   jsr delay
-  LED_OFF 2
+  LED_OFF LED_OK
   jsr delay
-  LED_OFF 3
+  LED_OFF LED_FILE_ACT
   jsr delay
-  LED_OFF 4
+  LED_OFF LED_DEBUG
 
-  cli                     	        ; enable interrupts
+  cli                     	        ; Enable interrupts
 
 .soft_reset
   jsr acia_prtprompt
 
-; --------- MAIN LOOP ----------------------------------------------------------
-.mainloop                           ; loop forever
+\ --------- MAIN LOOP ----------------------------------------------------------
+.mainloop                               ; Loop forever
 .main_chk_stdin
   lda STDIN_STATUS_REG
   and #STDIN_NUL_RCVD_FLG               ; Is the 'null received' bit set?
@@ -198,19 +198,20 @@ ORG ROMSTART          ; This is where the actual code starts.
   cpx #STR_BUF_LEN                      ; Are we at the limit?
   bcs process_input                     ; Branch if X >= STR_BUF_LEN
 ;.main_chk_SC28L92
-;  lda STDIN_STATUS_REG            ; load our serial status register
+;  lda STDIN_STATUS_REG                  ; Load our serial status register
 ;  and #DUART_RxA_BUF_FULL_FL
 ;  bne main_service_SC28L92
 ;  and DUART_RxA_NUL_RCVD_FL
 ;  bne main_service_SC28L92
-;  jmp main_chk_viac           ; if this produced 0, on to next check
+;  jmp main_chk_viac                     ; If 0, on to next check
 ;.main_chk_viac
-;  jsr viac_chk_timer                    ; Result in FUNC_RESULT
+;  jsr viac_chk_timer                    ; Result will be in FUNC_RESULT
 ;  lda FUNC_RESULT
 ;  cmp #LESS_THAN
 ;  beq mainloop
 ;  jsr barled_count
   jmp mainloop                          ; Loop
+\ --------- end of main loop ---------------------------------------------------
 
 .process_input
   \\ We're here because the null received bit is set or STDIN_BUF full
@@ -235,18 +236,18 @@ ORG ROMSTART          ; This is where the actual code starts.
   LED_OFF LED_ERR
   LED_OFF LED_OK
   LED_OFF LED_DEBUG
-  lda STDIN_STATUS_REG                   ; Get our info register
-  eor #STDIN_NUL_RCVD_FLG                ; Zero the received flag
-  sta STDIN_STATUS_REG                   ; and re-save the register
-  jsr parse_input                       ; Puts command token in FUNC_RESULT
-  lda FUNC_RESULT                       ; Get the result
+  lda STDIN_STATUS_REG                    ; Get our info register
+  eor #STDIN_NUL_RCVD_FLG                 ; Zero the received flag
+  sta STDIN_STATUS_REG                    ; and re-save the register
+  jsr parse_input                         ; Puts command token in FUNC_RESULT
+  lda FUNC_RESULT                         ; Get the result
   cmp #CMD_TKN_NUL
   beq process_input_nul
-  cmp #CMD_TKN_FAIL                     ; This means a syntax error
+  cmp #CMD_TKN_FAIL                       ; This means a syntax error
   beq process_input_fail
-  cmp #PARSE_ERR_CODE                   ; This means a syntax error
+  cmp #PARSE_ERR_CODE                     ; This means a syntax error
   beq process_input_fail
-  sta BARLED_CMD                        ; Display on barled
+  sta BARLED_CMD                          ; Display on barled
   \\ anything other than CMD_TKN_NUL and CMD_TKN_FAIL should be a valid token
   sec
   sbc #$80                        ; This turns the token into an offset for our
@@ -266,7 +267,7 @@ ORG ROMSTART          ; This is where the actual code starts.
   jmp process_input_done
 
 ;.main_service_SC28L92
-;  lda STDIN_STATUS_REG             ; Clear the NUL_RECVD and BUF_FULL flags
+;  lda STDIN_STATUS_REG           ; Clear the NUL_RECVD and BUF_FULL flags
 ;  and #DUART_RxA_CLR_FLAGS
 ;  sta STDIN_STATUS_REG
   
@@ -294,9 +295,9 @@ INCLUDE "include/cmds_V.asm"
 .cmdprc_end
   jsr acia_prtprompt
 .process_input_done
-  stz STDIN_IDX                 ; reset RX buffer index
+  stz STDIN_IDX                                   ; Reset RX buffer index
   LED_OFF LED_BUSY
-  jmp mainloop                  ; go around again
+  jmp mainloop                                    ; Go around again
 
 INCLUDE "include/funcs_VIAA.asm"
 INCLUDE "include/funcs_uart_6551_acia.asm"
@@ -353,8 +354,8 @@ ORG $FF00
 
 ORG $FFF4
 .reset
-  jmp soft_reset
-  jmp main
+  jmp soft_reset                      ; Print prompt and go to start of mainloop
+  jmp main                            ; Harder reset - go to start of ROM code
 .boot
   equw NMI_handler                          ; Vector for NMI
   equw startcode                            ; Reset vector to start of ROM code
@@ -362,4 +363,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-21.bin", startrom, endrom
+SAVE "bin/z64-ROM-22.bin", startrom, endrom
