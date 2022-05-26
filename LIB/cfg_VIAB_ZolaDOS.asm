@@ -1,8 +1,10 @@
-; Configuration for ZolaDOS mass storage system.
-; Uses 6522 VIA B at address $A400
-; PORT A is used for 8-bit parallel data - bidirectional.
-; PORT B is used for control signals
-; These connect to a Raspberry Pi running the program zolados.
+\ VIA_B - ZolaDOS
+\ Configuration for ZolaDOS mass storage system.
+\ Uses 65C22 VIA B at address $A400
+\ PORT A is used for 8-bit parallel data - bidirectional.
+\ PORT B is used for control signals
+\ These connect to a Raspberry Pi running the program zolados.
+\ The VIA's timers are also reserved for use by ZolaDOS.
 
 ZD_BASE_ADDR = $A400
 
