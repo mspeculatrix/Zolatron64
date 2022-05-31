@@ -1,6 +1,4 @@
-; ZERO PAGE CONFIG -- cfg_page_0.asm ----------------------------------------
-;
-; Zero-page addresses
+; ZERO PAGE CONFIG -- cfg_page_0.asm -------------------------------------------
 
 MSG_VEC      = $50    	 		      ; Message to print. LSB is MSG_VEC, MSB is +1
 FUNC_RES_L   = MSG_VEC + 2        ; For 16-bit subroutine results. Must be in
@@ -18,6 +16,3 @@ TMP_ADDR_B_H = TMP_ADDR_B + 1
 STDIN_STATUS_REG = TMP_ADDR_B_H + 1		; used to store various flags
 PROC_REG = STDIN_STATUS_REG + 1  			; process flags
 TIMER_STATUS_REG = PROC_REG + 1	      ; timer status register
-
-; PROCESS REGISTER FLAGS
-;IGNORE_MSB    = %00001000        ; ignore high byte

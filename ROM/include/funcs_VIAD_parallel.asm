@@ -11,8 +11,13 @@
   sta PRT_DATA_DDR
   stz PRT_DATA_PORT
   lda PRT_CTRL_PORT                 ; Set outputs high to start
-  ora #%11010000                    
+  ora PRT_AF_OFF
+  ora PRT_STRB_OFF                     
+  and PRT_INIT_ON
   sta PRT_CTRL_PORT
-
-
+  pha
+  PRT_PULSE_DELAY
+  pla
+  ora PRT_INIT_OFF
+  sta PRT_CTRL_PORT
   rts

@@ -30,6 +30,7 @@ INCLUDE "../LIB/cfg_VIAA.asm"
 INCLUDE "../LIB/cfg_2x16_lcd.asm"
 INCLUDE "../LIB/cfg_VIAB_ZolaDOS.asm"
 INCLUDE "../LIB/cfg_VIAC.asm"
+INCLUDE "../LIB/cfg_VIAD_parallel.asm"
 
 \ ----- INITIALISATION ---------------------------------------------------------
 ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
@@ -110,6 +111,14 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSLCDSC_VEC
   lda #>lcd_set_cursor
   sta OSLCDSC_VEC + 1
+
+; OSUSRINT
+
+  lda #<delay               ; OSDELAY
+  sta OSDELAY_VEC
+  lda #>delay
+  sta OSDELAY_VEC + 1
+
 
 ; Initialise registers
   stz STDIN_STATUS_REG
@@ -308,6 +317,7 @@ INCLUDE "include/funcs_io.asm"
 INCLUDE "include/funcs_isr.asm"
 ;INCLUDE "include/funcs_math.asm"
 INCLUDE "include/funcs_VIAA_2x16_lcd.asm"
+INCLUDE "include/funcs_VIAD_parallel.asm"
 INCLUDE "include/data_tables.asm"
 
 ALIGN &100        ; start on new page
@@ -351,6 +361,7 @@ ORG $FF00
   jmp (OSLCDSC_VEC)
   
   jmp (OSUSRINT_VEC)
+  jmp (OSDELAY_VEC)
 
 ORG $FFF4
 .reset

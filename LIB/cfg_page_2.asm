@@ -34,3 +34,4 @@ OSLCDPRB_VEC  = OSLCDMSG_VEC + 2
 OSLCDSC_VEC   = OSLCDPRB_VEC + 2
 
 OSUSRINT_VEC  = OSLCDSC_VEC + 2    ; Vector for user interrupt handling routines
+OSDELAY_VEC   = OSUSRINT_VEC + 2

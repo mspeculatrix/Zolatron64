@@ -68,8 +68,8 @@ ALIGN &100                ; start on new page
   ora #STDIN_NUL_RCVD_FLG   ; Set the null byte received flag
   sta STDIN_STATUS_REG      ; Re-save the status
 .isr_acia_end
-  inx                       ; Increment the index for next time
-  stx STDIN_IDX             ; and save it.
+  inx                       ; Increment the index for next time.
+  stx STDIN_IDX             ; If STDIN_IDX > 0, that means we've received data.
   lda ACIA_STAT_REG         ; Load ACIA status reg - resets interrupt bit
   jmp isr_exit
 

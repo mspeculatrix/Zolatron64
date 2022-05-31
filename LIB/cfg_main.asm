@@ -54,6 +54,7 @@ OSLCDPRB  = OSLCDMSG + 3
 OSLCDSC   = OSLCDPRB + 3
 
 OSUSRINT  = OSLCDSC + 3
+OSDELAY   = OSUSRINT + 3
 
 OSSFTRST  = $FFF4         ; Use direct JMP with these (not indirected/vectored)
 OSHRDRST  = $FFF7
@@ -61,8 +62,8 @@ OSHRDRST  = $FFF7
 USR_PAGE = $0800                    ; Address where user programs load
 ROMSTART = $C000
 
-EOCMD_SECTION = 0                   ; end of section marker for command table
-EOTBL_MKR     = 255                 ; end of table marker
+EOCMD_SECTION = 0                   ; End of section marker for command table
+EOTBL_MKR     = 255                 ; End of table marker
 
 CHR_LINEEND   = 10        ; ASCII code for line end - here we're using line feed
 CHR_SPACE     = 32
@@ -71,21 +72,21 @@ EQUAL = 1
 MORE_THAN = 2
 LESS_THAN = 0
 
-STDIN_NUL_RCVD_FLG = %00000001    ; we've received a null terminator
-STDIN_CLEAR_FLAGS  = %11110000    ; to be ANDed with reg to clear RX flags
+STDIN_NUL_RCVD_FLG = %00000001    ; We've received a null terminator
+STDIN_CLEAR_FLAGS  = %11110000    ; To be ANDed with reg to clear RX flags
 
 ; Values for stream select. STREAM_SELECT_REG address is defined in
 ; cfg_page_5.asm.
 ; Low nibble - Input Streams
 ; Bit       Stream
 ;  0        Keyboard
-;  1        Serial
+;  1        Serial (ACIA)
 ;  2        -- reserved --
 ;  3        -- reserved --
 ; High nibble - Output Streams
 ;  4        Screen
-;  5        Serial
-;  6        Serial2
+;  5        Serial (ACIA)
+;  6        Serial2 (DUART)
 ;  7        Printer
 ; Doesn't make much sense to use the LCD as a stream, so this is treated as a
 ; device in its own right, although its functions need to be accessible via

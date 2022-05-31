@@ -64,6 +64,8 @@
 \ --- CMD: LOAD  :  LOAD FILE
 \ ------------------------------------------------------------------------------
 .cmdprcLOAD
+\ Need to move most of this to a standard function (an OS call) so that we
+\ can use it for other load operations - eg, fl_load
 ; ----- INITIATE ---------------------------------
   lda #ZD_OPCODE_LOAD         ; Tell ZolaDOS device we want to perform a LOAD
   jsr zd_init_process
