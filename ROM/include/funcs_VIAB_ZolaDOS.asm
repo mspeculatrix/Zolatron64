@@ -57,15 +57,47 @@
   rts
 
 \ ------------------------------------------------------------------------------
+\ ---  ZD_LOADFILE
+\ ---  Implements: OSZDLOAD
+\ ------------------------------------------------------------------------------
+\ Loads a file into memory.
+\ ON ENTRY: STR_BUF must contain filename
+\           FILE_ADDR/+1 must contain address to which we wish to load file.
+\ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
+.zd_loadfile
+  stz FUNC_ERR                ; Zero out the error code
+  lda #ZD_OPCODE_LOAD         ; ----- INITIATE ---------------------------------
+  jsr zd_init_process         ; Tell ZolaDOS device we want to perform a LOAD
+  lda FUNC_ERR             
+  bne zd_loadf_end            ; If this is anything but 0, that's an error
+.zd_loadf_send_fn             ; ----- SEND FILENAME ----------------------------
+  jsr zd_send_strbuf          ; Send the filename over the ZolaDOS port
+  lda FUNC_ERR
+  bne zd_loadf_end
+.zd_loadf_svr_resp            ; ----- SERVER RESPONSE --------------------------
+  ZD_SET_DATADIR_INPUT
+;  ZD_SET_CR_ON                ; Take /CR low
+  jsr zd_svr_resp
+  lda FUNC_ERR
+  bne zd_loadf_end
+.zd_loadf_rcv_data            ; ----- TRANSFER DATA ----------------------------
+  jsr zd_waitForSAoff         ; Should add timeout handling here!!!!!
+  jsr zd_rcv_data
+.zd_loadf_end
+  ZD_SET_CA_OFF
+  ZD_SET_CR_OFF 
+  ZD_SET_DATADIR_OUTPUT
+  rts
+
+\ ------------------------------------------------------------------------------
 \ ---  ZD_RCV_DATA
 \ ------------------------------------------------------------------------------
 \ This receives data from the server and stores it starting at the address
-\ specified by TEMP_ADDR_A.
-\ ON ENTRY: TEMP_ADDR_A_L and TEMP_ADDR_A_H must contain the 16-bit address
+\ specified by FILE_ADDR.
+\ ON ENTRY: FILE_ADDR/+1 must contain the 16-bit address
 \           for where to store the data.
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
 .zd_rcv_data
-  LED_ON LED_FILE_ACT
   jsr zd_waitForSA            ; Wait for /SA signal to go low
   lda FUNC_ERR             
   bne zd_rcv_data_end         ; If this is anything but 0, that's an error
@@ -74,11 +106,11 @@
   lda FUNC_ERR             
   bne zd_rcv_data_chkSA       ; If not 0, might be error or loading complete
   lda ZD_DATA_PORT            ; Read byte on data bus
-  sta (TMP_ADDR_A)            ; Store byte
+  sta (FILE_ADDR)             ; Store byte
   sta BARLED_DAT              ; Show it on bar LED
-  inc TMP_ADDR_A_L            ; Increment address low byte
+  inc FILE_ADDR               ; Increment address low byte
   bne zd_rcv_data_loop_cont   ; If it didn't roll over to 0, carry on...
-  inc TMP_ADDR_A_H            ; Otherwise, increment high byte
+  inc FILE_ADDR + 1           ; Otherwise, increment high byte
 .zd_rcv_data_loop_cont
   jsr zd_waitForSRoff         ; Wait for /SR to go high again
   ZD_SET_CR_ON                ; Strobe /CR line
@@ -92,7 +124,6 @@
   jsr zd_strobeDelay
   jsr zd_waitForSAoff
 .zd_rcv_data_end
-  LED_OFF LED_FILE_ACT
   rts
 
 \ ------------------------------------------------------------------------------
@@ -116,7 +147,7 @@
   beq zd_sendstrbuf_end       ; Got a null byte so we're done
   inx
   sta ZD_DATA_PORT            ; Put byte on data bus
-  sta BARLED_DAT              ; Just for fun
+;  sta BARLED_DAT              ; Just for fun
   ZD_SET_CR_ON                ; Take /CR low - signals that we're ready to rock
   jsr zd_signalDelay          ; Slight pause to settle down
   jsr zd_waitForSR            ; Wait for server response - might need long wait

@@ -43,6 +43,7 @@ ORG ROMSTART          ; This is where the actual code starts.
   txs                 ; the LSB, as MSB is assumed to be $01
 
   stz TIMER_STATUS_REG
+  stz FLASH_BANK
 
 \ ----- SETUP OS CALL VECTORS --------------------------------------------------
   lda #<read_hex_byte       ; OSRDHBYTE
@@ -53,10 +54,19 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSRDHADDR_VEC
   lda #>read_hex_addr
   sta OSRDHADDR_VEC + 1
+  ;lda #<read_char           ; OSRDCH
+  ;sta OSRDCH_VEC
+  ;lda #>read_char
+  ;sta OSRDCH_VEC + 1
+  lda #<read_int16          ; OSRDINT16
+  sta OSRDINT16_VEC
+  lda #>read_int16
+  sta OSRDINT16_VEC + 1
   lda #<read_filename       ; OSRDFNAME
   sta OSRDFNAME_VEC
   lda #>read_filename
   sta OSRDFNAME_VEC + 1
+
   lda #<acia_sendbuf        ; OSWRBUF
   sta OSWRBUF_VEC
   lda #>acia_sendbuf
@@ -111,6 +121,11 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSLCDSC_VEC
   lda #>lcd_set_cursor
   sta OSLCDSC_VEC + 1
+
+  lda #<zd_loadfile         ; OSZDLOAD
+  sta OSZDLOAD
+  lda #>zd_loadfile
+  sta OSZDLOAD + 1
 
 ; OSUSRINT
 
@@ -181,15 +196,15 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta VIAA_TIMER_INTVL+1
   
 ;  jsr uart_SC28L92_test_msg
-  jsr delay
+;  jsr delay
   LED_OFF LED_ERR
-  jsr delay
+;  jsr delay
   LED_OFF LED_BUSY
-  jsr delay
+;  jsr delay
   LED_OFF LED_OK
-  jsr delay
+;  jsr delay
   LED_OFF LED_FILE_ACT
-  jsr delay
+;  jsr delay
   LED_OFF LED_DEBUG
 
   cli                     	        ; Enable interrupts
@@ -292,6 +307,7 @@ ORG ROMSTART          ; This is where the actual code starts.
 .cmdprcSTAR
   jmp cmdprc_end
 INCLUDE "include/cmds_B.asm"
+INCLUDE "include/cmds_F.asm"
 INCLUDE "include/cmds_H.asm"
 INCLUDE "include/cmds_J.asm"
 INCLUDE "include/cmds_L.asm"
@@ -302,6 +318,8 @@ INCLUDE "include/cmds_V.asm"
 .cmdprc_fail
   jsr os_print_error
 .cmdprc_end
+  ldx #0
+  stx STDIN_IDX
   jsr acia_prtprompt
 .process_input_done
   stz STDIN_IDX                                   ; Reset RX buffer index
@@ -315,7 +333,7 @@ INCLUDE "include/funcs_VIAB_ZolaDOS.asm"
 INCLUDE "include/funcs_conv.asm"
 INCLUDE "include/funcs_io.asm"
 INCLUDE "include/funcs_isr.asm"
-;INCLUDE "include/funcs_math.asm"
+INCLUDE "../LIB/funcs_math.asm"
 INCLUDE "include/funcs_VIAA_2x16_lcd.asm"
 INCLUDE "include/funcs_VIAD_parallel.asm"
 INCLUDE "include/data_tables.asm"
@@ -342,6 +360,7 @@ ORG $FF00
   jmp (OSRDHBYTE_VEC)
   jmp (OSRDHADDR_VEC)
   jmp (OSRDCH_VEC)
+  jmp (OSRDINT16_VEC)
   jmp (OSRDFNAME_VEC)
 
   jmp (OSWRBUF_VEC)
@@ -360,6 +379,10 @@ ORG $FF00
   jmp (OSLCDPRB_VEC)
   jmp (OSLCDSC_VEC)
   
+  jmp (OSZDLOAD_VEC)
+
+;  jmp (OSFLOAD_VEC)
+
   jmp (OSUSRINT_VEC)
   jmp (OSDELAY_VEC)
 

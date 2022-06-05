@@ -1,29 +1,26 @@
 ; Addresses for PAGE 4 - buffers and misc storage locations
 
-\TMP_BUF_SZ = $20            ; 32 bytes
 STR_BUF_SZ = $20            ; 32 bytes
 
 \ The purpose of the following variables is to provide tempoary storage within
 \ subroutines/functions, as entry parameters for functions or to hold the
 \ results of functions. You should not assume they have any reliable value 
 \ outside of functions other than immediate return values.
-\TMP_BUF = $0400                       ; General-purpose buffer/scratchpad
-TEST_VAL    = $0400
+FLASH_BANK  = $0400                   ; Number of current flash memory bank
+TEST_VAL    = FLASH_BANK + 1
 TMP_VAL     = TEST_VAL + 1 
-TMP_IDX     = TMP_VAL + 1            ; Index for use with buffers, loops
-\TMP_OFFSET = TMP_IDX + 1  
-\TMP_COUNT = TMP_OFFSET + 1            ; For misc temporary counters
-TMP_COUNT   = TMP_IDX + 1            ; For misc temporary counters
-\LOOP_COUNT = TMP_COUNT + 1 				    ; General-purpose loop counter
-\TMP_WORD_L  = LOOP_COUNT+1		        ; For temporary storage of 16-bit values
-TMP_WORD_L  = TMP_COUNT + 1		       ; For temporary storage of 16-bit values
+TMP_IDX     = TMP_VAL + 1             ; Index for use with buffers, loops
+TMP_COUNT   = TMP_IDX + 1             ; For misc temporary counters
+TMP_WORD_L  = TMP_COUNT + 1		        ; For temporary storage of 16-bit values
 TMP_WORD_H  = TMP_WORD_L + 1
 
-FUNC_RESULT = TMP_WORD_H + 1       ; to hold the 8-bit result of a subroutine
-FUNC_ERR    = FUNC_RESULT + 1	   ; store an error code for functions
-BYTE_CONV_L = FUNC_ERR + 1       ; for converting bytes between num & string
+FUNC_PARAM  = TMP_WORD_H + 1
+FUNC_PARAM_L = FUNC_PARAM	            ; Alias
+FUNC_PARAM_H = FUNC_PARAM_L + 1
+FUNC_RESULT = FUNC_PARAM_H + 1        ; To hold the 8-bit result of a subroutine
+FUNC_ERR    = FUNC_RESULT + 1	        ; Store an error code for functions
+BYTE_CONV_L = FUNC_ERR + 1            ; For converting bytes between num & str
 BYTE_CONV_H = BYTE_CONV_L + 1
-\BUF_PTR     = BYTE_CONV_H + 1    ; multi-purpose buffer pointer
 
 STR_BUF = BYTE_CONV_H + 1
 
@@ -40,7 +37,7 @@ VIAA_TIMER_COUNT = STREAM_SELECT_REG + 1  ; times timer interrupt has triggered
 VIAA_TIMER_INTVL = VIAA_TIMER_COUNT + 2   ; value for interval - 2 bytes
 
 LCD_BUF  = VIAA_TIMER_INTVL + 2   ; *** REPLACE WITH STDOUT_BUF ***
-; next will be LCD_BUF + LCD_BUF_SZ
+; next will be LCD_BUF + LCD_BUF_SZ + 1
 
 
 ; Variables for holding multi-byte vaues for math routines such as

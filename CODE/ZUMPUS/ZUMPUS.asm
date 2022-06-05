@@ -79,7 +79,7 @@ ORG USR_PAGE
   lda #59                     ; Start value
   sta VIAC_T1CL
   lda #0
-  sta VIAC_T1CH		            ; starts timer running
+  sta VIAC_T1CH		            ; Starts timer running
 
 .main
 ;  NEWLINE
@@ -102,17 +102,16 @@ ORG USR_PAGE
   bne init_set_loc
   jmp init_loop_wait
 .init_set_loc
-  ldx #20             ; MOD
+  ldx #20                       ; MOD
   phy
-  jsr roll_dice       ; Random number will be in A
+  jsr roll_dice                 ; Random number will be in A
   ply
   sta RANDOM_LOCS,Y
-  stz STDIN_IDX        ; clear the input buffer
-  lda STDIN_STATUS_REG ; reset the nul received flag
+  stz STDIN_IDX                 ; Clear the input buffer
+  lda STDIN_STATUS_REG          ; Reset the nul received flag
   and #STDIN_CLEAR_FLAGS
   sta STDIN_STATUS_REG
-  ;check that this number not already used
-  jsr init_check_unique
+  jsr init_check_unique         ; Check that this number not already used
   lda FUNC_RESULT
   bne init_loop
   iny
@@ -186,6 +185,7 @@ ORG USR_PAGE
 
 INCLUDE "./zumpus_funcs.asm"
 INCLUDE "./zumpus_data.asm"
+INCLUDE "../../LIB/funcs_math.asm"
 
 .endcode
 

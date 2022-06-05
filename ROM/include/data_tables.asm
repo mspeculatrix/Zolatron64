@@ -9,6 +9,8 @@ ALIGN &100                  ; Start on new page
 .cmdprcptrs
   equw cmdprcSTAR           ; *
   equw cmdprcBRK            ; BRK
+  equw cmdprcFLOAD          ; FLOAD
+  equw cmdprcFSEL           ; FSEL
   equw cmdprcHELP           ; HELP
   equw cmdprcJMP            ; JMP
   equw cmdprcLM             ; LM - list memory
@@ -25,7 +27,7 @@ ALIGN &100                  ; Start on new page
 \ FIRST CHARACTER TABLE
 \ Initial characters of our commands.
 .cmd_ch1_tbl
-  equs "*BHJLPRSV" 
+  equs "*BFHJLPRSV" 
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -33,6 +35,7 @@ ALIGN &100                  ; Start on new page
 .cmd_ptrs                   ; Pointers to command table sections
   equw cmd_tbl_STAR         ; Commands starting '*'
   equw cmd_tbl_ASCB         ; Commands starting 'B'
+  equw cmd_tbl_ASCF         ; Commands starting 'F'
   equw cmd_tbl_ASCH         ; Commands starting 'H'
   equw cmd_tbl_ASCJ         ; Commands starting 'J'
   equw cmd_tbl_ASCL         ; Commands starting 'L'
@@ -48,6 +51,11 @@ ALIGN &100                  ; Start on new page
 
 .cmd_tbl_ASCB               ; Commands starting 'B'
   equs "RK", CMD_TKN_BRK    ; BRK
+  equb EOCMD_SECTION
+
+.cmd_tbl_ASCF                ; Commands starting 'F'
+  equs "LOAD", CMD_TKN_FLOAD ; FLOAD
+  equs "SEL", CMD_TKN_FSEL   ; FSEL
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCH               ; Commands starting 'H'
@@ -139,6 +147,8 @@ ALIGN &100                  ; Start on new page
 
 .help_table
   equs "BRK",0
+  equs "FLOAD",0
+  equs "FSEL",0
   equs "HELP",0
   equs "JMP",0
   equs "LM",0

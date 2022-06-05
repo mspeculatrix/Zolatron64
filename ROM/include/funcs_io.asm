@@ -97,7 +97,7 @@
 \ ------------------------------------------------------------------------------
 \ --- DISPLAY_MEMORY
 \ ------------------------------------------------------------------------------
-\ ON ENTRY: Start and end addresses must be stored at TMP_ADDR_A and TMP_ADDR_B.
+\ ON ENTRY: Start and end addresses must be in TMP_ADDR_A and TMP_ADDR_B.
 ; We'll leave TMP_ADDR_B alone, but increment TMP_ADDR_B until the two match.
 .display_memory
   LOAD_MSG memory_header
@@ -162,6 +162,59 @@
   jsr OSWRCH
   jmp display_mem_end
 .display_mem_end
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  READ_INT16
+\ ---  Implements: OSRDINT16
+\ ------------------------------------------------------------------------------
+\ Read a decimal integer from STDIN_BUF.
+\ ON ENTRY: Expects input in STDIN_BUF
+\ ON EXIT : - 16-bit number in FUNC_RES_L/H
+\           - Error in FUNC_ERR
+.read_int16
+  stz FUNC_ERR
+  stz FUNC_RES_L
+  stz FUNC_RES_H
+  ldx #0                      ; Offset for STDIN_BUF
+.read_int_char
+  txa                         ; Transfer a copy of the X offset to Y
+  tay                         ; "
+  iny                         ; Make Y an index to the char _after_ this one
+  lda STDIN_BUF,X
+  beq read_int_done           ; If it's a 0 terminator, we're done
+  cmp #' '
+  beq read_int_char           ; Ignore spaces
+  cmp #'0'
+  bcc read_int_error          ; Less than '0'
+  cmp #$3A                    ; ASCII for ':', char above '9'
+  bcs read_int_error          ; More than '9'
+  sec
+  sbc #$30                    ; Turn ASCII value into integer digit
+  clc                         ; Now got the value of the digit in A
+  adc MATH_TMP16              ; Add this value to our result
+  sta MATH_TMP16
+  bcs read_int_carry          ; Did we carry?
+  jmp read_int_mult
+.read_int_carry
+  inc MATH_TMP16+1
+.read_int_mult                ; Check if we need to multiply value by 10
+  lda STDIN_BUF,Y             ; Look ahead to next char
+  beq read_int_done           ; If a zero, the current one is the last digit
+  jsr uint16_times10          ; Otherwise, multiply the current sum by 10
+.read_int_next                ; Get the next digit
+  inx
+  jmp read_int_char
+.read_int_error
+  lda #ERR_NAN
+  sta FUNC_ERR
+  jmp read_int_end
+.read_int_done
+  lda MATH_TMP16
+  sta FUNC_RES_L
+  lda MATH_TMP16 + 1
+  sta FUNC_RES_H
+.read_int_end
   rts
 
 \ ------------------------------------------------------------------------------

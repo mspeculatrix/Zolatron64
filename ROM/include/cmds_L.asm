@@ -64,58 +64,29 @@
 \ --- CMD: LOAD  :  LOAD FILE
 \ ------------------------------------------------------------------------------
 .cmdprcLOAD
-\ Need to move most of this to a standard function (an OS call) so that we
-\ can use it for other load operations - eg, fl_load
-; ----- INITIATE ---------------------------------
-  lda #ZD_OPCODE_LOAD         ; Tell ZolaDOS device we want to perform a LOAD
-  jsr zd_init_process
-  lda FUNC_ERR             
-  bne cmdprcLOAD_init_err     ; If this is anything but 0, that's an error
-  jmp cmdprcLOAD_send_fn
-.cmdprcLOAD_init_err
-  jmp cmdprcLOAD_err
-.cmdprcLOAD_send_fn           ; ----- SEND FILENAME ----------------------------
+  LED_ON LED_FILE_ACT
+  lda #<USR_PAGE              ; This is where we're going to put the code
+  sta FILE_ADDR
+  lda #>USR_PAGE
+  sta FILE_ADDR + 1
   jsr read_filename           ; Puts filename in STR_BUF
   lda FUNC_ERR
-  bne cmdprcLOAD_send_fn_err
-  jsr zd_send_strbuf          ; Send the filename over the ZolaDOS port
+  bne cmdprcLOAD_err
+  jsr zd_loadfile
   lda FUNC_ERR
-  bne cmdprcLOAD_send_fn_err
-  jmp cmdprcLOAD_svr_resp     ; If no errors, get the server's response
-.cmdprcLOAD_send_fn_err
-  jmp cmdprcLOAD_err
-.cmdprcLOAD_svr_resp          ; ----- SERVER RESPONSE --------------------------
-  ZD_SET_DATADIR_INPUT
-;  ZD_SET_CR_ON                ; Take /CR low
-  jsr zd_svr_resp
-  lda FUNC_ERR
-  bne cmdprcLOAD_svr_err
-  jmp cmdprcLOAD_rcv_data
-.cmdprcLOAD_svr_err
-  jmp cmdprcLOAD_err
-.cmdprcLOAD_rcv_data          ; ----- TRANSFER DATA ----------------------------
-  lda #<USR_PAGE              ; This is where we're going to put the code
-  sta TMP_ADDR_A_L
-  lda #>USR_PAGE
-  sta TMP_ADDR_A_H
-  jsr zd_waitForSAoff         ; Should add timeout handling here!!!!!
-  jsr zd_rcv_data
-  lda FUNC_ERR
-  beq cmdprcLOAD_complete
+  bne cmdprcLOAD_err
+  jmp cmdprcLOAD_success
 .cmdprcLOAD_err
+  LED_ON LED_ERR
   jsr os_print_error          ; There should be an error code in FUNC_ERR
   jsr OSLCDERR
-  LED_ON LED_ERR
   jmp cmdprcLOAD_end
-.cmdprcLOAD_complete
+.cmdprcLOAD_success
   LOAD_MSG load_complete_msg
   jsr OSLCDMSG
   jsr OSWRMSG
 .cmdprcLOAD_end
   LED_OFF LED_FILE_ACT
-  ZD_SET_CA_OFF
-  ZD_SET_CR_OFF 
-  ZD_SET_DATADIR_OUTPUT
   jmp cmdprc_end
 
 \ ------------------------------------------------------------------------------

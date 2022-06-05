@@ -23,6 +23,7 @@ FREAD_SVR_OPEN        = FREAD_TO_SAO + 1            ; 11 B  File not found
 FILE_LIST_ERR         = FREAD_SVR_OPEN + 1          ; 12 C  LS error
 FN_CHAR_ERR_CODE      = FILE_LIST_ERR + 1           ; 13 D  Bad character
 FN_LEN_ERR_CODE       = FN_CHAR_ERR_CODE + 1        ; 14 E  Bad filename length
+ERR_NAN               = FN_LEN_ERR_CODE + 1         ; 15 F  Not a number
 
 
 \-------------------------------------------------------------------------------
@@ -35,7 +36,8 @@ FN_LEN_ERR_CODE       = FN_CHAR_ERR_CODE + 1        ; 14 E  Bad filename length
 OSRDHBYTE = $FF00
 OSRDHADDR = OSRDHBYTE + 3
 OSRDCH    = OSRDHADDR + 3
-OSRDFNAME = OSRDCH + 3
+OSRDINT16 = OSRDCH + 3
+OSRDFNAME = OSRDINT16 + 3
 
 OSWRBUF   = OSRDFNAME + 3
 OSWRCH    = OSWRBUF + 3
@@ -53,7 +55,9 @@ OSLCDMSG  = OSLCDERR + 3
 OSLCDPRB  = OSLCDMSG + 3
 OSLCDSC   = OSLCDPRB + 3
 
-OSUSRINT  = OSLCDSC + 3
+OSZDLOAD  = OSLCDSC + 3
+
+OSUSRINT  = OSZDLOAD + 3
 OSDELAY   = OSUSRINT + 3
 
 OSSFTRST  = $FFF4         ; Use direct JMP with these (not indirected/vectored)
