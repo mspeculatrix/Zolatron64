@@ -14,6 +14,6 @@ TMP_ADDR_B_L = TMP_ADDR_B	        ; - Alias -
 TMP_ADDR_B_H = TMP_ADDR_B + 1
 FILE_ADDR    = TMP_ADDR_B_H + 1
 
-STDIN_STATUS_REG = FILE_ADDR + 2		; used to store various flags
-PROC_REG = STDIN_STATUS_REG + 1  			; process flags
-TIMER_STATUS_REG = PROC_REG + 1	      ; timer status register
+STDIN_STATUS_REG = FILE_ADDR + 2	; used to store various flags
+PROC_REG = STDIN_STATUS_REG + 1  	; process flags
+TIMER_STATUS_REG = PROC_REG + 1	  ; timer status register

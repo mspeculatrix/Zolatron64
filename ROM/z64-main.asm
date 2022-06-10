@@ -26,6 +26,7 @@ INCLUDE "../LIB/cfg_page_4.asm"                   ; Misc buffers etc
 INCLUDE "include/cfg_ROM.asm"
 INCLUDE "../LIB/cfg_uart_6551_acia.asm"
 ;INCLUDE "../LIB/cfg_uart_SC28L92.asm"
+INCLUDE "../LIB/cfg_flashmem.asm"
 INCLUDE "../LIB/cfg_VIAA.asm"
 INCLUDE "../LIB/cfg_2x16_lcd.asm"
 INCLUDE "../LIB/cfg_VIAB_ZolaDOS.asm"
@@ -42,8 +43,12 @@ ORG ROMSTART          ; This is where the actual code starts.
   ldx #$ff            ; Set stack pointer to $01FF - only need to set
   txs                 ; the LSB, as MSB is assumed to be $01
 
+; Initialise registers etc
   stz TIMER_STATUS_REG
   stz FLASH_BANK
+  stz STDIN_BUF
+  stz STDIN_IDX
+  stz STDIN_STATUS_REG
 
 \ ----- SETUP OS CALL VECTORS --------------------------------------------------
   lda #<read_hex_byte       ; OSRDHBYTE
@@ -54,10 +59,10 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSRDHADDR_VEC
   lda #>read_hex_addr
   sta OSRDHADDR_VEC + 1
-  ;lda #<read_char           ; OSRDCH
-  ;sta OSRDCH_VEC
-  ;lda #>read_char
-  ;sta OSRDCH_VEC + 1
+  lda #<read_char           ; OSRDCH
+  sta OSRDCH_VEC
+  lda #>read_char
+  sta OSRDCH_VEC + 1
   lda #<read_int16          ; OSRDINT16
   sta OSRDINT16_VEC
   lda #>read_int16
@@ -92,6 +97,10 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSB2HEX_VEC
   lda #>byte_to_hex_str
   sta OSB2HEX_VEC + 1
+  lda #<byte_to_int_str     ; OSB2ISTR
+  sta OSB2ISTR_VEC
+  lda #>byte_to_int_str
+  sta OSB2ISTR_VEC + 1
   lda #<hex_str_to_byte     ; OSHEX2B
   sta OSHEX2B_VEC
   lda #>hex_str_to_byte
@@ -133,10 +142,6 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSDELAY_VEC
   lda #>delay
   sta OSDELAY_VEC + 1
-
-
-; Initialise registers
-  stz STDIN_STATUS_REG
 
 ; Select serial as default input/output streams
   lda #STR_SEL_SERIAL
@@ -318,11 +323,10 @@ INCLUDE "include/cmds_V.asm"
 .cmdprc_fail
   jsr os_print_error
 .cmdprc_end
-  ldx #0
-  stx STDIN_IDX
   jsr acia_prtprompt
 .process_input_done
   stz STDIN_IDX                                   ; Reset RX buffer index
+  stz STDIN_BUF
   LED_OFF LED_BUSY
   jmp mainloop                                    ; Go around again
 
@@ -344,7 +348,7 @@ ALIGN &100        ; start on new page
   rti
 
 .version_str
-  equs "ZolOS v.21", 0
+  equs "ZolOS v.22", 0
 
 \-------------------------------------------------------------------------------
 \ OS CALLS  - OS Call Jump Table                                      
@@ -370,6 +374,7 @@ ORG $FF00
   jmp (OSWRSBUF_VEC)
 
   jmp (OSB2HEX_VEC)
+  jmp (OSB2ISTR_VEC)
   jmp (OSHEX2B_VEC)
 
   jmp (OSLCDCH_VEC)

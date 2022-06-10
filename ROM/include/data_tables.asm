@@ -5,11 +5,15 @@ ALIGN &100                  ; Start on new page
 \ ===== COMMAND TABLES ========================================================
 
 \ COMMAND POINTER JUMP TABLE
-\ These entries need to be in the same order as the CMD_TKN_* definitions
+\ These entries need to be in the same order as the CMD_TKN_* definitions that
+\ are in cfg_ROM.asm.
+\ The entries are the labels of the relevant subroutines in z64-main.asm (or
+\ the command files that includes).
 .cmdprcptrs
   equw cmdprcSTAR           ; *
   equw cmdprcBRK            ; BRK
   equw cmdprcFLOAD          ; FLOAD
+  equw cmdprcFRUN           ; FRUN
   equw cmdprcFSEL           ; FSEL
   equw cmdprcHELP           ; HELP
   equw cmdprcJMP            ; JMP
@@ -19,19 +23,22 @@ ALIGN &100                  ; Start on new page
   equw cmdprcLS             ; LS - list storage
   equw cmdprcPEEK           ; PEEK
   equw cmdprcPOKE           ; POKE
-  equw cmdprcPRT
+  equw cmdprcPRT            ; PRT
   equw cmdprcRUN            ; RUN user program
   equw cmdprcSAVE           ; SAVE - save file
   equw cmdprcVERS           ; VERS - version
 
 \ FIRST CHARACTER TABLE
-\ Initial characters of our commands.
+\ Initial characters of our commands. The parsing system first looks to see if
+\ the initial character is in this list.
 .cmd_ch1_tbl
   equs "*BFHJLPRSV" 
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
-\ These are vectors to the Command Table labels below.
+\ These are vectors to the Command Table labels below. Once the parsing routine
+\ has found the initial character, it uses its position in the First
+\ Character Table (above) to determine an offset into this table.
 .cmd_ptrs                   ; Pointers to command table sections
   equw cmd_tbl_STAR         ; Commands starting '*'
   equw cmd_tbl_ASCB         ; Commands starting 'B'
@@ -45,6 +52,10 @@ ALIGN &100                  ; Start on new page
   equw cmd_tbl_ASCV         ; Commands starting 'V'
 
 \ COMMAND TABLE
+\ Having found the an address in the Command Pointers table above, the parsing
+\ rutine then jumps to the corresponding label in this section to match the
+\ rest of the characters in the command. When a match is made, it then reads
+\ the corresponding token value following the command name.
 .cmd_tbl_STAR               ; Commands starting '*'
   equb CMD_TKN_STAR         ; Not sure what I'm using this for yet
   equb EOCMD_SECTION        ; Comes at end of each section
@@ -55,6 +66,7 @@ ALIGN &100                  ; Start on new page
 
 .cmd_tbl_ASCF                ; Commands starting 'F'
   equs "LOAD", CMD_TKN_FLOAD ; FLOAD
+  equs "RUN", CMD_TKN_FRUN   ; FRUN
   equs "SEL", CMD_TKN_FSEL   ; FSEL
   equb EOCMD_SECTION
 
@@ -92,7 +104,8 @@ ALIGN &100                  ; Start on new page
   equb EOCMD_SECTION
 
 \ ===== ERROR TABLES ========+==================================================
-
+\ See cfg_main.asm for the corresponding error numbers. This list needs to be in
+\ the same order as that list.
 \ Error Message Pointer Table
 .err_ptrs                   
   equw err_msg_cmd
@@ -111,6 +124,9 @@ ALIGN &100                  ; Start on new page
 
   equw err_filename_badchar
   equw err_filename_badlen
+
+  equw err_end_of_buffer
+  equw err_not_a_number
 
 \ Error Message Table
 .err_msg_cmd
@@ -142,12 +158,17 @@ ALIGN &100                  ; Start on new page
   equs "Bad filename",0
 .err_filename_badlen
   equs "Bad f/n length",0
+.err_end_of_buffer
+  equs "End of buffer",0
+.err_not_a_number
+  equs "Not a number",0 
 
 \ ===== MISC TABLES & STRINGS ==================================================
 
 .help_table
   equs "BRK",0
   equs "FLOAD",0
+  equs "FRUN",0
   equs "FSEL",0
   equs "HELP",0
   equs "JMP",0

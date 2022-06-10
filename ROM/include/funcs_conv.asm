@@ -30,6 +30,48 @@
   rts
   
 \ ------------------------------------------------------------------------------
+\ ---  BYTE_TO_INT_STR  ; Convert 1-byte value to decimal string
+\ ---  Implements: OSB2ISTR
+\ ------------------------------------------------------------------------------
+\ ON ENTRY: A contains the number to be converted
+\ ON EXIT : STR_BUF contains decimal string representation, nul-terminated.
+.byte_to_int_str
+  stz TMP_IDX             ; Keep track of digits in buffer
+  stz STR_BUF             ; Set nul terminator at start of buffer
+.byte_to_int_str_next_digit
+  ldx #10                 ; Divisor for MOD function
+  jsr uint8_mod8          ; FUNC_RESULT contains remainder, X contains quotient
+  txa                     ; Transfer quotient to A as dividend for next round
+  pha                     ; Protect it for now
+  ldy TMP_IDX             ; Use the index as an offset
+.byte_to_int_str_add_loop
+  lda STR_BUF,Y           ; Load whatever is currently at the index position
+  iny
+  sta STR_BUF,Y           ; Move it to the next position
+  dey
+  cpy #0                  ; If the index is 0, we've finished with moving digits
+  beq byte_to_int_str_add_loop_done
+  dey                     ; Otherwise, decrement the offset and go around again
+  jmp byte_to_int_str_add_loop
+.byte_to_int_str_add_loop_done
+  inc TMP_IDX             ; Increment our digit index
+  lda FUNC_RESULT         ; Get the remainder from the MOD operation
+  clc
+  adc #$30                ; Add $30 to get the ASCII code
+  sta STR_BUF             ; And store it in the first byte of the buffer
+  pla                     ; Bring back that quotient, as dividend for next loop
+  cpx #0                  ; If it's 0, we're done...
+  beq byte_to_int_str_done
+  jmp byte_to_int_str_next_digit
+.byte_to_int_str_done
+  rts
+
+
+
+  ply : plx
+  rts
+
+\ ------------------------------------------------------------------------------
 \ ---  HEX_STR_TO_BYTE
 \ ---  Implements: OSHEX2B
 \ ------------------------------------------------------------------------------
@@ -114,5 +156,18 @@
   lda TMP_WORD_H
   sta STR_BUF + 3
   stz STR_BUF + 4             ; Add a null terminator
+  pla
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  RES_WORD_TO_INT_STR
+\ ------------------------------------------------------------------------------
+\ Takes the 16-bit value in FUNC_RES_L/H and converts it to a string
+\ representation of the decimal integer value.
+\ ON ENTRY: 16-bit value expected in FUNC_RES_L, FUNC_RES_H
+\ ON EXIT : String in STR_BUF
+.res_word_to_int_str
+  pha
+  ; ??????
   pla
   rts

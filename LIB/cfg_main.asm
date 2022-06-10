@@ -13,17 +13,18 @@ COMMAND_ERR_CODE      = 1
 HEX_TO_BIN_ERR_CODE   = COMMAND_ERR_CODE + 1			  ; 2
 PARSE_ERR_CODE        = HEX_TO_BIN_ERR_CODE + 1			; 3
 READ_HEXBYTE_ERR_CODE = PARSE_ERR_CODE + 1				  ; 4
-SYNTAX_ERR_CODE       = READ_HEXBYTE_ERR_CODE + 1		; 5
-FREAD_ERR_CODE        = SYNTAX_ERR_CODE + 1				  ; 6
+SYNTAX_ERR_CODE       = READ_HEXBYTE_ERR_CODE + 1		; 5  Syntax error
+FREAD_ERR_CODE        = SYNTAX_ERR_CODE + 1				  ; 6  File read error
 FREAD_TO_SR			      = FREAD_ERR_CODE + 1		      ; 7  SR Timeout
 FREAD_TO_SA			      = FREAD_TO_SR + 1				      ; 8  SA Timeout
-FREAD_TO_SRO			    = FREAD_TO_SA + 1		          ; 9
-FREAD_TO_SAO			    = FREAD_TO_SRO + 1				    ; 10 A
+FREAD_TO_SRO			    = FREAD_TO_SA + 1		          ; 9  SR Off Timeout
+FREAD_TO_SAO			    = FREAD_TO_SRO + 1				    ; 10 A  SA Off Timeout
 FREAD_SVR_OPEN        = FREAD_TO_SAO + 1            ; 11 B  File not found
 FILE_LIST_ERR         = FREAD_SVR_OPEN + 1          ; 12 C  LS error
 FN_CHAR_ERR_CODE      = FILE_LIST_ERR + 1           ; 13 D  Bad character
 FN_LEN_ERR_CODE       = FN_CHAR_ERR_CODE + 1        ; 14 E  Bad filename length
-ERR_NAN               = FN_LEN_ERR_CODE + 1         ; 15 F  Not a number
+ERR_EOB               = FN_LEN_ERR_CODE + 1         ; 15 F  End of buffer
+ERR_NAN               = ERR_EOB + 1                 ; 16 10 Not a number
 
 
 \-------------------------------------------------------------------------------
@@ -46,7 +47,8 @@ OSWRMSG   = OSWRERR + 3
 OSWRSBUF  = OSWRMSG + 3
 
 OSB2HEX   = OSWRSBUF + 3
-OSHEX2B   = OSB2HEX + 3
+OSB2ISTR  = OSB2HEX + 3
+OSHEX2B   = OSB2ISTR + 3
 
 OSLCDCH   = OSHEX2B + 3
 OSLCDCLS  = OSLCDCH + 3

@@ -1,6 +1,27 @@
 \ MATHS & Numbers -- funcs_math.asm --------------------------------------------
 
 \ ------------------------------------------------------------------------------
+\ ---  uint8_mod8
+\ ---  MOD/DIV an 8-bit number by another 8-bit number
+\ ------------------------------------------------------------------------------
+\ ON ENTRY: - A must contain the dividend - the number to be modded
+\			      - X must contain the divisor
+\ ON EXIT : - FUNC_RESULT contains remainder
+\           - X contains quotient (number of divisions. X=0 if num < divisor) 
+.uint8_mod8
+  stx TMP_VAL
+  ldx #0
+.uint8_mod8_loop
+  sta FUNC_RESULT
+  sec
+  sbc TMP_VAL
+  bcc uint8_mod8_result   ; We've gone too far
+  inx
+  jmp uint8_mod8_loop
+.uint8_mod8_result
+  rts
+
+\ ------------------------------------------------------------------------------
 \ --- uint16_times10
 \ --- Multiply 16-bit integer by 10.
 \ ------------------------------------------------------------------------------

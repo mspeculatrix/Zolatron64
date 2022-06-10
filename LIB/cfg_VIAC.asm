@@ -33,5 +33,5 @@ USRP_ACL   = USRP_BASE_ADDR + $0B		    ; Auxiliary Control register
 USRP_IER   = USRP_BASE_ADDR + $0E 	    ; Interrupt Enable Register
 USRP_IFR   = USRP_BASE_ADDR + $0D		    ; Interrupt Flag Register
 
-BARLED_CMD = USRP_PORTA	                ; These will be retired soon
-BARLED_DAT = USRP_PORTB                 ; "
+BARLED_CMD = USRP_PORTB	                ; These will be retired soon
+BARLED_DAT = USRP_PORTA                 ; "

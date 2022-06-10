@@ -165,18 +165,57 @@
   rts
 
 \ ------------------------------------------------------------------------------
+\ ---  READ_CHAR
+\ ---  Implements: OSRDCH
+\ ------------------------------------------------------------------------------
+\ Get the next non-space character from STDIN_BUF. This doesn't remove anything
+\ from the buffer, but it does update the pointer STDIN_IDX to the next char.
+\ ON ENTRY: - Assumes there is something in STDIN_BUF
+\           - Reads the char pointed to by STDIN_IDX
+\ ON EXIT : - Character code is in FUNC_RESULT
+\           - Error code in FUNC_ERR
+.read_char
+  stz FUNC_RESULT
+  stz FUNC_ERR
+  ldx STDIN_IDX
+.read_char_next
+  lda STDIN_BUF,X
+  sta FUNC_RESULT
+  beq read_char_EOB             ; A 0 means end of buffered text
+  cmp #' '                      ; Is it a space?
+  bne read_char_store           ; If so, try again...
+  inx
+  jmp read_char_next
+.read_char_store
+  inx                           ; For next time
+  stx STDIN_IDX
+  sta FUNC_RESULT
+  jmp read_char_end
+.read_char_EOB
+  stz STDIN_IDX
+  lda #ERR_EOB
+  sta FUNC_ERR
+.read_char_end
+  rts
+
+\ ------------------------------------------------------------------------------
 \ ---  READ_INT16
 \ ---  Implements: OSRDINT16
 \ ------------------------------------------------------------------------------
-\ Read a decimal integer from STDIN_BUF.
-\ ON ENTRY: Expects input in STDIN_BUF
+\ Read a decimal integer from STDIN_BUF. Input number is terminated by nul (0)
+\ or a space.
+\ ON ENTRY: - Expects input in STDIN_BUF.
+\           - Assumes STDIN_IDX points to next byte to be read from STDIN_BUF.
 \ ON EXIT : - 16-bit number in FUNC_RES_L/H
 \           - Error in FUNC_ERR
 .read_int16
   stz FUNC_ERR
   stz FUNC_RES_L
   stz FUNC_RES_H
-  ldx #0                      ; Offset for STDIN_BUF
+  stz MATH_TMP16
+  stz MATH_TMP16 + 1
+  stz TMP_VAL                 ; Flag for whether we've started reading a number
+  ldx STDIN_IDX               ; Offset for STDIN_BUF
 .read_int_char
   txa                         ; Transfer a copy of the X offset to Y
   tay                         ; "
@@ -184,11 +223,11 @@
   lda STDIN_BUF,X
   beq read_int_done           ; If it's a 0 terminator, we're done
   cmp #' '
-  beq read_int_char           ; Ignore spaces
+  beq read_int_chkspc         ; If space, have we already started reading num?
   cmp #'0'
-  bcc read_int_error          ; Less than '0'
+  bcc read_int_error          ; Less than '0' - an error
   cmp #$3A                    ; ASCII for ':', char above '9'
-  bcs read_int_error          ; More than '9'
+  bcs read_int_error          ; More than '9' - an error
   sec
   sbc #$30                    ; Turn ASCII value into integer digit
   clc                         ; Now got the value of the digit in A
@@ -196,11 +235,22 @@
   sta MATH_TMP16
   bcs read_int_carry          ; Did we carry?
   jmp read_int_mult
+.read_int_chkspc              ; We've read a space
+  lda TMP_VAL                 ; If TMP_VAL is 0, that means we haven't started
+  beq read_int_next           ; reading the number yet, so go around again...
+  jmp read_int_done           ; Otherwise, we're done
 .read_int_carry
-  inc MATH_TMP16+1
+  inc MATH_TMP16 + 1
 .read_int_mult                ; Check if we need to multiply value by 10
+  inc TMP_VAL                 ; First, flag that we've got a number
   lda STDIN_BUF,Y             ; Look ahead to next char
   beq read_int_done           ; If a zero, the current one is the last digit
+  cmp #' '
+  beq read_int_done           ; If a space, the current one is the last digit
+  cmp #'0'
+  bcc read_int_error          ; Less than '0' - an error
+  cmp #$3A                    ; ASCII for ':', char above '9'
+  bcs read_int_error          ; More than '9' - an error
   jsr uint16_times10          ; Otherwise, multiply the current sum by 10
 .read_int_next                ; Get the next digit
   inx
@@ -215,27 +265,33 @@
   lda MATH_TMP16 + 1
   sta FUNC_RES_H
 .read_int_end
+  inx
+  stx STDIN_IDX
   rts
 
 \ ------------------------------------------------------------------------------
 \ ---  READ_FILENAME
 \ ---  Implements: OSRDFNAME
+\ COULD BE RENAMED TO READ_STRING AS A MORE GENERAL-PURPOSE ROUTINE - OSRDSTR
+\ Keep READ_FILENAME AS A WRAPPER
+\ WOULD NEED TO UPGRADE TO ACCEPT NUMBERS (and maybe lowercase)
 \ ------------------------------------------------------------------------------
 \ This function reads characters from STDIN_BUF and stores them in STR_BUF.
 \ It assumes that X contains an offset pointer to the part of STDIN_BUF from 
 \ which we want to read next.
-\ ON ENTRY: Nul-terminated filename string expected in STDIN_BUF
+\ ON ENTRY: Nul- or space- terminated filename string expected in STDIN_BUF
 \ ON EXIT : - Nul-terminated filename in STR_BUF
 \           - Error in FUNC_ERR
 .read_filename
   pha : phy
   stz FUNC_ERR              ; Initialise to 0
   ldy #0                    ; Offset for where we're storing each byte
+  stz TMP_VAL               ; Flag regarding whether we've already read chars
 .read_filename_next_char
   lda STDIN_BUF,X           ; Get next byte from buffer
   beq read_filename_check   ; If a null (0), at end of input
   cmp #CHR_SPACE            ; If it's a space, ignore it & get next byte
-  beq read_filename_loop
+  beq read_filename_chkspc
   cmp #CHR_LINEEND
   beq read_filename_loop
   cmp #'A'                  ; Acceptable values are 65-90 (A-Z)
@@ -244,9 +300,14 @@
   bcs read_filename_fail
   sta STR_BUF,Y             ; Store in STR_BUF buffer
   iny                       ; Increment STR_BUF index
+  inc TMP_VAL
 .read_filename_loop
   inx                       ; Increment input buffer index
   jmp read_filename_next_char
+.read_filename_chkspc
+  lda TMP_VAL
+  beq read_filename_loop    ; 0, so not started receiving chars yet
+  jmp read_filename_check   ; Otherwise, we're done
 .read_filename_fail
   lda #FN_CHAR_ERR_CODE
   sta FUNC_ERR
@@ -295,14 +356,15 @@
 \ Reads a pair of ASCII hex chars from the serial buffer and converts to
 \ a byte value.
 \ ON ENTRY: - Expects a pair of ASCII hex chars in the serial buffer.
-\           - Also assumes that X contains an offset pointer to the part of 
-\             STDIN_BUF from which we want to read next.
+\           - Also assumes that STDIN_IDX contains an offset pointer to the part
+\             of STDIN_BUF from which we want to read next.
 \ ON EXIT : - Value in FUNC_RESULT
 \           - Error in FUNC_ERR
 .read_hex_byte
   pha : phy
   stz FUNC_ERR              ; Initialise to 0
   ldy #1                    ; Offset for where we're storing each byte from buf
+  ldx STDIN_IDX
 .read_hexbyte_next_char
   lda STDIN_BUF,X           ; Get next byte from buffer
   inx                       ; Increment for next time
@@ -326,6 +388,7 @@
   lda #READ_HEXBYTE_ERR_CODE
   sta FUNC_ERR  
 .read_hexbyte_end
+  stx STDIN_IDX
   ply : pla
   rts
 
@@ -344,5 +407,4 @@
   lda err_ptrs+1,X        ; Get MSB
   sta MSG_VEC+1           ; and put in MSG_VEC high byte
   jsr OSWRMSG
-  LED_ON LED_ERR
   rts

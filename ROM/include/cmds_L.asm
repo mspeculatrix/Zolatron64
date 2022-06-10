@@ -65,6 +65,8 @@
 \ ------------------------------------------------------------------------------
 .cmdprcLOAD
   LED_ON LED_FILE_ACT
+  LOAD_MSG loading_msg
+  jsr OSWRMSG
   lda #<USR_PAGE              ; This is where we're going to put the code
   sta FILE_ADDR
   lda #>USR_PAGE
@@ -83,7 +85,6 @@
   jmp cmdprcLOAD_end
 .cmdprcLOAD_success
   LOAD_MSG load_complete_msg
-  jsr OSLCDMSG
   jsr OSWRMSG
 .cmdprcLOAD_end
   LED_OFF LED_FILE_ACT
@@ -136,12 +137,9 @@
 .cmdprcLS_rcv_data            ; ----- TRANSFER DATA ----------------------------
   ZD_SET_DATADIR_INPUT
   lda #<ZD_WKSPC              ; This is where we're going to put the data
-  sta TMP_ADDR_A_L            ; "
+  sta FILE_ADDR               ; "
   lda #>ZD_WKSPC              ; "
-  sta TMP_ADDR_A_H            ; "
-;  jsr zd_waitForSAoff         ; Wait for /SA signal to go high. This times out
-;  lda FUNC_ERR                ; sometimes, so might want a longer wait here
-;  bne cmdprcLS_err
+  sta FILE_ADDR+1             ; "
   jsr zd_rcv_data             ; If no error, get the data from the Pi
   lda FUNC_ERR
   beq cmdprcLS_show           ; If no error, go to the bit that displays data
@@ -154,7 +152,7 @@
   lda #<ZD_WKSPC              ; Reset vector to where data is stored
   sta TMP_ADDR_A_L            ; "
   lda #>ZD_WKSPC              ; "
-  sta TMP_ADDR_A_H            ; "
+  sta TMP_ADDR_A_H            ; "     **** OKAY TO HERE ****
 .cmdprcLS_show_loop
   lda (TMP_ADDR_A)            ; Get char from workspace
   beq cmdprcLS_show_pad       ; If it's a 0 terminator, pad out the name

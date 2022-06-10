@@ -4,6 +4,7 @@
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: - Memory bank must have been set in FLASH_BANK
 \           - STR_BUF must contain filename
+\ *** SHOULD THIS BE AN OS CALL ??? ***
 .fl_load
   lda #<FLASHMEM_LOC                    ; This is where we're loading the data
   sta FILE_ADDR

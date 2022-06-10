@@ -61,8 +61,8 @@
 \ ---  Implements: OSZDLOAD
 \ ------------------------------------------------------------------------------
 \ Loads a file into memory.
-\ ON ENTRY: STR_BUF must contain filename
-\           FILE_ADDR/+1 must contain address to which we wish to load file.
+\ ON ENTRY: - STR_BUF must contain filename
+\           - FILE_ADDR/+1 must contain address to which we wish to load file.
 \ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
 .zd_loadfile
   stz FUNC_ERR                ; Zero out the error code
@@ -81,7 +81,9 @@
   lda FUNC_ERR
   bne zd_loadf_end
 .zd_loadf_rcv_data            ; ----- TRANSFER DATA ----------------------------
-  jsr zd_waitForSAoff         ; Should add timeout handling here!!!!!
+  jsr zd_waitForSAoff
+  lda FUNC_ERR
+  bne zd_loadf_end
   jsr zd_rcv_data
 .zd_loadf_end
   ZD_SET_CA_OFF
@@ -360,5 +362,7 @@
   rts
 
 \ --- DATA ---------------------------------------------------------------------
+.loading_msg
+  equs "Loading ... ",0
 .load_complete_msg
-  equs "Loading complete",0
+  equs "done",0

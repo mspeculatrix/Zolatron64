@@ -17,47 +17,28 @@ INCLUDE "../../LIB/cfg_page_2.asm"
 INCLUDE "../../LIB/cfg_page_4.asm"
 INCLUDE "../../LIB/cfg_VIAC.asm"
 
-; CONSTANTS
-NUM_ROOMS    = 20
-NUM_STAPLES  = 5
-NUM_LOCS     = 6
-
-; ADDRESSES
-RANDOM_LOCS  = $0500
-PLAYER_LOC   = RANDOM_LOCS          ; 0500
-ZUMPUS_LOC   = PLAYER_LOC + 1       ; 0501
-BAT1_LOC     = ZUMPUS_LOC + 1       ; 0502
-BAT2_LOC     = BAT1_LOC + 1         ; 0503
-PIT1_LOC     = BAT2_LOC + 1         ; 0504
-PIT2_LOC     = PIT1_LOC + 1         ; 0505
-STAPLE_COUNT = PIT2_LOC + 1         ; 0506
-P_CONN_ROOMS = STAPLE_COUNT + 1     ; 0507-0590
-Z_CONN_ROOMS = P_CONN_ROOMS + 3     ; 050A-050C
-FLAGS        = Z_CONN_ROOMS + 3     ; 050D
-INPUT_NUM    = FLAGS + 1            ; 050E, 050F
-
-; ERROR CODES
-NOT_A_NUMBER = 1
-
-; FLAGS
-PIT_WARNING_ISSUED = %00000001
-BAT_WARNING_ISSUED = %00000010
-
-
-MACRO NEWLINE
-  lda #CHR_LINEEND
-  jsr OSWRCH
-ENDMACRO
+INCLUDE "zumpus_cfg.asm"
 
 ORG USR_PAGE
-.startcode
-  sei             ; don't interrupt me yet
-  cld             ; we don' need no steenkin' BCD
-  ldx #$ff        ; set stack pointer to $01FF - only need to set the
-  txs             ; LSB, as MSB is assumed to be $01
+.header                     ; HEADER INFO
+  jmp startprog             ;
+  equw header               ; @ $0804 Entry address
+  equw reset                ; @ $0806 Reset address
+  equw endcode              ; @ $0808 Addr of first byte after end of program
+  equs 0,0,0,0              ; -- Reserved for future use --
+  equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - nul terminated
+.version_string
+  equs "0.1",0              ; Version string - nul terminated
+
+.startprog
+.reset                      ; Sometimes this may be different from startprog
+  sei                       ; Don't interrupt me yet
+  cld                       ; Ensure BCD mode is off
+  ldx #$ff                  ; Set stack pointer to $01FF - only need to set the
+  txs                       ; LSB, as MSB is assumed to be $01
 
   lda #0
-  sta PRG_EXIT_CODE
+  sta PRG_EXIT_CODE         ; Not sure we're using this yet
   cli
 
   stz VIAC_PORTA
@@ -82,16 +63,41 @@ ORG USR_PAGE
   sta VIAC_T1CH		            ; Starts timer running
 
 .main
-;  NEWLINE
-;  LOAD_MSG start_msg
-;  jsr OSWRMSG
-;  NEWLINE
+  stz STDIN_BUF
+  stz STDIN_IDX
+  NEWLINE
+.instruction_prompt
+  LOAD_MSG instr_prompt
+  jsr OSWRMSG
+  jsr yesno
+  ; --- DEBUGGING ------------------
+;  lda FUNC_RESULT
+;  jsr OSB2ISTR
+;  jsr OSWRSBUF
+;  lda #' '
+;  jsr OSWRCH
+  ; --------------------------------
+  lda FUNC_RESULT
+  cmp #YESNO_YES
+  bne init
+  
+  LOAD_MSG start_msg
+  jsr OSWRMSG
+  NEWLINE
+  LOAD_MSG instructions
+  jsr OSWRMSG
+  NEWLINE
 
 .init
-; Randomise initial locations of player & threats
-;  LOAD_MSG init_msg
-;  jsr OSWRMSG
+  stz BARLED_CMD
+  stz BARLED_DAT
+  LOAD_MSG init_msg
+  jsr OSWRMSG
   NEWLINE
+  stz SITUATION
+  lda #5
+  sta STAPLE_COUNT
+; Randomise initial locations of player & threats
   ldy #0      ; Counter for number of locs we've set
 .init_loop
   LOAD_MSG press_enter_msg
@@ -102,7 +108,7 @@ ORG USR_PAGE
   bne init_set_loc
   jmp init_loop_wait
 .init_set_loc
-  ldx #20                       ; MOD
+  ldx #NUM_ROOMS                ; MOD
   phy
   jsr roll_dice                 ; Random number will be in A
   ply
@@ -124,63 +130,236 @@ ORG USR_PAGE
   jmp start_play
 
 .start_play
-  jsr list_locs
-  lda #235
-  jsr uint8_decstr
-  jsr OSWRSBUF
+;  jsr list_locs
   NEWLINE
   jsr status_update
+  jsr status_msg
+  LOAD_MSG zumpus_prompt
+  jsr OSWRMSG
 
-;  lda #'6'
-;  sta STDIN_BUF
-;  lda #'5'
-;  sta STDIN_BUF+1
-;  lda #'5'
-;  sta STDIN_BUF+2
-;  lda #'3'
-;  sta STDIN_BUF+3
-;  lda #'5'
-;  sta STDIN_BUF+4
-;  lda #0
-;  sta STDIN_BUF+5
-;  jsr get_decimal_input
+\ ------------------------------------------------------------------------------
+\ ---  MAINLOOP
+\ ------------------------------------------------------------------------------
+.mainloop
+  lda STDIN_STATUS_REG
+  and #STDIN_NUL_RCVD_FLG               ; Is the 'null received' bit set?
+  bne zum_input                         ; If yes, process the buffer
+  ldx STDIN_IDX                         ; Load the value of the RX buffer index
+  cpx #STR_BUF_LEN                      ; Are we at the limit?
+  bcs zum_input                         ; Branch if X >= STR_BUF_LEN
+  jmp mainloop
 
-;  lda MATH_TMP16+1
-;  sta $0511
-;  jsr OSB2HEX
-;  jsr OSWRSBUF
+.zum_input
+  ; Okay, so there's stuff in the input buffer. Let's take a look.
+  lda STDIN_STATUS_REG                    ; Get our info register
+  eor #STDIN_NUL_RCVD_FLG                 ; Zero the received flag
+  sta STDIN_STATUS_REG                    ; and re-save the register
+  stz STDIN_IDX
 
-;  lda MATH_TMP16
-;  sta $0510
-;  jsr OSB2HEX
-;  jsr OSWRSBUF
+  ; We're expecting the first item to be 'M', 'S' or 'Q'
+  jsr OSRDCH
+  lda FUNC_RESULT
+  cmp #'I'
+  beq zum_cmd_instructions
+  cmp #'M'
+  beq zum_cmd_move
+  cmp #'S'
+  beq zum_cmd_shoot
+  cmp #'Q'
+  beq zum_cmd_leave
+  lda #ERR_SYNTAX
+  sta FUNC_ERR
+  jsr show_error_msg
+  jmp zum_chk_stat
+.zum_cmd_leave
+  jmp zum_cmd_quit
+; ---  INSTRUCTIONS ------------------------------------------------------------
+.zum_cmd_instructions
+  LOAD_MSG instructions
+  jsr OSWRMSG
+  NEWLINE
+  jmp zum_chk_stat
+; ---  MOVING ------------------------------------------------------------------
+.zum_cmd_move
+  jsr get_input_room
+  lda FUNC_ERR
+  bne zum_cmd_move_err
+  lda ROOM_NUM
+  sta PLAYER_LOC
+  ;NEWLINE
+  jmp zum_cmd_move_end
+.zum_cmd_move_err
+  jsr show_error_msg
+  jmp zum_input_go_again
+.zum_cmd_move_end
+  jmp zum_chk_stat
 
+; ---  SHOOTING ----------------------------------------------------------------
+.zum_cmd_shoot
+  ; The input buf should contain the room number & range of shot
+  jsr get_input_room            ; Puts room in ROOM_NUM
+  lda FUNC_ERR
+  bne zum_cs_err_msg
+  jsr OSRDINT16                 ; Read range from STDIN_BUF, num in FUNC_RES_L
+  lda FUNC_ERR                  ; Check for error
+  bne zum_cs_oserr
+  lda FUNC_RES_L
+  beq zum_cs_range_err   ; 0 is not an option
+  cmp #6
+  bcs zum_cs_range_err
+  jmp zum_cmd_shoot_staple
+.zum_cs_err_msg
+  jmp zum_cmd_shoot_err_msg
+.zum_cs_oserr
+  jmp zum_cmd_shoot_oserr
+.zum_cs_range_err
+  jmp zum_cmd_shoot_range_err
+.zum_cmd_shoot_staple
+  sta STAPLE_RANGE
+;  dec STAPLE_RANGE              ; Immediately decr to account for first room
+  dec STAPLE_COUNT              ; We have one fewer staples now
+;  stz SHOT_STATE
+.zum_cmd_shoot_flight
+  ; --- DEBUGGING -----------------
+  lda ROOM_NUM
+  inc A
+  jsr OSB2ISTR
+  jsr OSWRSBUF
+  lda #' '
+  jsr OSWRCH
+  ; -------------------------------
+  lda ROOM_NUM
+  cmp ZUMPUS_LOC
+  beq zum_cmd_shoot_hit
+  cmp PLAYER_LOC
+  beq zum_cmd_shoot_self
+  dec STAPLE_RANGE
+  beq zum_cmd_shoot_missed
+  jsr random_room
+  jmp zum_cmd_shoot_flight
+.zum_cmd_shoot_hit
+  ldx #4                        ; Divisor for MOD
+  jsr roll_dice                 ; A should contain value 0-3
+  cmp #2
+  bcs zum_cmd_shoot_win
+  LOAD_MSG shot_nearhit_msg
+  jsr OSWRMSG
+  jmp zum_cmd_shoot_end
+.zum_cmd_shoot_win
+  LOAD_MSG shot_hit_msg
+  jsr OSWRMSG
+  jmp game_end
+.zum_cmd_shoot_self
+  ldx #6                        ; Divisor for MOD
+  jsr roll_dice                 ; A should contain value 0-3
+  cmp #3
+  beq zum_cmd_shoot_selfhit
+  LOAD_MSG shot_nearself_msg
+  jsr OSWRMSG
+  jmp zum_cmd_shoot_end
+.zum_cmd_shoot_selfhit
+  LOAD_MSG shot_self_msg
+  jsr OSWRMSG
+  jmp game_end
+.zum_cmd_shoot_missed
+  LOAD_MSG shot_miss_msg
+  jsr OSWRMSG
+  jmp zum_cmd_shoot_end
+.zum_cmd_shoot_range_err
+  lda #ERR_RANGE
+  jmp zum_cmd_shoot_err_msg
+.zum_cmd_shoot_oserr
+  lda #ERR_OS_ERROR
+.zum_cmd_shoot_err_msg
+  sta FUNC_ERR
+  jsr show_error_msg
+  jmp zum_input_go_again
 
-;  ldy #59
-;.loopback
-;  tya
-;  jsr OSB2HEX
-;  jsr OSWRSBUF
-;  lda #' '
-;  jsr OSWRCH
-;  tya
-;  ldx #20
-;  jsr uint8_mod8
-;  lda FUNC_RESULT
-;  jsr OSB2HEX
-;  jsr OSWRSBUF
-;  lda #' '
-;  jsr OSWRCH
-;  txa
-;  jsr OSB2HEX
-;  jsr OSWRSBUF
-;  NEWLINE
-;  dey
-;  bmi done  
-;  jmp loopback
-;.done
+.zum_cmd_shoot_end
+  jmp zum_chk_stat
 
+; ---  QUIT --------------------------------------------------------------------
+.zum_cmd_quit
+  jmp prog_end
+
+.zum_chk_stat
+  LOAD_MSG breakline
+  jsr OSWRMSG
+.zum_input_status_chk
+  jsr status_update
+  lda SITUATION
+  cmp #STATE_DEAD
+  beq zum_fate_dead
+  cmp #STATE_FALLEN
+  beq zum_fate_fallen
+  cmp #STATE_KIDNAPPED
+  beq zum_input_kidnapped
+  cmp #STATE_NO_STAPLES
+  beq zum_fate_no_ammo
+  jmp zum_input_go_again
+.zum_fate_dead
+  jmp you_have_died
+.zum_fate_fallen
+  jmp falling_down_the_pit
+.zum_fate_no_ammo
+  jmp zum_input_ammo_out
+.zum_input_kidnapped
+;  SHOW_STATE
+  LOAD_MSG you_are_kidnapped
+  jsr OSWRMSG
+.zum_input_random_room
+  ldx #NUM_ROOMS
+  jsr roll_dice                         ; Random number will be in A
+  cmp PLAYER_LOC                        ; Ensure we don't get taken to the
+  beq zum_input_random_room             ; same place we are now, or to our
+  cmp ZUMPUS_LOC                        ; immediate demise...
+  beq zum_input_random_room             ;  "
+  cmp BAT1_LOC                          ;  "
+  beq zum_input_random_room             ;  "
+  cmp BAT2_LOC                          ;  "
+  beq zum_input_random_room             ;  "
+  cmp PIT1_LOC                          ;  "
+  beq zum_input_random_room             ;  "
+  cmp PIT2_LOC                          ;  "
+  beq zum_input_random_room             ;  "
+  sta PLAYER_LOC
+.zum_input_go_again
+  jsr status_msg
+  LOAD_MSG zumpus_prompt
+  jsr OSWRMSG
+  stz STDIN_BUF
+  stz STDIN_IDX
+  stz FUNC_ERR
+  jmp mainloop
+.you_have_died
+  LOAD_MSG you_are_dead
+  jsr OSWRMSG
+  jmp game_end
+.falling_down_the_pit
+  LOAD_MSG you_have_fallen
+  jsr OSWRMSG
+  jmp game_end
+.zum_input_ammo_out
+  LOAD_MSG you_have_no_staples
+  jsr OSWRMSG
+.game_end
+  stz STDIN_IDX
+  stz STDIN_BUF
+  LOAD_MSG go_again_msg
+  jsr OSWRMSG
+.game_end_yesno
+  jsr yesno
+  lda FUNC_RESULT
+  cmp #YESNO_YES
+  beq play_again
+  cmp #YESNO_ERR
+  beq play_again
+  jmp prog_end
+.play_again
+  jmp init
 .prog_end
+  stz STDIN_IDX
+  stz STDIN_BUF
   jmp OSSFTRST
 
 INCLUDE "./zumpus_funcs.asm"
@@ -189,4 +368,4 @@ INCLUDE "../../LIB/funcs_math.asm"
 
 .endcode
 
-SAVE "../bin/ZUMPUS.BIN", startcode, endcode
+SAVE "../bin/ZUMPUS.BIN", header, endcode
