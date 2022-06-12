@@ -94,6 +94,7 @@ ORG USR_PAGE
   LOAD_MSG init_msg
   jsr OSWRMSG
   NEWLINE
+  stz Z_STATE
   stz SITUATION
   lda #5
   sta STAPLE_COUNT

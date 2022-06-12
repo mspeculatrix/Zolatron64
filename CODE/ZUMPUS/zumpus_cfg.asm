@@ -17,6 +17,9 @@ YESNO_ERR        = 0
 YESNO_NO         = 1
 YESNO_YES        = 2
 
+Z_STATE_ASLEEP   = 0
+Z_STATE_AWAKE    = 1
+
 ; ADDRESSES
 RANDOM_LOCS  = $0500
 PLAYER_LOC   = RANDOM_LOCS          ; 0500
@@ -34,7 +37,7 @@ INPUT_NUM    = FLAGS + 1            ; 0511, 0512
 ROOM_NUM     = INPUT_NUM + 1        ; 0513        For temp holding of a room num
 SITUATION    = ROOM_NUM + 1         ; 0514
 STAPLE_RANGE = SITUATION + 1        ; 0515
-;SHOT_STATE   = STAPLE_RANGE + 1     ; 0516
+Z_STATE      = STAPLE_RANGE + 1     ; 0516
 
 ; ERROR CODES --- should be sequential, starting at 1 (0 means no error)
 ERR_OS_ERROR = 1

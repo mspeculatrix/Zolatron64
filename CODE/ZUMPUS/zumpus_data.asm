@@ -130,6 +130,11 @@
 .warning_pit_msg
   equs "It's chilly in here, and there's a sensation like sucking air.",10,0
 
+.zumpus_awakes_msg
+  equs "A snort, a fart and a bellow from somewhere in the bowels of the",10
+  equs "building suggest that Zumpus has awoken.",10
+  equs "He will now ramble at random around the building.",10
+  equs "You have been warned...",10,0
 
 \ ---  ERRORS  -----------------------------------------------------------------
 .err_input
