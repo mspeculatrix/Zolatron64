@@ -4,6 +4,10 @@ Homebrew 65C02-based microcomputer.
 
 This is a backplane design because that allows me to work, fix and improve various parts of the design.
 
+The main CPU board has decoding for ROM, RAM and the /RD_EN & /WR_EN signals.
+
+Each I/O board has its own address decoding (1K blocks).
+
 Currently, the modules are:
   - Main board: 65C02 CPU @ 1MHz, 32KB RAM, 16KB ROM (EEPROM), oscillator.
   - VIA Interface boards: 65C22 VIA chip providing general-purpose I/O. One of these boards is currently used to drive a 16x2 character LCD display and five status LEDs.

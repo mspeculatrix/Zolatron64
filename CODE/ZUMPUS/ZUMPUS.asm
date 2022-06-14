@@ -28,7 +28,7 @@ ORG USR_PAGE
   equs 0,0,0,0              ; -- Reserved for future use --
   equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
-  equs "0.1",0              ; Version string - nul terminated
+  equs "1.0",0              ; Version string - nul terminated
 
 .startprog
 .reset                      ; Sometimes this may be different from startprog
@@ -40,12 +40,6 @@ ORG USR_PAGE
   lda #0
   sta PRG_EXIT_CODE         ; Not sure we're using this yet
   cli
-
-  stz VIAC_PORTA
-  stz VIAC_PORTB
-
-  lda #NUM_STAPLES
-  sta STAPLE_COUNT
 
 ; Using Timer 1 for random numbers. Basically, this will run constantly in
 ; free-run mode, counting down constantly 59..0. So we're going to use it like
@@ -63,13 +57,13 @@ ORG USR_PAGE
   sta VIAC_T1CH		            ; Starts timer running
 
 .main
-  stz STDIN_BUF
+  stz STDIN_BUF               ; Clear input buffer
   stz STDIN_IDX
   NEWLINE
 .instruction_prompt
-  LOAD_MSG instr_prompt
+  LOAD_MSG instr_prompt       ; Ask if player wants instructions
   jsr OSWRMSG
-  jsr yesno
+  jsr yesno                   ; Get response
   ; --- DEBUGGING ------------------
 ;  lda FUNC_RESULT
 ;  jsr OSB2ISTR
@@ -79,46 +73,43 @@ ORG USR_PAGE
   ; --------------------------------
   lda FUNC_RESULT
   cmp #YESNO_YES
-  bne init
-  
-  LOAD_MSG start_msg
+  bne init                    ; If no, jump ahead
+  LOAD_MSG start_msg          ; Otherwise, display intro message...
   jsr OSWRMSG
   NEWLINE
-  LOAD_MSG instructions
+  LOAD_MSG instructions       ; ...and instructions
   jsr OSWRMSG
   NEWLINE
 
 .init
-  stz BARLED_CMD
-  stz BARLED_DAT
   LOAD_MSG init_msg
   jsr OSWRMSG
   NEWLINE
-  stz Z_STATE
-  stz SITUATION
-  lda #5
+  stz Z_STATE                     ; Set Zumpus to sleeping
+  stz P_CONDITION                 ; Set Player's condition to default 
+  lda #NUM_STAPLES                ; Set initial number of staples
   sta STAPLE_COUNT
 ; Randomise initial locations of player & threats
-  ldy #0      ; Counter for number of locs we've set
+  ldy #0                          ; Counter for number of locs we've set
 .init_loop
   LOAD_MSG press_enter_msg
   jsr OSWRMSG
 .init_loop_wait
   lda STDIN_STATUS_REG
-  and #STDIN_NUL_RCVD_FLG
-  bne init_set_loc
-  jmp init_loop_wait
+  and #STDIN_NUL_RCVD_FLG         ; Has nul flag been set?
+  bne init_set_loc                ; If yes, proceed with setting random loc
+  jmp init_loop_wait              ; Otherwise, loop
 .init_set_loc
-  ldx #NUM_ROOMS                ; MOD
+  ldx #NUM_ROOMS                  ; Divisor for MOD
   phy
-  jsr roll_dice                 ; Random number will be in A
+  jsr roll_dice                   ; Random number will be in A
   ply
   sta RANDOM_LOCS,Y
-  stz STDIN_IDX                 ; Clear the input buffer
-  lda STDIN_STATUS_REG          ; Reset the nul received flag
+  stz STDIN_IDX                   ; Clear the input buffer
+  lda STDIN_STATUS_REG            ; Reset the nul received flag
   and #STDIN_CLEAR_FLAGS
   sta STDIN_STATUS_REG
-  jsr init_check_unique         ; Check that this number not already used
+  jsr init_check_unique           ; Check that this number not already used
   lda FUNC_RESULT
   bne init_loop
   iny
@@ -131,7 +122,7 @@ ORG USR_PAGE
   jmp start_play
 
 .start_play
-;  jsr list_locs
+;  jsr list_locs                ; For debugging only
   NEWLINE
   jsr status_update
   jsr status_msg
@@ -157,7 +148,7 @@ ORG USR_PAGE
   sta STDIN_STATUS_REG                    ; and re-save the register
   stz STDIN_IDX
 
-  ; We're expecting the first item to be 'M', 'S' or 'Q'
+  ; We're expecting the first item to be 'I', 'M', 'S' or 'Q'
   jsr OSRDCH
   lda FUNC_RESULT
   cmp #'I'
@@ -174,7 +165,7 @@ ORG USR_PAGE
   jmp zum_chk_stat
 .zum_cmd_leave
   jmp zum_cmd_quit
-; ---  INSTRUCTIONS ------------------------------------------------------------
+; ---  SHOW INSTRUCTIONS -------------------------------------------------------
 .zum_cmd_instructions
   LOAD_MSG instructions
   jsr OSWRMSG
@@ -182,12 +173,11 @@ ORG USR_PAGE
   jmp zum_chk_stat
 ; ---  MOVING ------------------------------------------------------------------
 .zum_cmd_move
-  jsr get_input_room
-  lda FUNC_ERR
+  jsr get_input_room              ; Get the room the player requested
+  lda FUNC_ERR                    ; Errors include entering an invalied room
   bne zum_cmd_move_err
   lda ROOM_NUM
   sta PLAYER_LOC
-  ;NEWLINE
   jmp zum_cmd_move_end
 .zum_cmd_move_err
   jsr show_error_msg
@@ -197,7 +187,32 @@ ORG USR_PAGE
 
 ; ---  SHOOTING ----------------------------------------------------------------
 .zum_cmd_shoot
-  ; The input buf should contain the room number & range of shot
+  ; The input buf should contain the room number & range of shot.
+  ; But before we get to that, let's see if firing the staple has woken Z.
+  lda Z_STATE                   ; Load current state
+  bne zum_cmd_shoot_parse       ; Already awake - nothing to do here
+  ldx #3                        ; Divisor for MOD
+  jsr roll_dice                 ; A will contain 0, 1 or 2
+  ; --- DEBUGGING ----------------
+;  pha
+;  tay
+;  lda #'!'
+;  jsr OSWRCH
+;  tya
+;  jsr OSB2ISTR
+;  jsr OSWRSBUF
+;  NEWLINE
+;  pla
+  ; ------------------------------
+  cmp #1
+  beq zum_cmd_shoot_wakez       ; If 1, Z awakes
+  jmp zum_cmd_shoot_parse       ; Otherwise, get on with next bit
+.zum_cmd_shoot_wakez
+  LOAD_MSG warning_zumpus_awakes
+  jsr OSWRMSG
+  lda #Z_STATE_AWAKE
+  sta Z_STATE
+.zum_cmd_shoot_parse
   jsr get_input_room            ; Puts room in ROOM_NUM
   lda FUNC_ERR
   bne zum_cs_err_msg
@@ -217,45 +232,45 @@ ORG USR_PAGE
   jmp zum_cmd_shoot_range_err
 .zum_cmd_shoot_staple
   sta STAPLE_RANGE
-;  dec STAPLE_RANGE              ; Immediately decr to account for first room
   dec STAPLE_COUNT              ; We have one fewer staples now
-;  stz SHOT_STATE
 .zum_cmd_shoot_flight
   ; --- DEBUGGING -----------------
-  lda ROOM_NUM
-  inc A
-  jsr OSB2ISTR
-  jsr OSWRSBUF
-  lda #' '
-  jsr OSWRCH
+;  lda ROOM_NUM
+;  inc A
+;  jsr OSB2ISTR
+;  jsr OSWRSBUF
+;  lda #' '
+;  jsr OSWRCH
   ; -------------------------------
   lda ROOM_NUM
   cmp ZUMPUS_LOC
-  beq zum_cmd_shoot_hit
+  beq zum_cmd_shoot_hit         ; Z in same room as staple
   cmp PLAYER_LOC
-  beq zum_cmd_shoot_self
-  dec STAPLE_RANGE
-  beq zum_cmd_shoot_missed
-  jsr random_room
-  jmp zum_cmd_shoot_flight
+  beq zum_cmd_shoot_self        ; Staple in same room as player
+  dec STAPLE_RANGE              ; Reduce range by 1
+  beq zum_cmd_shoot_missed      ; If 0, reached end of range - a miss
+  jsr random_room               ; Otherwise, pick a new room at random
+  jmp zum_cmd_shoot_flight      ; and loop around
 .zum_cmd_shoot_hit
   ldx #4                        ; Divisor for MOD
   jsr roll_dice                 ; A should contain value 0-3
-  cmp #2
-  bcs zum_cmd_shoot_win
-  LOAD_MSG shot_nearhit_msg
+  cmp #2                        
+  bcs zum_cmd_shoot_win         ; If it's less than 2, we won!
+  LOAD_MSG shot_nearhit_msg     ; Otherwise, it's a near hit
   jsr OSWRMSG
+  lda #Z_STATE_AWAKE            ; This definitely wakes up Zumpus
+  sta Z_STATE
   jmp zum_cmd_shoot_end
 .zum_cmd_shoot_win
   LOAD_MSG shot_hit_msg
   jsr OSWRMSG
   jmp game_end
-.zum_cmd_shoot_self
+.zum_cmd_shoot_self             ; Have we hit ourself?
   ldx #6                        ; Divisor for MOD
   jsr roll_dice                 ; A should contain value 0-3
-  cmp #3
+  cmp #3                        ; If it's 3, bad luck!
   beq zum_cmd_shoot_selfhit
-  LOAD_MSG shot_nearself_msg
+  LOAD_MSG shot_nearself_msg    ; Otherwise, print a near miss message
   jsr OSWRMSG
   jmp zum_cmd_shoot_end
 .zum_cmd_shoot_selfhit
@@ -263,6 +278,8 @@ ORG USR_PAGE
   jsr OSWRMSG
   jmp game_end
 .zum_cmd_shoot_missed
+  lda Z_STATE                   ; Is S awake or asleep?
+  beq zum_cmd_shoot_end         ; No message if Z asleep
   LOAD_MSG shot_miss_msg
   jsr OSWRMSG
   jmp zum_cmd_shoot_end
@@ -275,7 +292,6 @@ ORG USR_PAGE
   sta FUNC_ERR
   jsr show_error_msg
   jmp zum_input_go_again
-
 .zum_cmd_shoot_end
   jmp zum_chk_stat
 
@@ -283,12 +299,10 @@ ORG USR_PAGE
 .zum_cmd_quit
   jmp prog_end
 
+; --- CHECK STATUS -------------------------------------------------------------
 .zum_chk_stat
-  LOAD_MSG breakline
-  jsr OSWRMSG
-.zum_input_status_chk
   jsr status_update
-  lda SITUATION
+  lda P_CONDITION                 ; Load the player's condition
   cmp #STATE_DEAD
   beq zum_fate_dead
   cmp #STATE_FALLEN
@@ -325,6 +339,25 @@ ORG USR_PAGE
   beq zum_input_random_room             ;  "
   sta PLAYER_LOC
 .zum_input_go_again
+  lda Z_STATE                           ; Check whether we need to move Z
+  beq zum_input_go_contd                ; If 0, Zumpus is asleep
+  ldx #2                                ; Divisor for MOD
+  jsr roll_dice                         ; A will contain 0 or 1
+  cmp #1
+  beq zum_input_go_contd                ; If 1, Z doesn't move
+  LOAD_MSG warning_zumpus_moving        ; Otherwise, warn the player
+  jsr OSWRMSG
+  lda ZUMPUS_LOC                        ; Load Z's current location
+  sta ROOM_NUM
+.zum_input_go_zmove
+  jsr random_room                       ; Select a connecting room at random
+  lda ROOM_NUM
+  cmp PLAYER_LOC                        ; Is it the player's location?
+  beq zum_input_go_zmove                ; If so, try again
+  sta ZUMPUS_LOC
+.zum_input_go_contd
+  LOAD_MSG breakline
+  jsr OSWRMSG
   jsr status_msg
   LOAD_MSG zumpus_prompt
   jsr OSWRMSG

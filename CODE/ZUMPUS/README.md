@@ -8,7 +8,7 @@ As with the original Wumpus, the game takes place in a network of 20 locations. 
 
 If you enter a room containing Zumpus (or he comes into your room), you're dead ... well, fired. Whenever Zumpus is in a room adjacent to yours, you can smell him.
 
-If you enter a room containing a sales rep, he will grab you and transport you to another, randomly chosen room. The rep will then return to his original location. If a sales rep is in an adjoining room, you can hear him muttering.
+If you enter a room containing a sales rep, he will grab you and transport you to another, randomly chosen room. The rep will then return to his original location. The sales reps never carry you to a room containing Zumpus, one of the lift shafts or the other sales rep. If a sales rep is in an adjoining room, you can hear him muttering.
 
 There are also two bottomless pits (actually dangerously exposed lift shafts). Enter a room with one of those and ... well, I'm sure you can work that out. If a lift shaft is in an adjoining room, you can feel a chill and a rush of air.
 
@@ -26,6 +26,4 @@ s 8 3   - to shoot into room 8 with a range of 3 rooms
 
 ### Status
 
-The description above is what I'm aiming for. Here's how far I've actually got.
-
-* Actually, we're now at the point where it all works other than waking up Zumpus and having him ramble around the building. The game is playable.
+Version 1.0.0 - 14/06/2022 - Completed.

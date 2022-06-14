@@ -1,6 +1,9 @@
 ; zumpus_data.asm
 
 .connections
+  ; Lookup table of connecting rooms. Internally, rooms are numbered 0-19.
+  ; The current room number is used as an offset into this table, which then
+  ; provides a list of rooms that connect to the current one.
   ; Each entry ends with a null byte because that makes it four bytes per
   ; entry. When doing the lookup, we have to multiply by the number of bytes
   ; per entry, and multiplying by 4, using ASL, is easier than by 3.
@@ -24,11 +27,6 @@
   equs 8,16,18,0  ; 17
   equs 10,17,19,0 ; 18
   equs 12,15,18,0 ; 19
-
-.current_state
-  equs STATE_OK         ; 0
-  equs STATE_KIDNAPPED  ; 1
-  equs STATE_DEAD       ; 2
 
 .breakline
   equs "-----",10,0
@@ -93,22 +91,18 @@
   equs "Another game (Y/n)? ",0
 
 .you_are_dead
-  equs "ARGH!! The Zumpus has found you! It's been nice knowing you...",10,0
+  equs 10,"ARGH!! The Zumpus has found you! It's been nice knowing you...",10,10,0
 .you_have_fallen
-  equs "OOOOOOOoooooo........ Down the lift shaft you go. Sorry!",10,0
+  equs 10,"OOOOOOOoooooo........ Down the lift shaft you go. Sorry!",10,10,0
 .you_are_kidnapped
   equs "Oh-oh! You're suddenly in the presence of one of the sales reps.",10
   equs "He grabs you and hustles you to another room. But eventually a life",10
   equs "of bad food and cheap drinks means he becomes exhausted and scuttles",10
   equs "back, wheezing, to his cubicle.",10,0
 .you_have_no_staples
-  equs "Alas, you are out of staples. It's now only a matter of time before",10
-  equs "Zumpus gets you. So long old friend...",10,0
+  equs 10,"Alas, you are out of staples. It's now only a matter of time before",10
+  equs "Zumpus gets you. So long old friend...",10,10,0
 
-;.shot_msg_table
-;  equw zumpus_miss_msg
-;  equw zumpus_hit_msg
-;  equw zumpus_own_goal
 .shot_miss_msg
   equs "A distant snicker of contempt tells you the staple missed.",10,0
 .shot_hit_msg
@@ -129,12 +123,13 @@
   equs "Can you hear that muttering sound?",10,0
 .warning_pit_msg
   equs "It's chilly in here, and there's a sensation like sucking air.",10,0
-
-.zumpus_awakes_msg
-  equs "A snort, a fart and a bellow from somewhere in the bowels of the",10
+.warning_zumpus_awakes
+  equs "Oh no. A snort, a fart and a bellow from somewhere in the bowels of the",10
   equs "building suggest that Zumpus has awoken.",10
   equs "He will now ramble at random around the building.",10
   equs "You have been warned...",10,0
+.warning_zumpus_moving
+  equs "You hear banging and crashing in the distance.",10,0
 
 \ ---  ERRORS  -----------------------------------------------------------------
 .err_input

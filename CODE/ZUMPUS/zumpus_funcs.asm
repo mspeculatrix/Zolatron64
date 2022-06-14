@@ -5,8 +5,10 @@
 \ ------------------------------------------------------------------------------
 \ Check whether the room number in ROOM_NUM is a valid connecting room.
 \ Assumes the three bytes containing valid room numbers start at
-\ the address pointed to by TMP_ADDR_A.
-\ Returns a value in FUNC_RESULT: 0 = no match, 1 = match
+\ the address pointed to by TMP_ADDR_A. So this is typically called after using
+\ find_adjacent_rooms.
+\ ON ENTRY: ROOM_NUM contains room number to check
+\ ON EXIT : FUNC_RESULT contains 0 = invalid room, 1 = valid room
 .check_connecting_rooms
   ldy #0
   stz FUNC_RESULT
@@ -26,13 +28,17 @@
 \ ------------------------------------------------------------------------------
 \ ---  FIND_ADJACENT_ROOMS
 \ ------------------------------------------------------------------------------
-\ Assumes the current room number is in A.
+\ Get a list of the rooms adjacent to the current one.
 \ Assumes the three bytes to which you want to store the room numbers start at
 \ the address pointed to by TMP_ADDR_A.
+\ ON ENTRY: - A must contain current room number.
+\           - TMP_ADDR_A/+1 mus contain pointer to address where you want to
+\             store the results.
+\ ON EXIT : Results stored in three byytes pointed to by TMP_ADDR_A.
 .find_adjacent_rooms
   clc
-  asl A                                 ; Need to multiply by 4
-  asl A
+  asl A                                 ; Need to multiply by 4 for lookup table
+  asl A                                 ; offset.
   tax                                   ; Offset counter for lookup table
   ldy #0                                ; Offset counter for storing numbers
 .find_adjacent_rooms_next
@@ -50,16 +56,19 @@
 \ ---  GET_INPUT_ROOM
 \ ------------------------------------------------------------------------------
 \ Get the room number entered by the player and check that it is a valid - ie,
-\ a connecting - room.
+\ a connecting room.
+\ ON ENTRY: Expecting a room number to be next item in STDIN_BUF
 \ ON EXIT : - Room number is in ROOM_NUM
 \           - Error is in FUNC_ERR
 .get_input_room
-  ; The next thing in the input buf should be the number of the room
-  stz FUNC_ERR
+  stz FUNC_ERR                  ; Set default
   jsr OSRDINT16                 ; Read the room number from STDIN_BUF
   lda FUNC_ERR                  ; Check for error
-  bne get_input_room_oserr
-  SET_AS_PLAYER                 ; Loads pointer to conn room data in TMP_ADDR_A
+  bne get_input_room_oserr  
+  lda #<P_CONN_ROOMS            ; Load pointer to conn room data in TMP_ADDR_A
+  sta TMP_ADDR_A                ;  "
+  lda #>P_CONN_ROOMS            ;  "
+  sta TMP_ADDR_A + 1            ;  "
   lda FUNC_RES_L                ; Only need the low byte of the result
   dec A                         ; Internal room is one less
   sta ROOM_NUM
@@ -80,6 +89,9 @@
 \ ------------------------------------------------------------------------------
 \ ---  INIT_CHECK_UNIQUE
 \ ------------------------------------------------------------------------------
+\ Used when setting up game and assigning random locations to the various
+\ characters. This basically ensures that each character is assigned a 
+\ different room.
 .init_check_unique
   phx
   stz FUNC_RESULT
@@ -124,15 +136,17 @@
 \ ------------------------------------------------------------------------------
 \ ---  PRINT_ROOM_NUM
 \ ------------------------------------------------------------------------------
-.print_room_num ; location in A
-  inc A
-  jsr OSB2ISTR
+\ ON ENTRY: Room number in A
+.print_room_num
+  inc A                 ; Because internal room numbers are one less than
+  jsr OSB2ISTR          ; those shown to the player.
   jsr OSWRSBUF
   rts
 
 \ ------------------------------------------------------------------------------
 \ ---  RANDOM_ROOM
 \ ------------------------------------------------------------------------------
+\ Select a random connecting room.
 \ ON ENTRY: Room number in ROOM_NUM
 \ ON EXIT : New random room number in ROOM_NUM
 .random_room
@@ -144,50 +158,40 @@
   jsr find_adjacent_rooms     ; 3 bytes with conn room nums now in R_CONN_ROOMS
   ldx #3                      ; Divisor for MOD
   jsr roll_dice               ; Random number in A
-  tax
-  lda R_CONN_ROOMS,X
+  tax                         ; Use random number as an offset
+  lda R_CONN_ROOMS,X          ; and select from connecting rooms
   sta ROOM_NUM
   rts
 
 \ ------------------------------------------------------------------------------
 \ ---  ROLL_DICE
-\ ---  Get a random number in range 0..59 or random true/false value
+\ ---  Get a random number.
 \ ------------------------------------------------------------------------------
-\ A 'threshold' value (in Y) will be used to determine a true (1) or false (0) 
-\ return value. The rule is:
-\    Counter < threshold - FALSE
-\    Counter >= threshold - TRUE
-\ If you don't care about a true/false value, then don't worry about what's
-\ in Y.
-\ ON ENTRY: - X must contain the divisor for MODding, or 0 if no MOD needed.
-\           - Y should contain the threshold value - if a true/false value
-\             is required.
-\ ON EXIT : - A will contain the actual value of the counter MODded by X.
-\           - FUNC_RESULT will contain the true/false value (0 or 1)
+\ Generates a random number in the range 0..59 simply by looking at the value
+\ of the timer counter. This value is then MODded by whatever is in X. So:
+\     X=2   Returns 0 or 1 - ie, false or true
+\     X=3   Returns 0, 1 or 2
+\     X=4   Returns 0, 1, 2 or 3
+\     X=20  Returns 0-19 - for choosing a random room number.
+\ ON ENTRY: X must contain the divisor for MODding.
+\ ON EXIT : A will contain the actual value of the counter MODded by X.
 \ ------------------------------------------------------------------------------
 .roll_dice
-  stz FUNC_RESULT         ; Set to 0 (false) by default
-  lda VIAC_T1CL           ; Put Counter value in X
+  lda VIAC_T1CL           ; Get the current counter value
   cmp #$FF                ; Sometimes this pops up - don't know why
-  bne roll_dice_mod
-  lda #0
+  bne roll_dice_mod       ; If it doesn't, we're good to go
+  jmp roll_dice           ; Otherwise, try again
 .roll_dice_mod
-  cpx #0                  ; Do we want to mod?
-  beq roll_dice_store     ; No, if X=0
-  jsr uint8_mod8
-  lda FUNC_RESULT
-.roll_dice_store
-  sty TEST_VAL            ; Put threshold value in TEST_VAL
-  cmp TEST_VAL            ; Compare to our random number in A
-  bcc roll_dice_end       ; random num < threshold, so default value is fine
-  ldy #1                  ; Otherwise, return a true value
-  sty FUNC_RESULT
-.roll_dice_end
+  jsr uint8_mod8          ; A contains random number, X contains divisor
+  lda FUNC_RESULT         ; Get the result of the MODding.
   rts
 
 \ ------------------------------------------------------------------------------
 \ ---  SET_PLAYER_CONNECTING_ROOMS
 \ ------------------------------------------------------------------------------
+\ Set a pointer to the array of rooms that connect to the Player's current
+\ location.
+\ ON EXIT : TMP_ADDR_A/+1 contains pointer to the P_CONN_ROOMS array
 .set_player_connecting_rooms
   lda #<P_CONN_ROOMS
   sta TMP_ADDR_A
@@ -200,6 +204,7 @@
 \ ------------------------------------------------------------------------------
 \ ---  SHOW_CONNECTING_ROOMS
 \ ------------------------------------------------------------------------------
+\ Print a list of the rooms that connect to the Player's current location.
 .show_connecting_rooms
   LOAD_MSG connecting_rooms_msg
   jsr OSWRMSG
@@ -222,6 +227,7 @@
 \ ------------------------------------------------------------------------------
 \ ---  SHOW_CURRENT_ROOM
 \ ------------------------------------------------------------------------------
+\ Print the number of the Player's current location.
 .show_current_room
   LOAD_MSG current_room_msg
   jsr OSWRMSG
@@ -233,6 +239,9 @@
 \ ------------------------------------------------------------------------------
 \ ---  SHOW_ERROR_MSG
 \ ------------------------------------------------------------------------------
+\ Print an error message. Looks up message from the Error Message Table
+\ according to an error code in FUNC_ERR
+\ ON ENTRY: Error code must be in FUNC_ERR
 .show_error_msg
   lda FUNC_ERR
   dec A                   ; To get offset for table
@@ -249,6 +258,7 @@
 \ ------------------------------------------------------------------------------
 \ ---  STAPLE_COUNT
 \ ------------------------------------------------------------------------------
+\ Print a message telling the Player how many staples remain.
 .staple_count
   lda STAPLE_COUNT
   pha
@@ -271,6 +281,7 @@
 \ ------------------------------------------------------------------------------
 \ ---  STATUS_MSG
 \ ------------------------------------------------------------------------------
+\ Print a status update. Run at the end of every turn.
 .status_msg
   jsr show_current_room
   jsr set_player_connecting_rooms
@@ -278,96 +289,112 @@
   jsr staple_count
   NEWLINE
   jsr warnings
-  jsr debug_locations
+;  jsr debug_locations
   rts
 
-.debug_locations
-  lda #'Z'
-  jsr OSWRCH
-  lda #':'
-  jsr OSWRCH
-  lda ZUMPUS_LOC
-  jsr print_room_num
-  lda #' '
-  jsr OSWRCH
+;.debug_locations
+;  lda #'Z'
+;  jsr OSWRCH
+;  lda #':'
+;  jsr OSWRCH
+;  lda ZUMPUS_LOC
+;  jsr print_room_num
+;  lda #' '
+;  jsr OSWRCH
 
-  lda #'B'
-  jsr OSWRCH
-  lda #':'
-  jsr OSWRCH
-  lda BAT1_LOC
-  jsr print_room_num
-   lda #' '
-  jsr OSWRCH
+;  lda #'S'
+;  jsr OSWRCH
+;  lda #':'
+;  jsr OSWRCH
+;  lda Z_STATE
+;  jsr OSB2ISTR
+;  jsr OSWRSBUF
+;  lda #' '
+;  jsr OSWRCH
 
-  lda #'B'
-  jsr OSWRCH
-  lda #':'
-  jsr OSWRCH
-  lda BAT2_LOC
-  jsr print_room_num
-  lda #' '
-  jsr OSWRCH
+;  lda #'B'
+;  jsr OSWRCH
+;  lda #':'
+;  jsr OSWRCH
+;  lda BAT1_LOC
+;  jsr print_room_num
+;   lda #' '
+;  jsr OSWRCH
 
-  lda #'P'
-  jsr OSWRCH
-  lda #':'
-  jsr OSWRCH
-  lda PIT1_LOC
-  jsr print_room_num
-  lda #' '
-  jsr OSWRCH
+;  lda #'B'
+;  jsr OSWRCH
+;  lda #':'
+;  jsr OSWRCH
+;  lda BAT2_LOC
+;  jsr print_room_num
+;  lda #' '
+;  jsr OSWRCH
 
-  lda #'P'
-  jsr OSWRCH
-  lda #':'
-  jsr OSWRCH
-  lda PIT2_LOC
-  jsr print_room_num
-  NEWLINE
-  rts
+;  lda #'P'
+;  jsr OSWRCH
+;  lda #':'
+;  jsr OSWRCH
+;  lda PIT1_LOC
+;  jsr print_room_num
+;  lda #' '
+;  jsr OSWRCH
+
+;  lda #'P'
+;  jsr OSWRCH
+;  lda #':'
+;  jsr OSWRCH
+;  lda PIT2_LOC
+;  jsr print_room_num
+;  NEWLINE
+;  rts
 
 \ ------------------------------------------------------------------------------
 \ ---  STATUS_UPDATE
 \ ------------------------------------------------------------------------------
+\ Update the status of the Player - checking, for example, whether the Player
+\ has entered a room containing Zumpus, a sales rep (bat) or a lift shaft (pit).
+\ Also checks how many staples are left.
+\ ON EXIT : Sets P_CONDITION
 .status_update
   ; Check for threats.
-  stz SITUATION
-  lda PLAYER_LOC
-  cmp ZUMPUS_LOC
-  beq dead_as_a_dead_thing
-  cmp PIT1_LOC
-  beq down_the_pit
-  cmp PIT2_LOC
-  beq down_the_pit
-  cmp BAT1_LOC
-  beq status_kidnapped
-  cmp BAT2_LOC
-  beq status_kidnapped
-  lda STAPLE_COUNT
-  beq out_of_staples
-  jmp status_update_end
+  stz P_CONDITION                 ; Reset to default
+  lda PLAYER_LOC                  ; Are we in a room with Zumpus?
+  cmp ZUMPUS_LOC                  ;  "
+  beq dead_as_a_dead_thing        ;  "
+  cmp PIT1_LOC                    ; Are we in a room with a lift shaft?
+  beq down_the_pit                ;  "
+  cmp PIT2_LOC                    ;  "
+  beq down_the_pit                ;  "
+  cmp BAT1_LOC                    ; Are we in a room with a sales rep?
+  beq status_kidnapped            ;  "
+  cmp BAT2_LOC                    ;  "
+  beq status_kidnapped            ;  "
+  lda STAPLE_COUNT                ; Have we run out of staples?
+  beq out_of_staples              ;  "
+  jmp status_update_end           ; If none of above, we're done here
 .dead_as_a_dead_thing
   lda #STATE_DEAD
-  sta SITUATION
+  sta P_CONDITION
   jmp status_update_end
 .down_the_pit
   lda #STATE_FALLEN
-  sta SITUATION
+  sta P_CONDITION
   jmp status_update_end
 .status_kidnapped
   lda #STATE_KIDNAPPED
-  sta SITUATION
+  sta P_CONDITION
   jmp status_update_end
 .out_of_staples
   lda #STATE_NO_STAPLES
-  sta SITUATION
+  sta P_CONDITION
 .status_update_end
   rts
 
 \ ------------------------------------------------------------------------------
 \ ---  WARNINGS
 \ ------------------------------------------------------------------------------
+\ Display warnings about being in a room adjacent to Zumpus, a sales rep or a
+\ lift shaft.
 .warnings
   ldy #0
   ldx #0
@@ -418,40 +445,43 @@
 .warnings_done
   rts
 
+\ ------------------------------------------------------------------------------
 \ ---  YESNO
-\ ON ENTRY: SHould probably have zeroed-out STDIN_BUF and STDIN_IDX.
-\ ON EXIT : A contains result, YESNO_YES, YESNO_NO, YESNO_ERR
+\ ------------------------------------------------------------------------------
+\ Get a 'Y' or 'N' input.
+\ ON ENTRY: Should probably have zeroed-out STDIN_BUF and STDIN_IDX before
+\           coming here.
+\ ON EXIT : A contains result, YESNO_YES, YESNO_NO or YESNO_ERR
 .yesno
   lda STDIN_STATUS_REG
   and #STDIN_NUL_RCVD_FLG               ; Is the 'null received' bit set?
-  beq yesno                             ; If no, wait
+  beq yesno                             ; If no, loop until it is
   stz STDIN_IDX                         ; Want to get first char
-  jsr OSRDCH
+  jsr OSRDCH                            ; Read character from STDIN_BUF
   ; --- DEBUGGING ------------------
 ;  lda FUNC_RESULT
 ;  jsr OSWRCH
 ;  lda #' '
 ;  jsr OSWRCH
   ; --------------------------------
-  lda FUNC_RESULT
+  lda FUNC_RESULT                       ; Check the character we read
   cmp #'Y'
   beq yesno_yes
   cmp #'N'
   beq yesno_no
-  lda #YESNO_ERR
+  lda #YESNO_ERR                        ; If no 'Y' or 'N', this is an error
   jmp yesno_done
 .yesno_yes
   lda #YESNO_YES
-  sta BARLED_DAT
   jmp yesno_done
 .yesno_no
   lda #YESNO_NO
 .yesno_done
   sta FUNC_RESULT
-  stz STDIN_IDX
-  stz STDIN_BUF
-  lda STDIN_STATUS_REG                    ; Get our info register
-  eor #STDIN_NUL_RCVD_FLG                 ; Zero the received flag
-  sta STDIN_STATUS_REG                    ; and re-save the register
+  stz STDIN_IDX                         ; Clear input buffer 
+  stz STDIN_BUF                         ;  "
+  lda STDIN_STATUS_REG                  ; Get our info register
+  eor #STDIN_NUL_RCVD_FLG               ; Zero the received flag
+  sta STDIN_STATUS_REG                  ; and re-save the register
   rts
 
