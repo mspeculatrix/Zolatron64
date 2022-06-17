@@ -112,7 +112,7 @@
   lda #$20                      ; Add a space
   sta STR_BUF + 4
   stz STR_BUF + 5               ; Add a null terminator
-  jsr acia_prt_strbuf           ; !!! CHANGE TO OS CALL !!!
+  jsr OSWRSBUF
 .display_mem_next_addr
   ldx #0
   lda (TMP_ADDR_A)              ; Load the value of the byte at addr

@@ -14,15 +14,16 @@ ZD_CTRL_DDR  = ZD_BASE_ADDR + $02     ; Port B Data Direction Register
 ZD_DATA_PORT = ZD_BASE_ADDR + $01     ; VIA Port A data/instruction register
 ZD_DATA_DDR  = ZD_BASE_ADDR + $03     ; Port A Data Direction Register
 
-ZD_T1CL  = ZD_BASE_ADDR + $04         ; timer 1 counter low
-ZD_T1CH  = ZD_BASE_ADDR + $05	        ; timer 1 counter high
-ZD_T2CL  = ZD_BASE_ADDR + $08      ; timer 2 counter low
-ZD_T2CH  = ZD_BASE_ADDR + $09	     ; timer 2 counter high
+ZD_T1CL  = ZD_BASE_ADDR + $04         ; Timer 1 counter low
+ZD_T1CH  = ZD_BASE_ADDR + $05	        ; Timer 1 counter high
+ZD_T2CL  = ZD_BASE_ADDR + $08         ; Timer 2 counter low
+ZD_T2CH  = ZD_BASE_ADDR + $09	        ; Timer 2 counter high
 ZD_ACL   = ZD_BASE_ADDR + $0B		      ; Auxiliary Control register
 ZD_IER   = ZD_BASE_ADDR + $0E 	      ; Interrupt Enable Register
 ZD_IFR   = ZD_BASE_ADDR + $0D		      ; Interrupt Flag Register
 
-ZD_WKSPC = $0600                  ; Using page 6 as workspace memory for ZolaDOS
+ZD_TIMER_COUNT = $0600                ; Using page 6 as workspace memory 
+ZD_WKSPC       = $0600 + 2            ; for ZolaDOS
 
 ZD_OPCODE_LOAD = 8
 ZD_OPCODE_LS   = 16
@@ -32,8 +33,6 @@ ZD_MIN_FN_LEN = 3         ; Minimum filename length
 ZD_MAX_FN_LEN = 15        ; Maximum filename length
 ZD_FILES_PER_LINE = 4     ; Number of filenames to be displayed per line
 ZD_FILELIST_TERM = 255    ; Terminator for end file list
-
-ZD_TIMER_COUNT = LCD_BUF + LCD_BUF_SZ ; LCD_BUF_SZ defined in cfg_page_5.asm
 
 ; INIT and CR are outputs
 ZD_CA_ON        = %11111110           ; PB0 - AND with PB to set /CA bit low  

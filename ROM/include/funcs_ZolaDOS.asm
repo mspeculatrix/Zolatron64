@@ -44,7 +44,6 @@
   sta ZD_CTRL_PORT
   pla
   sta ZD_DATA_PORT
-  sta BARLED_CMD
   jsr zd_signalDelay          ; Slight pause to ensure data loaded
   ZD_SET_CR_ON                ; Take /CR low - signals that we're ready to rock
   jsr zd_signalDelay          ; Slight pause to settle down
@@ -109,7 +108,6 @@
   bne zd_rcv_data_chkSA       ; If not 0, might be error or loading complete
   lda ZD_DATA_PORT            ; Read byte on data bus
   sta (FILE_ADDR)             ; Store byte
-  sta BARLED_DAT              ; Show it on bar LED
   inc FILE_ADDR               ; Increment address low byte
   bne zd_rcv_data_loop_cont   ; If it didn't roll over to 0, carry on...
   inc FILE_ADDR + 1           ; Otherwise, increment high byte
@@ -149,7 +147,6 @@
   beq zd_sendstrbuf_end       ; Got a null byte so we're done
   inx
   sta ZD_DATA_PORT            ; Put byte on data bus
-;  sta BARLED_DAT              ; Just for fun
   ZD_SET_CR_ON                ; Take /CR low - signals that we're ready to rock
   jsr zd_signalDelay          ; Slight pause to settle down
   jsr zd_waitForSR            ; Wait for server response - might need long wait
@@ -227,11 +224,9 @@
   lda ZD_DATA_PORT            ; Read code
   bne zd_svr_resp_resp_err    ; Anything but 0 is an error
   ZD_SET_CR_OFF
-  sta BARLED_DAT
   jmp zd_svr_resp_svr_end
 .zd_svr_resp_resp_err
   sta FUNC_ERR                ; Store error code from server
-  sta VIAC_PORTA
 .zd_svr_resp_svr_end
   rts
 

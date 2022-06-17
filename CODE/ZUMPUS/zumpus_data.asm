@@ -31,6 +31,11 @@
 .breakline
   equs "-----",10,0
 
+.game_title
+  equs "***************************",10
+  equs "***   HUNT the ZUMPUS   ***",10
+  equs "***************************",10,10,0
+
 .instructions
   equs "At each turn, you can either move or fire a staple.",10
   equs "To move, type 'm' followed by the number of the room you want to",10
@@ -48,9 +53,6 @@
   equs "  Q - to quit",10,0
 
 .start_msg
-  equs "***************************",10
-  equs "***   HUNT the ZUMPUS   ***",10
-  equs "***************************",10,10
   equs "It is with a sense of dread that you realise the only people left in",10
   equs "the office tonight are you, your evil-smelling middle manager",10
   equs "Damian Zumpus and his two vile sales reps.",10,10
@@ -106,7 +108,7 @@
 .shot_miss_msg
   equs "A distant snicker of contempt tells you the staple missed.",10,0
 .shot_hit_msg
-  equs "WELL DONE!",10
+  equs 10,"WELL DONE!",10
   equs "An anguished wail of pain and indignation means you scored a hit!",10
   equs "Zumpus flees the building. You win!",10,0
 .shot_nearhit_msg

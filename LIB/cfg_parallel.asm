@@ -1,7 +1,7 @@
 \ 6522 VIA D - PARALLEL PORT
 \ Timers are available for other uses.
 
-PRT_BASE_ADDR = $A800
+PRT_BASE_ADDR = $AC00
 
 ; Register addresses
 PRT_DATA_PORT = PRT_BASE_ADDR + $01     ; VIA Port A data/instruction register
@@ -39,9 +39,9 @@ PRT_STROBE_DELAY = $0010          ; Length of strobe in ms
 
 MACRO PRT_PULSE_DELAY
   lda #PRT_STROBE_DELAY
-  sta VIAA_TIMER_INTVL
+  sta LCDV_TIMER_INTVL
   lda #0
-  sta VIAA_TIMER_INTVL + 1
+  sta LCDV_TIMER_INTVL + 1
   jsr OSDELAY
 ENDMACRO
 

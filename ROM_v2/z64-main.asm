@@ -24,18 +24,20 @@ INCLUDE "../LIB/cfg_page_4.asm"                   ; Misc buffers etc
 ; PAGE 7 - Reserved for future expansion
 
 INCLUDE "include/cfg_ROM.asm"
-INCLUDE "../LIB/cfg_uart_6551_acia.asm"
-;INCLUDE "../LIB/cfg_uart_SC28L92.asm"
-INCLUDE "../LIB/cfg_flashmem.asm"
+INCLUDE "../LIB/cfg_uart_SC28L92.asm"
+INCLUDE "../LIB/cfg_flash-io-snd.asm"
 INCLUDE "../LIB/cfg_2x16_lcd.asm"
 INCLUDE "../LIB/cfg_ZolaDOS.asm"
-;INCLUDE "../LIB/cfg_user_port.asm"
+INCLUDE "../LIB/cfg_user_port.asm"
 INCLUDE "../LIB/cfg_parallel.asm"
 
 \ ----- INITIALISATION ---------------------------------------------------------
 ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
 .startrom             ; This is where the ROM bytes start for the file, but...
 ORG ROMSTART          ; This is where the actual code starts.
+  jmp startcode
+.version_str
+  equs "ZolOS v2.1", 0
 .startcode
   sei                 ; Don't interrupt me yet
   cld                 ; We don' need no steenkin' BCD
@@ -48,6 +50,11 @@ ORG ROMSTART          ; This is where the actual code starts.
   stz STDIN_BUF
   stz STDIN_IDX
   stz STDIN_STATUS_REG
+
+  lda #<USR_PAGE      ; Set LOMEM to start of user RAM
+  sta LOMEM
+  lda #>USR_PAGE
+  sta LOMEM + 1
 
 \ ----- SETUP OS CALL VECTORS --------------------------------------------------
   lda #<read_hex_byte       ; OSRDHBYTE
@@ -71,25 +78,25 @@ ORG ROMSTART          ; This is where the actual code starts.
   lda #>read_filename
   sta OSRDFNAME_VEC + 1
 
-  lda #<acia_sendbuf        ; OSWRBUF
+  lda #<duart_sendbuf        ; OSWRBUF
   sta OSWRBUF_VEC
-  lda #>acia_sendbuf
+  lda #>duart_sendbuf
   sta OSWRBUF_VEC + 1
-  lda #<acia_writechar      ; OSWRCH
+  lda #<duart_sendchar      ; OSWRCH
   sta OSWRCH_VEC
-  lda #>acia_writechar
+  lda #>duart_sendchar
   sta OSWRCH_VEC + 1
   lda #<os_print_error      ; OSWRERR
   sta OSWRERR_VEC
   lda #>os_print_error
   sta OSWRERR_VEC + 1
-  lda #<acia_println        ; OSWRMSG
+  lda #<duart_println        ; OSWRMSG
   sta OSWRMSG_VEC
-  lda #>acia_println
+  lda #>duart_println
   sta OSWRMSG_VEC + 1
-  lda #<acia_prt_strbuf     ; OSWRSBUF
+  lda #<duart_snd_strbuf     ; OSWRSBUF
   sta OSWRSBUF_VEC
-  lda #>acia_prt_strbuf
+  lda #>duart_snd_strbuf
   sta OSWRSBUF_VEC + 1
 
   lda #<byte_to_hex_str     ; OSB2HEX
@@ -143,13 +150,13 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSDELAY_VEC + 1
 
 ; Select serial as default input/output streams
-  lda #STR_SEL_SERIAL
+  lda #STR_SEL_SERIAL       ; Don't think this is being used yet
   sta STREAM_SELECT_REG
 
 ; SETUP LCD display & LEDs
-;  lda #%11111111  
-;  sta LCDV_DDRB   ; Set all pins on port B to output - data for LCD
-;  sta LCDV_DDRA   ; Set all pins on port A to output - signals for LCD & LEDs
+  lda #%11111111  
+  sta LCDV_DDRB   ; Set all pins on port B to output - data for LCD
+  sta LCDV_DDRA   ; Set all pins on port A to output - signals for LCD & LEDs
 
 ; SETUP ZolaDOS RPi interface
   jsr zd_init
@@ -159,78 +166,64 @@ ORG ROMSTART          ; This is where the actual code starts.
 ;  stz USRP_DDRB  ; set all pins as outputs
 
 ; SETUP ACIA
-  jsr uart_6551_init
-;  jsr uart_SC28L92_init
+;  jsr uart_6551_init
+  jsr duart_init
 
 ; SETUP LCD
-;  lda #LCD_TYPE         ; Set 8-bit mode; 2-line display; 5x8 font
-;  jsr lcd_cmd
-;  lda #LCD_MODE         ; Display on; cursor off; blink off
-;  jsr lcd_cmd
-;  lda #LCD_CLS          ; clear display, reset display memory
-;  jsr lcd_cmd
+  lda #LCD_TYPE         ; Set 8-bit mode; 2-line display; 5x8 font
+  jsr lcd_cmd
+  lda #LCD_MODE         ; Display on; cursor off; blink off
+  jsr lcd_cmd
+  lda #LCD_CLS          ; clear display, reset display memory
+  jsr lcd_cmd
 
 \ ------------------------------------------------------------------------------
 \ ----     MAIN PROGRAM                                                     ----
 \ ------------------------------------------------------------------------------
 .main
-;  LED_ON LED_ERR
-;  LED_ON LED_BUSY
-;  LED_ON LED_OK
-;  LED_ON LED_FILE_ACT
-;  LED_ON LED_DEBUG
+  LED_ON LED_ERR
+  LED_ON LED_BUSY
+  LED_ON LED_OK
+  LED_ON LED_FILE_ACT
+  LED_ON LED_DEBUG
  
 ; Print initial message & prompt via serial
   lda #CHR_LINEEND                  ; start with a couple of line feeds
   jsr OSWRCH
   jsr OSWRCH
-  PRT_MSG start_msg, acia_println
+  PRT_MSG start_msg, duart_println
   lda #CHR_LINEEND
   jsr OSWRCH
-  PRT_MSG version_str, acia_println
+  PRT_MSG version_str, duart_println
 
 ;  jsr lcd_clear_buf                 ; Clear LCD buffer
-;  PRT_MSG version_str, lcd_println  ; Print initial messages on LCD
-;  PRT_MSG start_msg, lcd_println
+  PRT_MSG version_str, lcd_println  ; Print initial messages on LCD
+  PRT_MSG start_msg, lcd_println
   
-;  lda #<500                         ; interval for delay function - in ms
-;  sta LCDV_TIMER_INTVL
-;  lda #>500
-;  sta LCDV_TIMER_INTVL+1
+  lda #<500                         ; interval for delay function - in ms
+  sta LCDV_TIMER_INTVL
+  lda #>500
+  sta LCDV_TIMER_INTVL+1
   
-;  jsr uart_SC28L92_test_msg
-;  jsr delay
-;  LED_OFF LED_ERR
-;  jsr delay
-;  LED_OFF LED_BUSY
-;  jsr delay
-;  LED_OFF LED_OK
-;  jsr delay
-;  LED_OFF LED_FILE_ACT
-;  jsr delay
-;  LED_OFF LED_DEBUG
+  LED_OFF LED_ERR
+  LED_OFF LED_BUSY
+  LED_OFF LED_OK
+  LED_OFF LED_FILE_ACT
+  LED_OFF LED_DEBUG
 
   cli                     	        ; Enable interrupts
 
 .soft_reset
-  jsr acia_prtprompt
+  SERIAL_PROMPT
 
 \ --------- MAIN LOOP ----------------------------------------------------------
 .mainloop                               ; Loop forever
-.main_chk_stdin
   lda STDIN_STATUS_REG
-  and #STDIN_NUL_RCVD_FLG               ; Is the 'null received' bit set?
+  and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
   bne process_input                     ; If yes, process the buffer
   ldx STDIN_IDX                         ; Load the value of the RX buffer index
   cpx #STR_BUF_LEN                      ; Are we at the limit?
   bcs process_input                     ; Branch if X >= STR_BUF_LEN
-;.main_chk_SC28L92
-;  lda STDIN_STATUS_REG                  ; Load our serial status register
-;  and #DUART_RxA_BUF_FULL_FL
-;  bne main_service_SC28L92
-;  and DUART_RxA_NUL_RCVD_FL
-;  bne main_service_SC28L92
-;  jmp main_chk_usrp                     ; If 0, on to next check
 ;.main_chk_usrp
 ;  jsr usrp_chk_timer                    ; Result will be in FUNC_RESULT
 ;  lda FUNC_RESULT
@@ -241,29 +234,12 @@ ORG ROMSTART          ; This is where the actual code starts.
 
 .process_input
   \\ We're here because the null received bit is set or STDIN_BUF full
-  ; **** NEED TO REWORK THIS ****
-  ; Does this need to be an OS process, so that user programs can access it?
-  ; WHAT IS THE PURPOSE OF THIS ROUTINE?
-  ; Currently, it parses for commands. But is that necessarily what we want it
-  ; to do in a user program context?
-  ; Maybe we could update it so that it parses the first word (up to a space or
-  ; nul) and then places that word in its own buffer. And it transfers the rest
-  ; of the input buffer (minus any leading spaces) into another buffer.
-  ; We could possibly specify the locations of those buffers throug indirection
-  ; so that user programs could set up their own buffers.
-  ; We would then need some sort of context switch - ie, if we're in a CLI
-  ; context, get the program to interpret the commands as OS commands.
-  ; Otherwise, jump to a location where there are custom parsing/interpretion
-  ; routines (for user programs).
-  ; To do this, might need to use vectors/indirection so that parsing
-  ; routine knows which command table to use. Or is this all getting a bit
-  ; difficult?
-  ;LED_ON LED_BUSY
-  ;LED_OFF LED_ERR
-  ;LED_OFF LED_OK
-  ;LED_OFF LED_DEBUG
+  LED_ON LED_BUSY
+  LED_OFF LED_ERR
+  LED_OFF LED_OK
+  LED_OFF LED_DEBUG
   lda STDIN_STATUS_REG                    ; Get our info register
-  eor #STDIN_NUL_RCVD_FLG                 ; Zero the received flag
+  and #STDIN_CLEAR_FLAGS                  ; Clear the received flags
   sta STDIN_STATUS_REG                    ; and re-save the register
   jsr parse_input                         ; Puts command token in FUNC_RESULT
   lda FUNC_RESULT                         ; Get the result
@@ -288,15 +264,8 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta FUNC_ERR
   jsr os_print_error
 .process_input_nul
-  jsr acia_prtprompt
+  SERIAL_PROMPT
   jmp process_input_done
-
-;.main_service_SC28L92
-;  lda STDIN_STATUS_REG           ; Clear the NUL_RECVD and BUF_FULL flags
-;  and #DUART_RxA_CLR_FLAGS
-;  sta STDIN_STATUS_REG
-  
-  jmp mainloop
 
 \ ******************************************************************************
 \ ***   COMMAND PROCESS FUNCTIONS                                            ***
@@ -319,15 +288,14 @@ INCLUDE "include/cmds_V.asm"
 .cmdprc_fail
   jsr os_print_error
 .cmdprc_end
-  jsr acia_prtprompt
+  SERIAL_PROMPT
 .process_input_done
   stz STDIN_IDX                                   ; Reset RX buffer index
   stz STDIN_BUF
-;  LED_OFF LED_BUSY
+  LED_OFF LED_BUSY
   jmp mainloop                                    ; Go around again
 
-INCLUDE "include/funcs_uart_6551_acia.asm"
-;INCLUDE "include/funcs_uart_SC28L92.asm"
+INCLUDE "include/funcs_uart_SC28L92.asm"
 INCLUDE "include/funcs_ZolaDOS.asm"
 INCLUDE "include/funcs_conv.asm"
 INCLUDE "include/funcs_io.asm"
@@ -341,10 +309,6 @@ ALIGN &100        ; start on new page
 .NMI_handler      ; for future development
 .exit_nmi
   rti
-
-.version_str
-  equs "ZolOS v.23", 0
-
 \-------------------------------------------------------------------------------
 \ OS CALLS  - OS Call Jump Table                                      
 \ Jump table for OS calls. Requires corresponding entries in:
@@ -397,4 +361,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-23.bin", startrom, endrom
+SAVE "bin/z64-ROM-2.1.bin", startrom, endrom

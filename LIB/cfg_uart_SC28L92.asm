@@ -50,9 +50,23 @@ SC28L92_RxRDY     = %00000001
 ;DUARTA_BUF_MAX   = 127   ; but this leaves some headroom.
 
 ; UART FLAGS & MASKS for use with UART_STATUS_REG
-;ACIA_NUL_RCVD_FLG      = %00000001     ; defined in cfg_art_6551_acia.asm
-DUART_RxA_RDY_FL       = %00000010 		; SC28L92 has data in RX FIFO
-DUART_RxA_DATA_RCVD_FL = %00000100		; We've transferred data to our buffer
-DUART_RxA_BUF_FULL_FL  = %00001000		; The buffer is full.
-DUART_RxA_NUL_RCVD_FL  = %00010000		; We've received a null terminator.
-DUART_RxA_CLR_FLAGS    = %11100111
+;STDIN_NUL_RCVD_FLG = %00000001    ; Defined in cfg_main.asm
+;STDIN_DAT_RCVD_FLG = %00000010    ;  ""
+;STDIN_BUF_FULL_FLG = %00000100    ;  ""
+;STDIN_CLEAR_FLAGS  = %11110000    ;  ""
+
+; Synonyms for the STDIN flags above. As we're using Port A as the main
+; console port now, probably better to use the generic STDIN_ constants.
+DUART_RxA_NUL_RCVD_FL  = %00000001		; We've received a nul byte
+DUART_RxA_DAT_RCVD_FL  = %00000010		; We've transferred data to our buffer
+DUART_RxA_BUF_FULL_FL  = %00000100		; The buffer is full.
+DUART_RxA_CLR_FLAGS    = %11110000      ; AND with reg to clear input flags
+
+DUART_RxB_NUL_RCVD_FL  = %00010000		; We've received a nul byte
+DUART_RxB_DAT_RCVD_FL  = %00100000		; We've transferred data to our buffer
+DUART_RxB_BUF_FULL_FL  = %01000000		; The buffer is full.
+DUART_RxB_CLR_FLAGS    = %00001111      ; AND with reg to clear input flags
+
+; AND following with SC28L92_ISR to see if data received
+DUART_RxA_RDY_MASK     = %00000010 		; SC28L92 has data in RX A FIFO
+DUART_RxB_RDY_MASK     = %00100000 		; SC28L92 has data in RX B FIFO

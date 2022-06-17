@@ -1,4 +1,34 @@
-\ LCD CONFIG -- cfg_2x16_lcd.asm -----------------------------------------------
+; LCD & LED CONFIG -- cfg_via_lcd.asm ------------------------------------------
+;
+; $A000 - LCD and system LEDs.
+; Timer 1 is used for the delay function.
+; Even if we stop using the LCD and LEDs, this VIA should be reserved for
+; 'system' uses.
+; Port B is used for the Data pins on the LCD display.
+; Three pins on Port A are used for signal pins on the LCD:
+; - PA5	RS		Register select
+;	- PA6	RW		Read/Write
+;	- PA7	E		  Execute
+; Remaining pins on Port A are used for the 5 LEDs.
+
+LCDV_BASE_ADDR = $A000
+
+; 6522 VIA register addresses
+LCDV_PORTA = LCDV_BASE_ADDR + $01     ; VIA Port A data/instruction register
+LCDV_DDRA  = LCDV_BASE_ADDR + $03     ; Port A Data Direction Register
+LCDV_PORTB = LCDV_BASE_ADDR + $00     ; VIA Port B data/instruction register
+LCDV_DDRB  = LCDV_BASE_ADDR + $02     ; Port B Data Direction Register
+
+; TIMER SETTINGS
+LCDV_T1CL  = LCDV_BASE_ADDR + $04     ; Timer 1 counter low
+LCDV_T1CH  = LCDV_BASE_ADDR + $05	    ; Timer 1 counter high
+LCDV_T2CL  = LCDV_BASE_ADDR + $08     ; Timer 2 counter low
+LCDV_T2CH  = LCDV_BASE_ADDR + $09	    ; Timer 2 counter high
+LCDV_ACL   = LCDV_BASE_ADDR + $0B	    ; Auxiliary Control register
+LCDV_IER   = LCDV_BASE_ADDR + $0E 	  ; Interrupt Enable Register
+LCDV_IFR   = LCDV_BASE_ADDR + $0D	    ; Interrupt Flag Register
+
+\ LCD CONFIG -------------------------------------------------------------------
 \
 \ Port B of the VIA is used for the Data pins on the LCD display.
 \ Three pins on Port A are used for signal pins on the LCD:
@@ -39,17 +69,17 @@ LED_MASK = %00011111        ; will be ORed with control bits for LCD on PORTA
 
 MACRO LED_ON led_num
   pha
-  lda VIAA_PORTA
+  lda LCDV_PORTA
   ora #1 << led_num
-  sta VIAA_PORTA
+  sta LCDV_PORTA
   pla
 ENDMACRO
 
 MACRO LED_TOGGLE led_num
   pha
-  lda VIAA_PORTA
+  lda LCDV_PORTA
   eor #1 << led_num
-  sta VIAA_PORTA
+  sta LCDV_PORTA
   pla
 ENDMACRO
 
@@ -57,14 +87,14 @@ MACRO LED_OFF led_num
   pha
   lda #255
   eor #(1 << led_num)
-  and VIAA_PORTA
-  sta VIAA_PORTA
+  and LCDV_PORTA
+  sta LCDV_PORTA
   pla
 ENDMACRO
 
 MACRO LCD_SET_CTL ctl_bits        ; set control bits for LCD
-  lda VIAA_PORTA                  ; load the current state or PORT A
+  lda LCDV_PORTA                  ; load the current state or PORT A
   and #LED_MASK                   ; clear the top three bits
   ora #ctl_bits                   ; set those bits. Lower 5 bits should be 0s
-  sta VIAA_PORTA                  ; store result
+  sta LCDV_PORTA                  ; store result
 ENDMACRO

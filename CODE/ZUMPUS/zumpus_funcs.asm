@@ -177,7 +177,7 @@
 \ ON EXIT : A will contain the actual value of the counter MODded by X.
 \ ------------------------------------------------------------------------------
 .roll_dice
-  lda VIAC_T1CL           ; Get the current counter value
+  lda USRP_T1CL           ; Get the current counter value
   cmp #$FF                ; Sometimes this pops up - don't know why
   bne roll_dice_mod       ; If it doesn't, we're good to go
   jmp roll_dice           ; Otherwise, try again
@@ -292,6 +292,9 @@
 ;  jsr debug_locations
   rts
 
+\ ------------------------------------------------------------------------------
+\ ---  DEBUG_LOCATIONS - for debugging only
+\ ------------------------------------------------------------------------------
 ;.debug_locations
 ;  lda #'Z'
 ;  jsr OSWRCH
@@ -454,7 +457,7 @@
 \ ON EXIT : A contains result, YESNO_YES, YESNO_NO or YESNO_ERR
 .yesno
   lda STDIN_STATUS_REG
-  and #STDIN_NUL_RCVD_FLG               ; Is the 'null received' bit set?
+  and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
   beq yesno                             ; If no, loop until it is
   stz STDIN_IDX                         ; Want to get first char
   jsr OSRDCH                            ; Read character from STDIN_BUF
@@ -480,8 +483,8 @@
   sta FUNC_RESULT
   stz STDIN_IDX                         ; Clear input buffer 
   stz STDIN_BUF                         ;  "
-  lda STDIN_STATUS_REG                  ; Get our info register
-  eor #STDIN_NUL_RCVD_FLG               ; Zero the received flag
-  sta STDIN_STATUS_REG                  ; and re-save the register
+  lda STDIN_STATUS_REG                    ; Get our info register
+  and #STDIN_CLEAR_FLAGS                  ; Clear the received flags
+  sta STDIN_STATUS_REG                    ; and re-save the register
   rts
 

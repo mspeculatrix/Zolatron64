@@ -1,4 +1,62 @@
-\ LCD FUNCTIONS -- funcs_lcd.asm -----------------------------------------------
+\ LCD FUNCTIONS -- funcs_2x16_lcd.asm -----------------------------------------------
+
+\ ------------------------------------------------------------------------------
+\ ---  DELAY
+\ ---  Implements: OSDELAY
+\ ------------------------------------------------------------------------------
+\ General-purpose delay function. Blocking.
+\ ON ENTRY: Assumes a 16-bit value in LCDV_TIMER_INTVL. This number should be 
+\           the length of the desired delay in milliseconds.
+.delay
+  pha
+  stz LCDV_TIMER_COUNT		    ; Zero-out counter
+  stz LCDV_TIMER_COUNT + 1
+  lda LCDV_IER
+  ora #%11000000		          ; Bit 7 enables interrupts, bit 6 enables Timer 1
+  sta LCDV_IER
+  lda #%01000000              ; Set timer to free-run mode
+  sta LCDV_ACL			
+  lda #$E6				  ; Going to use a base of 1ms. At 1MHz that's 1K cycles but,
+  sta LCDV_T1CL     ; allowing for other operations, it's actually 998 ($03E6)
+  lda #$03
+  sta LCDV_T1CH		            ; Starts timer running
+.delay_loop
+  lda #100
+.nop_loop                     ; Adding a small NOP loop to give the timer time
+  nop                         ; to increase the counter
+  dec A 
+  bne nop_loop
+  jsr delay_timer_chk         ; Check how far our counter has got
+  lda FUNC_RESULT
+  cmp #LESS_THAN
+  beq delay_loop              ; If still less than our target, go around again
+  lda LCDV_IER
+  and #%01111111              ; Disable TIMER 1 interrupts
+  sta LCDV_IER
+  pla
+  rts
+
+.delay_timer_chk              ; Check to see if the counter has incremented
+  sei                         ; to the same value as the set delay.
+  lda LCDV_TIMER_COUNT+1      ; Compare the high bytes first as if they aren't
+  cmp LCDV_TIMER_INTVL+1      ; equal, we don't need to compare the low bytes
+  bcc delay_timer_chk_less_than                 ; Count is less than interval
+  bne delay_timer_chk_more_than                 ; Count is more than interval
+  lda LCDV_TIMER_COUNT        ; High bytes were equal - what about low bytes?
+  cmp LCDV_TIMER_INTVL
+  bcc delay_timer_chk_less_than
+  bne delay_timer_chk_more_than
+  lda #EQUAL				          ; COUNT = INTVL - this what we're looking for.
+  jmp delay_timer_chk_end
+.delay_timer_chk_less_than
+  lda #LESS_THAN			        ; COUNT < INTVL - counter isn't big enough yet
+  jmp delay_timer_chk_end     ; so let's bug out.
+.delay_timer_chk_more_than
+  lda #MORE_THAN			        ; COUNT > INTVL - shouldn't happen, but still...
+.delay_timer_chk_end
+  sta FUNC_RESULT
+  cli
+  rts
 
 \ ------------------------------------------------------------------------------
 \ ---  LCD_CLEAR_BUF
@@ -19,9 +77,9 @@
 \ ------------------------------------------------------------------------------
 \ Clear the RS, RW & E bits on PORT A
 .lcd_clear_sig
-  lda VIAA_PORTA
+  lda LCDV_PORTA
   and #%00011111
-  sta VIAA_PORTA
+  sta LCDV_PORTA
   rts
 
 \ ------------------------------------------------------------------------------
@@ -32,7 +90,7 @@
 .lcd_cmd
 ;  pha                              ; preserve A on the stack
   jsr lcd_wait                      ; check LCD is ready to receive
-  sta VIAA_PORTB                    ; assumes command byte is in A
+  sta LCDV_PORTB                    ; assumes command byte is in A
   jsr lcd_clear_sig                 ; Clear RS/RW/E bits. Writing to instr reg
   LCD_SET_CTL LCD_EX                ; Set E bit to send instruction
   jsr lcd_clear_sig
@@ -80,17 +138,17 @@
 .lcd_wait         ; Check to see if LCD is ready to receive next byte
   pha             ; Save current contents of A in stack, so it isn't corrupted
   lda #%00000000  ; Set Port B as input
-  sta VIAA_DDRB
+  sta LCDV_DDRB
 .lcd_busy
   LCD_SET_CTL LCD_RW
   ora #(LCD_RW OR LCD_EX)
-  sta VIAA_PORTA
-  lda VIAA_PORTB
+  sta LCDV_PORTA
+  lda LCDV_PORTB
   and #LCD_BUSY_FLAG      ; Sets zero flag - non-0 if LCD busy flag set
   bne lcd_busy            ; If result was non-0, keep looping
   LCD_SET_CTL LCD_RW
   lda #%11111111          ; Set Port B as output
-  sta VIAA_DDRB
+  sta LCDV_DDRB
   pla                     ; pull previous A contents back from stack
   rts
 
@@ -197,7 +255,7 @@
 .lcd_prt_chr                        ; assumes character is in A
   pha
   jsr lcd_wait                      ; check LCD is ready to receive
-  sta VIAA_PORTB
+  sta LCDV_PORTB
   LCD_SET_CTL LCD_RS 
   LCD_SET_CTL (LCD_RS OR LCD_EX)    ; Keep RS & set E bit to send instruction
   LCD_SET_CTL LCD_RS                ; Clear E bits

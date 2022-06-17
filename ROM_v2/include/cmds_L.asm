@@ -64,7 +64,7 @@
 \ --- CMD: LOAD  :  LOAD FILE
 \ ------------------------------------------------------------------------------
 .cmdprcLOAD
-;  LED_ON LED_FILE_ACT
+  LED_ON LED_FILE_ACT
   LOAD_MSG loading_msg
   jsr OSWRMSG
   lda #<USR_PAGE              ; This is where we're going to put the code
@@ -79,15 +79,19 @@
   bne cmdprcLOAD_err
   jmp cmdprcLOAD_success
 .cmdprcLOAD_err
-;  LED_ON LED_ERR
+  LED_ON LED_ERR
   jsr os_print_error          ; There should be an error code in FUNC_ERR
   jsr OSLCDERR
   jmp cmdprcLOAD_end
 .cmdprcLOAD_success
   LOAD_MSG load_complete_msg
   jsr OSWRMSG
+  lda USR_PAGE+CODEHDR_END
+  sta LOMEM
+  lda USR_PAGE+CODEHDR_END+1
+  sta LOMEM + 1
 .cmdprcLOAD_end
-;  LED_OFF LED_FILE_ACT
+  LED_OFF LED_FILE_ACT
   jmp cmdprc_end
 
 \ ------------------------------------------------------------------------------

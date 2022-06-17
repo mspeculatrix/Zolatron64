@@ -13,8 +13,9 @@ ALIGN &100                  ; Start on new page
   equw cmdprcSTAR           ; *
   equw cmdprcBRK            ; BRK
   equw cmdprcFLOAD          ; FLOAD
+  equw cmdprcFLIST          ; FLIST
   equw cmdprcFRUN           ; FRUN
-  equw cmdprcFSEL           ; FSEL
+  equw cmdprcFS             ; FS
   equw cmdprcHELP           ; HELP
   equw cmdprcJMP            ; JMP
   equw cmdprcLM             ; LM - list memory
@@ -66,8 +67,9 @@ ALIGN &100                  ; Start on new page
 
 .cmd_tbl_ASCF                ; Commands starting 'F'
   equs "LOAD", CMD_TKN_FLOAD ; FLOAD
+  equs "LIST", CMD_TKN_FLIST ; FLIST
   equs "RUN", CMD_TKN_FRUN   ; FRUN
-  equs "SEL", CMD_TKN_FSEL   ; FSEL
+  equs "S", CMD_TKN_FS       ; FS
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCH               ; Commands starting 'H'
@@ -168,8 +170,9 @@ ALIGN &100                  ; Start on new page
 .help_table
   equs "BRK",0
   equs "FLOAD",0
+  equs "FLIST",0
   equs "FRUN",0
-  equs "FSEL",0
+  equs "FS",0
   equs "HELP",0
   equs "JMP",0
   equs "LM",0

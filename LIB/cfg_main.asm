@@ -68,6 +68,12 @@ OSHRDRST  = $FFF7
 USR_PAGE = $0800                    ; Address where user programs load
 ROMSTART = $C000
 
+; Code headers. These are offsets from the start of user code (which is at
+; USR_PAGE for RAM-based code and FLASHMEM_LOC for Flash-based code)
+CODEHDR_RST  = $05
+CODEHDR_END  = $07
+CODEHDR_NAME = $0D
+
 EOCMD_SECTION = 0                   ; End of section marker for command table
 EOTBL_MKR     = 255                 ; End of table marker
 
@@ -78,8 +84,10 @@ EQUAL = 1
 MORE_THAN = 2
 LESS_THAN = 0
 
-STDIN_NUL_RCVD_FLG = %00000001    ; We've received a null terminator
-STDIN_CLEAR_FLAGS  = %11110000    ; To be ANDed with reg to clear RX flags
+STDIN_NUL_RCVD_FL = %00000001    ; We've received a null terminator
+STDIN_DAT_RCVD_FL = %00000010    ; We've received some data
+STDIN_BUF_FULL_FL = %00000100    ; Input buffer is full
+STDIN_CLEAR_FLAGS = %11110000    ; To be ANDed with reg to clear RX flags
 
 ; Values for stream select. STREAM_SELECT_REG address is defined in
 ; cfg_page_5.asm.
@@ -121,4 +129,12 @@ MACRO CLEAR_INPUT_BUF
   lda STDIN_STATUS_REG ; reset the nul received flag
   and #STDIN_CLEAR_FLAGS
   sta STDIN_STATUS_REG
+ENDMACRO
+
+MACRO SERIAL_PROMPT
+  lda #<prompt_msg                              ; LSB of message
+  sta MSG_VEC
+  lda #>prompt_msg                              ; MSB of message
+  sta MSG_VEC+1
+  jsr OSWRMSG
 ENDMACRO

@@ -7,12 +7,12 @@ ALIGN &100                ; start on new page
 
 ; --- CHECK VIA C TIMER --------------------------------------------------------
 ;.isr_via_c_timer
-;  bit VIAC_IFR                ; Bit 6 copied to overflow flag
+;  bit USRP_IFR                ; Bit 6 copied to overflow flag
 ;  bvc isr_via_c_timer_next    ; Overflow clear, so not this... on to next check
-;  bit VIAC_T1CL		            ; Clears interrupt
-;  inc VIAC_TIMER_COUNT
+;  bit USRP_T1CL		            ; Clears interrupt
+;  inc USRP_TIMER_COUNT
 ;  bne isr_via_c_timer_end
-;  inc VIAC_TIMER_COUNT + 1	  ; previous byte rolled over
+;  inc USRP_TIMER_COUNT + 1	  ; previous byte rolled over
 ;.isr_via_c_timer_end
 ;  jmp isr_exit
 ;.isr_via_c_timer_next
@@ -31,12 +31,12 @@ ALIGN &100                ; start on new page
 
 ; --- CHECK VIA A TIMER --------------------------------------------------------
 .isr_via_a_timer
-  bit VIAA_IFR                ; Bit 6 copied to overflow flag
+  bit LCDV_IFR                ; Bit 6 copied to overflow flag
   bvc isr_via_a_timer_next    ; overflow clear, so not this... on to next check
-  bit VIAA_T1CL		            ; clears interrupt
-  inc VIAA_TIMER_COUNT
+  bit LCDV_T1CL		            ; clears interrupt
+  inc LCDV_TIMER_COUNT
   bne isr_via_a_timer_end
-  inc VIAA_TIMER_COUNT + 1	  ; previous byte rolled over
+  inc LCDV_TIMER_COUNT + 1	  ; previous byte rolled over
 .isr_via_a_timer_end
   jmp isr_exit
 .isr_via_a_timer_next

@@ -15,16 +15,17 @@ INCLUDE "../../LIB/cfg_page_0.asm"
 INCLUDE "../../LIB/cfg_page_2.asm"
 ; PAGE 3 is used for STDIN & STDOUT buffers, plus indexes
 INCLUDE "../../LIB/cfg_page_4.asm"
-INCLUDE "../../LIB/cfg_VIAC.asm"
+INCLUDE "../../LIB/cfg_user_port.asm"
+;INCLUDE "../../LIB/cfg_uart_SC28L92.asm"
 
 INCLUDE "zumpus_cfg.asm"
 
 ORG USR_PAGE
 .header                     ; HEADER INFO
   jmp startprog             ;
-  equw header               ; @ $0804 Entry address
-  equw reset                ; @ $0806 Reset address
-  equw endcode              ; @ $0808 Addr of first byte after end of program
+  equw header               ; @ $0803 Entry address
+  equw reset                ; @ $0805 Reset address
+  equw endcode              ; @ $0807 Addr of first byte after end of program
   equs 0,0,0,0              ; -- Reserved for future use --
   equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
@@ -48,17 +49,20 @@ ORG USR_PAGE
 ; by various factors - eg, 20 to get a random room number, 3 to get a random
 ; choice of connecting rooms.
   lda #%01000000		          ; Bit 7 off - don't need interrupts
-  sta VIAC_IER
+  sta USRP_IER
   lda #%01000000              ; Set timer to free-run mode
-  sta VIAC_ACL			
+  sta USRP_ACL			
   lda #59                     ; Start value
-  sta VIAC_T1CL
+  sta USRP_T1CL
   lda #0
-  sta VIAC_T1CH		            ; Starts timer running
+  sta USRP_T1CH		            ; Starts timer running
 
 .main
   stz STDIN_BUF               ; Clear input buffer
   stz STDIN_IDX
+  NEWLINE
+  LOAD_MSG game_title
+  jsr OSWRMSG
   NEWLINE
 .instruction_prompt
   LOAD_MSG instr_prompt       ; Ask if player wants instructions
@@ -96,7 +100,7 @@ ORG USR_PAGE
   jsr OSWRMSG
 .init_loop_wait
   lda STDIN_STATUS_REG
-  and #STDIN_NUL_RCVD_FLG         ; Has nul flag been set?
+  and #STDIN_NUL_RCVD_FL          ; Has nul flag been set?
   bne init_set_loc                ; If yes, proceed with setting random loc
   jmp init_loop_wait              ; Otherwise, loop
 .init_set_loc
@@ -134,7 +138,7 @@ ORG USR_PAGE
 \ ------------------------------------------------------------------------------
 .mainloop
   lda STDIN_STATUS_REG
-  and #STDIN_NUL_RCVD_FLG               ; Is the 'null received' bit set?
+  and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
   bne zum_input                         ; If yes, process the buffer
   ldx STDIN_IDX                         ; Load the value of the RX buffer index
   cpx #STR_BUF_LEN                      ; Are we at the limit?
@@ -144,7 +148,7 @@ ORG USR_PAGE
 .zum_input
   ; Okay, so there's stuff in the input buffer. Let's take a look.
   lda STDIN_STATUS_REG                    ; Get our info register
-  eor #STDIN_NUL_RCVD_FLG                 ; Zero the received flag
+  eor #STDIN_NUL_RCVD_FL                  ; Zero the received flag
   sta STDIN_STATUS_REG                    ; and re-save the register
   stz STDIN_IDX
 
@@ -258,8 +262,13 @@ ORG USR_PAGE
   bcs zum_cmd_shoot_win         ; If it's less than 2, we won!
   LOAD_MSG shot_nearhit_msg     ; Otherwise, it's a near hit
   jsr OSWRMSG
-  lda #Z_STATE_AWAKE            ; This definitely wakes up Zumpus
+  lda Z_STATE                   ; Is Z awake or asleep?
+  bne zum_cmd_shoot_nearhit     ; Skip if Z already awake
+  lda #Z_STATE_AWAKE            ; Otherwise Z is deffo awake now
   sta Z_STATE
+  LOAD_MSG warning_zumpus_awakes
+  jsr OSWRMSG
+.zum_cmd_shoot_nearhit
   jmp zum_cmd_shoot_end
 .zum_cmd_shoot_win
   LOAD_MSG shot_hit_msg

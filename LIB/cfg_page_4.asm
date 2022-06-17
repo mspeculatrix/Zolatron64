@@ -33,10 +33,10 @@ PRG_EXIT_CODE = MATH_TMP_B + 2
 ; Stream Select Register
 STREAM_SELECT_REG = PRG_EXIT_CODE + 1
 
-VIAA_TIMER_COUNT = STREAM_SELECT_REG + 1  ; times timer interrupt has triggered
-VIAA_TIMER_INTVL = VIAA_TIMER_COUNT + 2   ; value for interval - 2 bytes
+LCDV_TIMER_COUNT = STREAM_SELECT_REG + 1  ; times timer interrupt has triggered
+LCDV_TIMER_INTVL = LCDV_TIMER_COUNT + 2   ; value for interval - 2 bytes
 
-LCD_BUF  = VIAA_TIMER_INTVL + 2   ; *** REPLACE WITH STDOUT_BUF ***
+LCD_BUF  = LCDV_TIMER_INTVL + 2   ; *** REPLACE WITH STDOUT_BUF ***
 ; next will be LCD_BUF + LCD_BUF_SZ + 1
 
 
@@ -49,9 +49,4 @@ LCD_BUF  = VIAA_TIMER_INTVL + 2   ; *** REPLACE WITH STDOUT_BUF ***
 
 
 ;ZD_TIMER_COUNT = LCD_BUF + LCD_BUF_SZ  ; DEFINED IN cfg_VIAB_ZolaDOS.asm
-
-;BARLED = VIAA_TIMER_INTVL + 2				      ; for the bar LED display
-;BARLED_L = BARLED
-;BARLED_H = BARLED + 1
-
 
