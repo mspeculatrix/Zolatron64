@@ -2,7 +2,7 @@
      0800   4C 18 08   JMP &0818
      0803   00 08
      0805   18 08
-     0807   E4 1A
+     0807   E8 1A
      0809   00
      080A   00
      080B   00
@@ -1125,5 +1125,8 @@ End macro LOAD_MSG
 .uint16_times10_done
      1AE2   FA         PLX
      1AE3   60         RTS
+.endtag
+     1AE4   45 4F 46 
+     1AE7   00
 .endcode
 Saving file '../bin/ZUMPUS.BIN'

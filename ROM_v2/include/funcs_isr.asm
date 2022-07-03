@@ -14,7 +14,7 @@ ALIGN &100                ; start on new page
 ;  bne isr_via_c_timer_end
 ;  inc USRP_TIMER_COUNT + 1	  ; previous byte rolled over
 ;.isr_via_c_timer_end
-;  jmp isr_exit
+;  jmp isr_end_chks
 ;.isr_via_c_timer_next
 
 ; --- CHECK ZOLADOS VIA TIMEOUT TIMER ------------------------------------------
@@ -26,26 +26,34 @@ ALIGN &100                ; start on new page
   bne isr_zd_timer_end
   inc ZD_TIMER_COUNT + 1	  ; Previous byte rolled over
 .isr_zd_timer_end
-  jmp isr_exit
+  jmp isr_end_chks
 .isr_zd_timer_next
 
 ; --- CHECK LCD VIA TIMER ------------------------------------------------------
-.isr_via_a_timer
+.isr_lcdvia_timer
   bit LCDV_IFR                ; Bit 6 copied to overflow flag
-  bvc isr_via_a_timer_next    ; Overflow clear, so not this... on to next check
+  bvc isr_lcdvia_timer_next    ; Overflow clear, so not this... on to next check
   bit LCDV_T1CL		            ; Clears interrupt
   inc LCDV_TIMER_COUNT
-  bne isr_via_a_timer_end
+  bne isr_lcdvia_timer_end
   inc LCDV_TIMER_COUNT + 1	  ; Previous byte rolled over
-.isr_via_a_timer_end
-  jmp isr_exit
-.isr_via_a_timer_next
+.isr_lcdvia_timer_end
+  jmp isr_end_chks
+.isr_lcdvia_timer_next
 
 ; --- CHECK SC28L92 ------------------------------------------------------------
 .isr_chk_SC28L92
   lda SC28L92_ISR              ; Bit 1 of the ISR will be set if incoming data
   and #DUART_RxA_RDY_MASK      ; triggered the interrupt
   bne isr_SC28L92              ; If result not zero, that means RxRDYA bit set
+
+.isr_chk_zolados
+  lda ZD_CTRL_PORT
+  and #ZD_INT_SEL
+  beq isr_end_chks
+  lda PROC_REG
+  ora #PROC_ZD_INT_FL
+  sta PROC_REG
 
 .isr_end_chks
   jmp isr_exit
@@ -88,6 +96,7 @@ ALIGN &100                ; start on new page
   lda STDIN_STATUS_REG        ; Update register to show that data has
   ora #DUART_RxA_DAT_RCVD_FL  ; been received.
   sta STDIN_STATUS_REG
+  jmp isr_exit
 
 .isr_exit
   ply : plx : pla             ; Resume original register state

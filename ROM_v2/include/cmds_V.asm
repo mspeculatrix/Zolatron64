@@ -7,4 +7,5 @@
   lda #>version_str             ; MSB of message
   sta MSG_VEC+1
   jsr duart_println
+  jsr OSLCDMSG
   jmp cmdprc_end

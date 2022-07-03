@@ -68,16 +68,11 @@
   ply : plx
   rts
 
-
-
-  ply : plx
-  rts
-
 \ ------------------------------------------------------------------------------
 \ ---  HEX_STR_TO_BYTE
 \ ---  Implements: OSHEX2B
 \ ------------------------------------------------------------------------------
-\ Converts 1-byte value to 2-char hex string representation.
+\ Converts 2-char hex string representation to a byte value.
 \ ON ENTRY: ASCII codes for hex value must be in BYTE_CONV_H and BYTE_CONV_L.
 \ ON EXIT : - Byte value is in FUNC_RESULT. 
 \           - Error in FUNC_ERR
@@ -87,7 +82,7 @@
   stz FUNC_ERR                ; Zero out function error
   stz FUNC_RESULT             ; Zero-out return result
   lda BYTE_CONV_H             ; Load the high nibble character
-  jsr asc_hex_to_bin          ; Convert to number - result is in A
+  jsr asc_hex_to_dec          ; Convert to number - result is in A
   ldx #$0
   cpx FUNC_ERR
   bne hex_str_to_byte_err
@@ -97,7 +92,7 @@
   asl A
   sta FUNC_RESULT             ; And store
   lda BYTE_CONV_L             ; Get the low nibble character
-  jsr asc_hex_to_bin          ; Convert to number - result is in A
+  jsr asc_hex_to_dec          ; Convert to number - result is in A
   ldx #$00
   cpx FUNC_ERR
   bne hex_str_to_byte_err
@@ -111,47 +106,49 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ ---  ASC_HEX_TO_BIN
+\ ---  ASC_HEX_TO_DEC
+\ ---  Implements: OSHEX2DEC
 \ ------------------------------------------------------------------------------
-\ Converts 1-byte integer representing an ASCII value for a hex character -
+\ Converts 1-byte char representing an ASCII value for a hex character -
 \ ie, '0' to 'F' and returns the corresponding one-byte numerical value -
 \ ie, 0 to 15.
 \ ON ENTRY: A contains ASCII character value
 \ ON EXIT : - A contains corresponding numeric value
 \           - Error in FUNC_ERR
-.asc_hex_to_bin
+.asc_hex_to_dec
   phx
   stz FUNC_ERR                ; Zero-out error
   sec
   sbc #$30                    ; Subtract $30 - this is good for 0-9
   cmp #10                     ; Ss value more than 10?
-  bcc asc_hex_to_bin_end      ; If not, we're okay
+  bcc asc_hex_to_dec_end      ; If not, we're okay
   sbc #$07                    ; Otherwise subtract further for A-F
   cmp #16                     ; Result should be less than 16
-  bcc asc_hex_to_bin_end
-.asc_hex_to_bin_err
+  bcc asc_hex_to_dec_end
+.asc_hex_to_dec_err
   ldx #HEX_TO_BIN_ERR_CODE    ; Set error code
   stx FUNC_ERR
-.asc_hex_to_bin_end
+.asc_hex_to_dec_end
   plx
   rts
 
 \ ------------------------------------------------------------------------------
-\ ---  RES_WORD_TO_HEX_STR
+\ ---  UINT16_TO_HEX_STR
+\ ---  Implement: OSU16HEX
 \ ------------------------------------------------------------------------------
-\ Takes the 16-bit value in FUNC_RES_L/H and converts it to a four-char
+\ Takes the 16-bit value in TMP_ADDR_A/+1 and converts it to a four-char
 \ hex string.
-\ ON ENTRY: 16-bit value expected in FUNC_RES_L, FUNC_RES_H
+\ ON ENTRY: 16-bit value expected in TMP_ADDR_A/+1
 \ ON EXIT : Hex string in STR_BUF
-.res_word_to_hex_str
+.uint16_to_hex_str
   pha 
-  lda FUNC_RES_L
+  lda TMP_ADDR_A_L
   jsr byte_to_hex_str
   lda STR_BUF                 ; STR_BUF contains the two chars for the low byte, 
   sta TMP_WORD_L              ; but at locations 0 & 1.
   lda STR_BUF + 1             ; Put these in temporary locations
   sta TMP_WORD_H
-  lda FUNC_RES_H              ; Now process the high byte
+  lda TMP_ADDR_A_H              ; Now process the high byte
   jsr byte_to_hex_str         ; This is now in STR_BUF
   lda TMP_WORD_L              ; Move our previous results into the appropriate
   sta STR_BUF + 2             ; locations in STR_BUF
@@ -162,14 +159,17 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ ---  RES_WORD_TO_INT_STR
+\ ---  UINT16_TO_INT_STR
+\ ---  (OSU16ISTR)
 \ ------------------------------------------------------------------------------
-\ Takes the 16-bit value in FUNC_RES_L/H and converts it to a string
+\ Takes the 16-bit value in TMP_ADDR_A/+1 and converts it to a string
 \ representation of the decimal integer value.
-\ ON ENTRY: 16-bit value expected in FUNC_RES_L, FUNC_RES_H
+\ ON ENTRY: 16-bit value expected in TMP_ADDR_A/+1
 \ ON EXIT : String in STR_BUF
-.res_word_to_int_str
+.uint16_to_int_str
   pha
+  stz STR_BUF
+  stz TMP_IDX             ; Keep track of digits in buffer
   ; ??????
   pla
   rts

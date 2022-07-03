@@ -360,4 +360,4 @@
 .loading_msg
   equs "Loading ... ",0
 .load_complete_msg
-  equs "done",0
+  equs "Done",0

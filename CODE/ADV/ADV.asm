@@ -15,7 +15,6 @@ INCLUDE "../../LIB/cfg_page_0.asm"
 INCLUDE "../../LIB/cfg_page_2.asm"
 ; PAGE 3 is used for STDIN & STDOUT buffers, plus indexes
 INCLUDE "../../LIB/cfg_page_4.asm"
-INCLUDE "../../LIB/cfg_VIAC.asm"
 
 MACRO NEWLINE
   lda #CHR_LINEEND
@@ -23,18 +22,27 @@ MACRO NEWLINE
 ENDMACRO
 
 ORG USR_PAGE
-.startcode
-  sei             ; don't interrupt me yet
-  cld             ; we don' need no steenkin' BCD
-  ldx #$ff        ; set stack pointer to $01FF - only need to set the
-  txs             ; LSB, as MSB is assumed to be $01
+.header                     ; HEADER INFO
+  jmp startprog             ;
+  equw header               ; @ $0803 Entry address
+  equw reset                ; @ $0805 Reset address
+  equw endcode              ; @ $0807 Addr of first byte after end of program
+  equs 0,0,0,0              ; -- Reserved for future use --
+  equs "ADVENTURE",0        ; @ $080D Short name, max 15 chars - nul terminated
+.version_string
+  equs "1.0",0              ; Version string - nul terminated
+
+.startprog
+.reset
+  sei                       ; Don't interrupt me yet
+  cld                       ; Turn off BCD
+  ldx #$ff                  ; Set stack pointer to $01FF - only need to set the
+  txs                       ; LSB, as MSB is assumed to be $01
 
   lda #0
   sta PRG_EXIT_CODE
   cli
 
-  stz VIAC_PORTA
-  stz VIAC_PORTB
 
 .main
 
@@ -65,6 +73,9 @@ ORG USR_PAGE
   equs "CRT display shows a message in green characters that you find",10
   equs "strangely comforting.",0
 
+
+.endtag
+  equs "EOF",0
 .endcode
 
-SAVE "../bin/ADV.BIN", startcode, endcode
+SAVE "../bin/ADV.BIN", header, endcode

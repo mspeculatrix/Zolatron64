@@ -49,6 +49,11 @@ ZD_DDIR_OUTPUT  = %00001000        ; PB3 - OR with PB to set DATA port to output
 ZD_SR_MASK      = %00010000           ; PB4 - AND with PB to read SR signal
 ZD_SA_MASK      = %00100000           ; PB5 - AND with PB to read SA signal
 
+; The interrupt select line from the RPi is connected to PB6 on the VIA.
+; This should be set high by the RPi before generating an interrupt signal.
+; To check for this signal, AND ZD_INT_SEL with ZD_CTRL_PORT
+ZD_INT_SEL      = %01000000
+
 ZD_DATA_SET_OUT = %11111111
 ZD_DATA_SET_IN  = %00000000
 ZD_CTRL_PINDIR  = %00001111

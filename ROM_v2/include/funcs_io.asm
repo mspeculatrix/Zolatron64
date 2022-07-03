@@ -97,6 +97,7 @@
 \ ------------------------------------------------------------------------------
 \ --- DISPLAY_MEMORY
 \ ------------------------------------------------------------------------------
+\ Display the contents of memory
 \ ON ENTRY: Start and end addresses must be in TMP_ADDR_A and TMP_ADDR_B.
 ; We'll leave TMP_ADDR_B alone, but increment TMP_ADDR_B until the two match.
 .display_memory
@@ -104,11 +105,7 @@
   jsr OSWRMSG
   stz TMP_COUNT                 ; Keep track how many bytes printed in each row
 .display_mem_next_line
-  lda TMP_ADDR_A_L              ; Load the value of the byte at addr
-  sta FUNC_RES_L                ; Puts ASCII string in STR_BUF
-  lda TMP_ADDR_A_H
-  sta FUNC_RES_H                ; Puts ASCII string in STR_BUF
-  jsr res_word_to_hex_str       ; Creates ASCII hex string starting at STR_BUF
+  jsr uint16_to_hex_str       ; Creates ASCII hex string starting at STR_BUF
   lda #$20                      ; Add a space
   sta STR_BUF + 4
   stz STR_BUF + 5               ; Add a null terminator
@@ -294,6 +291,7 @@
   beq read_filename_chkspc
   cmp #CHR_LINEEND
   beq read_filename_loop
+  and #$DF                  ; Converts lower to uppercase. Uppercase unaffected
   cmp #'A'                  ; Acceptable values are 65-90 (A-Z)
   bcc read_filename_fail
   cmp #'Z'+1
@@ -331,17 +329,23 @@
 \ ------------------------------------------------------------------------------
 \ This function reads four characters from the serial input and converts them to
 \ a 16-bit address.
-\ ON ENTRY: Expects four hex characters in STDIN_BUF, plus null terminator.
-\ ON EXIT : 16-bit value in FUNC_RES_L/FUNC_RES_H.
+\ ON ENTRY: Expects four hex characters in STDIN_BUF, plus null terminator or
+\           space.
+\ ON EXIT : - 16-bit value in FUNC_RES_L/FUNC_RES_H.
+\           - FUNC_ERR contains error code.
 .read_hex_addr
   pha : phy
   ldy #1                    ; Offset for where we're storing each byte from buf
 .read_hex_addr_next_byte
   jsr read_hex_byte         ; Byte value result is in FUNC_RESULT
+  lda FUNC_ERR
+  beq read_hex_addr_end
+.read_hex_addr_conv
   lda FUNC_RESULT           ; Load the result from the conversion
   sta FUNC_RES_L,Y
-  cpy #0
-  beq read_hex_addr_end
+  beq read_hex_addr_end     ; Done if next byte 0
+  cmp #' '
+  beq read_hex_addr_end     ; Done if next byte a space
   dey
   jmp read_hex_addr_next_byte
 .read_hex_addr_end
@@ -405,5 +409,6 @@
   sta MSG_VEC             ; and put in MSG_VEC
   lda err_ptrs+1,X        ; Get MSB
   sta MSG_VEC+1           ; and put in MSG_VEC high byte
-  jsr OSWRMSG
+  jsr OSWRMSG             ; Print to standard stream
+  jsr OSLCDMSG            ; and to LCD
   rts

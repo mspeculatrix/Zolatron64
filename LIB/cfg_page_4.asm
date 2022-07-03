@@ -36,7 +36,7 @@ STREAM_SELECT_REG = PRG_EXIT_CODE + 1
 LCDV_TIMER_COUNT = STREAM_SELECT_REG + 1  ; times timer interrupt has triggered
 LCDV_TIMER_INTVL = LCDV_TIMER_COUNT + 2   ; value for interval - 2 bytes
 
-LCD_BUF  = LCDV_TIMER_INTVL + 2   ; *** REPLACE WITH STDOUT_BUF ***
+LCD_BUF  = LCDV_TIMER_INTVL + 2   ;
 ; next will be LCD_BUF + LCD_BUF_SZ + 1
 
 

@@ -12,10 +12,10 @@ ALIGN &100                  ; Start on new page
 .cmdprcptrs
   equw cmdprcSTAR           ; *
   equw cmdprcBRK            ; BRK
-  equw cmdprcFLOAD          ; FLOAD
-  equw cmdprcFLIST          ; FLIST
-  equw cmdprcFRUN           ; FRUN
-  equw cmdprcFS             ; FS
+;  equw cmdprcFLOAD          ; FLOAD
+;  equw cmdprcFLIST          ; FLIST
+;  equw cmdprcFRUN           ; FRUN
+;  equw cmdprcFS             ; FS
   equw cmdprcHELP           ; HELP
   equw cmdprcJMP            ; JMP
   equw cmdprcLM             ; LM - list memory
@@ -27,6 +27,7 @@ ALIGN &100                  ; Start on new page
   equw cmdprcPRT            ; PRT
   equw cmdprcRUN            ; RUN user program
   equw cmdprcSAVE           ; SAVE - save file
+  equw cmdprcSTAT           ; STAT
   equw cmdprcVERS           ; VERS - version
 
 \ FIRST CHARACTER TABLE
@@ -66,10 +67,10 @@ ALIGN &100                  ; Start on new page
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCF                ; Commands starting 'F'
-  equs "LOAD", CMD_TKN_FLOAD ; FLOAD
-  equs "LIST", CMD_TKN_FLIST ; FLIST
-  equs "RUN", CMD_TKN_FRUN   ; FRUN
-  equs "S", CMD_TKN_FS       ; FS
+;  equs "LOAD", CMD_TKN_FLOAD ; FLOAD
+;  equs "LIST", CMD_TKN_FLIST ; FLIST
+;  equs "RUN", CMD_TKN_FRUN   ; FRUN
+;  equs "S", CMD_TKN_FS       ; FS
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCH               ; Commands starting 'H'
@@ -99,6 +100,7 @@ ALIGN &100                  ; Start on new page
 
 .cmd_tbl_ASCS               ; Commands starting 'S'
   equs "AVE", CMD_TKN_SAVE  ; SAVE
+  equs "TAT", CMD_TKN_STAT  ; STAT
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCV               ; Commands starting 'V'
@@ -182,6 +184,8 @@ ALIGN &100                  ; Start on new page
   equs "PEEK",0
   equs "POKE",0
   equs "RUN",0
+  equs "SAVE",0
+  equs "STAT",0
   equs "VERS",0
   equb EOTBL_MKR
 
@@ -191,6 +195,13 @@ ALIGN &100                  ; Start on new page
 
 .memory_header
   equs "----  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F", 10, 0
+
+.stat_msg1
+  equs "LOMEM:",0
+.stat_msg2
+  equs "FNERR:",0
+.stat_msg3
+  equs "FLSHB:",0
 
 \ MESSAGES
 .test_msg

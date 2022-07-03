@@ -173,22 +173,38 @@
 \ ------------------------------------------------------------------------------
 \ Clear the LCD screen
 .lcd_cls
-  jsr lcd_clear_buf
-  lda #LCD_CLS          ; clear display, reset display memory
+  jsr lcd_clear_buf                       ; Clear the line buffers
+  lda #LCD_CLS                            ; Clear display, reset display memory
   jsr lcd_cmd
   rts
 
 \ ------------------------------------------------------------------------------
 \ ---  LCD_PRINT_BYTE
-\ ---  Implements: OSLCDPRB
+\ ---  Implements: OSLCDB2HEX
 \ ------------------------------------------------------------------------------
+\ Prints an 8-bit value as a 2-char hex string
 \ ON ENTRY: A must contain value of byte to be printed.
 .lcd_print_byte
-  jsr byte_to_hex_str               ; Result in three bytes starting at STR_BUF
+  jsr byte_to_hex_str               ; Results in three bytes starting at STR_BUF
   lda STR_BUF
   jsr lcd_prt_chr
   lda STR_BUF + 1
   jsr lcd_prt_chr
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  LCD_PRT_SBUF
+\ ---  Implements: OSLCDSBUF
+\ ------------------------------------------------------------------------------
+\ Prints the contents of STR_BUF to LCD
+\ ON ENTRY: Expects a nul-terminated string in STR_BUF
+.lcd_prt_sbuf
+  lda #<STR_BUF
+  sta MSG_VEC
+  lda #>STR_BUF                              ; MSB of message
+  sta MSG_VEC+1
+  jsr lcd_println
+  pla
   rts
 
 \ ------------------------------------------------------------------------------

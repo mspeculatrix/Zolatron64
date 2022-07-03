@@ -67,6 +67,7 @@
   LED_ON LED_FILE_ACT
   LOAD_MSG loading_msg
   jsr OSWRMSG
+  jsr OSLCDMSG
   lda #<USR_PAGE              ; This is where we're going to put the code
   sta FILE_ADDR
   lda #>USR_PAGE
@@ -86,8 +87,9 @@
 .cmdprcLOAD_success
   LOAD_MSG load_complete_msg
   jsr OSWRMSG
-  lda USR_PAGE+CODEHDR_END
-  sta LOMEM
+  jsr OSLCDMSG
+  lda USR_PAGE+CODEHDR_END    ; Get info about first free byte after prog
+  sta LOMEM                   ; to put into our LOMEM variable
   lda USR_PAGE+CODEHDR_END+1
   sta LOMEM + 1
 .cmdprcLOAD_end

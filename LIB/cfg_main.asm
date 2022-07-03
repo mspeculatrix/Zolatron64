@@ -34,30 +34,40 @@ ERR_NAN               = ERR_EOB + 1                 ; 16 10 Not a number
 \                     - OS default config routine & stream select functions
 \    - cfg_page_2.asm - OS Indirection Table
 \-------------------------------------------------------------------------------
+; READ
 OSRDHBYTE = $FF00
 OSRDHADDR = OSRDHBYTE + 3
 OSRDCH    = OSRDHADDR + 3
 OSRDINT16 = OSRDCH + 3
 OSRDFNAME = OSRDINT16 + 3
-
+; WRITE
 OSWRBUF   = OSRDFNAME + 3
 OSWRCH    = OSWRBUF + 3
 OSWRERR   = OSWRCH + 3
 OSWRMSG   = OSWRERR + 3
 OSWRSBUF  = OSWRMSG + 3
-
+; CONVERSIONS
 OSB2HEX   = OSWRSBUF + 3
 OSB2ISTR  = OSB2HEX + 3
 OSHEX2B   = OSB2ISTR + 3
-
-OSLCDCH   = OSHEX2B + 3
+OSU16HEX  = OSHEX2B + 3
+OSHEX2DEC = OSU16HEX + 3
+; LCD
+OSLCDCH   = OSHEX2DEC + 3
 OSLCDCLS  = OSLCDCH + 3
 OSLCDERR  = OSLCDCLS + 3
 OSLCDMSG  = OSLCDERR + 3
-OSLCDPRB  = OSLCDMSG + 3
-OSLCDSC   = OSLCDPRB + 3
+OSLCDB2HEX = OSLCDMSG + 3
+OSLCDSBUF = OSLCDB2HEX + 3
+OSLCDSC   = OSLCDSBUF + 3
+; PRINTER
+OSPRTBUF  = OSLCDSC + 3
+OSPRTCH   = OSPRTBUF + 3
+OSPRTINIT = OSPRTCH + 3
+OSPRTMSG  = OSPRTINIT + 3
+OSPRTSBUF = OSPRTMSG + 3
 
-OSZDLOAD  = OSLCDSC + 3
+OSZDLOAD  = OSPRTSBUF + 3
 
 OSUSRINT  = OSZDLOAD + 3
 OSDELAY   = OSUSRINT + 3
@@ -84,10 +94,14 @@ EQUAL = 1
 MORE_THAN = 2
 LESS_THAN = 0
 
+; STDIN FLAGS
 STDIN_NUL_RCVD_FL = %00000001    ; We've received a null terminator
 STDIN_DAT_RCVD_FL = %00000010    ; We've received some data
 STDIN_BUF_FULL_FL = %00000100    ; Input buffer is full
 STDIN_CLEAR_FLAGS = %11110000    ; To be ANDed with reg to clear RX flags
+
+; PROCESS FLAGS - for use with PROC_REG
+PROC_ZD_INT_FL    = %01000000    ; Interrupt signal received from ZolaDOS
 
 ; Values for stream select. STREAM_SELECT_REG address is defined in
 ; cfg_page_5.asm.
@@ -105,9 +119,9 @@ STDIN_CLEAR_FLAGS = %11110000    ; To be ANDed with reg to clear RX flags
 ; Doesn't make much sense to use the LCD as a stream, so this is treated as a
 ; device in its own right, although its functions need to be accessible via
 ; OS calls.
-STR_SEL_SERIAL  = %00100010     ; STA to register to set
-STR_SEL_OUT_SER = %00101111     ; AND with register to set
-STR_SEL_OUT_PRT = %10001111     ; AND with register to set
+;STR_SEL_SERIAL  = %00100010     ; STA to register to set
+;STR_SEL_OUT_SER = %00101111     ; AND with register to set
+;STR_SEL_OUT_PRT = %10001111     ; AND with register to set
 
 MACRO LOAD_MSG msg_addr
   lda #<msg_addr                              ; LSB of message

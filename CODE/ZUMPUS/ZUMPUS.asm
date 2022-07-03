@@ -409,6 +409,8 @@ INCLUDE "./zumpus_funcs.asm"
 INCLUDE "./zumpus_data.asm"
 INCLUDE "../../LIB/funcs_math.asm"
 
+.endtag
+  equs "EOF",0
 .endcode
 
 SAVE "../bin/ZUMPUS.BIN", header, endcode

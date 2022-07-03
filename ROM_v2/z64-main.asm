@@ -25,11 +25,12 @@ INCLUDE "../LIB/cfg_page_4.asm"                   ; Misc buffers etc
 
 INCLUDE "include/cfg_ROM.asm"
 INCLUDE "../LIB/cfg_uart_SC28L92.asm"
-INCLUDE "../LIB/cfg_flash-io-snd.asm"
+; INCLUDE "../LIB/cfg_flash-io-snd.asm"
 INCLUDE "../LIB/cfg_2x16_lcd.asm"
 INCLUDE "../LIB/cfg_ZolaDOS.asm"
 INCLUDE "../LIB/cfg_user_port.asm"
 INCLUDE "../LIB/cfg_parallel.asm"
+INCLUDE "../LIB/cfg_prt.asm"
 
 \ ----- INITIALISATION ---------------------------------------------------------
 ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
@@ -47,11 +48,13 @@ ORG ROMSTART          ; This is where the actual code starts.
 ; Initialise registers etc
   stz TIMER_STATUS_REG
   stz FLASH_BANK
+  stz FUNC_ERR
+  stz FUNC_RESULT
   stz STDIN_BUF
   stz STDIN_IDX
   stz STDIN_STATUS_REG
 
-  lda #<USR_PAGE      ; Set LOMEM to start of user RAM
+  lda #<USR_PAGE      ; Initialise LOMEM to start of user RAM
   sta LOMEM
   lda #>USR_PAGE
   sta LOMEM + 1
@@ -112,6 +115,15 @@ ORG ROMSTART          ; This is where the actual code starts.
   lda #>hex_str_to_byte
   sta OSHEX2B_VEC + 1
 
+  lda #<uint16_to_hex_str   ; OSU16HEX
+  sta OSU16HEX_VEC
+  lda #>uint16_to_hex_str
+  sta OSU16HEX_VEC + 1
+  lda #<asc_hex_to_dec     ; OSHEX2DEC
+  sta OSHEX2DEC_VEC
+  lda #>asc_hex_to_dec
+  sta OSHEX2DEC_VEC + 1
+
   lda #<lcd_prt_chr         ; OSLCDCH
   sta OSLCDCH_VEC
   lda #>lcd_prt_chr
@@ -128,14 +140,40 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSLCDMSG_VEC
   lda #>lcd_println
   sta OSLCDMSG_VEC + 1
-  lda #<lcd_print_byte      ; OSLCDPRB
-  sta OSLCDPRB
+  lda #<lcd_print_byte      ; OSLCDB2HEX
+  sta OSLCDB2HEX
   lda #>lcd_print_byte
-  sta OSLCDPRB + 1
+  sta OSLCDB2HEX + 1
+  lda #<lcd_prt_sbuf        ; OSLCDSBUF
+  sta OSLCDSBUF_VEC
+  lda #>lcd_prt_sbuf
+  sta OSLCDSBUF_VEC + 1
   lda #<lcd_set_cursor      ; OSLCDSC 
   sta OSLCDSC_VEC
   lda #>lcd_set_cursor
   sta OSLCDSC_VEC + 1
+
+  lda #<prt_stdout_buf      ; OSPRTBUF 
+  sta OSPRTBUF_VEC
+  lda #>prt_stdout_buf
+  sta OSPRTBUF_VEC + 1
+  lda #<prt_char            ; OSPRTCH 
+  sta OSPRTCH_VEC
+  lda #>prt_char
+  sta OSPRTCH_VEC + 1
+  lda #<prt_init            ; OSPRTINIT 
+  sta OSPRTINIT_VEC
+  lda #>prt_init
+  sta OSPRTINIT_VEC + 1
+  lda #<prt_msg             ; OSPRTMSG 
+  sta OSPRTMSG_VEC
+  lda #>prt_msg
+  sta OSPRTMSG_VEC + 1
+  lda #<prt_str_buf         ; OSPRTSBUF 
+  sta OSPRTSBUF_VEC
+  lda #>prt_str_buf
+  sta OSPRTSBUF_VEC + 1
+
 
   lda #<zd_loadfile         ; OSZDLOAD
   sta OSZDLOAD
@@ -150,32 +188,32 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSDELAY_VEC + 1
 
 ; Select serial as default input/output streams
-  lda #STR_SEL_SERIAL       ; Don't think this is being used yet
-  sta STREAM_SELECT_REG
+;  lda #STR_SEL_SERIAL       ; not used yet
+;  sta STREAM_SELECT_REG
 
 ; SETUP LCD display & LEDs
   lda #%11111111  
   sta LCDV_DDRB   ; Set all pins on port B to output - data for LCD
   sta LCDV_DDRA   ; Set all pins on port A to output - signals for LCD & LEDs
-
-; SETUP ZolaDOS RPi interface
-  jsr zd_init
-
-; SETUP VIA C - for experimentation
-;  stz USRP_DDRA  ; set all pins as outputs
-;  stz USRP_DDRB  ; set all pins as outputs
-
-; SETUP ACIA
-;  jsr uart_6551_init
-  jsr duart_init
-
-; SETUP LCD
   lda #LCD_TYPE         ; Set 8-bit mode; 2-line display; 5x8 font
   jsr lcd_cmd
   lda #LCD_MODE         ; Display on; cursor off; blink off
   jsr lcd_cmd
   lda #LCD_CLS          ; clear display, reset display memory
   jsr lcd_cmd
+
+; SETUP USER PORT
+  lda #$FF
+  sta USRP_DDRA         ; Set all lines on user ports as outputs
+  sta USRP_DDRB
+  stz USRP_PORTA        ; And set all lines to low
+  stz USRP_PORTB
+
+; SETUP ZolaDOS RPi INTERFACE
+  jsr zd_init
+
+; SETUP SERIAL PORTS
+  jsr duart_init
 
 \ ------------------------------------------------------------------------------
 \ ----     MAIN PROGRAM                                                     ----
@@ -271,13 +309,10 @@ ORG ROMSTART          ; This is where the actual code starts.
 \ ***   COMMAND PROCESS FUNCTIONS                                            ***
 \ ******************************************************************************
 
-\-------------------------------------------------------------------------------
-\ --- CMD: *                                                                 ---
-\-------------------------------------------------------------------------------
 .cmdprcSTAR
   jmp cmdprc_end
 INCLUDE "include/cmds_B.asm"
-INCLUDE "include/cmds_F.asm"
+;INCLUDE "include/cmds_F.asm"
 INCLUDE "include/cmds_H.asm"
 INCLUDE "include/cmds_J.asm"
 INCLUDE "include/cmds_L.asm"
@@ -302,11 +337,11 @@ INCLUDE "include/funcs_io.asm"
 INCLUDE "include/funcs_isr.asm"
 INCLUDE "../LIB/funcs_math.asm"
 INCLUDE "include/funcs_2x16_lcd.asm"
-INCLUDE "include/funcs_parallel.asm"
+INCLUDE "include/funcs_prt.asm"
 INCLUDE "include/data_tables.asm"
 
-ALIGN &100        ; start on new page
-.NMI_handler      ; for future development
+ALIGN &100                                        ; Start on new page
+.NMI_handler                                      ; For future development
 .exit_nmi
   rti
 \-------------------------------------------------------------------------------
@@ -335,14 +370,23 @@ ORG $FF00
   jmp (OSB2HEX_VEC)
   jmp (OSB2ISTR_VEC)
   jmp (OSHEX2B_VEC)
+  jmp (OSU16HEX_VEC)
+  jmp (OSHEX2DEC_VEC)
 
   jmp (OSLCDCH_VEC)
   jmp (OSLCDCLS_VEC)
   jmp (OSLCDERR_VEC)
   jmp (OSLCDMSG_VEC)
-  jmp (OSLCDPRB_VEC)
+  jmp (OSLCDB2HEX_VEC)
+  jmp (OSLCDSBUF_VEC)
   jmp (OSLCDSC_VEC)
   
+  jmp (OSPRTBUF_VEC)
+  jmp (OSPRTCH_VEC)
+  jmp (OSPRTINIT_VEC)
+  jmp (OSPRTMSG_VEC)
+  jmp (OSPRTSBUF_VEC)
+
   jmp (OSZDLOAD_VEC)
 
 ;  jmp (OSFLOAD_VEC)

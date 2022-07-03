@@ -6,11 +6,11 @@ CMD_TKN_NUL   = $00                    ; What happens when you just hit RTN
 CMD_TKN_FAIL  = $01                    ; Syntax error & whatnot
 CMD_TKN_STAR  = $80                    ; *
 CMD_TKN_BRK   = CMD_TKN_STAR + 1       ; BRK - soft reset
-CMD_TKN_FLOAD = CMD_TKN_BRK + 1        ; FLOAD - load file to flash memory
-CMD_TKN_FLIST = CMD_TKN_FLOAD + 1	     ; FLIST - list programs in Flash
-CMD_TKN_FRUN  = CMD_TKN_FLIST + 1      ; FRUN
-CMD_TKN_FS    = CMD_TKN_FRUN + 1       ; FS - select flash memory bank
-CMD_TKN_HELP  = CMD_TKN_FS + 1         ; HELP
+;CMD_TKN_FLOAD = CMD_TKN_BRK + 1        ; FLOAD - load file to flash memory
+;CMD_TKN_FLIST = CMD_TKN_FLOAD + 1	    ; FLIST - list programs in Flash
+;CMD_TKN_FRUN  = CMD_TKN_FLIST + 1      ; FRUN
+;CMD_TKN_FS    = CMD_TKN_FRUN + 1       ; FS - select flash memory bank
+CMD_TKN_HELP  = CMD_TKN_BRK + 1        ; HELP
 CMD_TKN_JMP   = CMD_TKN_HELP + 1       ; JMP - jump to memory location
 CMD_TKN_LM    = CMD_TKN_JMP + 1        ; LM - list memory
 CMD_TKN_LOAD  = CMD_TKN_LM + 1         ; LOAD - load file
@@ -21,7 +21,8 @@ CMD_TKN_POKE  = CMD_TKN_PEEK + 1       ; POKE
 CMD_TKN_PRT   = CMD_TKN_POKE + 1       ; PRT - print string to LCD
 CMD_TKN_RUN   = CMD_TKN_PRT + 1        ; RUN - run user program
 CMD_TKN_SAVE  = CMD_TKN_RUN + 1        ; SAVE
-CMD_TKN_VERS  = CMD_TKN_SAVE + 1       ; VERS - show version
+CMD_TKN_STAT  = CMD_TKN_SAVE + 1       ; STAT
+CMD_TKN_VERS  = CMD_TKN_STAT + 1       ; VERS - show version
 
 
 CMD_MAX_LEN = 8            ; Max number of chars in command names

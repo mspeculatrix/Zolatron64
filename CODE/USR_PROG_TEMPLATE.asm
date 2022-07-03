@@ -5,13 +5,9 @@
 ;
 ; Written for the Beebasm assembler
 ; Assemble with:
-; beebasm -v -i TESTA.asm
+; beebasm -v -i <filename>.asm
 
 CPU 1                               ; use 65C02 instruction set
-
-BARLED = $0230				      ; for the bar LED display
-BARLED_L = BARLED
-BARLED_H = BARLED + 1
 
 INCLUDE "../../LIB/cfg_main.asm"
 INCLUDE "../../LIB/cfg_page_0.asm"
@@ -27,61 +23,29 @@ ORG USR_PAGE
   equw reset                ; @ $0805 Reset address
   equw endcode              ; @ $0807 Addr of first byte after end of program
   equs 0,0,0,0              ; -- Reserved for future use --
-  equs "TESTA",0            ; @ $080D Short name, max 15 chars - nul terminated
+  equs "TEMPLATE",0         ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
   equs "1.0",0              ; Version string - nul terminated
 
 .startprog
 .reset
-  sei             ; don't interrupt me yet
-  cld             ; we don' need no steenkin' BCD
-  ldx #$ff        ; set stack pointer to $01FF - only need to set the
-  txs             ; LSB, as MSB is assumed to be $01
+  sei                       ; Turn off interrupts
+  cld                       ; Turn off BCD
+  ldx #$ff                  ; Set stack pointer to $01FF - only need to set the
+  txs                       ; LSB, as MSB is assumed to be $01
 
-  lda #0
-  sta PRG_EXIT_CODE
+  stz PRG_EXIT_CODE         ; Should have an OS routine for initialising progs?
+  stz FUNC_ERR
+  stz FUNC_RESULT
   cli
 
-  jsr OSLCDCLS
-
 .main
-  lda #'A'
-  jsr OSLCDCH
-  jsr OSWRCH
-  lda #'B'
-  jsr OSLCDCH
-  jsr OSWRCH
-  lda #'C'
-  jsr OSLCDCH
-  jsr OSWRCH
-  lda #' '
-  jsr OSWRCH
 
-  jsr OSWRSBUF
-  lda #CHR_LINEEND
-  jsr OSWRCH
-
-  LOAD_MSG start_msg
-  jsr OSWRMSG
-  lda #CHR_LINEEND
-  jsr OSWRCH
-  jsr OSLCDMSG
-
-  LOAD_MSG second_msg
-  jsr OSWRMSG
-  jsr OSLCDMSG
 
 .prog_end
   jmp OSSFTRST
-
-.start_msg
-  equs "Test A", 0
-
-.second_msg
-  equs "Hello world!", 0
-
 .endtag
   equs "EOF",0
 .endcode
 
-SAVE "../bin/TESTA.BIN", header, endcode
+SAVE "../bin/TEMPLATE.BIN", header, endcode

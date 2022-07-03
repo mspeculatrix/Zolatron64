@@ -5,7 +5,7 @@
 ;
 ; Written for the Beebasm assembler
 ; Assemble with:
-; beebasm -v -i TESTB.asm
+; beebasm -v -i PRT.asm
 
 CPU 1                               ; use 65C02 instruction set
 
@@ -15,6 +15,16 @@ INCLUDE "../../LIB/cfg_page_0.asm"
 INCLUDE "../../LIB/cfg_page_2.asm"
 ; PAGE 3 is used for STDIN & STDOUT buffers, plus indexes
 INCLUDE "../../LIB/cfg_page_4.asm"
+;INCLUDE "../../LIB/cfg_parallel.asm"
+INCLUDE "../../LIB/cfg_prt.asm"
+
+
+MACRO LCDG_SET_CTL ctl_bits        ; set control bits for LCD
+  lda USRP_CTRL                  ; load the current state of PORT A
+;  and #LED_MASK                   ; clear the top three bits
+  ora #ctl_bits                   ; set those bits. Lower 5 bits should be 0s
+  sta USRP_CTRL                  ; store result
+ENDMACRO
 
 ORG USR_PAGE
 .header                     ; HEADER INFO
@@ -23,7 +33,7 @@ ORG USR_PAGE
   equw reset                ; @ $0805 Reset address
   equw endcode              ; @ $0807 Addr of first byte after end of program
   equs 0,0,0,0              ; -- Reserved for future use --
-  equs "TESTB",0           ; @ $080D Short name, max 15 chars - nul terminated
+  equs "PRT",0            ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
   equs "1.0",0              ; Version string - nul terminated
 
@@ -33,81 +43,26 @@ ORG USR_PAGE
   cld             ; we don' need no steenkin' BCD
   ldx #$ff        ; set stack pointer to $01FF - only need to set the
   txs             ; LSB, as MSB is assumed to be $01
-
-  lda #0
-  sta PRG_EXIT_CODE
+  stz PRG_EXIT_CODE
   cli
 
-  jsr OSLCDCLS
-
 .main
-  lda #'A'
-  jsr OSLCDCH
-  jsr OSWRCH
-  lda #'B'
-  jsr OSLCDCH
-  jsr OSWRCH
-  lda #'C'
-  jsr OSLCDCH
-  jsr OSWRCH
-  lda #' '
-  jsr OSWRCH
-
-  jsr OSWRSBUF
-  lda #CHR_LINEEND
-  jsr OSWRCH
-
-  LOAD_MSG welcome_msg
-  jsr OSWRMSG
-  lda #CHR_LINEEND
-  jsr OSWRCH
-  jsr OSLCDMSG
-
-  LOAD_MSG second_msg
+  LOAD_MSG prt_test_msg
+  jsr OSPRTMSG
+  lda #10
+  jsr OSPRTCH
   jsr OSWRMSG
   jsr OSLCDMSG
-;  inc BARLED_L
-;  bne main_loop
-;  inc BARLED_H
-;.main_loop
-;  lda BARLED_L
-;  sta VIAC_PORTA
-;  lda BARLED_H
-;  sta VIAC_PORTB
-;  cmp #255
-;  beq chk_lowbyte
-;.continue
-;  jsr barled_delay
-;  jmp main
-;.chk_lowbyte
-;  lda BARLED_L
-;  cmp #255
-;  beq prog_end
-;  jmp continue
 
 .prog_end
   jmp OSSFTRST
 
-;.barled_delay
-;  ldx #2
-;.barled_delay_x_loop
-;  ldy #255
-;.barled_delay_y_loop
-;  nop
-;  dey
-;  bne barled_delay_y_loop
-;  dex
-;  bne barled_delay_x_loop
-;  rts
-
-.welcome_msg
-  equs "This is a new test", 0
-
-.second_msg
-  equs "A second message", 0
+.prt_test_msg
+  equs "ABCDEFGHIJKLMNOPQRSTUVWXZY0123456789$#@_"
+  equs "0123456789012345678901234567890123456789",0
 
 .endtag
   equs "EOF",0
 .endcode
 
-SAVE "../bin/TESTB.BIN", header, endcode
+SAVE "../bin/PRT.BIN", header, endcode

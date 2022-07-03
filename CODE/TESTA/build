@@ -1,12 +1,33 @@
 #!/usr/bin/env bash
-
 PROG="TESTA"
 
-beebasm -i $PROG.asm
+WRITE_ROM=1
+
+usage()
+{
+    echo "Error: Unknown option."
+    echo "Usage: build [-b]"
+    echo "    -b build only. Don't attempt to write to EEPROM"
+}
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -b )    WRITE_ROM=0
+                ;;
+        * )     usage
+                exit 1
+    esac
+    shift
+done
+
+echo "Assembling $PROG.asm to $PROG.BIN"
+beebasm -v -i ${PROG}.asm > ${PROG}_out.txt
 
 result=$?
 
 if [ $result -eq 0 ]; then
-	echo "Uploading to Imp..."
-	scp -i ~/.ssh/ssh-key ../bin/$PROG.BIN pi@10.0.30.90:zd_files/$PROG.BIN
+    if [ $WRITE_ROM -eq 1 ]; then    
+		echo "Uploading to Imp..."
+		scp -i ~/.ssh/ssh-key ../bin/$PROG.BIN pi@10.0.30.90:zd_files/$PROG.BIN
+	fi
 fi

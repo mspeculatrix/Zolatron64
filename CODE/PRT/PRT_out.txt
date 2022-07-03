@@ -1,0 +1,45 @@
+.header
+     0800   4C 15 08   JMP &0815
+     0803   00 08
+     0805   15 08
+     0807   8C 08
+     0809   00
+     080A   00
+     080B   00
+     080C   00
+     080D   50 52 54 
+     0810   00
+.version_string
+     0811   31 2E 30 
+     0814   00
+.startprog
+.reset
+     0815   78         SEI
+     0816   D8         CLD
+     0817   A2 FF      LDX #&FF
+     0819   9A         TXS
+     081A   9C 32 04   STZ &0432
+     081D   58         CLI
+.main
+Macro LOAD_MSG:
+     081E   A9 37      LDA #&37
+     0820   85 50      STA &50
+     0822   A9 08      LDA #&08
+     0824   85 51      STA &51
+End macro LOAD_MSG
+     0826   20 4B FF   JSR &FF4B
+     0829   A9 0A      LDA #&0A
+     082B   20 45 FF   JSR &FF45
+     082E   20 18 FF   JSR &FF18
+     0831   20 36 FF   JSR &FF36
+.prog_end
+     0834   4C F4 FF   JMP &FFF4
+.prt_test_msg
+     0837   41 42 43 ...
+     085F   30 31 32 ...
+     0887   00
+.endtag
+     0888   45 4F 46 
+     088B   00
+.endcode
+Saving file '../bin/PRT.BIN'

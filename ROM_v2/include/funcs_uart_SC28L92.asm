@@ -40,16 +40,6 @@
   pla
   rts
 
-;.duart_test_msg
-;  pha
-;  lda #<test_msg
-;  sta MSG_VEC
-;  lda #>test_msg
-;  sta MSG_VEC+1
-;  jsr duart_println
-;  pla
-;  rts
-
 \ ******************************************************************************
 \ ***  OS API FUNCTIONS
 \ ******************************************************************************
@@ -74,8 +64,6 @@
   inc MSG_VEC + 1              ; Increment high byte
   jmp duart_println_chr           ; Go back for next character
 .duart_println_end
-;  lda #CHR_LINEEND
-;  sta SC28L92_TxFIFOA
   ply : pla
   rts
 
