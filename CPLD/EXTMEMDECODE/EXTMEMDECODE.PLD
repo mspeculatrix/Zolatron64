@@ -1,0 +1,92 @@
+Name     EXTMEMDECODE ;
+PartNo   00 ;
+Date     03/07/2022 ;
+Revision 01 ;
+Designer SMD ;
+Company  Machina Speculatrix ;
+Assembly ;
+Location ;
+Device   f1502tqfp44 ;
+
+/*
+
+This provides decoding for extended memory on the Zolatron 64.
+
+The memory sits at address $8000. The decoding allows us to select one of 16
+8K banks at this address.
+
+The bank is selected by writing the value 0-15 to the address $BFE0. This
+CPLD provides the decoding for that address as well as a register of four
+D-type latches that hold the selected value.
+
+This register (BSEL) connects to address lines A13-A16 of theRAM, thus 
+selecting the effective address of the bank.
+
+The BSEL register is also used to select among five chip enable signals -
+four for the RAM chips and one for the RAM. If the BSEL value is 0-3
+then the appropriate CHIP_EN line 0-3 is selected. If BSEL is 4-15 then
+CHIP_EN4 is selected.
+
+On the board itself, four jumpers individually select whether CHIP_EN lines
+0-3 go to their respective ROMs or to the RAM.
+
+*/
+
+/* *************** INPUT PINS ******************** */
+/*PIN 44  = CLK ;	*/                        /* For testing on the ATF15XX-DK3 */ 
+PIN 2  = CLK ;	                            /* PHI2 clock  */ 
+PIN [22..18,15..10] = [A15..5];             /* Address bus */
+PIN [8,6,5,3] = [D3..0] ;		                /* Data bus	to select mem bank    */
+
+/* *************** OUTPUT PINS ******************** */
+PIN [31,33,34,35] = [BSEL3..0] ;			      /* Bank select register           */ 
+PIN [23,27,30,28,25] = ![CHIP_EN4..0];      /* Chip enable reg - active low   */
+
+NODE [CHIP_SEL4..0];                       /* Internal chip select register   */
+NODE BSEL_EN;						                   /* Enable latching for bank select */
+
+/* BSEL_EN is selected when the address set is $BFE0. This is the case when
+we're writing a value to select the memory bank. */
+
+BSEL_EN = A15 & !A14 & [A13..5]:& ; /* Decodes for 32-bit block at $BFE0 */
+
+/* The four D-latches in the BSEL register have their clocks enabled (allowing
+the flip-flop to be set to the appropriate value) only when the main clock is 
+high *and* BSEL_EN is active. 
+
+Essentially if you write to $BFE0, BSEL_EN gets enabled when the clock goes 
+high. The four latches will set according to the inputs on D0-D3.
+When the clock goes low, these values are latched. When we no longer have $BFE0
+as the address, the values will remain latched.
+
+These four latches are connected to A13-A16 on the RAM chip. They're
+not attached to the address bus - so they don't interfere with anything else.
+*/
+BSEL3.d = D3 ;								              /* latch input 				            */
+BSEL3.ck = CLK & BSEL_EN ;				          /* Address-qualified clock        */
+BSEL2.d = D2 ;								              /* latch input 				            */
+BSEL2.ck = CLK & BSEL_EN ;				          /* Address-qualified clock        */
+BSEL1.d = D1 ;								              /* latch input 				            */
+BSEL1.ck = CLK & BSEL_EN ;				          /* Address-qualified clock        */
+BSEL0.d = D0 ;								              /* latch input 				            */
+BSEL0.ck = CLK & BSEL_EN ;				          /* Address-qualified clock        */
+
+/* Match the CHIP_SEL internal register settings to the current value of the
+BSEL register. */
+FIELD BANK = [BSEL3..0];
+FIELD CHIPSL = [CHIP_SEL4..0]; /* 4 = RAM, 3..0 = ROM/RAM */
+TABLE BANK => CHIPSL {
+    'b'0000 => 'b'00001 ;
+    'b'0001 => 'b'00010 ;
+    'b'0010 => 'b'00100 ;
+    'b'0011 => 'b'01000 ;
+    'b'01XX => 'b'10000 ;
+    'b'1XXX => 'b'10000 ;
+}
+
+/* Set the appropriate chip enable signal when address $8000 is selected. */
+CHIP_EN0 = A15 & !A14 & !A13 & CHIP_SEL0;
+CHIP_EN1 = A15 & !A14 & !A13 & CHIP_SEL1;
+CHIP_EN2 = A15 & !A14 & !A13 & CHIP_SEL2;
+CHIP_EN3 = A15 & !A14 & !A13 & CHIP_SEL3;
+CHIP_EN4 = A15 & !A14 & !A13 & CHIP_SEL4;

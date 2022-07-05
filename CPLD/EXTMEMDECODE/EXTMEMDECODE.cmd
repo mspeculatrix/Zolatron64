@@ -17,8 +17,8 @@ if %CPLD% equ 1502 (
 ECHO Compiling for %CPLD%
 ECHO Running cupl.exe...
 C:\Wincupl\Shared\cupl.exe -j -a -l -e -x -f -b -m4 %CHIPDES% %~n0
-ECHO Running find...
 if %ErrorLevel% equ 0 (
+    ECHO Running find...
     if %CPLD% equ 1502 (
         find1502 -i %~dp0\%~n0.tt2 -CUPL -dev %DEV% -str JTAG ON -str logic_doubling off
     ) else if %CPLD% equ 1504 (
