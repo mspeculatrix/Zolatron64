@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
-PROG="ZUMPUS"
+PROG=${PWD##*/}          # Get name of current directory
+PROG=${PROG:-/}          # Adjust for case where = /
 
-WRITE_ROM=1
+UPLOAD=0
 
 usage()
 {
     echo "Error: Unknown option."
-    echo "Usage: build [-b]"
-    echo "    -b build only. Don't attempt to write to EEPROM"
+    echo "Usage: build [-u]"
+    echo "    -u  Upload to RPi"
 }
 
 while [ "$1" != "" ]; do
     case $1 in
-        -b )    WRITE_ROM=0
+        -u )    UPLOAD=1
                 ;;
         * )     usage
                 exit 1
@@ -26,7 +27,7 @@ beebasm -v -i ${PROG}.asm > ${PROG}_out.txt
 result=$?
 
 if [ $result -eq 0 ]; then
-    if [ $WRITE_ROM -eq 1 ]; then    
+    if [ $UPLOAD -eq 1 ]; then    
 		echo "Uploading to Imp..."
 		scp -i ~/.ssh/ssh-key ../bin/$PROG.BIN pi@10.0.30.90:zd_files/$PROG.BIN
 	fi

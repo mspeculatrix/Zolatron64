@@ -25,6 +25,7 @@ FN_CHAR_ERR_CODE      = FILE_LIST_ERR + 1           ; 13 D  Bad character
 FN_LEN_ERR_CODE       = FN_CHAR_ERR_CODE + 1        ; 14 E  Bad filename length
 ERR_EOB               = FN_LEN_ERR_CODE + 1         ; 15 F  End of buffer
 ERR_NAN               = ERR_EOB + 1                 ; 16 10 Not a number
+ERR_EXTMEM_WR         = ERR_NAN + 1                 ; 17 11 Ext mem write err
 
 
 \-------------------------------------------------------------------------------
@@ -75,8 +76,16 @@ OSDELAY   = OSUSRINT + 3
 OSSFTRST  = $FFF4         ; Use direct JMP with these (not indirected/vectored)
 OSHRDRST  = $FFF7
 
-USR_PAGE = $0800                    ; Address where user programs load
+USR_PAGE = $0800          ; Address where user programs load
 ROMSTART = $C000
+EXTMEM_SLOT_SEL  = $BFE0  ; Write to this address to select memory slot (0-15)
+EXTMEM_LOC = $8000        ; This is where extended memory lives
+
+DATA_TYPE_EXE = 1
+DATA_TYPE_OVR = 2
+DATA_TYPE_DAT = 3
+DATA_TYPE_OSX = 4
+MAX_DATA_TYPE = 4
 
 ; Code headers. These are offsets from the start of user code (which is at
 ; USR_PAGE for RAM-based code and FLASHMEM_LOC for Flash-based code)

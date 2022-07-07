@@ -23,6 +23,10 @@ CMD_TKN_RUN   = CMD_TKN_PRT + 1        ; RUN - run user program
 CMD_TKN_SAVE  = CMD_TKN_RUN + 1        ; SAVE
 CMD_TKN_STAT  = CMD_TKN_SAVE + 1       ; STAT
 CMD_TKN_VERS  = CMD_TKN_STAT + 1       ; VERS - show version
+CMD_TKN_XLOAD = CMD_TKN_VERS + 1       ; XLOAD - load file to ext memory
+CMD_TKN_XLIST = CMD_TKN_XLOAD + 1	   ; XLIST - list programs in ext memory
+CMD_TKN_XRUN  = CMD_TKN_XLIST + 1      ; XRUN - run program in current bank
+CMD_TKN_XSEL  = CMD_TKN_XRUN + 1       ; XSEL - select ext memory bank
 
 
 CMD_MAX_LEN = 8            ; Max number of chars in command names

@@ -47,7 +47,7 @@ ORG ROMSTART          ; This is where the actual code starts.
 
 ; Initialise registers etc
   stz TIMER_STATUS_REG
-  stz FLASH_BANK
+  stz EXTMEM_BANK
   stz FUNC_ERR
   stz FUNC_RESULT
   stz STDIN_BUF
@@ -320,6 +320,7 @@ INCLUDE "include/cmds_P.asm"
 INCLUDE "include/cmds_R.asm"
 INCLUDE "include/cmds_S.asm"
 INCLUDE "include/cmds_V.asm"
+INCLUDE "include/cmds_X.asm"
 .cmdprc_fail
   jsr os_print_error
 .cmdprc_end
@@ -335,6 +336,7 @@ INCLUDE "include/funcs_ZolaDOS.asm"
 INCLUDE "include/funcs_conv.asm"
 INCLUDE "include/funcs_io.asm"
 INCLUDE "include/funcs_isr.asm"
+INCLUDE "include/funcs_ext_mem.asm"
 INCLUDE "../LIB/funcs_math.asm"
 INCLUDE "include/funcs_2x16_lcd.asm"
 INCLUDE "include/funcs_prt.asm"

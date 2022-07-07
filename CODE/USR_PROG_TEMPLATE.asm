@@ -15,20 +15,29 @@ INCLUDE "../../LIB/cfg_page_0.asm"
 INCLUDE "../../LIB/cfg_page_2.asm"
 ; PAGE 3 is used for STDIN & STDOUT buffers, plus indexes
 INCLUDE "../../LIB/cfg_page_4.asm"
+; -- OPTIONAL --
+; INCLUDE "../../LIB/cfg_parallel.asm"
+; INCLUDE "../../LIB/cfg_prt.asm"
+; INCLUDE "../../LIB/cfg_user_port.asm"
+; INCLUDE "../../LIB/cfg_ZolaDOS.asm"
+; INCLUDE "../../LIB/cfg_chk_char.asm"
+; INCLUDE "../../LIB/cfg_math.asm"
 
 ORG USR_PAGE
 .header                     ; HEADER INFO
-  jmp startprog             ;
-  equw header               ; @ $0803 Entry address
+  jmp startprog             ; $4C followed by 2-byte address
+  equw header               ; @ $0803 Entry address - normally $0800
   equw reset                ; @ $0805 Reset address
   equw endcode              ; @ $0807 Addr of first byte after end of program
-  equs 0,0,0,0              ; -- Reserved for future use --
+  equb 'P'                  ; @ $0808 'D'=data, 'O'=overlay, 'X'=OS ext
+  equs 0,0,0                ; -- Reserved for future use --
+.prog_name
   equs "TEMPLATE",0         ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
   equs "1.0",0              ; Version string - nul terminated
 
-.startprog
-.reset
+.startprog                  ; Start of main program code
+.reset                      ; May sometimes be different from startprog
   sei                       ; Turn off interrupts
   cld                       ; Turn off BCD
   ldx #$ff                  ; Set stack pointer to $01FF - only need to set the

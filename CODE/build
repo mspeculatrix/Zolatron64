@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-PROG=${PWD##*/}          # Get name of current directory
-PROG=${PROG:-/}          # Adjust for case where = /
+PROG=${PWD##*/}          # Get name of current directory for use as filename
+PROG=${PROG:-/}          # Adjust for case where dir = /
 
 UPLOAD=0
 

@@ -31,7 +31,7 @@
 
   LOAD_MSG stat_msg3
   jsr OSWRMSG
-  lda FLASH_BANK
+  lda EXTMEM_BANK
   jsr OSB2ISTR
   jsr OSWRSBUF
   lda #' '

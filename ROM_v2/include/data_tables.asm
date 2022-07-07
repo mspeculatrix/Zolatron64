@@ -29,12 +29,16 @@ ALIGN &100                  ; Start on new page
   equw cmdprcSAVE           ; SAVE - save file
   equw cmdprcSTAT           ; STAT
   equw cmdprcVERS           ; VERS - version
+  equw cmdprcXLOAD          ; XLOAD
+  equw cmdprcXLIST          ; XLIST
+  equw cmdprcXRUN           ; XRUN
+  equw cmdprcXSEL           ; XSEL
 
 \ FIRST CHARACTER TABLE
 \ Initial characters of our commands. The parsing system first looks to see if
 \ the initial character is in this list.
 .cmd_ch1_tbl
-  equs "*BFHJLPRSV" 
+  equs "*BFHJLPRSVX" 
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -52,6 +56,7 @@ ALIGN &100                  ; Start on new page
   equw cmd_tbl_ASCR         ; Commands starting 'R'
   equw cmd_tbl_ASCS         ; Commands starting 'S'
   equw cmd_tbl_ASCV         ; Commands starting 'V'
+  equw cmd_tbl_ASCX         ; Commands starting 'X'
 
 \ COMMAND TABLE
 \ Having found the an address in the Command Pointers table above, the parsing
@@ -107,6 +112,13 @@ ALIGN &100                  ; Start on new page
   equs "ERS", CMD_TKN_VERS  ; VERS
   equb EOCMD_SECTION
 
+.cmd_tbl_ASCX               ; Commands starting 'X'
+  equs "LOAD", CMD_TKN_XLOAD  ; XLOAD
+  equs "LIST", CMD_TKN_XLIST  ; XLIST
+  equs "RUN", CMD_TKN_XRUN  ; XRUN
+  equs "SEL", CMD_TKN_XSEL  ; XSEL
+  equb EOCMD_SECTION
+
 \ ===== ERROR TABLES ========+==================================================
 \ See cfg_main.asm for the corresponding error numbers. This list needs to be in
 \ the same order as that list.
@@ -132,6 +144,8 @@ ALIGN &100                  ; Start on new page
   equw err_end_of_buffer
   equw err_not_a_number
 
+  equw err_extmem_write
+
 \ Error Message Table
 .err_msg_cmd
   equs "Bad command! Bad, bad command!", 0
@@ -156,7 +170,6 @@ ALIGN &100                  ; Start on new page
 .err_filesvropen
   equs "File open failed on server", 0
 .err_filesvrls
-  ;     1234567890ABCDEF
   equs "File list failed on server", 0
 .err_filename_badchar
   equs "Bad filename",0
@@ -166,15 +179,18 @@ ALIGN &100                  ; Start on new page
   equs "End of buffer",0
 .err_not_a_number
   equs "Not a number",0 
+.err_extmem_write
+  ;     1234567890ABCDEF
+  equs "Extmem write error",0
 
 \ ===== MISC TABLES & STRINGS ==================================================
 
+\ Valid data types for extended memory.
+.ext_data_types
+  equs "PODX",0
+
 .help_table
   equs "BRK",0
-  equs "FLOAD",0
-  equs "FLIST",0
-  equs "FRUN",0
-  equs "FS",0
   equs "HELP",0
   equs "JMP",0
   equs "LM",0
@@ -187,6 +203,10 @@ ALIGN &100                  ; Start on new page
   equs "SAVE",0
   equs "STAT",0
   equs "VERS",0
+  equs "XLOAD",0
+  equs "XLIST",0
+  equs "XRUN",0
+  equs "XSEL",0
   equb EOTBL_MKR
 
 \ HEX CHARACTER TABLE

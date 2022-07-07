@@ -3,17 +3,21 @@ PROG=${PWD##*/}          # Get name of current directory
 PROG=${PROG:-/}          # Adjust for case where = /
 
 UPLOAD=0
+BURN_ROM=0
 
 usage()
 {
     echo "Error: Unknown option."
-    echo "Usage: build [-u]"
+    echo "Usage: build [-u] [-w]"
     echo "    -u  Upload to RPi"
+    echo "    -w  Write to EEPROM"
 }
 
 while [ "$1" != "" ]; do
     case $1 in
         -u )    UPLOAD=1
+                ;;
+        -w )    BURN_ROM=1
                 ;;
         * )     usage
                 exit 1
@@ -31,4 +35,9 @@ if [ $result -eq 0 ]; then
 		echo "Uploading to Imp..."
 		scp -i ~/.ssh/ssh-key ../bin/$PROG.BIN pi@10.0.30.90:zd_files/$PROG.BIN
 	fi
+    if [ $BURN_ROM -eq 1 ]; then    
+      	echo "Writing to EEPROM..."
+        echo "- minipro -p AT28C64 -w ../bin/$PROG.bin"
+        minipro -p AT28C64 -w ../bin/$PROG.bin
+    fi
 fi

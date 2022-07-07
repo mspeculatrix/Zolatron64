@@ -6,8 +6,8 @@ STR_BUF_SZ = $20            ; 32 bytes
 \ subroutines/functions, as entry parameters for functions or to hold the
 \ results of functions. You should not assume they have any reliable value 
 \ outside of functions other than immediate return values.
-FLASH_BANK  = $0400                   ; Number of current flash memory bank
-TEST_VAL    = FLASH_BANK + 1
+EXTMEM_BANK = $0400                   ; Number of current extended memory bank
+TEST_VAL    = EXTMEM_BANK + 1
 TMP_VAL     = TEST_VAL + 1 
 TMP_IDX     = TMP_VAL + 1             ; Index for use with buffers, loops
 TMP_COUNT   = TMP_IDX + 1             ; For misc temporary counters
