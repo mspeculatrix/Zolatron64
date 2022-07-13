@@ -2,8 +2,8 @@
      0800   4C 18 08   JMP &0818
      0803   00 08
      0805   18 08
-     0807   E8 1A
-     0809   00
+     0807   08 1B
+     0809   50
      080A   00
      080B   00
      080C   00
@@ -1125,8 +1125,27 @@ End macro LOAD_MSG
 .uint16_times10_done
      1AE2   FA         PLX
      1AE3   60         RTS
+.compare_tmp_addr
+     1AE4   A5 57      LDA &57
+     1AE6   C5 59      CMP &59
+     1AE8   90 0F      BCC &1AF9
+     1AEA   D0 12      BNE &1AFE
+     1AEC   A5 56      LDA &56
+     1AEE   C5 58      CMP &58
+     1AF0   90 07      BCC &1AF9
+     1AF2   D0 0A      BNE &1AFE
+     1AF4   A9 01      LDA #&01
+     1AF6   4C 00 1B   JMP &1B00
+.compare_tmp_addr_less
+     1AF9   A9 00      LDA #&00
+     1AFB   4C 00 1B   JMP &1B00
+.compare_tmp_addr_more
+     1AFE   A9 02      LDA #&02
+.compare_tmp_addr_end
+     1B00   8D 09 04   STA &0409
+     1B03   60         RTS
 .endtag
-     1AE4   45 4F 46 
-     1AE7   00
+     1B04   45 4F 46 
+     1B07   00
 .endcode
 Saving file '../bin/ZUMPUS.BIN'
