@@ -6,10 +6,10 @@
 .cmdprcXLOAD
   jsr read_filename       ; Read filename from STDIN_BUF
   lda FUNC_ERR
-  bne cmdprcXLOAD_bank_err
+  bne cmdprcXLOAD_err
   jsr extmem_readset_bank ; Read memory bank number. Bank will be selected.
   lda FUNC_ERR
-  bne cmdprcXLOAD_bank_err
+  bne cmdprcXLOAD_err
   ldx #0                  ; We're going to check that we can write to this
 .cmdprcXLOAD_bank_chk     ; bank. If not, it's probably a ROM. We'll write
   txa                     ; a sequence of numbers and read them back.
@@ -20,13 +20,10 @@
   cpx #5
   beq cmdprcXLOAD_loadfile
   jmp cmdprcXLOAD_bank_chk
-.cmdprcXLOAD_bank_err
-  jsr OSWRERR
-  jmp cmdprcXLOAD_done
 .cmdprcXLOAD_bank_chk_err
   lda #ERR_EXTMEM_WR
   sta FUNC_ERR
-  jsr OSWRERR
+  jmp cmdprcXLOAD_err
 .cmdprcXLOAD_loadfile     ; Here's where we actually load the file
   LED_ON LED_FILE_ACT
   lda #<EXTMEM_LOC        ; This is where we're going to load the code
@@ -36,12 +33,12 @@
   jsr OSZDLOAD
   lda FUNC_ERR
   bne cmdprcXLOAD_err
-  LOAD_MSG load_complete_msg
+  LOAD_MSG file_act_complete_msg
   jsr OSWRMSG
   jsr OSLCDMSG
   jmp cmdprcXLOAD_done
 .cmdprcXLOAD_err
-  jsr os_print_error          ; There should be an error code in FUNC_ERR
+  jsr OSWRERR          ; There should be an error code in FUNC_ERR
   jsr OSLCDERR  
 .cmdprcXLOAD_done
   LED_OFF LED_FILE_ACT

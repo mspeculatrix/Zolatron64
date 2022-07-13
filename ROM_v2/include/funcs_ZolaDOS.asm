@@ -48,8 +48,7 @@
   ZD_SET_CR_ON                ; Take /CR low - signals that we're ready to rock
   jsr zd_signalDelay          ; Slight pause to settle down
   jsr zd_waitForSR            ; Wait for server's response
-  lda FUNC_ERR             
-  ;bne zd_svr_resp_init_end    ; If this is anything but 0, that's an error
+;  lda FUNC_ERR             
   ZD_SET_CR_OFF               ; Take /CR high
   ZD_SET_CA_OFF               ; Take /CA high
 .zd_svr_resp_init_end
@@ -124,6 +123,71 @@
   jsr zd_strobeDelay
   jsr zd_waitForSAoff
 .zd_rcv_data_end
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  ZD_SAVE_DATA
+\ ---  Implements: OSZDSAVE
+\ ------------------------------------------------------------------------------
+\ Saves a section of memory to a file.
+\ ON ENTRY: - TMP_ADDR_A must contain 16-bit start address
+\           - TMP_ADDR_B must contain end address
+\           - STR_BUF must contain nul-terminated filename string
+\ ON EXIT : FUNC_ERR contains error code
+.zd_save_data
+  stz FUNC_ERR                ; Zero out the error code
+  lda #ZD_OPCODE_SAVE_CRT     ; ----- INITIATE ---------------------------------
+  jsr zd_init_process         ; Tell ZolaDOS device we want to perform a SAVE
+  lda FUNC_ERR             
+  bne zd_save_data_end        ; If this is anything but 0, that's an error
+  jsr zd_send_strbuf          ; Send the filename over the ZolaDOS port
+  lda FUNC_ERR
+  bne zd_save_data_end
+  ZD_SET_DATADIR_INPUT        ; ----- GET SERVER RESPONSE ----------------------
+  jsr zd_svr_resp
+  lda FUNC_ERR
+  bne zd_save_data_end
+  jsr zd_waitForSAoff
+  lda FUNC_ERR
+  bne zd_save_data_end
+  ; might need a pause here
+  jsr zd_strobeDelay
+  jsr zd_send_data            ; ----- SEND DATA ----------------------
+.zd_save_data_end
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  ZD_SEND_DATA
+\ ------------------------------------------------------------------------------
+.zd_send_data
+  ZD_SET_CR_OFF               ; Not sure if needed - but to be sure
+  ZD_SET_DATADIR_OUTPUT
+  ZD_SET_CA_ON
+  jsr zd_waitForSRoff         ; Wait for server response to end
+  lda FUNC_ERR
+  bne zd_send_data_end
+.zd_send_data_loop
+  lda (TMP_ADDR_A)            ; Put byte on data bus
+  sta ZD_DATA_PORT
+  ZD_SET_CR_ON                ; Signal that it's ready
+  jsr zd_strobeDelay 
+  ZD_SET_CR_OFF
+  jsr zd_waitForSR            ; Wait for server response
+  lda FUNC_ERR
+  bne zd_send_data_end
+  jsr zd_waitForSRoff         ; Wait for server response to end
+  lda FUNC_ERR
+  bne zd_send_data_end
+  inc TMP_ADDR_A_L            ; Increment address low byte
+  bne zd_send_data_chk        ; If it didn't roll over, got to next step
+  inc TMP_ADDR_A_H            ; Otherwise increment high byte
+.zd_send_data_chk
+  jsr compare_tmp_addr        ; Check if we've reached the end
+  lda FUNC_RESULT
+  cmp #MORE_THAN
+  bne zd_send_data_loop       
+.zd_send_data_end
+  ZD_SET_CA_OFF
   rts
 
 \ ------------------------------------------------------------------------------
@@ -359,5 +423,7 @@
 \ --- DATA ---------------------------------------------------------------------
 .loading_msg
   equs "Loading ... ",0
-.load_complete_msg
+.saving_msg
+  equs "Saving ... ",0
+.file_act_complete_msg
   equs "Done",0

@@ -13,8 +13,6 @@
   sta SC28L92_MRA     ; 16 bytes for TX int, 16-byte FIFO, baudrate mode normal.
   lda #%00010000      ; To set MR pointer to MR1A
   sta SC28L92_CRA
-;  nop                 ; 2 nops = 4 cycles
-;  nop                 ; DON'T THINK THESE ARE NEEDED
   lda #%00010011  ; No RTS, 1-byte fill level for RX interrupts, char err mode,
   sta SC28L92_MRA ; no parity, 8 bits per char - MR pointer gets set to MR2A.
   lda #%00000111  ; 1 stop bit
@@ -22,8 +20,7 @@
   \\ Set baud rate - assuming normal, not extended, mode
   lda #%10000000                  ; Set baud rate generator select bit to 1
   sta SC28L92_ACR
-  lda #%10111011                  ; Receive and transmit at 9600
-  ;lda #%11011000                 ; Receive and transmit at 19200
+  lda #DUART_BAUD_9600            ; Receive and transmit rate
   sta SC28L92_CSRA
   \\ Set interrupt mask register. Determines which events produce interrupts
   lda #%00000010                  ; Enable interrupts on RX on port A

@@ -206,6 +206,7 @@
 \ ON EXIT : - 16-bit number in FUNC_RES_L/H
 \           - Error in FUNC_ERR
 .read_int16
+  pha : phx : phy
   stz FUNC_ERR
   stz FUNC_RES_L
   stz FUNC_RES_H
@@ -223,7 +224,7 @@
   beq read_int_chkspc         ; If space, have we already started reading num?
   cmp #'0'
   bcc read_int_error          ; Less than '0' - an error
-  cmp #$3A                    ; ASCII for ':', char above '9'
+  cmp #':'                    ; Char above '9'
   bcs read_int_error          ; More than '9' - an error
   sec
   sbc #$30                    ; Turn ASCII value into integer digit
@@ -264,6 +265,7 @@
 .read_int_end
   inx
   stx STDIN_IDX
+  ply : plx : pla
   rts
 
 \ ------------------------------------------------------------------------------
@@ -274,15 +276,17 @@
 \ WOULD NEED TO UPGRADE TO ACCEPT NUMBERS (and maybe lowercase)
 \ ------------------------------------------------------------------------------
 \ This function reads characters from STDIN_BUF and stores them in STR_BUF.
-\ It assumes that X contains an offset pointer to the part of STDIN_BUF from 
-\ which we want to read next.
+\ It assumes that STDIN_IDX contains an offset pointer to the part of STDIN_BUF 
+\ from which we want to read next.
 \ ON ENTRY: Nul- or space- terminated filename string expected in STDIN_BUF
 \ ON EXIT : - Nul-terminated filename in STR_BUF
 \           - Error in FUNC_ERR
+\           - STDIN_IDX updated
 .read_filename
-  pha : phy
+  pha : phx : phy
   stz FUNC_ERR              ; Initialise to 0
   ldy #0                    ; Offset for where we're storing each byte
+  ldx STDIN_IDX
   stz TMP_VAL               ; Flag regarding whether we've already read chars
 .read_filename_next_char
   lda STDIN_BUF,X           ; Get next byte from buffer
@@ -290,7 +294,7 @@
   cmp #CHR_SPACE            ; If it's a space, ignore it & get next byte
   beq read_filename_chkspc
   cmp #CHR_LINEEND
-  beq read_filename_loop
+  beq read_filename_check
   and #$DF                  ; Converts lower to uppercase. Uppercase unaffected
   cmp #'A'                  ; Acceptable values are 65-90 (A-Z)
   bcc read_filename_fail
@@ -320,8 +324,70 @@
   lda #FN_LEN_ERR_CODE
   sta FUNC_ERR
 .read_filename_end
-  ply : pla
+  stx STDIN_IDX
+  ply : plx : pla
   rts
+
+\ Maybe use another address location for storing a parameter which will be
+\ the maximum string length.
+.read_string          ; **** WORK IN PROGRESS ****
+  pha : phx : phy
+  stz FUNC_ERR              ; Initialise to 0
+  ldy #0                    ; Offset for where we're storing each byte
+  ldx STDIN_IDX
+  stz TMP_VAL               ; Flag regarding whether we've already read chars
+.read_string_next_char
+  lda STDIN_BUF,X           ; Get next byte from buffer
+  beq read_string_check     ; If a null (0), at end of input
+  cmp #CHR_SPACE            ; If it's a space, ignore it & get next byte
+  beq read_string_chkspc
+  cmp #CHR_LINEEND          ; If LF, end of input.
+  beq read_string_check
+  \ Acceptable char ranges:
+  \     -./0-9:
+  \     @A-Z
+  \     a-z
+  cmp #'-'
+  bcc read_string_fail      ; A is less than lowest acceptable char
+  cmp #':'+1
+  bcc read_string_charOK    ; A less than top of first range, so okay
+  cmp #'@'
+  bcc read_string_fail      ; More than first range but less than second. Fail
+  cmp #'Z'+1
+  bcc read_string_charOK    ; Falls within second range
+  cmp #'a'
+  bcc read_string_fail      ; More than second range but less than third. Fail
+  cmp #'z'+1
+  bcs read_string_fail      ; Within third range, so okay
+.read_string_charOK
+  sta STR_BUF,Y             ; Store in STR_BUF buffer
+  iny                       ; Increment STR_BUF index
+  inc TMP_VAL
+.read_string_loop
+  inx                       ; Increment input buffer index
+  jmp read_string_next_char
+.read_string_chkspc
+  lda TMP_VAL
+  beq read_string_loop      ; 0, so not started receiving chars yet
+  jmp read_string_check     ; Otherwise, we're done
+.read_string_fail
+  lda #FN_CHAR_ERR_CODE
+  sta FUNC_ERR
+  jmp read_string_end
+.read_string_check  ;
+  sta STR_BUF,Y             ; Make sure we have a null terminator
+  cpy #ZD_MIN_FN_LEN        ; Minimum filename length
+  bcc read_string_err
+  cpy #ZD_MAX_FN_LEN+1      ; Maximum filename length
+  bcc read_string_end
+.read_string_err
+  lda #FN_LEN_ERR_CODE
+  sta FUNC_ERR
+.read_string_end
+  stx STDIN_IDX
+  ply : plx : pla
+  rts
+
 
 \ ------------------------------------------------------------------------------
 \ ---  READ_HEX_ADDR
@@ -339,17 +405,41 @@
 .read_hex_addr_next_byte
   jsr read_hex_byte         ; Byte value result is in FUNC_RESULT
   lda FUNC_ERR
-  beq read_hex_addr_end
-.read_hex_addr_conv
+  bne read_hex_addr_end
   lda FUNC_RESULT           ; Load the result from the conversion
   sta FUNC_RES_L,Y
-  beq read_hex_addr_end     ; Done if next byte 0
-  cmp #' '
-  beq read_hex_addr_end     ; Done if next byte a space
+  cpy #0
+  beq read_hex_addr_end
   dey
   jmp read_hex_addr_next_byte
 .read_hex_addr_end
   ply : pla
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  READ_HEX_ADDR_PAIR
+\ ------------------------------------------------------------------------------
+\ This function reads two four-character hex addresses from STDIN_BUF.
+\ ON ENTRY: Expects two four-char hex characters in STDIN_BUF, plus null 
+\           terminator or space.
+\ ON EXIT : - Two 16-bit addresses in TMP_ADDR_A and TMP_ADDR_B.
+\           - FUNC_ERR contains error code.
+.read_hex_addr_pair
+  ldy #0
+.read_hex_addr_pair_next        ; Get next address from buffer
+  jsr read_hex_addr             ; Puts bytes in FUNC_RES_L, FUNC_RES_H
+  lda FUNC_ERR
+  bne read_hex_addr_pair_end
+  lda FUNC_RES_L
+  sta TMP_ADDR_A,Y
+  iny                           ; Increment Y to store the high byte
+  lda FUNC_RES_H
+  sta TMP_ADDR_A,Y
+  cpy #3                        ; If 3, then we've got all four bytes
+  beq read_hex_addr_pair_end
+  iny                           ; Otherwise, get next byte
+  jmp read_hex_addr_pair_next  
+.read_hex_addr_pair_end
   rts
 
 \ ------------------------------------------------------------------------------
@@ -382,9 +472,8 @@
   jmp read_hexbyte_next_char
 .read_hexbyte_conv
   ; We've got our pair of bytes in BYTE_CONV_L and BYTE_CONV_L+1
-  jsr hex_str_to_byte       ; Convert them - result is in FUNC_RESULT
-  lda #0                    ; Check to see if there was an error
-  cmp FUNC_ERR
+  jsr hex_str_to_byte       ; Convert them - result is in FUNC_RESULT                   
+  lda FUNC_ERR              ; Check to see if there was an error
   bne read_hexbyte_fail
   jmp read_hexbyte_end
 .read_hexbyte_fail
@@ -410,5 +499,4 @@
   lda err_ptrs+1,X        ; Get MSB
   sta MSG_VEC+1           ; and put in MSG_VEC high byte
   jsr OSWRMSG             ; Print to standard stream
-  jsr OSLCDMSG            ; and to LCD
   rts

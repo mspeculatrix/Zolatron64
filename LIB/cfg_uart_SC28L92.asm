@@ -70,3 +70,6 @@ DUART_RxB_CLR_FLAGS    = %00001111      ; AND with reg to clear input flags
 ; AND following with SC28L92_ISR to see if data received
 DUART_RxA_RDY_MASK     = %00000010 		; SC28L92 has data in RX A FIFO
 DUART_RxB_RDY_MASK     = %00100000 		; SC28L92 has data in RX B FIFO
+
+DUART_BAUD_9600  = %10111011
+DUART_BAUD_19200 = %11011000

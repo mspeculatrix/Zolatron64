@@ -40,6 +40,7 @@ OSPRTMSG_VEC  = OSPRTINIT_VEC + 2
 OSPRTSBUF_VEC = OSPRTMSG_VEC + 2
 
 OSZDLOAD_VEC  = OSPRTSBUF_VEC + 2
+OSZDSAVE_VEC  = OSZDLOAD_VEC + 2
 
-OSUSRINT_VEC  = OSZDLOAD_VEC + 2    ; Vector for user interrupt handling routines
+OSUSRINT_VEC  = OSZDSAVE_VEC + 2    ; Vector for user interrupt handling routines
 OSDELAY_VEC   = OSUSRINT_VEC + 2

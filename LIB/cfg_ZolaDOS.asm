@@ -25,9 +25,11 @@ ZD_IFR   = ZD_BASE_ADDR + $0D		      ; Interrupt Flag Register
 ZD_TIMER_COUNT = $0600                ; Using page 6 as workspace memory 
 ZD_WKSPC       = $0600 + 2            ; for ZolaDOS
 
-ZD_OPCODE_LOAD = 8
-ZD_OPCODE_LS   = 16
-ZD_OPCODE_SAVE = 128
+ZD_OPCODE_LOAD = 2
+ZD_OPCODE_LS   = 8
+ZD_OPCODE_SAVE_CRT = 16               ; Save command - create file, no overwrite
+ZD_OPCODE_SAVE_OVR = 17               ; Save - overwrite okay
+ZD_OPCODE_SAVE_APP = 18               ; Save - append
 
 ZD_MIN_FN_LEN = 3         ; Minimum filename length
 ZD_MAX_FN_LEN = 15        ; Maximum filename length
@@ -60,14 +62,14 @@ ZD_CTRL_PINDIR  = %00001111
 
 ; These values work
 ;ZD_STROBETIME    = $07D0             ; 
-;ZD_SIGNALDELAY   = $07D0             ; 03E8 = 1ms, 07D0 = 2ms, 1388 = 5ms approx
+;ZD_SIGNALDELAY   = $07D0             ; 03E8=1ms, 07D0=2ms, 1388=5ms approx
 ;ZD_TIMEOUT_INTVL = $270E             ; Timer cycles between each interrupt
 ;ZD_TIMEOUT_LIMIT = $000F             ; Times interrupt fires before we timeout
 ; Versions for tweaking/experimenting
 ZD_STROBETIME    = $02EE             ; 
-ZD_SIGNALDELAY   = $03E8             ; 03E8 = 1ms, 07D0 = 2ms, 1388 = 5ms approx
-ZD_TIMEOUT_INTVL = $270E             ; Timer cycles between each interrupt
-ZD_TIMEOUT_LIMIT = $001F             ; Times interrupt fires before we timeout
+ZD_SIGNALDELAY   = $03E8             ; 03E8=1ms, 07D0=2ms, 1388=5ms approx
+ZD_TIMEOUT_INTVL = $270E             ; No. of timer cycles between interrupts
+ZD_TIMEOUT_LIMIT = $002F             ; was 1F Times interrupt fires before timeout
 
 MACRO ZD_SET_CA_ON
   lda ZD_CTRL_PORT

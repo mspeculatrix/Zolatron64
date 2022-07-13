@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
-CODE_VERSION="2.1"
-WRITE_ROM=1
+CODE_VERSION="2.4"
+WRITE_ROM=0
 
 usage()
 {
     echo "Error: Unknown option."
-    echo "Usage: build [-b]"
-    echo "    -b build only. Don't attempt to write to EEPROM"
+    echo "Usage: build [-w]"
+    echo "    -w Write to EEPROM after building"
 }
 
 while [ "$1" != "" ]; do
     case $1 in
-        -b )    WRITE_ROM=0
+        -w )    WRITE_ROM=1
                 ;;
         * )     usage
                 exit 1

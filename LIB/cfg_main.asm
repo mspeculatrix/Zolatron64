@@ -26,6 +26,10 @@ FN_LEN_ERR_CODE       = FN_CHAR_ERR_CODE + 1        ; 14 E  Bad filename length
 ERR_EOB               = FN_LEN_ERR_CODE + 1         ; 15 F  End of buffer
 ERR_NAN               = ERR_EOB + 1                 ; 16 10 Not a number
 ERR_EXTMEM_WR         = ERR_NAN + 1                 ; 17 11 Ext mem write err
+ERR_EXTMEM_BANK       = ERR_EXTMEM_WR + 1           ; 18 12 Ext mem bank err
+ERR_ADDR              = ERR_EXTMEM_BANK + 1         ; 19 13 Address error
+ERR_FILE_EXISTS       = ERR_ADDR + 1                ; 20 14 File exists error
+ERR_FILE_OPEN         = ERR_FILE_EXISTS + 1         ; 21 15 Error opening file
 
 
 \-------------------------------------------------------------------------------
@@ -69,8 +73,9 @@ OSPRTMSG  = OSPRTINIT + 3
 OSPRTSBUF = OSPRTMSG + 3
 
 OSZDLOAD  = OSPRTSBUF + 3
+OSZDSAVE  = OSZDLOAD + 3
 
-OSUSRINT  = OSZDLOAD + 3
+OSUSRINT  = OSZDSAVE + 3
 OSDELAY   = OSUSRINT + 3
 
 OSSFTRST  = $FFF4         ; Use direct JMP with these (not indirected/vectored)

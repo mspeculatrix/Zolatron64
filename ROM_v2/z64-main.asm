@@ -38,7 +38,7 @@ ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROMSTART          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v2.1", 0
+  equs "ZolOS v2.2", 0
 .startcode
   sei                 ; Don't interrupt me yet
   cld                 ; We don' need no steenkin' BCD
@@ -179,6 +179,10 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSZDLOAD
   lda #>zd_loadfile
   sta OSZDLOAD + 1
+  lda #<zd_save_data         ; OSZDSAVE
+  sta OSZDSAVE
+  lda #>zd_save_data
+  sta OSZDSAVE + 1
 
 ; OSUSRINT
 
@@ -390,6 +394,7 @@ ORG $FF00
   jmp (OSPRTSBUF_VEC)
 
   jmp (OSZDLOAD_VEC)
+  jmp (OSZDSAVE_VEC)
 
 ;  jmp (OSFLOAD_VEC)
 
@@ -407,4 +412,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-2.1.bin", startrom, endrom
+SAVE "bin/z64-ROM-2.4.bin", startrom, endrom

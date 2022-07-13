@@ -145,6 +145,11 @@ ALIGN &100                  ; Start on new page
   equw err_not_a_number
 
   equw err_extmem_write
+  equw err_extmem_bank
+
+  equw err_addr
+  equw err_file_exists
+  equw err_file_open
 
 \ Error Message Table
 .err_msg_cmd
@@ -182,6 +187,14 @@ ALIGN &100                  ; Start on new page
 .err_extmem_write
   ;     1234567890ABCDEF
   equs "Extmem write error",0
+.err_extmem_bank
+  equs "Ext mem bank error",0
+.err_addr
+  equs "Address error",0
+.err_file_exists
+  equs "File exists",0
+.err_file_open
+  equs "Error opening file",0
 
 \ ===== MISC TABLES & STRINGS ==================================================
 
@@ -221,7 +234,7 @@ ALIGN &100                  ; Start on new page
 .stat_msg2
   equs "FNERR:",0
 .stat_msg3
-  equs "FLSHB:",0
+  equs "EXMEM:",0
 
 \ MESSAGES
 .test_msg

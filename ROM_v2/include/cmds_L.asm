@@ -8,29 +8,31 @@
 \ optionally separated by a space.
 \ Variables used: BYTE_CONV_L, TMP_OFFSET, TMP_COUNT, LOOP_COUNT, FUNC_RESULT
 .cmdprcLM
-  ; X currently contains the buffer index for the rest of the text in the RX 
-  ; buffer (after the command), although the first char is likely to be a space.
   stz FUNC_ERR
+  ;stx STDIN_IDX
 ; --- GET & CONVERT HEX VALUE PAIRS --------------------------------------------
 ; Get the two, 4-char addresses.
 ; The byte values are stored at the four locations starting at TMP_ADDR_A
 ; (which encompasses TMP_ADDR_A and TMP_ADDR_B).
-  ldy #0                        ; Offset from TMP_ADDR_A
-.cmdprcLM_next_addr             ; Get next address from buffer
-  jsr read_hex_addr             ; Puts bytes in FUNC_RES_L, FUNC_RES_H
+  jsr read_hex_addr_pair
   lda FUNC_ERR
-  bne cmdprcLM_rd_addr_fail
-  lda FUNC_RES_L
-  sta TMP_ADDR_A,Y
-  iny                           ; Increment Y to store the high byte
-  lda FUNC_RES_H
-  sta TMP_ADDR_A,Y
-  cpy #3                        ; If 3, then we've got all four bytes
-  beq cmdprcLM_check
-  iny                           ; Otherwise, get next byte
-  jmp cmdprcLM_next_addr
-.cmdprcLM_rd_addr_fail
-  jmp cmdprc_fail
+  bne cmdprcLM_addr_fail
+;  ldy #0                        ; Offset from TMP_ADDR_A
+;.cmdprcLM_next_addr             ; Get next address from buffer
+;  jsr read_hex_addr             ; Puts bytes in FUNC_RES_L, FUNC_RES_H
+;  lda FUNC_ERR
+;  bne cmdprcLM_rd_addr_fail
+;  lda FUNC_RES_L
+;  sta TMP_ADDR_A,Y
+;  iny                           ; Increment Y to store the high byte
+;  lda FUNC_RES_H
+;  sta TMP_ADDR_A,Y
+;  cpy #3                        ; If 3, then we've got all four bytes
+;  beq cmdprcLM_check
+;  iny                           ; Otherwise, get next byte
+;  jmp cmdprcLM_next_addr
+;.cmdprcLM_rd_addr_fail
+;  jmp cmdprc_fail
 ; --- CHECK VALUES: Check that values obtained are sane ------------------------
 ; The four bytes defining the memory range are in the four bytes starting
 ; at TMP_ADDR_A. The MSB of the start address must be less than or equal to
@@ -38,23 +40,20 @@
 ; If it's equal, then the LSB of the start address must be less than that of
 ; the end address.
 .cmdprcLM_check
-  lda FUNC_ERR
-  bne cmdprcLM_chk_fail
-  lda TMP_ADDR_B_H          ; MSB of end address
-  cmp TMP_ADDR_A_H          ; MSB of start address
-  beq cmdprcLM_chk_lsb      ; They're equal, so now check LSB
-  bcc cmdprcLM_chk_fail     ; Start is more than end
+  jsr compare_tmp_addr
+  lda FUNC_RESULT
+  bne cmdprcLM_addr_fail
   jmp cmdprcLM_chk_nul
-.cmdprcLM_chk_lsb
-  lda TMP_ADDR_B_L          ; LSB of end address
-  cmp TMP_ADDR_A_L          ; LSB of start address
-  beq cmdprcLM_chk_fail     ; If equal, then both addresses are same - an error
-  bcs cmdprcLM_chk_nul
+.cmdprcLM_addr_fail
+  lda #ERR_ADDR
+  sta FUNC_ERR
+  jmp cmdprc_fail
 .cmdprcLM_chk_fail
   lda #SYNTAX_ERR_CODE      ; We'll return a syntax error
   sta FUNC_ERR
   jmp cmdprc_fail
 .cmdprcLM_chk_nul           ; Check there's nothing left in the RX buffer
+  ldx STDIN_IDX
   lda STDIN_BUF,X           ; Should be null. Anything else is a mistake
   bne cmdprcLM_chk_fail
   jsr display_memory
@@ -85,7 +84,7 @@
   jsr OSLCDERR
   jmp cmdprcLOAD_end
 .cmdprcLOAD_success
-  LOAD_MSG load_complete_msg
+  LOAD_MSG file_act_complete_msg
   jsr OSWRMSG
   jsr OSLCDMSG
   lda USR_PAGE+CODEHDR_END    ; Get info about first free byte after prog
