@@ -66,10 +66,10 @@ ZD_CTRL_PINDIR  = %00001111
 ;ZD_TIMEOUT_INTVL = $270E             ; Timer cycles between each interrupt
 ;ZD_TIMEOUT_LIMIT = $000F             ; Times interrupt fires before we timeout
 ; Versions for tweaking/experimenting
-ZD_STROBETIME    = $02EE             ; 
-ZD_SIGNALDELAY   = $03E8             ; 03E8=1ms, 07D0=2ms, 1388=5ms approx
-ZD_TIMEOUT_INTVL = $270E             ; No. of timer cycles between interrupts
-ZD_TIMEOUT_LIMIT = $002F             ; was 1F Times interrupt fires before timeout
+ZD_STROBETIME    = $02EE         ; 
+ZD_SIGNALDELAY   = $03E8         ; 03E8=1ms, 07D0=2ms, 1388=5ms approx
+ZD_TIMEOUT_INTVL = $270E         ; No. of timer cycles between interrupts
+ZD_TIMEOUT_LIMIT = $004F         ; Times interrupt fires before timeout - was 2F
 
 MACRO ZD_SET_CA_ON
   lda ZD_CTRL_PORT
