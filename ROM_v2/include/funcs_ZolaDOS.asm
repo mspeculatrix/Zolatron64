@@ -55,6 +55,18 @@
   rts
 
 \ ------------------------------------------------------------------------------
+\ ---  ZD_DELFILE
+\ ---  Implements: OSZDDEL
+\ ------------------------------------------------------------------------------
+\ Deletes a file on the ZolaDOS server.
+\ ON ENTRY: STDIN_BUF must contain filename
+\ ON EXIT : FUNC_ERR contains error code - 0 for success
+.zd_delfile
+  lda #ZD_OPCODE_DEL
+  jsr zd_handshake
+  rts
+
+\ ------------------------------------------------------------------------------
 \ ---  ZD_LOADFILE
 \ ---  Implements: OSZDLOAD
 \ ------------------------------------------------------------------------------
@@ -63,21 +75,10 @@
 \           - FILE_ADDR/+1 must contain address to which we wish to load file.
 \ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
 .zd_loadfile
-  stz FUNC_ERR                ; Zero out the error code
   lda #ZD_OPCODE_LOAD         ; ----- INITIATE ---------------------------------
-  jsr zd_init_process         ; Tell ZolaDOS device we want to perform a LOAD
+  jsr zd_handshake
   lda FUNC_ERR             
   bne zd_loadf_end            ; If this is anything but 0, that's an error
-.zd_loadf_send_fn             ; ----- SEND FILENAME ----------------------------
-  jsr zd_send_strbuf          ; Send the filename over the ZolaDOS port
-  lda FUNC_ERR
-  bne zd_loadf_end
-.zd_loadf_svr_resp            ; ----- SERVER RESPONSE --------------------------
-  ZD_SET_DATADIR_INPUT
-;  ZD_SET_CR_ON                ; Take /CR low
-  jsr zd_svr_resp
-  lda FUNC_ERR
-  bne zd_loadf_end
 .zd_loadf_rcv_data            ; ----- TRANSFER DATA ----------------------------
   jsr zd_waitForSAoff
   lda FUNC_ERR
@@ -87,6 +88,30 @@
   ZD_SET_CA_OFF
   ZD_SET_CR_OFF 
   ZD_SET_DATADIR_OUTPUT
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  ZD_HANDSHAKE
+\ ------------------------------------------------------------------------------
+\ The handshake consists of the following steps:
+\   1. Send a code to the ZD server saying what operation we want to perform.
+\   2. Send a filename (or other string) to the server.
+\   3. Receive back a code - potentially an error code or 0 for OK.
+\ ON ENTRY: - A must contain opcode we want to send to server.
+\           - STR_BUF must contain a string such as a filename
+\ ON EXIT : - FUNC_ERR contains error code - 0 for success
+.zd_handshake
+  stz FUNC_ERR                ; Zero out the error code
+  stz FUNC_RESULT             ; This is where we'll store the server's response
+  jsr zd_init_process         ; Tell ZolaDOS device we want to perform a process
+  lda FUNC_ERR             
+  bne zd_handshake_end        ; If this is anything but 0, that's an error
+  jsr zd_send_strbuf          ; Send the string over the ZolaDOS port
+  lda FUNC_ERR                ; Anything but 0 in FUNC_ERR is an error
+  bne zd_handshake_end
+  ZD_SET_DATADIR_INPUT        ; ----- SERVER RESPONSE --------------------------
+  jsr zd_svr_resp
+.zd_handshake_end
   rts
 
 \ ------------------------------------------------------------------------------
@@ -421,6 +446,8 @@
   rts
 
 \ --- DATA ---------------------------------------------------------------------
+.deleting_msg
+  equs "Deleting...",0
 .loading_msg
   equs "Loading ... ",0
 .saving_msg

@@ -22,7 +22,7 @@ ORG EXTMEM_LOC
   equw header               ; @ $8003 Entry address
   equw reset                ; @ $8005 Reset address
   equw endcode              ; @ $8007 Addr of first byte after end of program
-  equb 'P'
+  equb "P"
   equs 0,0,0                ; -- Reserved for future use --
   equs "TESTB",0            ; @ $800D Short name, max 15 chars - nul terminated
 .version_string

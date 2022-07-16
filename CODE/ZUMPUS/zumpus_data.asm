@@ -43,7 +43,7 @@
   equs "   m 15",10
   equs "To shoot, type 's' followed by the number of the room you want to",10
   equs "shoot into and then the distance you want the staple to go in terms",10
-  equs "of number of rooms (1-5) - eg",10
+  equs "of number of rooms (1-5) - eg:",10
   equs "   s 15 3",10
   equs "Note that, after the first room, the staple will take a random",10
   equs "course and might even end up back in the room you're in -",10
@@ -65,7 +65,7 @@
   equs "about wanting to abduct you.",10,10
   equs "Luckily, you finally got around to modifying that staple gun. It's",10
   equs "powerful enough to fire through as many as five adjacent rooms.",10
-  equs "And it stings enough to make the Zumpus want to go home.",10
+  equs "And it stings enough to make Zumpus want to go home.",10
   equs "But be careful - you have only five staples.",10,0
 
 

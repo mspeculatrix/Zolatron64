@@ -16,6 +16,7 @@ ALIGN &100                  ; Start on new page
 ;  equw cmdprcFLIST          ; FLIST
 ;  equw cmdprcFRUN           ; FRUN
 ;  equw cmdprcFS             ; FS
+  equw cmdprcDEL            ; DEL
   equw cmdprcHELP           ; HELP
   equw cmdprcJMP            ; JMP
   equw cmdprcLM             ; LM - list memory
@@ -38,7 +39,7 @@ ALIGN &100                  ; Start on new page
 \ Initial characters of our commands. The parsing system first looks to see if
 \ the initial character is in this list.
 .cmd_ch1_tbl
-  equs "*BFHJLPRSVX" 
+  equs "*BDFHJLPRSVX" 
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -48,6 +49,7 @@ ALIGN &100                  ; Start on new page
 .cmd_ptrs                   ; Pointers to command table sections
   equw cmd_tbl_STAR         ; Commands starting '*'
   equw cmd_tbl_ASCB         ; Commands starting 'B'
+  equw cmd_tbl_ASCD         ; Commands starting 'D'
   equw cmd_tbl_ASCF         ; Commands starting 'F'
   equw cmd_tbl_ASCH         ; Commands starting 'H'
   equw cmd_tbl_ASCJ         ; Commands starting 'J'
@@ -69,6 +71,10 @@ ALIGN &100                  ; Start on new page
 
 .cmd_tbl_ASCB               ; Commands starting 'B'
   equs "RK", CMD_TKN_BRK    ; BRK
+  equb EOCMD_SECTION
+
+.cmd_tbl_ASCD
+  equs "EL", CMD_TKN_DEL    ; DEL
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCF                ; Commands starting 'F'
@@ -150,6 +156,8 @@ ALIGN &100                  ; Start on new page
   equw err_addr
   equw err_file_exists
   equw err_file_open
+  equw err_delfile_fail
+  equw err_filenotfound
 
 \ Error Message Table
 .err_msg_cmd
@@ -195,6 +203,11 @@ ALIGN &100                  ; Start on new page
   equs "File exists",0
 .err_file_open
   equs "Error opening file",0
+.err_delfile_fail
+  ;     1234567890ABCDEF
+  equs "Delete file failed",0
+.err_filenotfound
+  equs "File not found",0
 
 \ ===== MISC TABLES & STRINGS ==================================================
 
@@ -204,6 +217,7 @@ ALIGN &100                  ; Start on new page
 
 .help_table
   equs "BRK",0
+  equs "DEL",0
   equs "HELP",0
   equs "JMP",0
   equs "LM",0

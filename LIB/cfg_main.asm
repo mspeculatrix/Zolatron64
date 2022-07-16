@@ -19,7 +19,7 @@ FREAD_TO_SR			      = FREAD_ERR_CODE + 1		      ; 7  SR Timeout
 FREAD_TO_SA			      = FREAD_TO_SR + 1				      ; 8  SA Timeout
 FREAD_TO_SRO			    = FREAD_TO_SA + 1		          ; 9  SR Off Timeout
 FREAD_TO_SAO			    = FREAD_TO_SRO + 1				    ; 10 A  SA Off Timeout
-FREAD_SVR_OPEN        = FREAD_TO_SAO + 1            ; 11 B  File not found
+FREAD_SVR_OPEN        = FREAD_TO_SAO + 1            ; 11 B  File open err
 FILE_LIST_ERR         = FREAD_SVR_OPEN + 1          ; 12 C  LS error
 FN_CHAR_ERR_CODE      = FILE_LIST_ERR + 1           ; 13 D  Bad character
 FN_LEN_ERR_CODE       = FN_CHAR_ERR_CODE + 1        ; 14 E  Bad filename length
@@ -30,6 +30,8 @@ ERR_EXTMEM_BANK       = ERR_EXTMEM_WR + 1           ; 18 12 Ext mem bank err
 ERR_ADDR              = ERR_EXTMEM_BANK + 1         ; 19 13 Address error
 ERR_FILE_EXISTS       = ERR_ADDR + 1                ; 20 14 File exists error
 ERR_FILE_OPEN         = ERR_FILE_EXISTS + 1         ; 21 15 Error opening file
+ERR_DELFILE_FAIL      = ERR_FILE_OPEN + 1           ; 22 16 Failed delete file
+ERR_FILENOTFOUND      = ERR_DELFILE_FAIL + 1        ; 23 17 File not found
 
 
 \-------------------------------------------------------------------------------
@@ -72,7 +74,8 @@ OSPRTINIT = OSPRTCH + 3
 OSPRTMSG  = OSPRTINIT + 3
 OSPRTSBUF = OSPRTMSG + 3
 
-OSZDLOAD  = OSPRTSBUF + 3
+OSZDDEL   = OSPRTSBUF + 3
+OSZDLOAD  = OSZDDEL + 3
 OSZDSAVE  = OSZDLOAD + 3
 
 OSUSRINT  = OSZDSAVE + 3

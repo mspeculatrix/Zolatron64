@@ -30,6 +30,7 @@ ZD_OPCODE_LS   = 8
 ZD_OPCODE_SAVE_CRT = 16               ; Save command - create file, no overwrite
 ZD_OPCODE_SAVE_OVR = 17               ; Save - overwrite okay
 ZD_OPCODE_SAVE_APP = 18               ; Save - append
+ZD_OPCODE_DEL  = 32                   ; Delete file
 
 ZD_MIN_FN_LEN = 3         ; Minimum filename length
 ZD_MAX_FN_LEN = 15        ; Maximum filename length
@@ -66,8 +67,8 @@ ZD_CTRL_PINDIR  = %00001111
 ;ZD_TIMEOUT_INTVL = $270E             ; Timer cycles between each interrupt
 ;ZD_TIMEOUT_LIMIT = $000F             ; Times interrupt fires before we timeout
 ; Versions for tweaking/experimenting
-ZD_STROBETIME    = $02EE         ; 
-ZD_SIGNALDELAY   = $03E8         ; 03E8=1ms, 07D0=2ms, 1388=5ms approx
+ZD_STROBETIME    = $02EE         ; $02EE works
+ZD_SIGNALDELAY   = $0280         ; 03E8=1ms (works), 07D0=2ms, 1388=5ms approx
 ZD_TIMEOUT_INTVL = $270E         ; No. of timer cycles between interrupts
 ZD_TIMEOUT_LIMIT = $004F         ; Times interrupt fires before timeout - was 2F
 
