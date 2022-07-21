@@ -19,7 +19,7 @@ The bank is selected by writing the value 0-15 to the address $BFE0. This
 CPLD provides the decoding for that address as well as a register (BSEL) of four
 D-type latches that hold the selected value.
 
-This register connects to address lines A13-A16 of theRAM, thus 
+This register connects to address lines A13-A16 of the RAM, thus 
 selecting the effective address of the bank.
 
 The BSEL register is also used to select among five chip enable signals -
@@ -62,13 +62,13 @@ as the address, the values will remain latched.
 These four latches are connected to A13-A16 on the RAM chip. They're
 not attached to the address bus - so they don't interfere with anything else.
 */
-BSEL3.d = D3 ;                              /* latch input                    */
+BSEL3.d = D3 ;                              /* Latch input                    */
 BSEL3.ck = CLK & BSEL_EN ;                  /* Address-qualified clock        */
-BSEL2.d = D2 ;                              /* latch input                    */
+BSEL2.d = D2 ;                              /* Latch input                    */
 BSEL2.ck = CLK & BSEL_EN ;                  /* Address-qualified clock        */
-BSEL1.d = D1 ;                              /* latch input                    */
+BSEL1.d = D1 ;                              /* Latch input                    */
 BSEL1.ck = CLK & BSEL_EN ;                  /* Address-qualified clock        */
-BSEL0.d = D0 ;                              /* latch input                    */
+BSEL0.d = D0 ;                              /* Latch input                    */
 BSEL0.ck = CLK & BSEL_EN ;                  /* Address-qualified clock        */
 
 /* Match the CHIP_SEL internal register settings to the current value of the

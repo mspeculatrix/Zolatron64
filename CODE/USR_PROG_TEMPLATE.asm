@@ -29,7 +29,7 @@ ORG USR_PAGE
   equw header               ; @ $0803 Entry address - normally $0800
   equw reset                ; @ $0805 Reset address
   equw endcode              ; @ $0807 Addr of first byte after end of program
-  equb 'P'                  ; @ $0808 'D'=data, 'O'=overlay, 'X'=OS ext
+  equb 'P'                  ; @ $0808 D=data, L=library, O=overlay, X=OS ext
   equs 0,0,0                ; -- Reserved for future use --
 .prog_name
   equs "TEMPLATE",0         ; @ $080D Short name, max 15 chars - nul terminated

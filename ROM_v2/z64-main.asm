@@ -38,7 +38,7 @@ ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROMSTART          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v2.4", 0
+  equs "ZolOS v2.5", 0
 .startcode
   sei                 ; Don't interrupt me yet
   cld                 ; We don' need no steenkin' BCD
@@ -101,7 +101,7 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSWRSBUF_VEC
   lda #>duart_snd_strbuf
   sta OSWRSBUF_VEC + 1
-
+  ; CONVERSIONS
   lda #<byte_to_hex_str     ; OSB2HEX
   sta OSB2HEX_VEC
   lda #>byte_to_hex_str
@@ -123,7 +123,7 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSHEX2DEC_VEC
   lda #>asc_hex_to_dec
   sta OSHEX2DEC_VEC + 1
-
+  ; LCD
   lda #<lcd_prt_chr         ; OSLCDCH
   sta OSLCDCH_VEC
   lda #>lcd_prt_chr
@@ -152,7 +152,7 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSLCDSC_VEC
   lda #>lcd_set_cursor
   sta OSLCDSC_VEC + 1
-
+  ; PRINTER
   lda #<prt_stdout_buf      ; OSPRTBUF 
   sta OSPRTBUF_VEC
   lda #>prt_stdout_buf
@@ -173,8 +173,11 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSPRTSBUF_VEC
   lda #>prt_str_buf
   sta OSPRTSBUF_VEC + 1
-
-
+  lda #<prt_load_state_msg         ; OSPRTSTMSG 
+  sta OSPRTSTMSG_VEC
+  lda #>prt_load_state_msg
+  sta OSPRTSTMSG_VEC + 1
+  ; ZOLADOS
   lda #<zd_delfile         ; OSZDDEL
   sta OSZDDEL
   lda #>zd_delfile
@@ -250,7 +253,7 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta LCDV_TIMER_INTVL
   lda #>500
   sta LCDV_TIMER_INTVL+1
-  
+
   LED_OFF LED_ERR
   LED_OFF LED_BUSY
   LED_OFF LED_OK
@@ -397,12 +400,11 @@ ORG $FF00
   jmp (OSPRTINIT_VEC)
   jmp (OSPRTMSG_VEC)
   jmp (OSPRTSBUF_VEC)
+  jmp (OSPRTSTMSG_VEC)
 
   jmp (OSZDDEL_VEC)
   jmp (OSZDLOAD_VEC)
   jmp (OSZDSAVE_VEC)
-
-;  jmp (OSFLOAD_VEC)
 
   jmp (OSUSRINT_VEC)
   jmp (OSDELAY_VEC)
@@ -418,4 +420,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-2.4.bin", startrom, endrom
+SAVE "bin/z64-ROM-2.5.bin", startrom, endrom

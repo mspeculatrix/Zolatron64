@@ -6,9 +6,9 @@
 \ for example, have more than one parallel port.
 PRT_BASE_ADDR = $AC00
 ; Register addresses
-PRT_DATA_PORT = PRT_BASE_ADDR + $01     ; VIA Port A data/instruction register
+PRT_DATA_PORT = PRT_BASE_ADDR + $01     ; VIA Port A data register
 PRT_DATA_DDR  = PRT_BASE_ADDR + $03     ; Port A Data Direction Register
-PRT_CTRL_PORT = PRT_BASE_ADDR + $00     ; VIA Port B data/instruction register
+PRT_CTRL_PORT = PRT_BASE_ADDR + $00     ; VIA Port B control register
 PRT_CTRL_DDR  = PRT_BASE_ADDR + $02     ; Port B Data Direction Register
 
 ; Printer signal masks 
@@ -32,9 +32,10 @@ PRT_STATE_OK      = 0
 PRT_STATE_OFFLINE = 1
 PRT_STATE_PE      = 2
 PRT_STATE_ERR     = 3
+PRT_STATE_CHKS    = 128           ; Times we'll check state before aborting
 
 PRT_CTRL_PT_DIR  = %11010000      ; For DDR on control port
-PRT_STROBE_DELAY = $0010          ; Length of strobe in ms
+PRT_STROBE_DELAY = $10            ; Length of strobe in ms
 
 MACRO PRT_PULSE_DELAY
   lda #PRT_STROBE_DELAY
@@ -43,12 +44,12 @@ MACRO PRT_PULSE_DELAY
   jsr OSDELAY
 ENDMACRO
 
-MACRO PRT_PULSE_STROBE
-  lda PRT_CTRL_PORT
-  and #PRT_STRB_ON
-  sta PRT_CTRL_PORT
-  PRT_PULSE_DELAY
-  lda PRT_CTRL_PORT
-  ora #PRT_STRB_OFF
-  sta PRT_CTRL_PORT
-ENDMACRO
+;MACRO PRT_PULSE_STROBE
+;  lda PRT_CTRL_PORT
+;  and #PRT_STRB_ON
+;  sta PRT_CTRL_PORT
+;  PRT_PULSE_DELAY
+;  lda PRT_CTRL_PORT
+;  ora #PRT_STRB_OFF
+;  sta PRT_CTRL_PORT
+;ENDMACRO

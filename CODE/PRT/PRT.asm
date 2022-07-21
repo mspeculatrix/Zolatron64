@@ -16,15 +16,8 @@ INCLUDE "../../LIB/cfg_page_2.asm"
 ; PAGE 3 is used for STDIN & STDOUT buffers, plus indexes
 INCLUDE "../../LIB/cfg_page_4.asm"
 ;INCLUDE "../../LIB/cfg_parallel.asm"
+INCLUDE "../../LIB/cfg_2x16_lcd.asm"
 INCLUDE "../../LIB/cfg_prt.asm"
-
-
-MACRO LCDG_SET_CTL ctl_bits        ; set control bits for LCD
-  lda USRP_CTRL                  ; load the current state of PORT A
-;  and #LED_MASK                   ; clear the top three bits
-  ora #ctl_bits                   ; set those bits. Lower 5 bits should be 0s
-  sta USRP_CTRL                  ; store result
-ENDMACRO
 
 ORG USR_PAGE
 .header                     ; HEADER INFO
@@ -40,25 +33,39 @@ ORG USR_PAGE
 
 .startprog
 .reset
-  sei             ; don't interrupt me yet
-  cld             ; we don' need no steenkin' BCD
-  ldx #$ff        ; set stack pointer to $01FF - only need to set the
+  sei             ; Don't interrupt me yet
+  cld             ; Don't want BCD
+  ldx #$ff        ; Set stack pointer to $01FF - only need to set the
   txs             ; LSB, as MSB is assumed to be $01
   stz PRG_EXIT_CODE
   cli
 
 .main
-  LOAD_MSG prt_test_msg
+  jsr OSPRTINIT
+  LOAD_MSG test_msg
+  jsr OSWRMSG
   jsr OSPRTMSG
-  lda #10
-  jsr OSPRTCH
+  lda FUNC_RESULT
+  bne done
+;  LOAD_MSG test_line
+;  jsr OSPRTMSG
+  ;lda #10
+  ;jsr OSPRTCH
+  ;lda #10
+  ;jsr OSPRTCH
+;  jsr OSLCDMSG
+
+.done
+  jsr OSPRTSTMSG
   jsr OSWRMSG
   jsr OSLCDMSG
 
 .prog_end
   jmp OSSFTRST
 
-.prt_test_msg
+.test_msg
+  equs "Test message!",10,0
+.test_line
   equs "ABCDEFGHIJKLMNOPQRSTUVWXZY0123456789$#@_"
   equs "0123456789012345678901234567890123456789",0
 

@@ -160,7 +160,7 @@
 
 \ ------------------------------------------------------------------------------
 \ ---  UINT16_TO_INT_STR
-\ ---  (OSU16ISTR)
+\ ---  Will implement: OSU16ISTR - NOT FINISHED!!!!!
 \ ------------------------------------------------------------------------------
 \ Takes the 16-bit value in TMP_ADDR_A/+1 and converts it to a string
 \ representation of the decimal integer value.
