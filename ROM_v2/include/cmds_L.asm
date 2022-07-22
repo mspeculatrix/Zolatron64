@@ -157,7 +157,7 @@
   lda #<ZD_WKSPC              ; Reset vector to where data is stored
   sta TMP_ADDR_A_L            ; "
   lda #>ZD_WKSPC              ; "
-  sta TMP_ADDR_A_H            ; "     **** OKAY TO HERE ****
+  sta TMP_ADDR_A_H            ; "
 .cmdprcLS_show_loop
   lda (TMP_ADDR_A)            ; Get char from workspace
   beq cmdprcLS_show_pad       ; If it's a 0 terminator, pad out the name
@@ -181,7 +181,7 @@
   ldy #0                      ; "
   jmp cmdprcLS_show_loopback  ; Go on to next filename
 .cmdprcLS_show_pad_next
-  cpy #ZD_MAX_FN_LEN + 2      ; Length of filename plus two spaces for neatness
+  cpy #ZD_MAX_FN_LEN + 6      ; Max filename, +4 chars for ext, +2 for neatness
   beq cmdprcLS_show_pad_end   ; If we're at max width, skip to next step
   lda #' '                    ; Otherwise, print a space
   jsr OSWRCH                  ; "

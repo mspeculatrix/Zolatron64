@@ -22,7 +22,7 @@ ZD_ACL   = ZD_BASE_ADDR + $0B		      ; Auxiliary Control register
 ZD_IER   = ZD_BASE_ADDR + $0E 	      ; Interrupt Enable Register
 ZD_IFR   = ZD_BASE_ADDR + $0D		      ; Interrupt Flag Register
 
-ZD_TIMER_COUNT = $0600                ; Using page 6 as workspace memory 
+ZD_TIMER_COUNT = $0600                ; Using page 6 as workspace memory
 ZD_WKSPC       = $0600 + 2            ; for ZolaDOS
 
 ZD_OPCODE_LOAD = 2
@@ -33,12 +33,12 @@ ZD_OPCODE_SAVE_APP = 18               ; Save - append
 ZD_OPCODE_DEL  = 32                   ; Delete file
 
 ZD_MIN_FN_LEN = 3         ; Minimum filename length
-ZD_MAX_FN_LEN = 15        ; Maximum filename length
+ZD_MAX_FN_LEN = 12        ; Maximum filename length, not including extension
 ZD_FILES_PER_LINE = 4     ; Number of filenames to be displayed per line
 ZD_FILELIST_TERM = 255    ; Terminator for end file list
 
 ; INIT and CR are outputs
-ZD_CA_ON        = %11111110           ; PB0 - AND with PB to set /CA bit low  
+ZD_CA_ON        = %11111110           ; PB0 - AND with PB to set /CA bit low
 ZD_CA_OFF       = %00000001           ; PB0 - OR with PB to set /CA bit high
 ZD_CO_ON        = %00000100           ; PB2 - OR with PB to set /CO bit low
 ZD_CO_OFF       = %11111011           ; PB2 - AND with PB to set /CO bit high
@@ -62,7 +62,7 @@ ZD_DATA_SET_IN  = %00000000
 ZD_CTRL_PINDIR  = %00001111
 
 ; These values work
-;ZD_STROBETIME    = $07D0             ; 
+;ZD_STROBETIME    = $07D0             ;
 ;ZD_SIGNALDELAY   = $07D0             ; 03E8=1ms, 07D0=2ms, 1388=5ms approx
 ;ZD_TIMEOUT_INTVL = $270E             ; Timer cycles between each interrupt
 ;ZD_TIMEOUT_LIMIT = $000F             ; Times interrupt fires before we timeout

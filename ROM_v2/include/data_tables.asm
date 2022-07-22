@@ -39,7 +39,7 @@ ALIGN &100                  ; Start on new page
 \ Initial characters of our commands. The parsing system first looks to see if
 \ the initial character is in this list.
 .cmd_ch1_tbl
-  equs "*BDFHJLPRSVX" 
+  equs "*BDFHJLPRSVX"
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -129,7 +129,7 @@ ALIGN &100                  ; Start on new page
 \ See cfg_main.asm for the corresponding error numbers. This list needs to be in
 \ the same order as that list.
 \ Error Message Pointer Table
-.err_ptrs                   
+.err_ptrs
   equw err_msg_cmd
   equw err_msg_hex_bin_conv
   equw err_msg_parse
@@ -191,7 +191,7 @@ ALIGN &100                  ; Start on new page
 .err_end_of_buffer
   equs "End of buffer",0
 .err_not_a_number
-  equs "Not a number",0 
+  equs "Not a number",0
 .err_extmem_write
   ;     1234567890ABCDEF
   equs "Extmem write error",0
@@ -243,17 +243,23 @@ ALIGN &100                  ; Start on new page
 .memory_header
   equs "----  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F", 10, 0
 
-.stat_msg1
+.stat_msg_lomem
   equs "LOMEM:",0
-.stat_msg2
+.stat_msg_faddr
+  equs "FADDR:",0
+.stat_msg_fnerr
   equs "FNERR:",0
-.stat_msg3
+.stat_msg_fnres
+  equs "FNRES:",0
+.stat_msg_exmem
   equs "EXMEM:",0
+.stat_msg_pexit
+  equs "PEXIT:",0
 
 \ MESSAGES
 .test_msg
   equs "Hello World!", 0
-  
+
 .prompt_msg
   equs CHR_LINEEND, "Z>", 0
 

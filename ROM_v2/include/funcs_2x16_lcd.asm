@@ -34,6 +34,7 @@
   and #%01111111              ; Disable TIMER 1 interrupts
   sta LCDV_IER
   pla
+  stz FUNC_RESULT             ; Done with this, so zero out
   rts
 
 .delay_timer_chk              ; Check to see if the counter has incremented

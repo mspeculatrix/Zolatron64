@@ -42,30 +42,51 @@
 \ ------------------------------------------------------------------------------
 \ Output some useful info.
 .cmdprcSTAT
-  LOAD_MSG stat_msg1
+  LOAD_MSG stat_msg_lomem
   jsr OSWRMSG
   lda LOMEM
   sta TMP_ADDR_A_L
   lda LOMEM+1
   sta TMP_ADDR_A_H
   jsr uint16_to_hex_str                       ; Result will be in STR_BUF
-  jsr OSWRSBUF
-  lda #' '
-  jsr OSWRCH
+  jsr display_stat_sbuf
 
-  LOAD_MSG stat_msg2
+  LOAD_MSG stat_msg_faddr
   jsr OSWRMSG
-  lda FUNC_ERR
-  jsr OSB2HEX
-  jsr OSWRSBUF
-  lda #' '
-  jsr OSWRCH
+  lda FILE_ADDR
+  sta TMP_ADDR_A_L
+  lda FILE_ADDR+1
+  sta TMP_ADDR_A_H
+  jsr uint16_to_hex_str                       ; Result will be in STR_BUF
+  jsr display_stat_sbuf
 
-  LOAD_MSG stat_msg3
+  LOAD_MSG stat_msg_pexit
+  lda PRG_EXIT_CODE
+  jsr display_stat_hex
+
+  LOAD_MSG stat_msg_fnerr
+  lda FUNC_ERR
+  jsr display_stat_hex
+
+  LOAD_MSG stat_msg_fnres
+  lda FUNC_RESULT
+  jsr display_stat_hex
+
+  LOAD_MSG stat_msg_exmem
   jsr OSWRMSG
   lda EXTMEM_BANK
   jsr OSB2ISTR
+  jsr display_stat_sbuf
+
+  jmp cmdprc_end
+
+.display_stat_hex
+  pha
+  jsr OSWRMSG
+  pla
+  jsr OSB2HEX
+.display_stat_sbuf
   jsr OSWRSBUF
   lda #' '
   jsr OSWRCH
-  jmp cmdprc_end
+  rts

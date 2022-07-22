@@ -1,5 +1,7 @@
 ; Code for Zolatron 64 6502-based microcomputer.
 ;
+; Program to test out the printing functions of ZolaDOS.
+;
 ; GitHub: https://github.com/mspeculatrix/Zolatron64/
 ; Blog: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
 ;
@@ -42,8 +44,14 @@ ORG USR_PAGE
 
 .main
   jsr OSPRTINIT
-  LOAD_MSG test_msg
+
+  LOAD_MSG printing_msg
   jsr OSWRMSG
+  jsr OSLCDMSG
+  lda #10
+  jsr OSWRMSG
+
+  LOAD_MSG test_msg
   jsr OSPRTMSG
   lda FUNC_RESULT
   bne done
@@ -68,6 +76,8 @@ ORG USR_PAGE
 .test_line
   equs "ABCDEFGHIJKLMNOPQRSTUVWXZY0123456789$#@_"
   equs "0123456789012345678901234567890123456789",0
+.printing_msg
+  equs "Printing...",0
 
 .endtag
   equs "EOF",0

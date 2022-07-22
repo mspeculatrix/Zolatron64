@@ -38,7 +38,7 @@ ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROMSTART          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v2.5", 0
+  equs "ZolOS v2.6", 0
 .startcode
   sei                 ; Don't interrupt me yet
   cld                 ; We don' need no steenkin' BCD
@@ -148,32 +148,32 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta OSLCDSBUF_VEC
   lda #>lcd_prt_sbuf
   sta OSLCDSBUF_VEC + 1
-  lda #<lcd_set_cursor      ; OSLCDSC 
+  lda #<lcd_set_cursor      ; OSLCDSC
   sta OSLCDSC_VEC
   lda #>lcd_set_cursor
   sta OSLCDSC_VEC + 1
   ; PRINTER
-  lda #<prt_stdout_buf      ; OSPRTBUF 
+  lda #<prt_stdout_buf      ; OSPRTBUF
   sta OSPRTBUF_VEC
   lda #>prt_stdout_buf
   sta OSPRTBUF_VEC + 1
-  lda #<prt_char            ; OSPRTCH 
+  lda #<prt_char            ; OSPRTCH
   sta OSPRTCH_VEC
   lda #>prt_char
   sta OSPRTCH_VEC + 1
-  lda #<prt_init            ; OSPRTINIT 
+  lda #<prt_init            ; OSPRTINIT
   sta OSPRTINIT_VEC
   lda #>prt_init
   sta OSPRTINIT_VEC + 1
-  lda #<prt_msg             ; OSPRTMSG 
+  lda #<prt_msg             ; OSPRTMSG
   sta OSPRTMSG_VEC
   lda #>prt_msg
   sta OSPRTMSG_VEC + 1
-  lda #<prt_str_buf         ; OSPRTSBUF 
+  lda #<prt_str_buf         ; OSPRTSBUF
   sta OSPRTSBUF_VEC
   lda #>prt_str_buf
   sta OSPRTSBUF_VEC + 1
-  lda #<prt_load_state_msg         ; OSPRTSTMSG 
+  lda #<prt_load_state_msg         ; OSPRTSTMSG
   sta OSPRTSTMSG_VEC
   lda #>prt_load_state_msg
   sta OSPRTSTMSG_VEC + 1
@@ -203,7 +203,7 @@ ORG ROMSTART          ; This is where the actual code starts.
 ;  sta STREAM_SELECT_REG
 
 ; SETUP LCD display & LEDs
-  lda #%11111111  
+  lda #%11111111
   sta LCDV_DDRB   ; Set all pins on port B to output - data for LCD
   sta LCDV_DDRA   ; Set all pins on port A to output - signals for LCD & LEDs
   lda #LCD_TYPE         ; Set 8-bit mode; 2-line display; 5x8 font
@@ -235,7 +235,7 @@ ORG ROMSTART          ; This is where the actual code starts.
   LED_ON LED_OK
   LED_ON LED_FILE_ACT
   LED_ON LED_DEBUG
- 
+
 ; Print initial message & prompt via serial
   lda #CHR_LINEEND                  ; start with a couple of line feeds
   jsr OSWRCH
@@ -248,7 +248,7 @@ ORG ROMSTART          ; This is where the actual code starts.
 ;  jsr lcd_clear_buf                 ; Clear LCD buffer
   PRT_MSG version_str, lcd_println  ; Print initial messages on LCD
   PRT_MSG start_msg, lcd_println
-  
+
   lda #<500                         ; interval for delay function - in ms
   sta LCDV_TIMER_INTVL
   lda #>500
@@ -359,12 +359,12 @@ ALIGN &100                                        ; Start on new page
 .exit_nmi
   rti
 \-------------------------------------------------------------------------------
-\ OS CALLS  - OS Call Jump Table                                      
+\ OS CALLS  - OS Call Jump Table
 \ Jump table for OS calls. Requires corresponding entries in:
 \    - cfg_page_2.asm - OS Indirection Table
 \    - cfg_main.asm   - OS Function Address Table
 \    - this file      - OS default config routine & this OS Call Jump Table
-\ These entries must be in the same order as those in the OS Function Address 
+\ These entries must be in the same order as those in the OS Function Address
 \ Table in cfg_main.asm.
 \-------------------------------------------------------------------------------
 ORG $FF00
@@ -376,7 +376,7 @@ ORG $FF00
   jmp (OSRDFNAME_VEC)
 
   jmp (OSWRBUF_VEC)
-  jmp (OSWRCH_VEC) 
+  jmp (OSWRCH_VEC)
   jmp (OSWRERR_VEC)
   jmp (OSWRMSG_VEC)
   jmp (OSWRSBUF_VEC)
@@ -394,7 +394,7 @@ ORG $FF00
   jmp (OSLCDB2HEX_VEC)
   jmp (OSLCDSBUF_VEC)
   jmp (OSLCDSC_VEC)
-  
+
   jmp (OSPRTBUF_VEC)
   jmp (OSPRTCH_VEC)
   jmp (OSPRTINIT_VEC)
@@ -420,4 +420,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-2.5.bin", startrom, endrom
+SAVE "bin/z64-ROM-2.6.bin", startrom, endrom

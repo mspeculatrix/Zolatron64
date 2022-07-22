@@ -5,9 +5,9 @@
 \ Inspired somewhat by keyword parsing in EhBASIC:
 \ https://github.com/Klaus2m5/6502_EhBASIC_V2.22/blob/master/patched/basic.asm
 \ (see line 8273 onward)
-.parse_input 
+.parse_input
   lda #CMD_TKN_FAIL         ; We'll use this as the default result
-  sta FUNC_RESULT           ; 
+  sta FUNC_RESULT           ;
   ldx #0                    ; Init offset counter
   lda STDIN_BUF             ; Load first char in buffer
   beq parse_cmd_nul         ; if it's a zero, the buffer is empty
@@ -22,7 +22,7 @@
   jmp parse_next_test
 .parse_cmd_nul
   lda #CMD_TKN_NUL
-  sta FUNC_RESULT 
+  sta FUNC_RESULT
   jmp parse_end
 .parse_1st_char_fail
   jmp parse_fail
@@ -54,17 +54,17 @@
   ; and buffer char in TEST_VAL
   cmp TEST_VAL
   bne parse_next_cmd  ; if it's not equal, this isn't the right command
-  inx                 ; otherwise, if it is equal, let's test the next buffer 
+  inx                 ; otherwise, if it is equal, let's test the next buffer
   iny                 ; char against the next command char
   jmp parse_next_chr
-.parse_token_found    
-  ; We've mached against a command. The next char in the buffer should be a 
+.parse_token_found
+  ; We've mached against a command. The next char in the buffer should be a
   ; space or a null. X already indicates this char because it was incremented
   ; above at the same time as we incremented Y to get the token byte.
   pha                 ; prserve A (which holds our token code)
   lda STDIN_BUF,X     ; get the byte from the buffer
   tay                 ; store it in Y
-  pla                 ; restore A 
+  pla                 ; restore A
   cpy #$20            ; is buffer byte a space?
   beq parse_token_ok
   cpy #0              ; or is it a null?
@@ -93,7 +93,7 @@
   ; Buffer pointer is still in X
   stx STDIN_IDX         ; for other routines to use for parsing rest of input
   rts
-  
+
 \ ------------------------------------------------------------------------------
 \ --- DISPLAY_MEMORY
 \ ------------------------------------------------------------------------------
@@ -276,7 +276,7 @@
 \ WOULD NEED TO UPGRADE TO ACCEPT NUMBERS (and maybe lowercase)
 \ ------------------------------------------------------------------------------
 \ This function reads characters from STDIN_BUF and stores them in STR_BUF.
-\ It assumes that STDIN_IDX contains an offset pointer to the part of STDIN_BUF 
+\ It assumes that STDIN_IDX contains an offset pointer to the part of STDIN_BUF
 \ from which we want to read next.
 \ ON ENTRY: Nul- or space- terminated filename string expected in STDIN_BUF
 \ ON EXIT : - Nul-terminated filename in STR_BUF
@@ -295,30 +295,43 @@
   beq read_filename_chkspc
   cmp #CHR_LINEEND
   beq read_filename_check
-  and #$DF                  ; Converts lower to uppercase. Uppercase unaffected
-  cmp #'A'                  ; Acceptable values are 65-90 (A-Z)
+  ; If we're not at or near the beginning of the filename, numbers and certain
+  ; special chars are allowed
+  cpy #ZD_MIN_FN_LEN          ; If our char count Y is less than the minimum
+  bcc read_filename_chk_alpha ; filename length, only alpha chars are allowed
+  cmp #'.'                    ; Check for special, allowed chars
+  beq read_filename_store     ; Period is okay
+  cmp #'0'
+  bcc read_filename_fail      ; Not special char but also less than '0' - fail
+  cmp #'9'+1
+  bcs read_filename_chk_alpha ; More than 0 and also =>'9'+1, check alpha
+  jmp read_filename_store     ; Otherwise it's a number, so okay
+.read_filename_chk_alpha
+  and #$DF                    ; Convert lower to uppercase. Uppercase unaffected
+  cmp #'A'                    ; Acceptable values are 65-90 (A-Z)
   bcc read_filename_fail
   cmp #'Z'+1
   bcs read_filename_fail
-  sta STR_BUF,Y             ; Store in STR_BUF buffer
-  iny                       ; Increment STR_BUF index
+.read_filename_store
+  sta STR_BUF,Y               ; Store in STR_BUF buffer
+  iny                         ; Increment STR_BUF index
   inc TMP_VAL
 .read_filename_loop
-  inx                       ; Increment input buffer index
+  inx                         ; Increment input buffer index
   jmp read_filename_next_char
 .read_filename_chkspc
   lda TMP_VAL
-  beq read_filename_loop    ; 0, so not started receiving chars yet
-  jmp read_filename_check   ; Otherwise, we're done
+  beq read_filename_loop      ; 0, so not started receiving chars yet
+  jmp read_filename_check     ; Otherwise, we're done
 .read_filename_fail
   lda #FN_CHAR_ERR_CODE
   sta FUNC_ERR
   jmp read_filename_end
 .read_filename_check  ;
-  sta STR_BUF,Y             ; Make sure we have a null terminator
-  cpy #ZD_MIN_FN_LEN        ; Minimum filename length
+  sta STR_BUF,Y               ; Make sure we have a null terminator
+  cpy #ZD_MIN_FN_LEN          ; Minimum filename length
   bcc read_filename_err
-  cpy #ZD_MAX_FN_LEN+1      ; Maximum filename length
+  cpy #ZD_MAX_FN_LEN+1        ; Maximum filename length
   bcc read_filename_end
 .read_filename_err
   lda #FN_LEN_ERR_CODE
@@ -420,7 +433,7 @@
 \ ---  READ_HEX_ADDR_PAIR
 \ ------------------------------------------------------------------------------
 \ This function reads two four-character hex addresses from STDIN_BUF.
-\ ON ENTRY: Expects two four-char hex characters in STDIN_BUF, plus null 
+\ ON ENTRY: Expects two four-char hex characters in STDIN_BUF, plus null
 \           terminator or space.
 \ ON EXIT : - Two 16-bit addresses in TMP_ADDR_A and TMP_ADDR_B.
 \           - FUNC_ERR contains error code.
@@ -438,7 +451,7 @@
   cpy #3                        ; If 3, then we've got all four bytes
   beq read_hex_addr_pair_end
   iny                           ; Otherwise, get next byte
-  jmp read_hex_addr_pair_next  
+  jmp read_hex_addr_pair_next
 .read_hex_addr_pair_end
   rts
 
@@ -466,19 +479,19 @@
   cmp #CHR_SPACE            ; If it's a space, ignore it & get next byte
   beq read_hexbyte_next_char
   sta BYTE_CONV_L,Y         ; Store in BYTE_CONV buffer, high byte first
-  cpy #0                    
+  cpy #0
   beq read_hexbyte_conv     ; If 0, we've now got the second of the 2 bytes
   dey                       ; Otherwise go get low byte
   jmp read_hexbyte_next_char
 .read_hexbyte_conv
   ; We've got our pair of bytes in BYTE_CONV_L and BYTE_CONV_L+1
-  jsr hex_str_to_byte       ; Convert them - result is in FUNC_RESULT                   
+  jsr hex_str_to_byte       ; Convert them - result is in FUNC_RESULT
   lda FUNC_ERR              ; Check to see if there was an error
   bne read_hexbyte_fail
   jmp read_hexbyte_end
 .read_hexbyte_fail
   lda #READ_HEXBYTE_ERR_CODE
-  sta FUNC_ERR  
+  sta FUNC_ERR
 .read_hexbyte_end
   stx STDIN_IDX
   ply : pla

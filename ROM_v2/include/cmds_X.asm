@@ -12,9 +12,9 @@
   bne cmdprcXLOAD_err
   ldx #0                  ; We're going to check that we can write to this
 .cmdprcXLOAD_bank_chk     ; bank. If not, it's probably a ROM. We'll write
-  txa                     ; a sequence of numbers and read them back.
-  sta $8000,X             ; Store in memory
-  cmp $8000,X             ; Is X the same as what's now stored in this location?
+  txa                     ; a sequence of numbers to $8000 and read them back.
+  sta $8000               ; Store in memory
+  cmp $8000               ; Is X the same as what's now stored in this location?
   bne cmdprcXLOAD_bank_chk_err
   inx
   cpx #5

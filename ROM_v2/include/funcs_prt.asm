@@ -4,7 +4,8 @@
 \ ---  PRT_INIT
 \ ---  Implements: OSPRTINIT
 \ ------------------------------------------------------------------------------
-\ Set up the VIA.
+\ Set up the VIA and initialise the printer by sending an /INIT pulse.
+\ ON EXIT : - Overwrites A.
 .prt_init 
   lda #PRT_CTRL_PT_DIR              ; Set pin directions for control port
   sta PRT_CTRL_DDR
@@ -30,6 +31,7 @@
 \ Print a character. Blocking.
 \ ON ENTRY: A contains ASCII char code
 .prt_char
+  LED_ON LED_BUSY
   pha
 .prt_char_chk_busy
   lda PRT_CTRL_PORT
@@ -38,6 +40,7 @@
   pla
   sta PRT_DATA_PORT
   jsr prt_strobe
+  LED_OFF LED_BUSY
   rts
 
 \ ------------------------------------------------------------------------------
@@ -87,7 +90,6 @@
 .prt_msg_ok
   stz FUNC_RESULT
 .prt_msg_end
-  stz FUNC_RESULT
   rts
 
 \ ------------------------------------------------------------------------------
@@ -126,9 +128,10 @@
 \ ---  PRT_LOAD_STATE_MSG
 \ ---  Implements: OSPRTSTMSG
 \ ------------------------------------------------------------------------------
-\ Puts a message into the message vector
-\ ON ENTRY: Assumes an error/result code in FUNC_RESULT
-\ ON EXIT : MSG_VEC/+1 contains vector to appropriate message
+\ Puts a vector to a message into MSG_VEC/+1.
+\ ON ENTRY: Assumes an error/result code in FUNC_RESULT.
+\ ON EXIT : - MSG_VEC/+1 contains vector to appropriate message.
+\           - Overwrites A.
 .prt_load_state_msg
   lda FUNC_RESULT
   asl A                           ; Multiply by 2 to get offset for table
@@ -167,7 +170,9 @@
 \ ------------------------------------------------------------------------------
 \ ---  PRT_STROBE
 \ ------------------------------------------------------------------------------
-\ Sends a strobe signal to the printer
+\ Sends a strobe signal to the printer.
+\ This uses a timer-based interval for the length of the strobe. Might be
+\ interesting to try a version that instead waits for an /ACK from the printer.
 .prt_strobe
   lda PRT_CTRL_PORT
   and #PRT_STRB_ON
@@ -199,8 +204,6 @@
   equw prt_state_msg_pe
   equw prt_state_msg_err
 
-.prt_printing_msg
-  equs "Printing...",0
 .prt_state_msg_ok
   equs "OK",0
 .prt_state_msg_offline
