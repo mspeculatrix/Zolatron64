@@ -17,6 +17,7 @@ ALIGN &100                  ; Start on new page
 ;  equw cmdprcFRUN           ; FRUN
 ;  equw cmdprcFS             ; FS
   equw cmdprcDEL            ; DEL
+  equw cmdprcDUMP           ; DUMP
   equw cmdprcHELP           ; HELP
   equw cmdprcJMP            ; JMP
   equw cmdprcLM             ; LM - list memory
@@ -75,6 +76,7 @@ ALIGN &100                  ; Start on new page
 
 .cmd_tbl_ASCD
   equs "EL", CMD_TKN_DEL    ; DEL
+  equs "UMP", CMD_TKN_DUMP  ; DUMP
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCF                ; Commands starting 'F'
@@ -218,6 +220,7 @@ ALIGN &100                  ; Start on new page
 .help_table
   equs "BRK",0
   equs "DEL",0
+  equs "DUMP",0
   equs "HELP",0
   equs "JMP",0
   equs "LM",0

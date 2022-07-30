@@ -1,6 +1,8 @@
 \ ------------------------------------------------------------------------------
 \ --- CMD: SAVE  :  SAVE MEMORY
 \ ------------------------------------------------------------------------------
+\ *** This is currently a synonym for DUMP. Might change this in the future
+\     to do something different. ***
 \ Save a block of memory to ZolaDOS device.
 \ Usage: SAVE <start_addr> <end_addr> <filename>
 \ The start and end addresses must be 4-char hex addresses.
@@ -18,6 +20,7 @@
   jsr read_filename                   ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne cmdprcSAVE_err
+  lda #ZD_OPCODE_SAVE_CRT             ; Set save type - in this case, CREATE
   jsr zd_save_data                    ; Now save the memory contents
   lda FUNC_ERR
   beq cmdprcSAVE_success

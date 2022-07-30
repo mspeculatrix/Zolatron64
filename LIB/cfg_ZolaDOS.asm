@@ -25,11 +25,19 @@ ZD_IFR   = ZD_BASE_ADDR + $0D		      ; Interrupt Flag Register
 ZD_TIMER_COUNT = $0600                ; Using page 6 as workspace memory
 ZD_WKSPC       = $0600 + 2            ; for ZolaDOS
 
-ZD_OPCODE_LOAD = 2
-ZD_OPCODE_LS   = 8
+ZD_OPCODE_LOAD  = 2
+ZD_OPCODE_LS    = 8
+ZD_OPCODE_OPEN  = 10
+ZD_OPCODE_CLOSE = 11
+; Following save modes will case ZolaDOS to append '.BIN' to the filename.
 ZD_OPCODE_SAVE_CRT = 16               ; Save command - create file, no overwrite
 ZD_OPCODE_SAVE_OVR = 17               ; Save - overwrite okay
 ZD_OPCODE_SAVE_APP = 18               ; Save - append
+; Following save modes will case ZolaDOS to append '.TXT' to the filename.
+ZD_OPCODE_SAVE_TXC = 19               ; Save - create file, no overwrite
+ZD_OPCODE_SAVE_TXO = 20               ; Save - overwite okay
+ZD_OPCODE_SAVE_TXA = 21               ; Save - append
+; No extension appended - command must use full filename
 ZD_OPCODE_DEL  = 32                   ; Delete file
 
 ZD_MIN_FN_LEN = 3         ; Minimum filename length

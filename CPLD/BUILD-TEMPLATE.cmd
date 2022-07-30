@@ -8,7 +8,7 @@ set package=plcc
 
 if %CPLD% equ 1502 (
     if %package% equ plcc (
-        set CHIPDES=f1502ispplcc44
+        set CHIPDES=f1502plcc44
         set DEV=P1502C44
     ) else (
         set CHIPDES=f1502tqfp44
@@ -16,7 +16,7 @@ if %CPLD% equ 1502 (
     )
 ) else if %CPLD% equ 1504 (
     if %package% equ plcc (
-        set CHIPDES=f1504ispplcc44
+        set CHIPDES=f1504plcc44
         set DEV=P1504C44
     ) else (
         set CHIPDES=f1504tqfp44
@@ -24,7 +24,7 @@ if %CPLD% equ 1502 (
     )
 ) else if %CPLD% equ 1508 (
     if %package% equ plcc (
-        set CHIPDES=f1508ispplcc84
+        set CHIPDES=f1508plcc84
         set DEV=P1508C84
     ) else (
         set CHIPDES=f1508tqfp84
@@ -39,11 +39,9 @@ C:\Wincupl\Shared\cupl.exe -j -a -l -e -x -f -b -m4 %CHIPDES% %~n0
 if %ErrorLevel% equ 0 (
     ECHO Running find...
     if %CPLD% equ 1502 (
-        find1502 -i %~dp0\%~n0.tt2 -CUPL -dev %DEV% -str JTAG ON -str open_collector = CHIP_EN0 CHIP_EN1 CHIP_EN2 CHIP_EN3 CHIP_EN4 logic_doubling off
-        REM find1502 -i %~dp0\%~n0.tt2 -CUPL -dev %DEV% -str JTAG ON -str logic_doubling off
+        find1502 -i %~dp0\%~n0.tt2 -CUPL -dev %DEV% -str JTAG ON -str logic_doubling off
     ) else if %CPLD% equ 1504 (
-        find1504 -i %~dp0\%~n0.tt2 -CUPL -dev %DEV% -str JTAG ON -str open_collector = CHIP_EN0 CHIP_EN1 CHIP_EN2 CHIP_EN3 CHIP_EN4 logic_doubling off
-        REM find1504 -i %~dp0\%~n0.tt2 -CUPL -dev %DEV% -str JTAG ON -str logic_doubling off
+        find1504 -i %~dp0\%~n0.tt2 -CUPL -dev %DEV% -str JTAG ON -str logic_doubling off
     ) else if %CPLD% equ 1508 (
         find1508 -i %~dp0\%~n0.tt2 -CUPL -dev %DEV% -str JTAG ON -str logic_doubling off
     )

@@ -6,7 +6,7 @@
 \ ---  ZD_INIT
 \ ------------------------------------------------------------------------------
 \ Set up the VIA.
-.zd_init 
+.zd_init
   lda #ZD_CTRL_PINDIR               ; Set pin directions
   sta ZD_CTRL_DDR
   lda #ZD_DATA_SET_OUT              ; Set data port to output
@@ -14,7 +14,7 @@
   stz ZD_DATA_PORT
   ; Initialise timeout & delay timer - using Timer 1
   lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
-  ZD_SET_CO_ON                      ; Signal to server that Z64 is online. 
+  ZD_SET_CO_ON                      ; Signal to server that Z64 is online.
   sta ZD_IER
   lda #%00000000                    ; Set timer to one-shot mode
   sta ZD_ACL
@@ -48,7 +48,7 @@
   ZD_SET_CR_ON                ; Take /CR low - signals that we're ready to rock
   jsr zd_signalDelay          ; Slight pause to settle down
   jsr zd_waitForSR            ; Wait for server's response
-;  lda FUNC_ERR             
+;  lda FUNC_ERR
   ZD_SET_CR_OFF               ; Take /CR high
   ZD_SET_CA_OFF               ; Take /CA high
 .zd_svr_resp_init_end
@@ -77,7 +77,7 @@
 .zd_loadfile
   lda #ZD_OPCODE_LOAD         ; ----- INITIATE ---------------------------------
   jsr zd_handshake
-  lda FUNC_ERR             
+  lda FUNC_ERR
   bne zd_loadf_end            ; If this is anything but 0, that's an error
 .zd_loadf_rcv_data            ; ----- TRANSFER DATA ----------------------------
   jsr zd_waitForSAoff
@@ -86,7 +86,7 @@
   jsr zd_rcv_data
 .zd_loadf_end
   ZD_SET_CA_OFF
-  ZD_SET_CR_OFF 
+  ZD_SET_CR_OFF
   ZD_SET_DATADIR_OUTPUT
   rts
 
@@ -104,7 +104,7 @@
   stz FUNC_ERR                ; Zero out the error code
   stz FUNC_RESULT             ; This is where we'll store the server's response
   jsr zd_init_process         ; Tell ZolaDOS device we want to perform a process
-  lda FUNC_ERR             
+  lda FUNC_ERR
   bne zd_handshake_end        ; If this is anything but 0, that's an error
   jsr zd_send_strbuf          ; Send the string over the ZolaDOS port
   lda FUNC_ERR                ; Anything but 0 in FUNC_ERR is an error
@@ -124,11 +124,11 @@
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
 .zd_rcv_data
   jsr zd_waitForSA            ; Wait for /SA signal to go low
-  lda FUNC_ERR             
+  lda FUNC_ERR
   bne zd_rcv_data_end         ; If this is anything but 0, that's an error
 .zd_rcv_data_loop             ; READ LOOP
   jsr zd_waitForSR            ; Wait for server to say there's a byte ready
-  lda FUNC_ERR             
+  lda FUNC_ERR
   bne zd_rcv_data_chkSA       ; If not 0, might be error or loading complete
   lda ZD_DATA_PORT            ; Read byte on data bus
   sta (FILE_ADDR)             ; Store byte
@@ -155,15 +155,15 @@
 \ ---  Implements: OSZDSAVE
 \ ------------------------------------------------------------------------------
 \ Saves a section of memory to a file.
-\ ON ENTRY: - TMP_ADDR_A must contain 16-bit start address
+\ ON ENTRY: - A must contain the save type - eg, #ZD_OPCODE_SAVE_CRT
+\           - TMP_ADDR_A must contain 16-bit start address
 \           - TMP_ADDR_B must contain end address
 \           - STR_BUF must contain nul-terminated filename string
 \ ON EXIT : FUNC_ERR contains error code
 .zd_save_data
   stz FUNC_ERR                ; Zero out the error code
-  lda #ZD_OPCODE_SAVE_CRT     ; ----- INITIATE ---------------------------------
   jsr zd_init_process         ; Tell ZolaDOS device we want to perform a SAVE
-  lda FUNC_ERR             
+  lda FUNC_ERR
   bne zd_save_data_end        ; If this is anything but 0, that's an error
   jsr zd_send_strbuf          ; Send the filename over the ZolaDOS port
   lda FUNC_ERR
@@ -195,7 +195,7 @@
   lda (TMP_ADDR_A)            ; Put byte on data bus
   sta ZD_DATA_PORT
   ZD_SET_CR_ON                ; Signal that it's ready
-  jsr zd_strobeDelay 
+  jsr zd_strobeDelay
   ZD_SET_CR_OFF
   jsr zd_waitForSR            ; Wait for server response
   lda FUNC_ERR
@@ -210,7 +210,7 @@
   jsr compare_tmp_addr        ; Check if we've reached the end
   lda FUNC_RESULT
   cmp #MORE_THAN
-  bne zd_send_data_loop       
+  bne zd_send_data_loop
 .zd_send_data_end
   ZD_SET_CA_OFF
   rts
@@ -293,14 +293,14 @@
 \ Get a response code from the server. It's actually looking for an error code,
 \ which is why we're storing the result in FUNC_ERR. If it returns a 0, that
 \ means no error.
-\ ON ENTRY: Must have set the appropriate data direction on the data port - 
+\ ON ENTRY: Must have set the appropriate data direction on the data port -
 \           eg, with the macro ZD_SET_DATADIR_INPUT.
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
 .zd_svr_resp
   ldx #128                    ; For longer timeout counter
 .zd_svr_resp_SA_waitloop
   jsr zd_waitForSA            ; Wait for server's response - extended wait
-  lda FUNC_ERR             
+  lda FUNC_ERR
   beq zd_svr_resp_nextwait
   dex
   bne zd_svr_resp_SA_waitloop
@@ -308,7 +308,7 @@
 .zd_svr_resp_nextwait
   ZD_SET_CR_ON                ; Take /CR low
   jsr zd_waitForSR            ; Wait for server's response
-  lda FUNC_ERR             
+  lda FUNC_ERR
   bne zd_svr_resp_svr_end     ; If this is anything but 0, that's an error
   lda ZD_DATA_PORT            ; Read code
   bne zd_svr_resp_resp_err    ; Anything but 0 is an error

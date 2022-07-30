@@ -49,7 +49,7 @@ ORG USR_PAGE
   jsr OSWRMSG
   jsr OSLCDMSG
   lda #10
-  jsr OSWRMSG
+  jsr OSWRCH
 
   LOAD_MSG test_msg
   jsr OSPRTMSG
