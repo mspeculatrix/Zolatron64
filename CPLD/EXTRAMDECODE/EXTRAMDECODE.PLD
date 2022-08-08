@@ -36,7 +36,7 @@ PIN [24,21..16,14,12,11,9] = [A15..5];     /* Address bus                     */
 PIN [33,34,36,37] = [BSEL3..0] ;           /* Bank select register            */
 PIN 39 = !RAM_EN;                        /* RAM chip enable - active low    */
 
-NODE BSEL_EN;                              /* Enable latching for bank select */
+PINNODE = BSEL_EN;                         /* Enable latching for bank select */
 
 RAM_EN = A15 & !A14 & !A13;
 
@@ -60,12 +60,12 @@ not attached to the address bus - so they don't interfere with anything else.
 BSEL3.d = D3 ;                    /* Value from data bus                      */
 BSEL3.ck = !CLK;                  /* Act on falling edge of clock             */
 BSEL3.ce = !RWB & BSEL_EN;        /* Only during writes & with $BFE0 selected */
-BSEL2.d = D2 ;
+BSEL2.d = D2;
 BSEL2.ck = !CLK;
 BSEL2.ce = !RWB & BSEL_EN;
-BSEL1.d = D1 ;
+BSEL1.d = D1;
 BSEL1.ck = !CLK;
 BSEL1.ce = !RWB & BSEL_EN;
-BSEL0.d = D0 ;
+BSEL0.d = D0;
 BSEL0.ck = !CLK;
 BSEL0.ce = !RWB & BSEL_EN;

@@ -1,7 +1,7 @@
 @ECHO OFF
 REM Make sure this script name is identical to both the folder name
 REM and the filename of the .pld and .tt2 files.
-REM Also, edit the CPLD variable to suit the chip
+REM Also, edit the CPLD and package variables to suit the chip
 
 set CPLD=1502
 set package=plcc

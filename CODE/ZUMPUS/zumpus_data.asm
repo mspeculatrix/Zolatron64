@@ -47,7 +47,7 @@
   equs "   s 15 3",10
   equs "Note that, after the first room, the staple will take a random",10
   equs "course and might even end up back in the room you're in -",10
-  equs "in which case it's all over for you.",10,10
+  equs "which could be bad.",10,10
   equs "You can also type:",10
   equs "  I - to see these instructions again",10
   equs "  Q - to quit",10,0
@@ -154,4 +154,3 @@
   equs "That didn't make any sense to me.",10,0
 .err_range
   equs "Your range is 1-5 with these staples.",10,0
-

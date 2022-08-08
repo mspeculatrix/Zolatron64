@@ -46,8 +46,8 @@ PIN [24,21..16,14,12,11,9] = [A15..5];     /* Address bus                     */
 PIN [33,34,36,37] = [BSEL3..0] ;           /* Bank select register            */
 PIN [39,27,28,40,31] = ![CHIP_EN4..0];     /* Chip enable reg - active low    */
 
-NODE [CHIP_SEL4..0];                       /* Internal chip select register   */
-NODE BSEL_EN;                              /* Enable latching for bank select */
+PINNODE = [CHIP_SEL4..0];                  /* Internal chip select register   */
+PINNODE = BSEL_EN;                         /* Enable latching for bank select */
 
 
 /* --------------- BANK SELECTION ------------------------------------------- */
@@ -91,7 +91,7 @@ FIELD CHIPSL = [CHIP_SEL4..0];                   /* 4 = RAM, 3..0 = ROM/RAM   */
 TABLE BANK => CHIPSL {
     'b'0000 => 'b'00001 ;                        /* CHIP_EN0 - BANK 0 RAM/ROM */
     'b'0001 => 'b'00010 ;                        /* CHIP_EN1 - BANK 1 RAM/ROM */
-    'b'0010 => 'b'00100 ;                        /* CHIP_EN2 - BANK 2 RAM/ROM*/
+    'b'0010 => 'b'00100 ;                        /* CHIP_EN2 - BANK 2 RAM/ROM */
     'b'0011 => 'b'01000 ;                        /* CHIP_EN3 - BANK 3 RAM/ROM */
     'b'01XX => 'b'10000 ;                        /* CHIP_EN4 - BANKS 4-15 RAM */
     'b'1XXX => 'b'10000 ;                        /*    "         "     "   "  */
