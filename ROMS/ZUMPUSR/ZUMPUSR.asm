@@ -1,3 +1,7 @@
+; ***** HUNT the ZUMPUS *****
+;
+; Extended memory/ROM version.
+;
 ; Code for Zolatron 64 6502-based microcomputer.
 ;
 ; GitHub: https://github.com/mspeculatrix/Zolatron64/
@@ -20,7 +24,7 @@ INCLUDE "../../LIB/cfg_user_port.asm"
 
 INCLUDE "zumpus_cfg.asm"
 
-ORG $8000
+ORG EXTMEM_LOC
 .header                     ; HEADER INFO
   jmp startprog             ;
   equw header               ; @ $8003 Entry address
@@ -28,7 +32,7 @@ ORG $8000
   equw endcode              ; @ $8007 Addr of first byte after end of program
   equb "P"                  ; @ $8008 A code of P denotes a standalone program
   equs 0,0,0                ; -- Reserved for future use --
-  equs "ZUMPUS",0           ; @ $800D Short name, max 15 chars - nul terminated
+  equs "ZUMPUSR",0           ; @ $800D Short name, max 15 chars - nul terminated
 .version_string
   equs "1.0",0              ; Version string - nul terminated
 
@@ -52,7 +56,7 @@ ORG $8000
   lda #%01000000		          ; Bit 7 off - don't need interrupts
   sta USRP_IER
   lda #%01000000              ; Set timer to free-run mode
-  sta USRP_ACL			
+  sta USRP_ACL
   lda #59                     ; Start value
   sta USRP_T1CL
   lda #0
@@ -91,7 +95,7 @@ ORG $8000
   jsr OSWRMSG
   NEWLINE
   stz Z_STATE                     ; Set Zumpus to sleeping
-  stz P_CONDITION                 ; Set Player's condition to default 
+  stz P_CONDITION                 ; Set Player's condition to default
   lda #NUM_STAPLES                ; Set initial number of staples
   sta STAPLE_COUNT
 ; Randomise initial locations of player & threats
@@ -259,7 +263,7 @@ ORG $8000
 .zum_cmd_shoot_hit
   ldx #4                        ; Divisor for MOD
   jsr roll_dice                 ; A should contain value 0-3
-  cmp #2                        
+  cmp #2
   bcs zum_cmd_shoot_win         ; If it's less than 2, we won!
   LOAD_MSG shot_nearhit_msg     ; Otherwise, it's a near hit
   jsr OSWRMSG
@@ -410,8 +414,10 @@ INCLUDE "./zumpus_funcs.asm"
 INCLUDE "./zumpus_data.asm"
 INCLUDE "../../LIB/funcs_math.asm"
 
+ORG EXTMEM_LOC + 8188                       ; To fill out 8K ROM
 .endtag
   equs "EOF",0
 .endcode
+
 
 SAVE "../bin/ZUMPUSR.BIN", header, endcode

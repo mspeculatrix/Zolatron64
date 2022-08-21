@@ -196,7 +196,7 @@ ALIGN &100                  ; Start on new page
   equs "Not a number",0
 .err_extmem_write
   ;     1234567890ABCDEF
-  equs "Extmem write error",0
+  equs "Extmem bank not writeable",0
 .err_extmem_bank
   equs "Ext mem bank error",0
 .err_addr
@@ -260,6 +260,12 @@ ALIGN &100                  ; Start on new page
   equs "PEXIT:",0
 
 \ MESSAGES
+
+.exmem_fitted_msg
+  equs "Extended memory",0
+.exmem_absent_msg
+  equs "No ext memory",0
+
 .test_msg
   equs "Hello World!", 0
 

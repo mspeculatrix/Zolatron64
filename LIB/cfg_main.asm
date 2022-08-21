@@ -33,12 +33,11 @@ ERR_FILE_OPEN         = ERR_FILE_EXISTS + 1         ; 21 15 Error opening file
 ERR_DELFILE_FAIL      = ERR_FILE_OPEN + 1           ; 22 16 Failed delete file
 ERR_FILENOTFOUND      = ERR_DELFILE_FAIL + 1        ; 23 17 File not found
 
-
 \-------------------------------------------------------------------------------
-\ OS CALLS  - OS Function Address Table                                      
+\ OS CALLS  - OS Function Address Table
 \ Jump table for OS calls. Requires corresponding entries in:
 \    - z64-main.asm   - OS Call Jump Table
-\                     - OS default config routine & stream select functions
+\    - os_call_vectors.asm - map functions to vectors
 \    - cfg_page_2.asm - OS Indirection Table
 \-------------------------------------------------------------------------------
 ; READ

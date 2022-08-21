@@ -45,10 +45,10 @@
 \ ------------------------------------------------------------------------------
 \ Output some useful info.
 .cmdprcSTAT
-  LOAD_MSG stat_msg_lomem
-  jsr OSWRMSG
-  lda LOMEM
-  sta TMP_ADDR_A_L
+  LOAD_MSG stat_msg_lomem                     ; Show address of LOMEM - the
+  jsr OSWRMSG                                 ; address of the first byte after
+  lda LOMEM                                   ; the end of the currently loaded
+  sta TMP_ADDR_A_L                            ; program.
   lda LOMEM+1
   sta TMP_ADDR_A_H
   jsr uint16_to_hex_str                       ; Result will be in STR_BUF

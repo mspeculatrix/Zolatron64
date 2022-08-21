@@ -59,35 +59,11 @@
 \ ---  Implements: OSZDDEL
 \ ------------------------------------------------------------------------------
 \ Deletes a file on the ZolaDOS server.
-\ ON ENTRY: STDIN_BUF must contain filename
+\ ON ENTRY: STR_BUF must contain filename
 \ ON EXIT : FUNC_ERR contains error code - 0 for success
 .zd_delfile
   lda #ZD_OPCODE_DEL
   jsr zd_handshake
-  rts
-
-\ ------------------------------------------------------------------------------
-\ ---  ZD_LOADFILE
-\ ---  Implements: OSZDLOAD
-\ ------------------------------------------------------------------------------
-\ Loads a file into memory.
-\ ON ENTRY: - STR_BUF must contain filename
-\           - FILE_ADDR/+1 must contain address to which we wish to load file.
-\ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
-.zd_loadfile
-  lda #ZD_OPCODE_LOAD         ; ----- INITIATE ---------------------------------
-  jsr zd_handshake
-  lda FUNC_ERR
-  bne zd_loadf_end            ; If this is anything but 0, that's an error
-.zd_loadf_rcv_data            ; ----- TRANSFER DATA ----------------------------
-  jsr zd_waitForSAoff
-  lda FUNC_ERR
-  bne zd_loadf_end
-  jsr zd_rcv_data
-.zd_loadf_end
-  ZD_SET_CA_OFF
-  ZD_SET_CR_OFF
-  ZD_SET_DATADIR_OUTPUT
   rts
 
 \ ------------------------------------------------------------------------------
@@ -112,6 +88,30 @@
   ZD_SET_DATADIR_INPUT        ; ----- SERVER RESPONSE --------------------------
   jsr zd_svr_resp
 .zd_handshake_end
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  ZD_LOADFILE
+\ ---  Implements: OSZDLOAD
+\ ------------------------------------------------------------------------------
+\ Loads a file into memory.
+\ ON ENTRY: - STR_BUF must contain filename
+\           - FILE_ADDR/+1 must contain address to which we wish to load file.
+\ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
+.zd_loadfile
+  lda #ZD_OPCODE_LOAD         ; ----- INITIATE ---------------------------------
+  jsr zd_handshake
+  lda FUNC_ERR
+  bne zd_loadf_end            ; If this is anything but 0, that's an error
+.zd_loadf_rcv_data            ; ----- TRANSFER DATA ----------------------------
+  jsr zd_waitForSAoff
+  lda FUNC_ERR
+  bne zd_loadf_end
+  jsr zd_rcv_data
+.zd_loadf_end
+  ZD_SET_CA_OFF
+  ZD_SET_CR_OFF
+  ZD_SET_DATADIR_OUTPUT
   rts
 
 \ ------------------------------------------------------------------------------

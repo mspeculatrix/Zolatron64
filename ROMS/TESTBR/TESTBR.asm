@@ -5,13 +5,9 @@
 ;
 ; Written for the Beebasm assembler
 ; Assemble with:
-; beebasm -v -i TESTA.asm
+; beebasm -v -i TESTBR.asm
 
 CPU 1                               ; use 65C02 instruction set
-
-BARLED = $0230				      ; for the bar LED display
-BARLED_L = BARLED
-BARLED_H = BARLED + 1
 
 INCLUDE "../../LIB/cfg_main.asm"
 INCLUDE "../../LIB/cfg_page_0.asm"
@@ -23,12 +19,12 @@ INCLUDE "../../LIB/cfg_page_4.asm"
 ORG EXTMEM_LOC
 .header                     ; HEADER INFO
   jmp startprog             ;
-  equw header               ; @ $0803 Entry address
-  equw reset                ; @ $0805 Reset address
-  equw endcode              ; @ $0807 Addr of first byte after end of program
+  equw header               ; @ $8003 Entry address
+  equw reset                ; @ $8005 Reset address
+  equw endcode              ; @ $8007 Addr of first byte after end of program
   equb "P"
   equs 0,0,0                ; -- Reserved for future use --
-  equs "TESTA",0            ; @ $080D Short name, max 15 chars - nul terminated
+  equs "TESTBR",0           ; @ $800D Short name, max 15 chars - nul terminated
 .version_string
   equs "1.0",0              ; Version string - nul terminated
 
@@ -62,7 +58,7 @@ ORG EXTMEM_LOC
   lda #CHR_LINEEND
   jsr OSWRCH
 
-  LOAD_MSG start_msg
+  LOAD_MSG welcome_msg
   jsr OSWRMSG
   lda #CHR_LINEEND
   jsr OSWRCH
@@ -71,18 +67,48 @@ ORG EXTMEM_LOC
   LOAD_MSG second_msg
   jsr OSWRMSG
   jsr OSLCDMSG
+;  inc BARLED_L
+;  bne main_loop
+;  inc BARLED_H
+;.main_loop
+;  lda BARLED_L
+;  sta VIAC_PORTA
+;  lda BARLED_H
+;  sta VIAC_PORTB
+;  cmp #255
+;  beq chk_lowbyte
+;.continue
+;  jsr barled_delay
+;  jmp main
+;.chk_lowbyte
+;  lda BARLED_L
+;  cmp #255
+;  beq prog_end
+;  jmp continue
 
 .prog_end
   jmp OSSFTRST
 
-.start_msg
-  equs "Test A", 0
+;.barled_delay
+;  ldx #2
+;.barled_delay_x_loop
+;  ldy #255
+;.barled_delay_y_loop
+;  nop
+;  dey
+;  bne barled_delay_y_loop
+;  dex
+;  bne barled_delay_x_loop
+;  rts
+
+.welcome_msg
+  equs "This is Test B", 0
 
 .second_msg
-  equs "Hello world!", 0
+  equs "This is the ROM version.", 0
 
 .endtag
   equs "EOF",0
 .endcode
 
-SAVE "../bin/TESTAROM.BIN", header, endcode
+SAVE "../bin/TESTBR.BIN", header, endcode

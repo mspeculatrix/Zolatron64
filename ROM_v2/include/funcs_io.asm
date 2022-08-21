@@ -220,6 +220,8 @@
   iny                         ; Make Y an index to the char _after_ this one
   lda STDIN_BUF,X
   beq read_int_done           ; If it's a 0 terminator, we're done
+  cmp #CHR_LINEEND
+  beq read_int_done           ; If it's a line end, we're also done
   cmp #' '
   beq read_int_chkspc         ; If space, have we already started reading num?
   cmp #'0'
@@ -287,14 +289,13 @@
   stz FUNC_ERR              ; Initialise to 0
   ldy #0                    ; Offset for where we're storing each byte
   ldx STDIN_IDX
-  stz TMP_VAL               ; Flag regarding whether we've already read chars
 .read_filename_next_char
   lda STDIN_BUF,X           ; Get next byte from buffer
   beq read_filename_check   ; If a null (0), at end of input
-  cmp #CHR_SPACE            ; If it's a space, ignore it & get next byte
-  beq read_filename_chkspc
-  cmp #CHR_LINEEND
+  cmp #CHR_LINEEND          ; If a line end, we're done.
   beq read_filename_check
+  cmp #CHR_SPACE            ; If it's a space, check if we should ignore it
+  beq read_filename_chkspc
   ; If we're not at or near the beginning of the filename, numbers and certain
   ; special chars are allowed
   cpy #ZD_MIN_FN_LEN          ; If our char count Y is less than the minimum
@@ -314,20 +315,20 @@
   bcs read_filename_fail
 .read_filename_store
   sta STR_BUF,Y               ; Store in STR_BUF buffer
-  iny                         ; Increment STR_BUF index
-  inc TMP_VAL
+  iny                         ; Increment STR_BUF index for next time
 .read_filename_loop
   inx                         ; Increment input buffer index
-  jmp read_filename_next_char
+  jmp read_filename_next_char ; Go get next char
 .read_filename_chkspc
-  lda TMP_VAL
-  beq read_filename_loop      ; 0, so not started receiving chars yet
+  cpy #0
+  beq read_filename_loop      ; 0, so not started receiving chars, ignore space
   jmp read_filename_check     ; Otherwise, we're done
 .read_filename_fail
   lda #FN_CHAR_ERR_CODE
   sta FUNC_ERR
   jmp read_filename_end
 .read_filename_check  ;
+  lda #0
   sta STR_BUF,Y               ; Make sure we have a null terminator
   cpy #ZD_MIN_FN_LEN          ; Minimum filename length
   bcc read_filename_err

@@ -1,7 +1,7 @@
 ; cfg_uart_SC28L92_dual.asm
 ; For NXP SC28L92 dual UART.
 
-SC28L92_BASE_ADDR = $BC00
+SC28L92_BASE_ADDR = $B400
 
 ; Registers for GENERAL operations
 SC28L92_MRA       = SC28L92_BASE_ADDR           ; $00 Mode Register A
@@ -71,5 +71,13 @@ DUART_RxB_CLR_FLAGS    = %00001111      ; AND with reg to clear input flags
 DUART_RxA_RDY_MASK     = %00000010 		; SC28L92 has data in RX A FIFO
 DUART_RxB_RDY_MASK     = %00100000 		; SC28L92 has data in RX B FIFO
 
-DUART_BAUD_9600  = %10111011
+; These baud rates work in Normal mode (bit 0 of MR0A/MR0B set to 0) and with
+; bit 7 of ACR set to 0.
+DUART_BAUD_300   = %01000100 			; Also works with ACR bit 7 set to 1
+DUART_BAUD_1200  = %01100110 			; Also works with ACR bit 7 set to 1
+DUART_BAUD_2400  = %10001000 			; Also works with ACR bit 7 set to 1
+DUART_BAUD_4800  = %10011001 			; Also works with ACR bit 7 set to 1
+DUART_BAUD_7200  = %10101010
+DUART_BAUD_9600  = %10111011 			; Also works with ACR bit 7 set to 1
+; These baud rates work in Normal mode with bit 7 of ACR set to 1.
 DUART_BAUD_19200 = %11011000

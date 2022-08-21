@@ -18,3 +18,16 @@ LOMEM         = FILE_ADDR + 2       ; $5C First available byte after user prog
 STDIN_STATUS_REG = LOMEM + 2	      ; $5E Used to store various flags
 PROC_REG = STDIN_STATUS_REG + 1  	  ; $5F Process flags
 TIMER_STATUS_REG = PROC_REG + 1	    ; $60 Timer status register
+SYS_REG = TIMER_STATUS_REG + 1      ; $61 System Register
+; SYSTEM REGISTER
+; Bit     Flag name          Function
+;  0
+;  1      SYS_EXMEM_YES/NO   1=Extended memory fitted - 1=yes, 0=no
+;  2
+;  3
+;  4
+;  5
+;  6
+;  7
+SYS_EXMEM_YES = %00000010
+SYS_EXMEM_NO = %11111101

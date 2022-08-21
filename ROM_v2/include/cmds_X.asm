@@ -1,56 +1,13 @@
 \ ------------------------------------------------------------------------------
-\ --- CMD: XLOAD  :  LOAD CODE INTO EXTENDED RAM
-\ ------------------------------------------------------------------------------
-\ Usage: XLOAD <filename> <memory_bank>
-\ The memory_bank must be in the range 0-15.
-.cmdprcXLOAD
-  jsr read_filename       ; Read filename from STDIN_BUF
-  lda FUNC_ERR
-  bne cmdprcXLOAD_err
-  jsr extmem_readset_bank ; Read memory bank number. Bank will be selected.
-  lda FUNC_ERR
-  bne cmdprcXLOAD_err
-  ldx #0                  ; We're going to check that we can write to this
-.cmdprcXLOAD_bank_chk     ; bank. If not, it's probably a ROM. We'll write
-  txa                     ; a sequence of numbers to $8000 and read them back.
-  sta $8000               ; Store in memory
-  cmp $8000               ; Is X the same as what's now stored in this location?
-  bne cmdprcXLOAD_bank_chk_err
-  inx
-  cpx #5
-  beq cmdprcXLOAD_loadfile
-  jmp cmdprcXLOAD_bank_chk
-.cmdprcXLOAD_bank_chk_err
-  lda #ERR_EXTMEM_WR
-  sta FUNC_ERR
-  jmp cmdprcXLOAD_err
-.cmdprcXLOAD_loadfile     ; Here's where we actually load the file
-  LED_ON LED_FILE_ACT
-  lda #<EXTMEM_LOC        ; This is where we're going to load the code
-  sta FILE_ADDR
-  lda #>EXTMEM_LOC
-  sta FILE_ADDR+1
-  jsr OSZDLOAD
-  lda FUNC_ERR
-  bne cmdprcXLOAD_err
-  LOAD_MSG file_act_complete_msg
-  jsr OSWRMSG
-  jsr OSLCDMSG
-  jmp cmdprcXLOAD_done
-.cmdprcXLOAD_err
-  jsr OSWRERR          ; There should be an error code in FUNC_ERR
-  jsr OSLCDERR  
-.cmdprcXLOAD_done
-  LED_OFF LED_FILE_ACT
-  jmp cmdprc_end
-
-\ ------------------------------------------------------------------------------
 \ --- CMD: XLIST  :  LIST PROGRAMS IN EXTENDED MEMORY
 \ ------------------------------------------------------------------------------
-\ List the programs in extended memory. This assumes that the programs comply 
+\ List the programs in extended memory. This assumes that the programs comply
 \ with the protocol of having a nul-terminated name string at $080D.
 .cmdprcXLIST
-  ldy #0                          ; Number of bank
+  LED_ON LED_FILE_ACT
+  lda EXTMEM_BANK                 ; Load the num of current selected bank
+  sta TMP_VAL                     ; and save it for later
+  ldy #0                          ; Number of memory bank
 .cmdprcXLIST_loop
   sty EXTMEM_SLOT_SEL             ; Select the ext memory slot
   cpy #10                         ; See if we need a leading space
@@ -63,10 +20,18 @@
   jsr OSWRSBUF
   lda #' '                        ; Followed by a space
   jsr OSWRCH
+  cpy EXTMEM_BANK                 ; Is this the currently selected bank?
+  beq cmdprcXLIST_currbank_is
+  lda #' '
+  jmp cmdprcXLIST_currbank_done
+.cmdprcXLIST_currbank_is
+  lda #'*'
+.cmdprcXLIST_currbank_done
+  jsr OSWRCH
   lda EXTMEM_LOC                  ; Load the first byte of the code and compare
   cmp #$4C                        ; to JMP instruction - if not this then prob
   bne cmdprcXLIST_name_loop_done  ; no program loaded in this bank.
-  lda EXTMEM_LOC+8                ; Load the data type code
+  lda EXTMEM_LOC+9                ; Load the data type code
   sta TEST_VAL
   beq cmdprcXLIST_name_loop_done  ; If a zero, nothing more to do
   ldx #0                          ; Index for loop
@@ -78,8 +43,6 @@
   inx                             ; Otherwise, try again
   jmp cmdprcXLIST_dtype_loop
 .cmdprcXLIST_dtype_prt
-  lda #' '                        ; Followed by a space
-  jsr OSWRCH
   lda TEST_VAL
   jsr OSWRCH
   lda #' '                        ; Followed by a space
@@ -102,6 +65,55 @@
   beq cmdprcXLIST_done
   jmp cmdprcXLIST_loop
 .cmdprcXLIST_done
+  LED_OFF LED_FILE_ACT
+  lda TMP_VAL                     ; Retrieve previous bank
+  sta EXTMEM_SLOT_SEL             ; and restore it
+  jmp cmdprc_end
+
+\ ------------------------------------------------------------------------------
+\ --- CMD: XLOAD  :  LOAD CODE INTO EXTENDED RAM
+\ ------------------------------------------------------------------------------
+\ Usage: XLOAD <filename> <memory_bank>
+\ The memory_bank must be in the range 0-15.
+.cmdprcXLOAD
+  jsr read_filename          ; Read filename from STDIN_BUF, put in STR_BUF
+  lda FUNC_ERR
+  bne cmdprcXLOAD_err
+  jsr extmem_readset_bank    ; Read memory bank number. Bank will be selected.
+  lda FUNC_ERR
+  bne cmdprcXLOAD_err
+  jsr extmem_ram_chk        ; Check that the selected bank is available
+  lda FUNC_ERR              ; *** THIS CHECK IS CAUSING IT TO HANG ***
+  bne cmdprcXLOAD_err
+  jmp cmdprcXLOAD_loadfile
+.cmdprcXLOAD_bank_chk_err
+  lda #ERR_EXTMEM_WR
+  sta FUNC_ERR
+  jmp cmdprcXLOAD_err
+.cmdprcXLOAD_loadfile        ; Here's where we actually load the file
+  LED_ON LED_FILE_ACT
+  LOAD_MSG loading_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
+  lda #<EXTMEM_LOC           ; This is where we're going to load the code
+  sta FILE_ADDR
+  lda #>EXTMEM_LOC
+  sta FILE_ADDR+1
+  jsr OSZDLOAD               ; Run LOAD routine
+  LED_ON LED_DEBUG
+  lda FUNC_ERR
+  bne cmdprcXLOAD_err
+  LOAD_MSG file_act_complete_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
+  lda EXTMEM_BANK
+  sta EXTMEM_SLOT_SEL                     ; Select bank by writing to this addr
+  jmp cmdprcXLOAD_done
+.cmdprcXLOAD_err
+  jsr OSWRERR                ; There should be an error code in FUNC_ERR
+  jsr OSLCDERR
+.cmdprcXLOAD_done
+  LED_OFF LED_FILE_ACT
   jmp cmdprc_end
 
 \ ------------------------------------------------------------------------------

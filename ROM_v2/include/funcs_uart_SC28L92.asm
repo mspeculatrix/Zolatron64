@@ -5,9 +5,9 @@
   lda #%10110000      ; To set MR pointer to 0
   sta SC28L92_CRA     ; Need some clock cycles to pass, so write to lower bits.
   lda #%00000100      ; Enable TX
-  sta SC28L92_CRA 
+  sta SC28L92_CRA
   lda #%00000001      ; Enable RX
-  sta SC28L92_CRA 
+  sta SC28L92_CRA
   ; TRY COMBINING THE ABOVE COMMANDS/SETTINGS
   lda #%10011000      ; RX watchdog on, 1-byte fill level for RX interrupts,
   sta SC28L92_MRA     ; 16 bytes for TX int, 16-byte FIFO, baudrate mode normal.
@@ -17,9 +17,11 @@
   sta SC28L92_MRA ; no parity, 8 bits per char - MR pointer gets set to MR2A.
   lda #%00000111  ; 1 stop bit
   sta SC28L92_MRA
-  \\ Set baud rate - assuming normal, not extended, mode
-  lda #%10000000                  ; Set baud rate generator select bit to 1
+  \\ Set baud rate. Not using extended modes
+  lda SC28L92_ACR
+  and #%01111111                  ; Set baud rate generator select bit (7) to 0
   sta SC28L92_ACR
+  ;lda #DUART_BAUD_4800            ; Receive and transmit rate
   lda #DUART_BAUD_9600            ; Receive and transmit rate
   sta SC28L92_CSRA
   \\ Set interrupt mask register. Determines which events produce interrupts
@@ -55,7 +57,7 @@
   jsr duart_wait_send_clr         ; Wait for serial port to be ready
   sta SC28L92_TxFIFOA             ; Write to data register. This sends the byte
   iny                             ; Increment index
-  beq duart_println_inc_addr    ; Y has rolled over so update vector        
+  beq duart_println_inc_addr    ; Y has rolled over so update vector
   jmp duart_println_chr           ; Go back for next character
 .duart_println_inc_addr
   inc MSG_VEC + 1              ; Increment high byte

@@ -1,7 +1,7 @@
 \-------------------------------------------------------------------------------
 \ --- CMD: LM  :  LIST MEMORY
 \-------------------------------------------------------------------------------
-\ Expects two, two-byte hex addresses and prints the memory contents in that 
+\ Expects two, two-byte hex addresses and prints the memory contents in that
 \ range. So the format is:
 \     LM hhhh hhhh
 \ The first address must be lower than the second. The two addresses can be
@@ -62,6 +62,9 @@
 \ ------------------------------------------------------------------------------
 \ --- CMD: LOAD  :  LOAD FILE
 \ ------------------------------------------------------------------------------
+\ This is for loading executable files in main memory.
+\ Expects a filename in STDIN_BUF. The filename should not have the '.BIN'
+\ extension (this will be added by ZolaDOS).
 .cmdprcLOAD
   LED_ON LED_FILE_ACT
   LOAD_MSG loading_msg
@@ -133,7 +136,7 @@
 \ ZolaDOS server. The files are shown without their '.BIN' suffixes because,
 \ when loading, we only use the main part of the filename with the LOAD command.
 .cmdprcLS
-;  LED_ON LED_FILE_ACT
+  LED_ON LED_FILE_ACT
   lda #ZD_OPCODE_LS           ; Start a ZolaDOS process with the code for LS
   jsr zd_init_process
   lda FUNC_ERR
@@ -192,5 +195,5 @@
   jmp cmdprcLS_show_loopback  ; On to next filename
 .cmdprcLS_end
   ZD_SET_DATADIR_OUTPUT
-;  LED_OFF LED_FILE_ACT
+  LED_OFF LED_FILE_ACT
   jmp cmdprc_end

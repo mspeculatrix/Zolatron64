@@ -1,10 +1,10 @@
 ; PAGE TWO CONFIG -- cfg_page_2.asm --------------------------------------------
 
 \-------------------------------------------------------------------------------
-\ OS CALLS  - OS Indirection Table                                      
+\ OS CALLS  - OS Indirection Table
 \ Jump table for OS calls. Requires corresponding entries in:
 \    - z64-main.asm   - OS Call Jump Table
-\                     - OS default config routine & stream select functions
+\    - os_call_vectors.asm - map functions to vectors
 \    - cfg_main.asm   - OS Function Address Table
 \-------------------------------------------------------------------------------
 ; READ

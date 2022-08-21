@@ -48,6 +48,7 @@ ORG ROMSTART          ; This is where the actual code starts.
 ; Initialise registers etc
   stz TIMER_STATUS_REG
   stz EXTMEM_BANK
+  stz EXTMEM_SLOT_SEL
   stz FUNC_ERR
   stz FUNC_RESULT
   stz STDIN_BUF
@@ -59,144 +60,7 @@ ORG ROMSTART          ; This is where the actual code starts.
   lda #>USR_PAGE
   sta LOMEM + 1
 
-\ ----- SETUP OS CALL VECTORS --------------------------------------------------
-  lda #<read_hex_byte       ; OSRDHBYTE
-  sta OSRDHBYTE_VEC
-  lda #>read_hex_byte
-  sta OSRDHBYTE_VEC + 1
-  lda #<read_hex_addr       ; OSRDHADDR
-  sta OSRDHADDR_VEC
-  lda #>read_hex_addr
-  sta OSRDHADDR_VEC + 1
-  lda #<read_char           ; OSRDCH
-  sta OSRDCH_VEC
-  lda #>read_char
-  sta OSRDCH_VEC + 1
-  lda #<read_int16          ; OSRDINT16
-  sta OSRDINT16_VEC
-  lda #>read_int16
-  sta OSRDINT16_VEC + 1
-  lda #<read_filename       ; OSRDFNAME
-  sta OSRDFNAME_VEC
-  lda #>read_filename
-  sta OSRDFNAME_VEC + 1
-
-  lda #<duart_sendbuf        ; OSWRBUF
-  sta OSWRBUF_VEC
-  lda #>duart_sendbuf
-  sta OSWRBUF_VEC + 1
-  lda #<duart_sendchar      ; OSWRCH
-  sta OSWRCH_VEC
-  lda #>duart_sendchar
-  sta OSWRCH_VEC + 1
-  lda #<os_print_error      ; OSWRERR
-  sta OSWRERR_VEC
-  lda #>os_print_error
-  sta OSWRERR_VEC + 1
-  lda #<duart_println        ; OSWRMSG
-  sta OSWRMSG_VEC
-  lda #>duart_println
-  sta OSWRMSG_VEC + 1
-  lda #<duart_snd_strbuf     ; OSWRSBUF
-  sta OSWRSBUF_VEC
-  lda #>duart_snd_strbuf
-  sta OSWRSBUF_VEC + 1
-  ; CONVERSIONS
-  lda #<byte_to_hex_str     ; OSB2HEX
-  sta OSB2HEX_VEC
-  lda #>byte_to_hex_str
-  sta OSB2HEX_VEC + 1
-  lda #<byte_to_int_str     ; OSB2ISTR
-  sta OSB2ISTR_VEC
-  lda #>byte_to_int_str
-  sta OSB2ISTR_VEC + 1
-  lda #<hex_str_to_byte     ; OSHEX2B
-  sta OSHEX2B_VEC
-  lda #>hex_str_to_byte
-  sta OSHEX2B_VEC + 1
-
-  lda #<uint16_to_hex_str   ; OSU16HEX
-  sta OSU16HEX_VEC
-  lda #>uint16_to_hex_str
-  sta OSU16HEX_VEC + 1
-  lda #<asc_hex_to_dec     ; OSHEX2DEC
-  sta OSHEX2DEC_VEC
-  lda #>asc_hex_to_dec
-  sta OSHEX2DEC_VEC + 1
-  ; LCD
-  lda #<lcd_prt_chr         ; OSLCDCH
-  sta OSLCDCH_VEC
-  lda #>lcd_prt_chr
-  sta OSLCDCH_VEC + 1
-  lda #<lcd_cls             ; OSLCDCLS
-  sta OSLCDCLS_VEC
-  lda #>lcd_cls
-  sta OSLCDCLS_VEC + 1
-  lda #<lcd_prt_err         ; OSLCDERR
-  sta OSLCDERR_VEC
-  lda #>lcd_prt_err
-  sta OSLCDERR_VEC + 1
-  lda #<lcd_println         ; OSLCDMSG
-  sta OSLCDMSG_VEC
-  lda #>lcd_println
-  sta OSLCDMSG_VEC + 1
-  lda #<lcd_print_byte      ; OSLCDB2HEX
-  sta OSLCDB2HEX
-  lda #>lcd_print_byte
-  sta OSLCDB2HEX + 1
-  lda #<lcd_prt_sbuf        ; OSLCDSBUF
-  sta OSLCDSBUF_VEC
-  lda #>lcd_prt_sbuf
-  sta OSLCDSBUF_VEC + 1
-  lda #<lcd_set_cursor      ; OSLCDSC
-  sta OSLCDSC_VEC
-  lda #>lcd_set_cursor
-  sta OSLCDSC_VEC + 1
-  ; PRINTER
-  lda #<prt_stdout_buf      ; OSPRTBUF
-  sta OSPRTBUF_VEC
-  lda #>prt_stdout_buf
-  sta OSPRTBUF_VEC + 1
-  lda #<prt_char            ; OSPRTCH
-  sta OSPRTCH_VEC
-  lda #>prt_char
-  sta OSPRTCH_VEC + 1
-  lda #<prt_init            ; OSPRTINIT
-  sta OSPRTINIT_VEC
-  lda #>prt_init
-  sta OSPRTINIT_VEC + 1
-  lda #<prt_msg             ; OSPRTMSG
-  sta OSPRTMSG_VEC
-  lda #>prt_msg
-  sta OSPRTMSG_VEC + 1
-  lda #<prt_str_buf         ; OSPRTSBUF
-  sta OSPRTSBUF_VEC
-  lda #>prt_str_buf
-  sta OSPRTSBUF_VEC + 1
-  lda #<prt_load_state_msg         ; OSPRTSTMSG
-  sta OSPRTSTMSG_VEC
-  lda #>prt_load_state_msg
-  sta OSPRTSTMSG_VEC + 1
-  ; ZOLADOS
-  lda #<zd_delfile         ; OSZDDEL
-  sta OSZDDEL
-  lda #>zd_delfile
-  sta OSZDDEL + 1
-  lda #<zd_loadfile         ; OSZDLOAD
-  sta OSZDLOAD
-  lda #>zd_loadfile
-  sta OSZDLOAD + 1
-  lda #<zd_save_data         ; OSZDSAVE
-  sta OSZDSAVE
-  lda #>zd_save_data
-  sta OSZDSAVE + 1
-
-; OSUSRINT
-
-  lda #<delay               ; OSDELAY
-  sta OSDELAY_VEC
-  lda #>delay
-  sta OSDELAY_VEC + 1
+INCLUDE "include/os_call_vectors.asm"
 
 ; Select serial as default input/output streams
 ;  lda #STR_SEL_SERIAL       ; not used yet
@@ -245,9 +109,28 @@ ORG ROMSTART          ; This is where the actual code starts.
   jsr OSWRCH
   PRT_MSG version_str, duart_println
 
-;  jsr lcd_clear_buf                 ; Clear LCD buffer
+  jsr lcd_clear_buf                 ; Clear LCD buffer
   PRT_MSG version_str, lcd_println  ; Print initial messages on LCD
   PRT_MSG start_msg, lcd_println
+
+; CHECK FOR EXTENDED ROM/RAM BOARD
+  lda #4                        ; Use bank 4. This is never a ROM
+  sta EXTMEM_SLOT_SEL           ; Select it
+  jsr extmem_ram_chk            ; Run a check. Also sets the bit in SYS_REG
+  lda FUNC_ERR
+  bne boot_exmem_err            ; If error 0, no problem
+  LOAD_MSG exmem_fitted_msg
+  jmp boot_exmem_def
+.boot_exmem_err
+  LOAD_MSG exmem_absent_msg
+.boot_exmem_def
+  lda #CHR_LINEEND
+  jsr OSWRCH
+  jsr OSWRMSG
+  jsr OSLCDMSG
+  lda #0                        ; Now revert to 0 as default
+  sta EXTMEM_SLOT_SEL           ; Select it
+  sta EXTMEM_BANK               ; Store it for some reason
 
   lda #<500                         ; interval for delay function - in ms
   sta LCDV_TIMER_INTVL
@@ -309,6 +192,7 @@ ORG ROMSTART          ; This is where the actual code starts.
   sta TBL_VEC_H                   ; and also store in table vector
   jmp (TBL_VEC_L)                 ; Now jump to location indicated by pointer
 .process_input_fail
+  LED_OFF LED_ERR
   lda #PARSE_ERR_CODE
   sta FUNC_ERR
   jsr os_print_error
