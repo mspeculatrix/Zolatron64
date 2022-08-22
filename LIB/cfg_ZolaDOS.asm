@@ -25,7 +25,8 @@ ZD_IFR   = ZD_BASE_ADDR + $0D		      ; Interrupt Flag Register
 ZD_TIMER_COUNT = $0600                ; Using page 6 as workspace memory
 ZD_WKSPC       = $0600 + 2            ; for ZolaDOS
 
-ZD_OPCODE_LOAD  = 2
+ZD_OPCODE_LOAD  = 2                   ; Opcode for loading executable .BIN files
+ZD_OPCODE_DLOAD = 3                   ; Opcode for loading data files
 ZD_OPCODE_LS    = 8
 ZD_OPCODE_OPEN  = 10
 ZD_OPCODE_CLOSE = 11

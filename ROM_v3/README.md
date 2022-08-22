@@ -1,12 +1,13 @@
 ## Zolatron 64 ROM
 
-This is V2 of the ROM. It considers the following boards to be intrinsic parts of the computer (which need to be served by the OS):
+This is V3 of the ROM. It considers the following boards to be intrinsic parts of the computer (which need to be served by the OS):
 
 * CPU board (duh!)
 * LCDV  - LCD/LED board - VIA provides timer 1 for delay function
-* DUART - SC28L92 DUART board (replaces the 6551 ACIA)
+* DUART - SC28L92 DUART board
 * ZD    - RPi/ZolaDOS board
 * USRP  - User Port VIA board (provides timers available for user programs)
+* EXMEM - Extended memory board
 * PRT   - Parallel interface board
 
 The Zolatron's ROM code occupies the top 16KB of the address space – $C000-$FFFF.
@@ -18,7 +19,3 @@ Communication with the Zolatron is via serial at 9600 baud 8N1. As we're not usi
 The output-nn.txt files in the _output_ folder are the output from Beebasm when the code is assembled. Just in case.
 
 _build_ is just a small Bash script I use to save typing (and remembering) the commands to assemble the code and write it to the EEPROM. Documentation is in the script itself.
-
-_burn_ is a Bash script to write a bin file to the EEPROM. I use it to write older bin files. You need to be in the ROM directory to run it and it looks in the bin/ directory within that for its files.
-
-As the source file was starting to get rather long, and I got tired of scrolling, I've now carved out many discrete parts of the code and have put them in include files, in the _include_ directory. These are likely to change frequently.
