@@ -1,0 +1,112 @@
+%SIGNAL
+PIN   9 =  A5 
+PIN  11 =  A6 
+PIN  12 =  A7 
+PIN  14 =  A8 
+PIN  16 =  A9 
+PIN  17 =  A10 
+PIN  18 =  A11 
+PIN  19 =  A12 
+PIN  20 =  A13 
+PIN  21 =  A14 
+PIN  24 =  A15 
+PIN  37 =  BSEL0 
+PIN  36 =  BSEL1 
+PIN  34 =  BSEL2 
+PIN  33 =  BSEL3 
+PIN   0 =  BSEL_EN 
+PIN  31 = !CHIP_EN0 
+PIN  40 = !CHIP_EN1 
+PIN  28 = !CHIP_EN2 
+PIN  27 = !CHIP_EN3 
+PIN  39 = !CHIP_EN4 
+PIN   0 =  CHIP_SEL0 
+PIN   0 =  CHIP_SEL1 
+PIN   0 =  CHIP_SEL2 
+PIN   0 =  CHIP_SEL3 
+PIN   0 =  CHIP_SEL4 
+PIN  43 =  CLK 
+PIN   4 =  D0 
+PIN   5 =  D1 
+PIN   6 =  D2 
+PIN   8 =  D3 
+PIN  41 =  RWB 
+%END
+
+%FIELD
+FIELD BANK = BSEL3,BSEL2,BSEL1,BSEL0
+FIELD CHIPSL = CHIP_SEL4,CHIP_SEL3,CHIP_SEL2,CHIP_SEL1,CHIP_SEL0
+%END
+
+%EQUATION
+BSEL0.d  =>
+    D0
+
+BSEL0.ce  =>
+    BSEL_EN & !RWB
+
+BSEL0.ck  =>
+    !CLK
+
+BSEL1.d  =>
+    D1
+
+BSEL1.ce  =>
+    BSEL_EN & !RWB
+
+BSEL1.ck  =>
+    !CLK
+
+BSEL2.d  =>
+    D2
+
+BSEL2.ce  =>
+    BSEL_EN & !RWB
+
+BSEL2.ck  =>
+    !CLK
+
+BSEL3.d  =>
+    D3
+
+BSEL3.ce  =>
+    BSEL_EN & !RWB
+
+BSEL3.ck  =>
+    !CLK
+
+BSEL_EN =>
+    A5 & A6 & A7 & A8 & A9 & A10 & A11 & A12 & A13 & !A14 & A15
+
+CHIP_EN0 =>
+    !A13 & !A14 & A15 & CHIP_SEL0
+
+CHIP_EN1 =>
+    !A13 & !A14 & A15 & CHIP_SEL1
+
+CHIP_EN2 =>
+    !A13 & !A14 & A15 & CHIP_SEL2
+
+CHIP_EN3 =>
+    !A13 & !A14 & A15 & CHIP_SEL3
+
+CHIP_EN4 =>
+    !A13 & !A14 & A15 & CHIP_SEL4
+
+CHIP_SEL0 =>
+    !BSEL0 & !BSEL1 & !BSEL2 & !BSEL3
+
+CHIP_SEL1 =>
+    BSEL0 & !BSEL1 & !BSEL2 & !BSEL3
+
+CHIP_SEL2 =>
+    !BSEL0 & BSEL1 & !BSEL2 & !BSEL3
+
+CHIP_SEL3 =>
+    BSEL0 & BSEL1 & !BSEL2 & !BSEL3
+
+CHIP_SEL4 =>
+    BSEL3
+  # BSEL2
+
+%END

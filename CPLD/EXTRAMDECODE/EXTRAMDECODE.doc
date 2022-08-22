@@ -1,0 +1,114 @@
+
+*******************************************************************************
+                                 EXTMEMDECODE
+*******************************************************************************
+
+CUPL(WM)        5.0a Serial# MW-10400000
+Device          f1502plcc44  Library DLIB-h-40-1
+Created         Sat Jul 30 12:00:06 2022
+Name            EXTMEMDECODE 
+Partno          00 
+Revision        01 
+Date            03/07/2022 
+Designer        SMD 
+Company         Machina Speculatrix 
+Assembly        
+Location        
+
+===============================================================================
+                            Expanded Product Terms
+===============================================================================
+
+BSEL0.d  =>
+    D0
+
+BSEL0.ce  =>
+    BSEL_EN & !RWB
+
+BSEL0.ck  =>
+    !CLK
+
+BSEL1.d  =>
+    D1
+
+BSEL1.ce  =>
+    BSEL_EN & !RWB
+
+BSEL1.ck  =>
+    !CLK
+
+BSEL2.d  =>
+    D2
+
+BSEL2.ce  =>
+    BSEL_EN & !RWB
+
+BSEL2.ck  =>
+    !CLK
+
+BSEL3.d  =>
+    D3
+
+BSEL3.ce  =>
+    BSEL_EN & !RWB
+
+BSEL3.ck  =>
+    !CLK
+
+BSEL_EN =>
+    A5 & A6 & A7 & A8 & A9 & A10 & A11 & A12 & A13 & !A14 & A15
+
+RAM_EN =>
+    !A13 & !A14 & A15
+
+
+===============================================================================
+                                 Symbol Table
+===============================================================================
+
+Pin Variable                                    Pterms   Max     Min    
+Pol   Name              Ext     Pin     Type     Used   Pterms  Level   
+--- --------            ---     ---     ----    ------  ------  -----   
+
+    A5                          9        V        -       -       -     
+    A6                          11       V        -       -       -     
+    A7                          12       V        -       -       -     
+    A8                          14       V        -       -       -     
+    A9                          16       V        -       -       -     
+    A10                         17       V        -       -       -     
+    A11                         18       V        -       -       -     
+    A12                         19       V        -       -       -     
+    A13                         20       V        -       -       -     
+    A14                         21       V        -       -       -     
+    A15                         24       V        -       -       -     
+    BSEL0                       37       V        -       -       -     
+    BSEL0               d       37       X        1       0       4     
+    BSEL0               ce      37       X        1       0       4     
+    BSEL0               ck      37       X        1       0       1     
+    BSEL1                       36       V        -       -       -     
+    BSEL1               d       36       X        1       0       4     
+    BSEL1               ce      36       X        1       0       4     
+    BSEL1               ck      36       X        1       0       1     
+    BSEL2                       34       V        -       -       -     
+    BSEL2               d       34       X        1       0       4     
+    BSEL2               ce      34       X        1       0       4     
+    BSEL2               ck      34       X        1       0       1     
+    BSEL3                       33       V        -       -       -     
+    BSEL3               d       33       X        1       0       4     
+    BSEL3               ce      33       X        1       0       4     
+    BSEL3               ck      33       X        1       0       1     
+    BSEL_EN                     45       N        1       0       4     
+    CLK                         43       V        -       -       -     
+    D0                          4        V        -       -       -     
+    D1                          5        V        -       -       -     
+    D2                          6        V        -       -       -     
+    D3                          8        V        -       -       -     
+ !  RAM_EN                      39       V        1       0       4     
+    RWB                         41       V        -       -       -     
+
+
+LEGEND    D : default variable         F : field      G : group
+          I : intermediate variable    N : node       M : extended node
+          U : undefined                V : variable   X : extended variable
+          T : function
+

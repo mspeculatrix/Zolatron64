@@ -1,0 +1,125 @@
+LISTING FOR LOGIC DESCRIPTION FILE: EXTMEMDECODE.pld                 Page 1
+
+CUPL(WM): Universal Compiler for Programmable Logic
+Version 5.0a Serial# MW-10400000
+Copyright (c) 1983, 1998 Logical Devices, Inc.
+Created Wed Aug 17 20:12:17 2022
+
+  1:Name     EXTMEMDECODE ;
+  2:PartNo   00 ;
+  3:Date     03/07/2022 ;
+  4:Revision 01 ;
+  5:Designer SMD ;
+  6:Company  Machina Speculatrix ;
+  7:Assembly ;
+  8:Location ;
+  9:Device   f1502ispplcc44 ;
+ 10:
+ 11:/*
+ 12:*** Working Version ***
+ 13:
+ 14:This provides decoding for extended memory on the Zolatron 64.
+ 15:
+ 16:The memory sits at address $8000. The decoding allows us to select one of 16
+ 17:8K banks at this address.
+ 18:
+ 19:The bank is selected by writing the value 0-15 to the address $BFE0. This
+ 20:CPLD provides the decoding for that address as well as a register (BSEL) of four
+ 21:D flip-flops that hold the selected value.
+ 22:
+ 23:This register connects to address lines A13-A16 of the RAM, thus
+ 24:selecting the effective address of the bank.
+ 25:
+ 26:The BSEL register is also used to select among five chip enable signals -
+ 27:four for the RAM chips and one for the RAM. If the BSEL value is 0-3
+ 28:then the appropriate CHIP_EN line 0-3 is selected. If BSEL is 4-15 then
+ 29:CHIP_EN4 is selected.
+ 30:
+ 31:On the board itself, four jumpers individually select whether CHIP_EN lines
+ 32:0-3 go to their respective ROMs or to the RAM.
+ 33:
+ 34:NB: The build script has been modified to make the chip enable outputs
+ 35:open-collector.
+ 36:
+ 37:*/
+ 38:
+ 39:/* --------------- INPUTS --------------------------------------------------- */
+ 40:PIN 43 = CLK;                              /* PHI2 clock                      */
+ 41:PIN 41 = RWB;                              /* Read!Write signal from CPU      */
+ 42:PIN [8,6,5,4] = [D3..0] ;                  /* Data bus to select mem bank     */
+ 43:PIN [24,21..16,14,12,11,9] = [A15..5];     /* Address bus                     */
+ 44:
+ 45:/* --------------- OUTPUTS -------------------------------------------------- */
+ 46:PIN [33,34,36,37] = [BSEL3..0] ;           /* Bank select register            */
+ 47:PIN [39,27,28,40,31] = ![CHIP_EN4..0];     /* Chip enable reg - active low    */
+ 48:
+ 49:PINNODE [0..0] = [CHIP_SEL4..0];                  /* Internal chip select register   */
+ 50:PINNODE  0  = BSEL_EN;                         /* Enable latching for bank select */
+ 51:
+ 52:
+ 53:/* --------------- BANK SELECTION ------------------------------------------- */
+
+LISTING FOR LOGIC DESCRIPTION FILE: EXTMEMDECODE.pld                 Page 2
+
+CUPL(WM): Universal Compiler for Programmable Logic
+Version 5.0a Serial# MW-10400000
+Copyright (c) 1983, 1998 Logical Devices, Inc.
+Created Wed Aug 17 20:12:17 2022
+
+ 54:/* BSEL_EN is selected when the address set is $BFE0. This is the case when
+ 55:we're writing a value to select the memory bank. */
+ 56:
+ 57:BSEL_EN = A15 & !A14 & [A13..5]:& ;      /* Decodes for 32-bit block at $BFE0 */
+ 58:
+ 59:/* The four D flip-flops in the BSEL register have their clocks enabled.
+ 60:The flip-flop is set to the appropriate value when CLK transitions low - ie, on
+ 61:the falling edge. The flip-flop is also enabled only when RWB is low (ie doing
+ 62:write operations) BSEL_EN is active.
+ 63:
+ 64:The flip-flops will set according to the inputs on D0-D3.
+ 65:When the clock goes high again, these values are latched. When we no longer
+ 66:have $BFE0 as the address, the values will remain latched.
+ 67:
+ 68:These four flip-flops are connected to A13-A16 on the RAM chip. They're
+ 69:not attached to the address bus - so they don't interfere with anything else.
+ 70:*/
+ 71:BSEL3.d = D3;                     /* Value from data bus                      */
+ 72:BSEL3.ck = !CLK;                  /* Act on falling edge of clock             */
+ 73:BSEL3.ce = !RWB & BSEL_EN;        /* Only during writes & with $BFE0 selected */
+ 74:BSEL2.d = D2;
+ 75:BSEL2.ck = !CLK;
+ 76:BSEL2.ce = !RWB & BSEL_EN;
+ 77:BSEL1.d = D1;
+ 78:BSEL1.ck = !CLK;
+ 79:BSEL1.ce = !RWB & BSEL_EN;
+ 80:BSEL0.d = D0;
+ 81:BSEL0.ck = !CLK;
+ 82:BSEL0.ce = !RWB & BSEL_EN;
+ 83:
+ 84:
+ 85:/* --------------- CHIP ENABLE ---------------------------------------------- */
+ 86:
+ 87:/* Match the CHIP_SEL internal register settings to the current value of the
+ 88:BSEL register. */
+ 89:FIELD BANK = [BSEL3..0];
+ 90:FIELD CHIPSL = [CHIP_SEL4..0];                   /* 4 = RAM, 3..0 = ROM/RAM   */
+ 91:TABLE BANK => CHIPSL {
+ 92:    'b'0000 => 'b'00001 ;                        /* CHIP_EN0 - BANK 0 RAM/ROM */
+ 93:    'b'0001 => 'b'00010 ;                        /* CHIP_EN1 - BANK 1 RAM/ROM */
+ 94:    'b'0010 => 'b'00100 ;                        /* CHIP_EN2 - BANK 2 RAM/ROM */
+ 95:    'b'0011 => 'b'01000 ;                        /* CHIP_EN3 - BANK 3 RAM/ROM */
+ 96:    'b'01XX => 'b'10000 ;                        /* CHIP_EN4 - BANKS 4-15 RAM */
+ 97:    'b'1XXX => 'b'10000 ;                        /*    "         "     "   "  */
+ 98:}
+ 99:
+100:/* Set the appropriate chip enable signal when address $8000 is selected.     */
+101:CHIP_EN0 = A15 & !A14 & !A13 & CHIP_SEL0;          /* ROM/RAM Bank 0          */
+102:CHIP_EN1 = A15 & !A14 & !A13 & CHIP_SEL1;          /* ROM/RAM Bank 1          */
+103:CHIP_EN2 = A15 & !A14 & !A13 & CHIP_SEL2;          /* ROM/RAM Bank 2          */
+104:CHIP_EN3 = A15 & !A14 & !A13 & CHIP_SEL3;          /* ROM/RAM Bank 3          */
+105:CHIP_EN4 = A15 & !A14 & !A13 & CHIP_SEL4;          /* RAM Banks 4-15          */
+106:
+107:
+
+
+
