@@ -22,10 +22,7 @@ INCLUDE "zumpus_cfg.asm"
 
 ORG USR_PAGE
 .header                     ; HEADER INFO
-  jmp startprog             ;
-  equw header               ; @ $0803 Entry address
-  equw reset                ; @ $0805 Reset address
-  equw endcode              ; @ $0807 Addr of first byte after end of program
+  INCLUDE "../../LIB/header_std.asm"
   equb 'P'
   equs 0,0,0                ; -- Reserved for future use --
   equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - nul terminated
@@ -52,7 +49,7 @@ ORG USR_PAGE
   lda #%01000000		          ; Bit 7 off - don't need interrupts
   sta USRP_IER
   lda #%01000000              ; Set timer to free-run mode
-  sta USRP_ACL			
+  sta USRP_ACL
   lda #59                     ; Start value
   sta USRP_T1CL
   lda #0
@@ -91,7 +88,7 @@ ORG USR_PAGE
   jsr OSWRMSG
   NEWLINE
   stz Z_STATE                     ; Set Zumpus to sleeping
-  stz P_CONDITION                 ; Set Player's condition to default 
+  stz P_CONDITION                 ; Set Player's condition to default
   lda #NUM_STAPLES                ; Set initial number of staples
   sta STAPLE_COUNT
 ; Randomise initial locations of player & threats
@@ -259,7 +256,7 @@ ORG USR_PAGE
 .zum_cmd_shoot_hit
   ldx #4                        ; Divisor for MOD
   jsr roll_dice                 ; A should contain value 0-3
-  cmp #2                        
+  cmp #2
   bcs zum_cmd_shoot_win         ; If it's less than 2, we won!
   LOAD_MSG shot_nearhit_msg     ; Otherwise, it's a near hit
   jsr OSWRMSG

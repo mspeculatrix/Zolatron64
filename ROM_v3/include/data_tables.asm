@@ -255,7 +255,9 @@ ALIGN &100                  ; Start on new page
   equs "No ext memory",0
 
 .test_msg
-  equs "Hello World!", 0
+  equs "Hello World!",0
+.test_msg2
+  equs "Test message",0
 
 .prompt_msg
   equs CHR_LINEEND, "Z>", 0

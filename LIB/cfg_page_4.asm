@@ -4,11 +4,11 @@ STR_BUF_SZ = $20            ; 32 bytes
 
 \ The purpose of the following variables is to provide tempoary storage within
 \ subroutines/functions, as entry parameters for functions or to hold the
-\ results of functions. You should not assume they have any reliable value 
+\ results of functions. You should not assume they have any reliable value
 \ outside of functions other than immediate return values.
 EXTMEM_BANK = $0400                   ; Number of current extended memory bank
 TEST_VAL    = EXTMEM_BANK + 1
-TMP_VAL     = TEST_VAL + 1 
+TMP_VAL     = TEST_VAL + 1
 TMP_IDX     = TMP_VAL + 1             ; Index for use with buffers, loops
 TMP_COUNT   = TMP_IDX + 1             ; For misc temporary counters
 TMP_WORD_L  = TMP_COUNT + 1		        ; For temporary storage of 16-bit values
@@ -36,8 +36,7 @@ STREAM_SELECT_REG = PRG_EXIT_CODE + 1
 LCDV_TIMER_COUNT = STREAM_SELECT_REG + 1  ; times timer interrupt has triggered
 LCDV_TIMER_INTVL = LCDV_TIMER_COUNT + 2   ; value for interval - 2 bytes
 
-LCD_BUF  = LCDV_TIMER_INTVL + 2   ;
-; next will be LCD_BUF + LCD_BUF_SZ + 1
+LCD_BUF  = LCDV_TIMER_INTVL + 2   ; next will be LCD_BUF + LCD_BUF_SZ + 1
 
 
 ; Variables for holding multi-byte vaues for math routines such as
@@ -49,4 +48,3 @@ LCD_BUF  = LCDV_TIMER_INTVL + 2   ;
 
 
 ;ZD_TIMER_COUNT = LCD_BUF + LCD_BUF_SZ  ; DEFINED IN cfg_VIAB_ZolaDOS.asm
-

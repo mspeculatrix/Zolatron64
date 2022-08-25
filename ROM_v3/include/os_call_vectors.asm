@@ -43,6 +43,10 @@
   sta OSWRSBUF_VEC
   lda #>duart_snd_strbuf
   sta OSWRSBUF_VEC + 1
+  lda #<stdout_append     ; OSSOAPP
+  sta OSSOAPP_VEC
+  lda #>stdout_append
+  sta OSSOAPP_VEC + 1
 \ --- CONVERSIONS --------------------------------------------------------------
   lda #<byte_to_hex_str      ; OSB2HEX
   sta OSB2HEX_VEC
@@ -138,3 +142,4 @@
   sta OSDELAY_VEC
   lda #>delay
   sta OSDELAY_VEC + 1
+; OSUSRINT - to come

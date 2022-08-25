@@ -1,7 +1,5 @@
 ; Library for ZolaDOS using a 6522 VIA
 
-; All subroutines to start with 'zd'
-
 \ ------------------------------------------------------------------------------
 \ ---  ZD_INIT
 \ ------------------------------------------------------------------------------
@@ -28,7 +26,7 @@
 \ ------------------------------------------------------------------------------
 \ ---  ZD_INIT_PROCESS
 \ ------------------------------------------------------------------------------
-\ When intiating a specific process, this provides the first communications with
+\ When intiating a specific process, this provides the first communication with
 \ the RPi, sending a code designating which action is required.
 \ ON ENTRY: The relevant opcode must be in A.
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
@@ -447,7 +445,7 @@
 
 \ --- DATA ---------------------------------------------------------------------
 .deleting_msg
-  equs "Deleting...",0
+  equs "Deleting ...",0
 .loading_msg
   equs "Loading ... ",0
 .saving_msg

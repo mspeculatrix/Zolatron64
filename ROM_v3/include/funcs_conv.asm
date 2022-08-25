@@ -2,6 +2,35 @@
 ;
 
 \ ------------------------------------------------------------------------------
+\ ---  BYTE_TO_BIN
+\ ------------------------------------------------------------------------------
+\ ON ENTRY: Byte to be converted must be in A.
+\ ON EXIT : Nul-terminated string STR_BUF. Byte 8 is null terminator.
+.byte_to_bin
+  phx : phy
+  sta TMP_VAL                   ; Preserve initial value
+  ldx #0                        ; Index for STR_BUF
+  lda #128
+  sta TEST_VAL                  ; Bit mask for testing bits
+.byte_to_bin_loop
+  lda TMP_VAL
+  and TEST_VAL                  ; AND supplied value with bit mask
+  beq byte_to_bin_set_zero
+  lda #'1'
+  jmp byte_to_bin_next
+.byte_to_bin_set_zero
+  lda #'0'
+.byte_to_bin_next
+  sta STR_BUF,X
+  lsr TEST_VAL                  ; Shift bit mask
+  inx
+  cpx #8
+  bne byte_to_bin_loop
+  stz STR_BUF,X
+  ply : plx
+  rts
+
+\ ------------------------------------------------------------------------------
 \ ---  BYTE_TO_HEX_STR
 \ ---  Implements: OSB2HEX
 \ ------------------------------------------------------------------------------
@@ -9,7 +38,7 @@
 \ ON ENTRY: Byte to be converted must be in A.
 \ ON EXIT : String in three bytes starting at STR_BUF. Third byte is a null
 \           terminator.
-.byte_to_hex_str              
+.byte_to_hex_str
   phx : phy
   tax                         ; Keep a copy of A in X for later
   lsr A                       ; Logical shift right 4 bits
@@ -28,7 +57,7 @@
   txa                         ; Restore A to original value.
   ply : plx
   rts
-  
+
 \ ------------------------------------------------------------------------------
 \ ---  BYTE_TO_INT_STR  ; Convert 1-byte value to decimal string
 \ ---  Implements: OSB2ISTR
@@ -74,7 +103,7 @@
 \ ------------------------------------------------------------------------------
 \ Converts 2-char hex string representation to a byte value.
 \ ON ENTRY: ASCII codes for hex value must be in BYTE_CONV_H and BYTE_CONV_L.
-\ ON EXIT : - Byte value is in FUNC_RESULT. 
+\ ON EXIT : - Byte value is in FUNC_RESULT.
 \           - Error in FUNC_ERR
 
 .hex_str_to_byte              ; assumes text is in BYTE_CONV_H and BYTE_CONV_L
@@ -87,8 +116,8 @@
   cpx FUNC_ERR
   bne hex_str_to_byte_err
   asl A                       ; Shift to high nibble
-  asl A 
-  asl A 
+  asl A
+  asl A
   asl A
   sta FUNC_RESULT             ; And store
   lda BYTE_CONV_L             ; Get the low nibble character
@@ -141,10 +170,10 @@
 \ ON ENTRY: 16-bit value expected in TMP_ADDR_A/+1
 \ ON EXIT : Hex string in STR_BUF
 .uint16_to_hex_str
-  pha 
+  pha
   lda TMP_ADDR_A_L
   jsr byte_to_hex_str
-  lda STR_BUF                 ; STR_BUF contains the two chars for the low byte, 
+  lda STR_BUF                 ; STR_BUF contains the two chars for the low byte,
   sta TMP_WORD_L              ; but at locations 0 & 1.
   lda STR_BUF + 1             ; Put these in temporary locations
   sta TMP_WORD_H

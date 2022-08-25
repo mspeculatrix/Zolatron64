@@ -105,7 +105,7 @@
   jsr OSWRMSG
   stz TMP_COUNT                 ; Keep track how many bytes printed in each row
 .display_mem_next_line
-  jsr uint16_to_hex_str       ; Creates ASCII hex string starting at STR_BUF
+  jsr uint16_to_hex_str         ; Creates ASCII hex string starting at STR_BUF
   lda #$20                      ; Add a space
   sta STR_BUF + 4
   stz STR_BUF + 5               ; Add a null terminator
@@ -114,17 +114,9 @@
   ldx #0
   lda (TMP_ADDR_A)              ; Load the value of the byte at addr
   jsr byte_to_hex_str           ; Puts ASCII string in STR_BUF
-  lda STR_BUF                   ; Transferring STR_BUF to UART buffer
-  sta STDOUT_BUF,X              ;     "           "     "   "
-  inx                           ;     "           "     "   "
-  lda STR_BUF+1                 ;     "           "     "   "
-  sta STDOUT_BUF,X              ;     "           "     "   "
-  inx                           ;     "           "     "   "
-  lda #$20                      ; Followed by a space
-  sta STDOUT_BUF,X
-  inx
-  stz STDOUT_BUF,X              ; Followed by null terminator
-  jsr OSWRBUF
+  jsr OSWRSBUF
+  lda #' '
+  jsr OSWRCH
   inc TMP_COUNT
   lda TMP_COUNT
   cmp #$10                      ; Have we got to 16?
@@ -146,12 +138,10 @@
 .display_mem_inc_LSB
   inc TMP_ADDR_A_L              ; Increment LSB of start address
   lda TMP_ADDR_A_L
-  cmp #$00                      ; Has it rolled over?
-  bne display_mem_loopback      ; If not, go get next byte
+  bne display_mem_loopback      ; Has it rolled over? If not, go get next byte
   inc TMP_ADDR_A_H              ; If it has rolled over, increment MSB
 .display_mem_loopback
   lda TMP_COUNT
-  cmp #$00
   beq display_mem_next_line
   jmp display_mem_next_addr
 .display_mem_output_end
@@ -513,4 +503,52 @@
   lda err_ptrs+1,X        ; Get MSB
   sta MSG_VEC+1           ; and put in MSG_VEC high byte
   jsr OSWRMSG             ; Print to standard stream
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  STDOUT_APPEND
+\ ---  Implements: OSSOAPP
+\ ------------------------------------------------------------------------------
+\ ON ENTRY: - Assumes index for next char is in STDOUT_IDX
+\           - MSG_VEC/+1 contains pointer to text string
+\ ON EXIT : - FUNC_ERR contains error code - 0 for success
+.stdout_append
+  phx : phy
+  stz FUNC_ERR
+.stdout_append_copy
+  ldy #0
+  ldx STDOUT_IDX
+.stdout_append_copy_loop
+  lda (MSG_VEC),Y
+  beq stdout_append_copy_done
+  sta STDOUT_BUF,X
+  inx
+  iny
+  jmp stdout_append_copy_loop
+.stdout_append_copy_done
+  lda #0
+  sta STDOUT_BUF,X
+  stx STDOUT_IDX
+  ply : plx
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  STDOUT_TO_MSG_VEC
+\ ------------------------------------------------------------------------------
+\ Put the start address of STDOUT_BUF into the MSG_VEC vector.
+.stdout_to_msg_vec
+  lda #<STDOUT_BUF
+  sta MSG_VEC
+  lda #>STDOUT_BUF
+  sta MSG_VEC+1
+  rts
+\ ------------------------------------------------------------------------------
+\ ---  STR_BUF_TO_MSG_VEC
+\ ------------------------------------------------------------------------------
+\ Put the start address of STR_BUF into the MSG_VEC vector.
+.str_buf_to_msg_vec
+  lda #<STR_BUF
+  sta MSG_VEC
+  lda #>STR_BUF
+  sta MSG_VEC+1
   rts

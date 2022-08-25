@@ -26,10 +26,13 @@ INCLUDE "../../LIB/cfg_page_4.asm"
 ORG USR_PAGE
 .header                     ; HEADER INFO
   jmp startprog             ; $4C followed by 2-byte address
-  equw header               ; @ $0803 Entry address - normally $0800
-  equw reset                ; @ $0805 Reset address
-  equw endcode              ; @ $0807 Addr of first byte after end of program
-  equb 'P'                  ; @ $0808 D=data, L=library, O=overlay, X=OS ext
+  equb <header              ; @ $0803 Entry address
+  equb >header
+  equb <reset               ; @ $0805 Reset address
+  equb >reset
+  equb <endcode             ; @ $0807 Addr of first byte after end of program
+  equb >endcode
+ equb 'P'                  ; @ $0808 D=data, L=library, O=overlay, X=OS ext
   equs 0,0,0                ; -- Reserved for future use --
 .prog_name
   equs "TEMPLATE",0         ; @ $080D Short name, max 15 chars - nul terminated

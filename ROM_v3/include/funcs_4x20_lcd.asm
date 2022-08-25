@@ -1,4 +1,11 @@
-\ LCD FUNCTIONS -- funcs_2x16_lcd.asm -----------------------------------------------
+\ LCD FUNCTIONS -- funcs_4x20_lcd.asm ------------------------------------------
+
+\ Character addresses for 20x4 display:
+\ Line 0 :  0 ($0)  -  19 ($13)
+\ Line 1 : 64 ($40) -  83 ($53)
+\ Line 2 : 20 ($14) -  39 ($27)
+\ Line 3 : 84 ($54) - 103 ($67)
+
 
 \ ------------------------------------------------------------------------------
 \ ---  DELAY
@@ -102,8 +109,7 @@
 \ ---  LCD_PRT_LINEBUF
 \ ------------------------------------------------------------------------------
 \ Prints a line's worth from the LCD_BUF buffer.
-\ ON ENTRY: Y must contain line index - 0 or 1 for a 2-line display,
-\                                       0-3 for a 4-line display
+\ ON ENTRY: Y must contain line index - 0-3 for a 4-line display
 .lcd_prt_linebuf
   pha : phx : phy
   ldx #0                      ; Set cursor to start of line
@@ -298,14 +304,12 @@
 \ ---  Implements: OSLCDSC
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: X & Y co-ords have been put in X and Y.
-\           - X should contain the X param in range 0-15.
-\           - Y should be 0 or 1.
+\           - X should contain the X param in range 0-19.
+\           - Y should be 0-3.
 .lcd_set_cursor
-  txa                     ; A now contains X position
-  cpy #1
-  bcc lcd_move_curs       ; Y is less than 1
-  ora #$40                ; If we want second line, add $40 by setting bit 6
-.lcd_move_curs
+  stx TMP_VAL
+  lda lcd_ln_base_addr,Y  ; Base address for line, from lookup table
+  adc TMP_VAL
   ora #LCD_SET_DDRAM      ; OR with LCD_SET_DDRAM command byte
   jsr lcd_cmd
   rts

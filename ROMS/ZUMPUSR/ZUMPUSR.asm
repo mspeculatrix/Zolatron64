@@ -26,10 +26,7 @@ INCLUDE "zumpus_cfg.asm"
 
 ORG EXTMEM_LOC
 .header                     ; HEADER INFO
-  jmp startprog             ;
-  equw header               ; @ $8003 Entry address
-  equw reset                ; @ $8005 Reset address
-  equw endcode              ; @ $8007 Addr of first byte after end of program
+  INCLUDE "../../LIB/header_std.asm"
   equb "P"                  ; @ $8008 A code of P denotes a standalone program
   equs 0,0,0                ; -- Reserved for future use --
   equs "ZUMPUSR",0           ; @ $800D Short name, max 15 chars - nul terminated

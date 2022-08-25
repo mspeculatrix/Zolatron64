@@ -22,10 +22,7 @@ INCLUDE "../../LIB/cfg_page_4.asm"
 
 ORG USR_PAGE
 .header                     ; HEADER INFO
-  jmp startprog             ;
-  equw header               ; @ $0803 Entry address
-  equw reset                ; @ $0805 Reset address
-  equw endcode              ; @ $0807 Addr of first byte after end of program
+  INCLUDE "../../LIB/header_std.asm"
   equb 'P'
   equs 0,0,0                ; -- Reserved for future use --
   equs "TESTA",0            ; @ $080D Short name, max 15 chars - nul terminated
@@ -47,13 +44,13 @@ ORG USR_PAGE
 
 .main
   lda #'A'
-  jsr OSLCDCH
+;  jsr OSLCDCH
   jsr OSWRCH
   lda #'B'
-  jsr OSLCDCH
+;  jsr OSLCDCH
   jsr OSWRCH
   lda #'C'
-  jsr OSLCDCH
+;  jsr OSLCDCH
   jsr OSWRCH
   lda #' '
   jsr OSWRCH
@@ -66,11 +63,11 @@ ORG USR_PAGE
   jsr OSWRMSG
   lda #CHR_LINEEND
   jsr OSWRCH
-  jsr OSLCDMSG
+ ; jsr OSLCDMSG
 
   LOAD_MSG second_msg
   jsr OSWRMSG
-  jsr OSLCDMSG
+;  jsr OSLCDMSG
 
 .prog_end
   jmp OSSFTRST

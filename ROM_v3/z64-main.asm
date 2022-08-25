@@ -26,7 +26,7 @@ INCLUDE "../LIB/cfg_page_4.asm"                   ; Misc buffers etc
 INCLUDE "include/cfg_ROM.asm"
 INCLUDE "../LIB/cfg_uart_SC28L92.asm"
 ; INCLUDE "../LIB/cfg_flash-io-snd.asm"
-INCLUDE "../LIB/cfg_2x16_lcd.asm"
+INCLUDE "../LIB/cfg_4x20_lcd.asm"
 INCLUDE "../LIB/cfg_ZolaDOS.asm"
 INCLUDE "../LIB/cfg_user_port.asm"
 INCLUDE "../LIB/cfg_parallel.asm"
@@ -54,6 +54,8 @@ ORG ROMSTART          ; This is where the actual code starts.
   stz STDIN_BUF
   stz STDIN_IDX
   stz STDIN_STATUS_REG
+  stz STDOUT_BUF
+  stz STDOUT_IDX
 
   lda #<USR_PAGE      ; Initialise LOMEM to start of user RAM
   sta LOMEM
@@ -90,30 +92,6 @@ INCLUDE "include/os_call_vectors.asm"
 ; SETUP SERIAL PORTS
   jsr duart_init
 
-; CHECK FOR EXTENDED ROM/RAM BOARD
-  lda #4                        ; Use bank 4. This is never a ROM
-  sta EXTMEM_SLOT_SEL           ; Select it
-  jsr extmem_ram_chk            ; Run a check. Also sets the bit in SYS_REG
-  lda FUNC_ERR
-  bne boot_exmem_err            ; If error 0, no problem
-  LOAD_MSG exmem_fitted_msg
-  jmp boot_exmem_def
-.boot_exmem_err
-  LOAD_MSG exmem_absent_msg
-.boot_exmem_def
-  lda #CHR_LINEEND
-  jsr OSWRCH
-  jsr OSWRMSG
-  jsr OSLCDMSG
-  lda #0                        ; Now revert to 0 as default
-  sta EXTMEM_SLOT_SEL           ; Select it
-  sta EXTMEM_BANK               ; Store it for some reason
-
-  lda #<500                         ; Interval for delay function - in ms
-  sta LCDV_TIMER_INTVL
-  lda #>500
-  sta LCDV_TIMER_INTVL+1
-
 \ ------------------------------------------------------------------------------
 \ ----     MAIN PROGRAM                                                     ----
 \ ------------------------------------------------------------------------------
@@ -134,8 +112,45 @@ INCLUDE "include/os_call_vectors.asm"
   PRT_MSG version_str, duart_println
 
   jsr lcd_clear_buf                 ; Clear LCD buffer
-  PRT_MSG version_str, lcd_println  ; Print initial messages on LCD
   PRT_MSG start_msg, lcd_println
+  PRT_MSG version_str, lcd_println  ; Print initial messages on LCD
+
+; CHECK FOR EXTENDED ROM/RAM BOARD
+  lda #4                        ; Use bank 4. This is never a ROM
+  sta EXTMEM_SLOT_SEL           ; Select it
+  jsr extmem_ram_chk            ; Run a check. Also sets the bit in SYS_REG
+  lda FUNC_ERR
+  bne boot_exmem_err            ; If error 0, no problem
+  LOAD_MSG exmem_fitted_msg
+  jmp boot_exmem_def
+.boot_exmem_err
+  LOAD_MSG exmem_absent_msg
+.boot_exmem_def
+  lda #CHR_LINEEND
+  jsr OSWRCH
+  jsr OSWRMSG
+  jsr OSLCDMSG
+  lda #0                        ; Now revert to 0 as default
+  sta EXTMEM_SLOT_SEL           ; Select it
+  sta EXTMEM_BANK               ; Store it for some reason
+
+  lda #<500                     ; Interval for delay function - in ms
+  sta LCDV_TIMER_INTVL
+  lda #>500
+  sta LCDV_TIMER_INTVL+1
+
+
+; --- TEST CODE ----------------------------------------------------------------
+  LOAD_MSG test_msg
+  jsr stdout_append
+  LOAD_MSG test_msg2
+  jsr stdout_append
+  jsr stdout_to_msg_vec
+  ;jsr OSWRMSG
+  jsr OSLCDMSG
+  stz STDOUT_IDX
+  stz STDOUT_BUF
+; ------------------------------------------------------------------------------
 
   LED_OFF LED_ERR
   LED_OFF LED_BUSY
@@ -235,7 +250,7 @@ INCLUDE "include/funcs_io.asm"
 INCLUDE "include/funcs_isr.asm"
 INCLUDE "include/funcs_ext_mem.asm"
 INCLUDE "../LIB/funcs_math.asm"
-INCLUDE "include/funcs_2x16_lcd.asm"
+INCLUDE "include/funcs_4x20_lcd.asm"
 INCLUDE "include/funcs_prt.asm"
 INCLUDE "include/data_tables.asm"
 
@@ -265,6 +280,7 @@ ORG $FF00
   jmp (OSWRERR_VEC)
   jmp (OSWRMSG_VEC)
   jmp (OSWRSBUF_VEC)
+  jmp (OSSOAPP_VEC)
 
   jmp (OSB2HEX_VEC)
   jmp (OSB2ISTR_VEC)
@@ -291,8 +307,8 @@ ORG $FF00
   jmp (OSZDLOAD_VEC)
   jmp (OSZDSAVE_VEC)
 
-  jmp (OSUSRINT_VEC)
   jmp (OSDELAY_VEC)
+  jmp (OSUSRINT_VEC)
 
 ORG $FFF4
 .reset

@@ -26,8 +26,8 @@ SYS_REG = TIMER_STATUS_REG + 1      ; $61 System Register
 ;  2
 ;  3
 ;  4
-;  5
+;  5      LCD_SIZE           0 = 2x16, 1 = 4x20
 ;  6
 ;  7
-SYS_EXMEM_YES = %00000010
-SYS_EXMEM_NO = %11111101
+SYS_EXMEM_YES = %00000010 ; ORA with reg to set flag
+SYS_EXMEM_NO = %11111101  ; AND with reg to unset flag

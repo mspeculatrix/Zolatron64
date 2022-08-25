@@ -23,10 +23,7 @@ ENDMACRO
 
 ORG USR_PAGE
 .header                     ; HEADER INFO
-  jmp startprog             ;
-  equw header               ; @ $0803 Entry address
-  equw reset                ; @ $0805 Reset address
-  equw endcode              ; @ $0807 Addr of first byte after end of program
+  INCLUDE "../../LIB/header_std.asm"
   equb "P"
   equs 0,0,0                ; -- Reserved for future use --
   equs "ADVENTURE",0        ; @ $080D Short name, max 15 chars - nul terminated

@@ -18,10 +18,7 @@ INCLUDE "../../LIB/cfg_page_4.asm"
 
 ORG EXTMEM_LOC
 .header                     ; HEADER INFO
-  jmp startprog             ;
-  equw header               ; @ $8003 Entry address
-  equw reset                ; @ $8005 Reset address
-  equw endcode              ; @ $8007 Addr of first byte after end of program
+  INCLUDE "../../LIB/header_std.asm"
   equb "P"
   equs 0,0,0                ; -- Reserved for future use --
   equs "TESTBR",0           ; @ $800D Short name, max 15 chars - nul terminated

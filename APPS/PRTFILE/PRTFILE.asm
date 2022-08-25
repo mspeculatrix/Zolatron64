@@ -28,13 +28,13 @@ ORG USR_PAGE
   equs 0,0,0              ; -- Reserved for future use --
   equs "PRT",0            ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
-  equs "1.0",0              ; Version string - nul terminated
+  equs "0.1",0              ; Version string - nul terminated
 
 .startprog
 .reset
   sei             ; Don't interrupt me yet
   cld             ; Don't want BCD
-  ldx #$ff        ; Set stack pointer to $01FF - only need to set the
+  ldx #$FF        ; Set stack pointer to $01FF - only need to set the
   txs             ; LSB, as MSB is assumed to be $01
   stz PRG_EXIT_CODE
   cli
@@ -42,42 +42,19 @@ ORG USR_PAGE
 .main
   jsr OSPRTINIT
 
-  LOAD_MSG printing_msg
-  jsr OSWRMSG
-  jsr OSLCDMSG
-  lda #10
-  jsr OSWRCH
 
-  LOAD_MSG test_msg
-  jsr OSPRTMSG
-  lda FUNC_RESULT
-  bne done
-;  LOAD_MSG test_line
-;  jsr OSPRTMSG
-  ;lda #10
-  ;jsr OSPRTCH
-  ;lda #10
-  ;jsr OSPRTCH
-;  jsr OSLCDMSG
 
-.done
-  jsr OSPRTSTMSG
-  jsr OSWRMSG
-  jsr OSLCDMSG
+.filename_prompt
+  equs "Name of file to print: ",0
 
-.prog_end
-  jmp OSSFTRST
+.another_file_prompt
+  equs "Do you want to print another file (y/n)? ",0
 
-.test_msg
-  equs "Test message!",10,0
-.test_line
-  equs "ABCDEFGHIJKLMNOPQRSTUVWXZY0123456789$#@_"
-  equs "0123456789012345678901234567890123456789",0
-.printing_msg
-  equs "Printing...",0
+.quit_msg
+  equs "All done.",0
 
 .endtag
   equs "EOF",0
 .endcode
 
-SAVE "../bin/PRT.BIN", header, endcode
+SAVE "../bin/PRTFILE.BIN", header, endcode

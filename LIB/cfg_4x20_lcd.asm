@@ -44,12 +44,10 @@ LED_FILE_ACT = 3
 LED_DEBUG 	 = 4
 
 ; LCD PANEL
-LCD_LINES     = 2          ; number of lines on display
-LCD_COLS      = 16         ; number of chars per line
-LCD_LN_BUF_SZ = $28		     ; 40 bytes - per  line
+LCD_LINES     = 4          ; number of lines on display
+LCD_COLS      = 20         ; number of chars per line
+LCD_LN_BUF_SZ = 20		     ; 20 bytes per  line
 LCD_BUF_SZ    = LCD_LINES * LCD_LN_BUF_SZ
-;LCD_MOVE_SRC  = 39		     ; For versions 1 & 2 of ROM - 2-line display
-;LCD_MOVE_DST  = 79         ; For versions 1 & 2 of ROM - 2-line display
 LCD_CLS       = %00000001  ; Clear screen & reset display memory
 LCD_TYPE      = %00111000  ; Set 8-bit mode; 2-line display; 5x8 font
 LCD_MODE      = %00001100  ; Display on; cursor off; blink off
@@ -64,6 +62,9 @@ LCD_SET_DDRAM = %10000000   ; to be ORed with a 7-bit value for the DDRAM addres
 
 ; LEDs - LEDs 0-4 are on Port A, PA0-PA4
 LED_MASK = %00011111        ; will be ORed with control bits for LCD on PORTA
+
+.lcd_ln_base_addr               ; Lookup table
+  equs $00,$40,$14,$54
 
 MACRO LED_ON led_num
   pha

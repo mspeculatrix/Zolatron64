@@ -1,8 +1,9 @@
 ### CPLD code
 
-I've just started learning about CPLDs. This folder will be used for various solutions applicable to the Zolatron that use CPLDs.
+This folder is for CUPL code for CPLDs used on the Zolatron 64 platform.
 
-I'm primarily interested in using ATF1502AS and ATF1504AS chips, although I have a couple of others that I might explore.
+I'm using the ATF150xASL family of CPLD chips. But I'm still learning.
 
-You can read about my initial (yet oddly successful) attempts here: https://mansfield-devine.com/speculatrix/2022/06/a-newbies-introduction-to-cupl-and-cplds/
+EXTMEMDECODE is for the Extended Memory board.
 
+You can read about my initial (yet oddly successful) attempts at coding CPLDs here: https://mansfield-devine.com/speculatrix/2022/06/a-newbies-introduction-to-cupl-and-cplds/

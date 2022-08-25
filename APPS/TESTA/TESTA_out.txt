@@ -1,0 +1,68 @@
+.header
+     0800   4C 17 08   JMP &0817
+     0803   00
+     0804   08
+     0805   17
+     0806   08
+     0807   77
+     0808   08
+     0809   50
+     080A   00
+     080B   00
+     080C   00
+     080D   54 45 53 ...
+     0812   00
+.version_string
+     0813   31 2E 30 
+     0816   00
+.startprog
+.reset
+     0817   78         SEI
+     0818   D8         CLD
+     0819   A2 FF      LDX #&FF
+     081B   9A         TXS
+     081C   A9 00      LDA #&00
+     081E   8D 32 04   STA &0432
+     0821   58         CLI
+     0822   20 30 FF   JSR &FF30
+.main
+     0825   A9 41      LDA #&41
+     0827   20 12 FF   JSR &FF12
+     082A   A9 42      LDA #&42
+     082C   20 12 FF   JSR &FF12
+     082F   A9 43      LDA #&43
+     0831   20 12 FF   JSR &FF12
+     0834   A9 20      LDA #&20
+     0836   20 12 FF   JSR &FF12
+     0839   20 1B FF   JSR &FF1B
+     083C   A9 0A      LDA #&0A
+     083E   20 12 FF   JSR &FF12
+Macro LOAD_MSG:
+     0841   A9 5F      LDA #&5F
+     0843   85 50      STA &50
+     0845   A9 08      LDA #&08
+     0847   85 51      STA &51
+End macro LOAD_MSG
+     0849   20 18 FF   JSR &FF18
+     084C   A9 0A      LDA #&0A
+     084E   20 12 FF   JSR &FF12
+Macro LOAD_MSG:
+     0851   A9 66      LDA #&66
+     0853   85 50      STA &50
+     0855   A9 08      LDA #&08
+     0857   85 51      STA &51
+End macro LOAD_MSG
+     0859   20 18 FF   JSR &FF18
+.prog_end
+     085C   4C F4 FF   JMP &FFF4
+.start_msg
+     085F   54 65 73 ...
+     0865   00
+.second_msg
+     0866   48 65 6C ...
+     0872   00
+.endtag
+     0873   45 4F 46 
+     0876   00
+.endcode
+Saving file '../bin/TESTA.BIN'

@@ -138,6 +138,8 @@
 \ when loading, we only use the main part of the filename with the LOAD command.
 .cmdprcLS
   LED_ON LED_FILE_ACT
+  LOAD_MSG ls_req_msg
+  jsr OSLCDMSG
   lda #ZD_OPCODE_LS           ; Start a ZolaDOS process with the code for LS
   jsr zd_init_process
   lda FUNC_ERR
@@ -198,3 +200,6 @@
   ZD_SET_DATADIR_OUTPUT
   LED_OFF LED_FILE_ACT
   jmp cmdprc_end
+
+.ls_req_msg
+  equs "Requesting list...",0

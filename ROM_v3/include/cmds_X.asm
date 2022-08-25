@@ -66,7 +66,7 @@
   jmp cmdprcXLIST_loop
 .cmdprcXLIST_done
   LED_OFF LED_FILE_ACT
-  lda TMP_VAL                     ; Retrieve previous bank
+  lda TMP_VAL                     ; Retrieve previous bank selection
   sta EXTMEM_SLOT_SEL             ; and restore it
   jmp cmdprc_end
 
@@ -84,8 +84,8 @@
   jsr extmem_readset_bank    ; Read memory bank number. Bank will be selected.
   lda FUNC_ERR
   bne cmdprcXLOAD_err
-  jsr extmem_ram_chk        ; Check that the selected bank is available
-  lda FUNC_ERR              ; *** THIS CHECK IS CAUSING IT TO HANG ***
+  jsr extmem_ram_chk         ; Check that the selected bank is available
+  lda FUNC_ERR
   bne cmdprcXLOAD_err
   jmp cmdprcXLOAD_loadfile
 .cmdprcXLOAD_bank_chk_err
@@ -101,7 +101,7 @@
   sta FILE_ADDR
   lda #>EXTMEM_LOC
   sta FILE_ADDR+1
-  lda #ZD_OPCODE_LOAD        ; Use opcode for loading .BIN files
+  lda #ZD_OPCODE_LOAD        ; Use the opcode for loading .BIN files
   jsr OSZDLOAD               ; Run LOAD routine
   LED_ON LED_DEBUG
   lda FUNC_ERR
@@ -110,7 +110,7 @@
   jsr OSWRMSG
   jsr OSLCDMSG
   lda EXTMEM_BANK
-  sta EXTMEM_SLOT_SEL                     ; Select bank by writing to this addr
+  sta EXTMEM_SLOT_SEL        ; Select bank by writing to this addr
   jmp cmdprcXLOAD_done
 .cmdprcXLOAD_err
   jsr OSWRERR                ; There should be an error code in FUNC_ERR
@@ -126,6 +126,7 @@
   stz STDIN_BUF
   stz STDIN_IDX
   stz PRG_EXIT_CODE                       ; Reset Program Exit Code
+  LED_OFF LED_BUSY
   jmp EXTMEM_LOC
 
 \ ------------------------------------------------------------------------------
