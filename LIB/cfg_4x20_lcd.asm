@@ -45,7 +45,6 @@ LED_DEBUG 	 = 4
 
 ; LCD PANEL
 LCD_LINES     = 4          ; Number of lines on display
-;LCD_COLS      = 20         ; Number of chars per line
 LCD_LN_BUF_SZ = 21		     ; 20 chars + nul terminator per  line
 LCD_BUF_SZ    = LCD_LINES * LCD_LN_BUF_SZ
 LCD_CLS       = %00000001  ; Clear screen & reset display memory
@@ -74,7 +73,7 @@ ENDMACRO
 MACRO LED_TOGGLE led_num
   pha
   lda LCDV_PORTA
-  eor #1 << led_num
+  eor #(1 << led_num)
   sta LCDV_PORTA
   pla
 ENDMACRO

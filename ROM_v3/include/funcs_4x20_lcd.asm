@@ -76,7 +76,7 @@
 .lcd_clear_buf_next
   sta LCD_BUF, Y
   iny
-  cpy LCD_BUF_SZ
+  cpy #LCD_BUF_SZ
   bne lcd_clear_buf_next
   rts
 
@@ -127,10 +127,6 @@
 .lcd_prt_linebuf_prt
   tay                         ; Store the offset in Y
   ldx #0                      ; To keep track of how many chars printed
-;  jsr OSB2HEX
-;  jsr OSWRSBUF
-;  lda #' '
-;  jsr OSWRCH
 .lcd_prt_linebuf_prtchr
   lda LCD_BUF,Y               ; Load a char from the buffer
   beq lcd_prt_linebuf_end     ; Finish if we loaded a null terminator
@@ -206,12 +202,29 @@
   rts
 
 \ ------------------------------------------------------------------------------
+\ ---  LCD_PRT_BUF
+\ ---  Implements: OSLCDWRBUF
+\ ------------------------------------------------------------------------------
+\ Prints the contents of STDOUT_BUF to LCD
+\ ON ENTRY: Expects a nul-terminated string in STDOUT_BUF
+.lcd_prt_buf
+  pha
+  lda #<STDOUT_BUF
+  sta MSG_VEC
+  lda #>STDOUT_BUF                              ; MSB of message
+  sta MSG_VEC+1
+  jsr lcd_println
+  pla
+  rts
+
+\ ------------------------------------------------------------------------------
 \ ---  LCD_PRT_SBUF
 \ ---  Implements: OSLCDSBUF
 \ ------------------------------------------------------------------------------
 \ Prints the contents of STR_BUF to LCD
 \ ON ENTRY: Expects a nul-terminated string in STR_BUF
 .lcd_prt_sbuf
+  pha
   lda #<STR_BUF
   sta MSG_VEC
   lda #>STR_BUF                              ; MSB of message

@@ -44,13 +44,13 @@ ORG USR_PAGE
 
 .main
   lda #'A'
-;  jsr OSLCDCH
+  jsr OSLCDCH
   jsr OSWRCH
   lda #'B'
-;  jsr OSLCDCH
+  jsr OSLCDCH
   jsr OSWRCH
   lda #'C'
-;  jsr OSLCDCH
+  jsr OSLCDCH
   jsr OSWRCH
   lda #' '
   jsr OSWRCH
@@ -63,17 +63,17 @@ ORG USR_PAGE
   jsr OSWRMSG
   lda #CHR_LINEEND
   jsr OSWRCH
- ; jsr OSLCDMSG
+  jsr OSLCDMSG
 
   LOAD_MSG second_msg
   jsr OSWRMSG
-;  jsr OSLCDMSG
+  jsr OSLCDMSG
 
 .prog_end
   jmp OSSFTRST
 
 .start_msg
-  equs "Test A", 0
+  equs "TEST A", 0
 
 .second_msg
   equs "Hello world!", 0

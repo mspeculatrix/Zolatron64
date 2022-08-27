@@ -3,7 +3,9 @@
 
 \ ------------------------------------------------------------------------------
 \ ---  BYTE_TO_BIN
+\ ---  Implements: OSB2BIN
 \ ------------------------------------------------------------------------------
+\ Convert 1-byte integer value to binary string representation.
 \ ON ENTRY: Byte to be converted must be in A.
 \ ON EXIT : Nul-terminated string STR_BUF. Byte 8 is null terminator.
 .byte_to_bin

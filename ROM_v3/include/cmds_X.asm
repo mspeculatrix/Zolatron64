@@ -123,11 +123,21 @@
 \ --- CMD: XRUN  :  RUN PROGRAM IN CURRENT EXTENDED MEMORY BANK
 \ ------------------------------------------------------------------------------
 .cmdprcXRUN
-  stz STDIN_BUF
-  stz STDIN_IDX
-  stz PRG_EXIT_CODE                       ; Reset Program Exit Code
+  stz STDIN_BUF                         ; Zero out input buffer
+  stz STDIN_IDX                         ; and its index pointer
+  stz PRG_EXIT_CODE                     ; Reset Program Exit Code
   LED_OFF LED_BUSY
+  lda EXTMEM_BANK                       ; Load the num of current selected bank
+  sta EXTMEM_SLOT_SEL                   ; Select bank by writing to this addr
+  lda EXTMEM_LOC + CODEHDR_TYPE
+  cmp #'P'
+  bne cmdprcXRUN_err
   jmp EXTMEM_LOC
+.cmdprcXRUN_err
+  lda #ERR_EXTMEM_EXEC
+  sta FUNC_ERR
+  jsr OSWRERR
+  jmp cmdprc_end
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: XSEL  :  SELECT EXTENDED MEMORY BANK

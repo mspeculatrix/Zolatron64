@@ -7,7 +7,10 @@ STDOUT_IDX     = $03FF ; Location of output buffer index
 STR_BUF_LEN    = 120   ; size of buffers. We actually have 127 bytes available
 STR_BUF_MAX    = 127   ; but this leaves some headroom.
 
-; ERROR CODES: must be in the same order as the error tables in data_tables.asm.
+\-------------------------------------------------------------------------------
+\ ERROR CODES
+\-------------------------------------------------------------------------------
+; Must be in the same order as the error tables in data_tables.asm.
 ; Must also be sequential, starting at 1 (0 means no error).
 COMMAND_ERR_CODE      = 1
 HEX_TO_BIN_ERR_CODE   = COMMAND_ERR_CODE + 1			  ; 2
@@ -27,11 +30,12 @@ ERR_EOB               = FN_LEN_ERR_CODE + 1         ; 15 F  End of buffer
 ERR_NAN               = ERR_EOB + 1                 ; 16 10 Not a number
 ERR_EXTMEM_WR         = ERR_NAN + 1                 ; 17 11 Ext mem write err
 ERR_EXTMEM_BANK       = ERR_EXTMEM_WR + 1           ; 18 12 Ext mem bank err
-ERR_ADDR              = ERR_EXTMEM_BANK + 1         ; 19 13 Address error
-ERR_FILE_EXISTS       = ERR_ADDR + 1                ; 20 14 File exists error
-ERR_FILE_OPEN         = ERR_FILE_EXISTS + 1         ; 21 15 Error opening file
-ERR_DELFILE_FAIL      = ERR_FILE_OPEN + 1           ; 22 16 Failed delete file
-ERR_FILENOTFOUND      = ERR_DELFILE_FAIL + 1        ; 23 17 File not found
+ERR_EXTMEM_EXEC       = ERR_EXTMEM_BANK + 1         ; 19 13 Ext mem exec err
+ERR_ADDR              = ERR_EXTMEM_EXEC + 1         ; 20 14 Address error
+ERR_FILE_EXISTS       = ERR_ADDR + 1                ; 21 15 File exists error
+ERR_FILE_OPEN         = ERR_FILE_EXISTS + 1         ; 22 16 Error opening file
+ERR_DELFILE_FAIL      = ERR_FILE_OPEN + 1           ; 23 17 Failed delete file
+ERR_FILENOTFOUND      = ERR_DELFILE_FAIL + 1        ; 24 18 File not found
 
 \-------------------------------------------------------------------------------
 \ OS CALLS  - OS Function Address Table
@@ -41,49 +45,51 @@ ERR_FILENOTFOUND      = ERR_DELFILE_FAIL + 1        ; 23 17 File not found
 \    - cfg_page_2.asm - OS Indirection Table
 \-------------------------------------------------------------------------------
 ; READ
-OSRDHBYTE = $FF00
-OSRDHADDR = OSRDHBYTE + 3
-OSRDCH    = OSRDHADDR + 3
-OSRDINT16 = OSRDCH + 3
-OSRDFNAME = OSRDINT16 + 3
+OSRDHBYTE  = $FF00
+OSRDHADDR  = OSRDHBYTE + 3
+OSRDCH     = OSRDHADDR + 3
+OSRDINT16  = OSRDCH + 3
+OSRDFNAME  = OSRDINT16 + 3
 ; WRITE
-OSWRBUF   = OSRDFNAME + 3
-OSWRCH    = OSWRBUF + 3
-OSWRERR   = OSWRCH + 3
-OSWRMSG   = OSWRERR + 3
-OSWRSBUF  = OSWRMSG + 3
-OSSOAPP   = OSWRSBUF + 3
+OSWRBUF    = OSRDFNAME + 3
+OSWRCH     = OSWRBUF + 3
+OSWRERR    = OSWRCH + 3
+OSWRMSG    = OSWRERR + 3
+OSWRSBUF   = OSWRMSG + 3
+OSSOAPP    = OSWRSBUF + 3
 ; CONVERSIONS
-OSB2HEX   = OSSOAPP + 3
-OSB2ISTR  = OSB2HEX + 3
-OSHEX2B   = OSB2ISTR + 3
-OSU16HEX  = OSHEX2B + 3
-OSHEX2DEC = OSU16HEX + 3
+OSB2BIN    = OSSOAPP + 3
+OSB2HEX    = OSB2BIN + 3
+OSB2ISTR   = OSB2HEX + 3
+OSHEX2B    = OSB2ISTR + 3
+OSU16HEX   = OSHEX2B + 3
+OSHEX2DEC  = OSU16HEX + 3
 ; LCD
-OSLCDCH   = OSHEX2DEC + 3
-OSLCDCLS  = OSLCDCH + 3
-OSLCDERR  = OSLCDCLS + 3
-OSLCDMSG  = OSLCDERR + 3
+OSLCDCH    = OSHEX2DEC + 3
+OSLCDCLS   = OSLCDCH + 3
+OSLCDERR   = OSLCDCLS + 3
+OSLCDMSG   = OSLCDERR + 3
 OSLCDB2HEX = OSLCDMSG + 3
-OSLCDSBUF = OSLCDB2HEX + 3
-OSLCDSC   = OSLCDSBUF + 3
+OSLCDSBUF  = OSLCDB2HEX + 3
+OSLCDSC    = OSLCDSBUF + 3
+OSLCDWRBUF = OSLCDSC + 3
 ; PRINTER
-OSPRTBUF  = OSLCDSC + 3
-OSPRTCH   = OSPRTBUF + 3
-OSPRTINIT = OSPRTCH + 3
-OSPRTMSG  = OSPRTINIT + 3
-OSPRTSBUF = OSPRTMSG + 3
+OSPRTBUF   = OSLCDWRBUF + 3
+OSPRTCH    = OSPRTBUF + 3
+OSPRTINIT  = OSPRTCH + 3
+OSPRTMSG   = OSPRTINIT + 3
+OSPRTSBUF  = OSPRTMSG + 3
 OSPRTSTMSG = OSPRTSBUF + 3
 ; ZOLADOS
-OSZDDEL   = OSPRTSTMSG + 3
-OSZDLOAD  = OSZDDEL + 3
-OSZDSAVE  = OSZDLOAD + 3
+OSZDDEL    = OSPRTSTMSG + 3
+OSZDLOAD   = OSZDDEL + 3
+OSZDSAVE   = OSZDLOAD + 3
 ; MISC
-OSDELAY   = OSZDSAVE + 3
-OSUSRINT  = OSDELAY + 3
+OSDELAY    = OSZDSAVE + 3
+OSUSRINT   = OSDELAY + 3
 
-OSSFTRST  = $FFF4         ; Use direct JMP with these (not indirected/vectored)
-OSHRDRST  = $FFF7
+OSSFTRST   = $FFF4         ; Use direct JMP with these (not indirected/vectored)
+OSHRDRST   = $FFF7
 
 USR_PAGE = $0800          ; Address where user programs load
 ROMSTART = $C000
@@ -97,9 +103,10 @@ DATA_TYPE_OSX = 4
 MAX_DATA_TYPE = 4
 
 ; Code headers. These are offsets from the start of user code (which is at
-; USR_PAGE for RAM-based code and FLASHMEM_LOC for Flash-based code)
+; USR_PAGE for RAM-based code and EXTEM_LOC for ROM-based code)
 CODEHDR_RST  = $05
 CODEHDR_END  = $07
+CODEHDR_TYPE = $09
 CODEHDR_NAME = $0D
 
 EOCMD_SECTION = 0                   ; End of section marker for command table

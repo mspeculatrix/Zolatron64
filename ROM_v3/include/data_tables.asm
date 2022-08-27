@@ -11,6 +11,8 @@ ALIGN &100                  ; Start on new page
 \ the command files that includes).
 .cmdprcptrs
   equw cmdprcSTAR           ; *
+  equw cmdprcPEEK           ; ?
+  equw cmdprcPOKE           ; !
   equw cmdprcBRK            ; BRK
   equw cmdprcDEL            ; DEL
   equw cmdprcDUMP           ; DUMP
@@ -36,7 +38,7 @@ ALIGN &100                  ; Start on new page
 \ Initial characters of our commands. The parsing system first looks to see if
 \ the initial character is in this list.
 .cmd_ch1_tbl
-  equs "*BDHJLPRSVX"
+  equs "*?!BDHJLPRSVX"
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -45,6 +47,8 @@ ALIGN &100                  ; Start on new page
 \ Character Table (above) to determine an offset into this table.
 .cmd_ptrs                   ; Pointers to command table sections
   equw cmd_tbl_STAR         ; Commands starting '*'
+  equw cmd_tbl_QUERY        ; Commands starting '?'
+  equw cmd_tbl_BANG         ; Commands starting '!'
   equw cmd_tbl_ASCB         ; Commands starting 'B'
   equw cmd_tbl_ASCD         ; Commands starting 'D'
   equw cmd_tbl_ASCH         ; Commands starting 'H'
@@ -64,6 +68,14 @@ ALIGN &100                  ; Start on new page
 .cmd_tbl_STAR                  ; Commands starting '*'
   equb CMD_TKN_STAR            ; Not sure what I'm using this for yet
   equb EOCMD_SECTION           ; Comes at end of each section
+
+.cmd_tbl_QUERY                 ; Commands starting '?'
+  equb CMD_TKN_PEEK            ; Synonym for PEEK
+  equb EOCMD_SECTION
+
+.cmd_tbl_BANG                  ; Commands starting '!'
+  equb CMD_TKN_POKE            ; Synonym for POKE
+  equb EOCMD_SECTION
 
 .cmd_tbl_ASCB                  ; Commands starting 'B'
   equs "RK", CMD_TKN_BRK       ; BRK
@@ -142,6 +154,7 @@ ALIGN &100                  ; Start on new page
 
   equw err_extmem_write
   equw err_extmem_bank
+  equw err_extmem_exec
 
   equw err_addr
   equw err_file_exists
@@ -172,9 +185,9 @@ ALIGN &100                  ; Start on new page
   equs "SA Off Timeout", 0
 .err_filesvropen
   ;     01234567890123456789
-  equs "Server F/open failed", 0
+  equs "Server f/open error", 0
 .err_filesvrls
-  equs "Server F/list failed", 0
+  equs "Server f/list error", 0
 .err_filename_badchar
   equs "Bad filename",0
 .err_filename_badlen
@@ -187,6 +200,8 @@ ALIGN &100                  ; Start on new page
   equs "Extmem not writeable",0
 .err_extmem_bank
   equs "Ext mem bank error",0
+.err_extmem_exec
+  equs "Ext mem not executable",0
 .err_addr
   equs "Address error",0
 .err_file_exists
@@ -206,6 +221,8 @@ ALIGN &100                  ; Start on new page
   equs "PODX",0
 
 .help_table
+  equs "?",0
+  equs "!",0
   equs "BRK",0
   equs "DEL",0
   equs "DUMP",0
@@ -232,7 +249,8 @@ ALIGN &100                  ; Start on new page
   equs "0123456789ABCDEF"
 
 .memory_header
-  equs "----  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F", 10, 0
+  equs "----  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F   "
+  equs "0123456789ABCDEF", 10, 0
 
 .lcd_ln_base_addr           ; Lookup table - base addresses for lines
   equs $00,$40,$14,$54
@@ -249,6 +267,10 @@ ALIGN &100                  ; Start on new page
   equs "EXMEM:",0
 .stat_msg_pexit
   equs "PEXIT:",0
+.stat_msg_sysreg
+  equs "SYSRG:",0
+.stat_msg_procreg
+  equs "PRCRG:",0
 .stat_msg_spacer
   equs "  ",0
 

@@ -23,7 +23,7 @@ INCLUDE "../../LIB/cfg_page_4.asm"
 ORG EXTMEM_LOC
 .header                     ; HEADER INFO
   INCLUDE "../../LIB/header_std.asm"
-  equb "P"
+  equb "P"                  ; @ $0809
   equs 0,0,0                ; -- Reserved for future use --
   equs "TESTAR",0           ; @ $080D Short name, max 15 chars - nul terminated
 .version_string

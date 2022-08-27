@@ -87,7 +87,7 @@
 \ ---  DUART_SENDBUF
 \ ---  Implements: OSWRBUF
 \ ------------------------------------------------------------------------------
-\ Sends contents of STDOUT_BUF buffer and clears it.
+\ Sends contents of STDOUT_BUF buffer.
 \ ON ENTRY: Text to be send must be in STDOUT_BUF and nul-terminated.
 .duart_sendbuf
   ldx #0                           ; Offset index
@@ -103,7 +103,7 @@
   beq duart_sendbuf_end            ; If so, end it here
   jmp duart_sendbuf_next_char      ; Otherwise do the next char
 .duart_sendbuf_end
-  stz STDOUT_IDX                   ; Re-zero the index
+  ;stz STDOUT_IDX                   ; Re-zero the index
   rts
 
 \ ------------------------------------------------------------------------------

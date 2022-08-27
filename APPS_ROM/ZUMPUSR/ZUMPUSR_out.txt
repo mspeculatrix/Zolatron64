@@ -1,8 +1,11 @@
 .header
      8000   4C 19 80   JMP &8019
-     8003   00 80
-     8005   19 80
-     8007   00 A0
+     8003   00
+     8004   80
+     8005   19
+     8006   80
+     8007   00
+     8008   A0
      8009   50 
      800A   00
      800B   00
@@ -107,7 +110,7 @@ Macro LOAD_MSG:
 End macro LOAD_MSG
      80AD   20 18 FF   JSR &FF18
 .init_loop_wait
-     80B0   A5 5E      LDA &5E
+     80B0   A5 60      LDA &60
      80B2   29 01      AND #&01
      80B4   D0 03      BNE &80B9
      80B6   4C B0 80   JMP &80B0
@@ -118,9 +121,9 @@ End macro LOAD_MSG
      80BF   7A         PLY
      80C0   99 00 05   STA &0500,Y
      80C3   9C 7F 03   STZ &037F
-     80C6   A5 5E      LDA &5E
+     80C6   A5 60      LDA &60
      80C8   29 F0      AND #&F0
-     80CA   85 5E      STA &5E
+     80CA   85 60      STA &60
      80CC   20 A8 83   JSR &83A8
      80CF   AD 09 04   LDA &0409
      80D2   D0 D1      BNE &80A5
@@ -147,7 +150,7 @@ Macro LOAD_MSG:
 End macro LOAD_MSG
      80F7   20 18 FF   JSR &FF18
 .mainloop
-     80FA   A5 5E      LDA &5E
+     80FA   A5 60      LDA &60
      80FC   29 01      AND #&01
      80FE   D0 0A      BNE &810A
      8100   AE 7F 03   LDX &037F
@@ -155,9 +158,9 @@ End macro LOAD_MSG
      8105   B0 03      BCS &810A
      8107   4C FA 80   JMP &80FA
 .zum_input
-     810A   A5 5E      LDA &5E
+     810A   A5 60      LDA &60
      810C   49 01      EOR #&01
-     810E   85 5E      STA &5E
+     810E   85 60      STA &60
      8110   9C 7F 03   STZ &037F
      8113   20 06 FF   JSR &FF06
      8116   AD 09 04   LDA &0409
@@ -541,7 +544,7 @@ End macro LOAD_MSG
      83C6   60         RTS
 .print_room_num
      83C7   1A         INC A
-     83C8   20 21 FF   JSR &FF21
+     83C8   20 27 FF   JSR &FF27
      83CB   20 1B FF   JSR &FF1B
      83CE   60         RTS
 .random_room
@@ -754,7 +757,7 @@ End macro LOAD_MSG
 .warnings_done
      854E   60         RTS
 .yesno
-     854F   A5 5E      LDA &5E
+     854F   A5 60      LDA &60
      8551   29 01      AND #&01
      8553   F0 FA      BEQ &854F
      8555   9C 7F 03   STZ &037F
@@ -775,9 +778,9 @@ End macro LOAD_MSG
      8572   8D 09 04   STA &0409
      8575   9C 7F 03   STZ &037F
      8578   9C 00 03   STZ &0300
-     857B   A5 5E      LDA &5E
+     857B   A5 60      LDA &60
      857D   29 F0      AND #&F0
-     857F   85 5E      STA &5E
+     857F   85 60      STA &60
      8581   60         RTS
 .connections
      8582   01

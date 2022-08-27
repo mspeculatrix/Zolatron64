@@ -43,11 +43,15 @@
   sta OSWRSBUF_VEC
   lda #>duart_snd_strbuf
   sta OSWRSBUF_VEC + 1
-  lda #<stdout_append     ; OSSOAPP
+  lda #<stdout_append        ; OSSOAPP
   sta OSSOAPP_VEC
   lda #>stdout_append
   sta OSSOAPP_VEC + 1
 \ --- CONVERSIONS --------------------------------------------------------------
+  lda #<byte_to_bin         ; OSB2BIN
+  sta OSB2BIN_VEC
+  lda #>byte_to_bin
+  sta OSB2BIN_VEC + 1
   lda #<byte_to_hex_str      ; OSB2HEX
   sta OSB2HEX_VEC
   lda #>byte_to_hex_str
@@ -97,7 +101,11 @@
   sta OSLCDSC_VEC
   lda #>lcd_set_cursor
   sta OSLCDSC_VEC + 1
-\ --- PRINTER ------------------------------------------------------------------
+  lda #<lcd_prt_buf          ; OSLCDWRBUF
+  sta OSLCDWRBUF_VEC
+  lda #>lcd_prt_buf
+  sta OSLCDWRBUF_VEC + 1
+  \ --- PRINTER ------------------------------------------------------------------
   lda #<prt_stdout_buf       ; OSPRTBUF
   sta OSPRTBUF_VEC
   lda #>prt_stdout_buf

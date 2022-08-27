@@ -309,6 +309,7 @@ ORG $FF00
   jmp (OSWRSBUF_VEC)
   jmp (OSSOAPP_VEC)
 
+  jmp (OSB2BIN_VEC)
   jmp (OSB2HEX_VEC)
   jmp (OSB2ISTR_VEC)
   jmp (OSHEX2B_VEC)
@@ -322,6 +323,7 @@ ORG $FF00
   jmp (OSLCDB2HEX_VEC)
   jmp (OSLCDSBUF_VEC)
   jmp (OSLCDSC_VEC)
+  jmp (OSLCDWRBUF_VEC)
 
   jmp (OSPRTBUF_VEC)
   jmp (OSPRTCH_VEC)

@@ -39,22 +39,6 @@ ORG USR_PAGE
   jsr OSLCDCLS
 
 .main
-  lda #'A'
-  jsr OSLCDCH
-  jsr OSWRCH
-  lda #'B'
-  jsr OSLCDCH
-  jsr OSWRCH
-  lda #'C'
-  jsr OSLCDCH
-  jsr OSWRCH
-  lda #' '
-  jsr OSWRCH
-
-  jsr OSWRSBUF
-  lda #CHR_LINEEND
-  jsr OSWRCH
-
   LOAD_MSG welcome_msg
   jsr OSWRMSG
   lda #CHR_LINEEND
@@ -99,7 +83,7 @@ ORG USR_PAGE
 ;  rts
 
 .welcome_msg
-  equs "This is a new test", 0
+  equs "TEST B", 0
 
 .second_msg
   equs "A second message", 0
