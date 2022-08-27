@@ -99,16 +99,17 @@
 \ ------------------------------------------------------------------------------
 \ Display the contents of memory
 \ ON ENTRY: Start and end addresses must be in TMP_ADDR_A and TMP_ADDR_B.
-; We'll leave TMP_ADDR_B alone, but increment TMP_ADDR_B until the two match.
+; We'll leave TMP_ADDR_B alone, but increment TMP_ADDR_A until the two match.
 .display_memory
   LOAD_MSG memory_header
   jsr OSWRMSG
   stz TMP_COUNT                 ; Keep track how many bytes printed in each row
 .display_mem_next_line
+  jsr display_mem_copy_addr     ; Keep a copy for ASCII display
   jsr uint16_to_hex_str         ; Creates ASCII hex string starting at STR_BUF
   lda #$20                      ; Add a space
-  sta STR_BUF + 4
-  stz STR_BUF + 5               ; Add a null terminator
+  sta STR_BUF + 4               ; Overwrite existing terminator with space
+  stz STR_BUF + 5               ; Add a new null terminator
   jsr OSWRSBUF
 .display_mem_next_addr
   ldx #0
@@ -123,6 +124,7 @@
   beq display_mem_endline
   jmp display_mem_chk_MSB
 .display_mem_endline            ; Start a new line of output
+  jsr display_mem_ascii
   lda #CHR_LINEEND
   jsr OSWRCH
   stz TMP_COUNT                 ; Reset to 0 for next line
@@ -147,8 +149,57 @@
 .display_mem_output_end
   lda #CHR_LINEEND
   jsr OSWRCH
-  jmp display_mem_end
-.display_mem_end
+;.display_mem_end
+  rts
+
+.display_mem_copy_addr
+  lda TMP_ADDR_A_L                ; Keep a copy for ASCII display
+  sta TMP_ADDR_C_L
+  lda TMP_ADDR_A_H
+  sta TMP_ADDR_C_H
+  rts
+
+.display_mem_ascii
+  lda TMP_COUNT
+  bne display_mem_ascii_len
+  lda #16
+  sta TMP_COUNT    ; Is zero - means we had a full line on last line
+  jmp display_mem_ascii_display
+.display_mem_ascii_len
+  cmp #16     ; If less, we haven't got a full line so pad
+  bcc display_mem_ascii_pad
+  jmp display_mem_ascii_display
+.display_mem_ascii_pad
+  ldy TMP_COUNT
+.display_mem_ascii_pad_loop
+  jsr display_mem_pad
+  iny
+  cpy #16
+  bne display_mem_ascii_pad_loop
+.display_mem_ascii_display
+  jsr display_mem_pad
+  ldy #0
+.display_mem_ascii_loop
+  lda (TMP_ADDR_C),Y
+  cmp #$20   ; min $20, max $7E
+  bcc display_mem_ascii_use_dot
+  cmp #$7E
+  bcs display_mem_ascii_use_dot
+  jmp display_mem_ascii_prt
+.display_mem_ascii_use_dot
+  lda #'.'
+.display_mem_ascii_prt
+  jsr OSWRCH
+  iny
+  cpy TMP_COUNT
+  bne display_mem_ascii_loop
+  rts
+
+.display_mem_pad
+  lda #' '
+  jsr OSWRCH
+  jsr OSWRCH
+  jsr OSWRCH
   rts
 
 \ ------------------------------------------------------------------------------
@@ -458,7 +509,7 @@
 \ ON EXIT : - Value in FUNC_RESULT
 \           - Error in FUNC_ERR
 .read_hex_byte
-  pha : phy
+  pha : phx : phy
   stz FUNC_ERR              ; Initialise to 0
   ldy #1                    ; Offset for where we're storing each byte from buf
   ldx STDIN_IDX
@@ -485,7 +536,7 @@
   sta FUNC_ERR
 .read_hexbyte_end
   stx STDIN_IDX
-  ply : pla
+  ply : plx : pla
   rts
 
 \ ------------------------------------------------------------------------------
@@ -530,25 +581,4 @@
   sta STDOUT_BUF,X
   stx STDOUT_IDX
   ply : plx
-  rts
-
-\ ------------------------------------------------------------------------------
-\ ---  STDOUT_TO_MSG_VEC
-\ ------------------------------------------------------------------------------
-\ Put the start address of STDOUT_BUF into the MSG_VEC vector.
-.stdout_to_msg_vec
-  lda #<STDOUT_BUF
-  sta MSG_VEC
-  lda #>STDOUT_BUF
-  sta MSG_VEC+1
-  rts
-\ ------------------------------------------------------------------------------
-\ ---  STR_BUF_TO_MSG_VEC
-\ ------------------------------------------------------------------------------
-\ Put the start address of STR_BUF into the MSG_VEC vector.
-.str_buf_to_msg_vec
-  lda #<STR_BUF
-  sta MSG_VEC
-  lda #>STR_BUF
-  sta MSG_VEC+1
   rts

@@ -38,7 +38,7 @@
 \ ------------------------------------------------------------------------------
 \ ---  EXTMEM_STAT
 \ ------------------------------------------------------------------------------
-; Check the SYS_EXTMEM bit in the SYS_REG. This is set on power-up.
+; Check the SYS_EXTMEM status bit in the SYS_REG. This is set on power-up.
 ; This just tells us if a board is fitted. It doesn't say whether the
 ; selected bank is ROM or RAM. Need the check above for that.
 ; ON EXIT : - Carry clear if Ext Mem board fitted.

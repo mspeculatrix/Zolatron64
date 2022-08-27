@@ -14,9 +14,9 @@
   lda FUNC_RES_H
   sta TMP_ADDR_A+1
   jsr uint16_to_hex_str     ; Puts hex string in STR_BUF
-  jsr str_buf_to_msg_vec
+  STR_BUF_TO_MSG_VEC
   jsr stdout_append
-  jsr stdout_to_msg_vec
+  STDOUT_TO_MSG_VEC
   jsr OSLCDMSG
   ldx #$FF                  ; Reset stack pointer
   txs

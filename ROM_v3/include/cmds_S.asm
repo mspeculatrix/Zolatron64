@@ -41,55 +41,92 @@
   jmp cmdprc_end
 
 \ ------------------------------------------------------------------------------
-\ --- CMD: STAT  :  PRINT STATUS
+\ --- CMD: STAT  :  DISPLAY STATUS
 \ ------------------------------------------------------------------------------
 \ Output some useful info.
 .cmdprcSTAT
-  LOAD_MSG stat_msg_lomem                     ; Show address of LOMEM - the
-  jsr OSWRMSG                                 ; address of the first byte after
+  jsr OSLCDCLS
+  ; --- LINE 1 -----------------
+  stz STDOUT_IDX                              ; Set offset pointer
+  LOAD_MSG stat_msg_lomem                     ; Show address of LOMEM
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
   lda LOMEM                                   ; the end of the currently loaded
   sta TMP_ADDR_A_L                            ; program.
   lda LOMEM+1
   sta TMP_ADDR_A_H
   jsr uint16_to_hex_str                       ; Result will be in STR_BUF
-  jsr display_stat_sbuf
+  STR_BUF_TO_MSG_VEC                          ; Set MSG_VEC to point to this
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
+
+  LOAD_MSG stat_msg_spacer
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
+
+  LOAD_MSG stat_msg_fnres
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
+  lda FUNC_RESULT
+  jsr display_stat_hex
+
+  STDOUT_TO_MSG_VEC
+  jsr OSWRMSG
+  NEWLINE
+  jsr OSLCDMSG
+
+  ; --- LINE 2 -----------------
+  stz STDOUT_IDX                              ; Set offset pointer
 
   LOAD_MSG stat_msg_faddr
-  jsr OSWRMSG
+  jsr OSSOAPP
   lda FILE_ADDR
   sta TMP_ADDR_A_L
   lda FILE_ADDR+1
   sta TMP_ADDR_A_H
   jsr uint16_to_hex_str                       ; Result will be in STR_BUF
-  jsr display_stat_sbuf
+  STR_BUF_TO_MSG_VEC                          ; Set MSG_VEC to point to this
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
 
-  LOAD_MSG stat_msg_pexit
-  lda PRG_EXIT_CODE
-  jsr display_stat_hex
+  LOAD_MSG stat_msg_spacer
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
 
   LOAD_MSG stat_msg_fnerr
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
   lda FUNC_ERR
   jsr display_stat_hex
 
-  LOAD_MSG stat_msg_fnres
-  lda FUNC_RESULT
+  STDOUT_TO_MSG_VEC
+  jsr OSWRMSG
+  NEWLINE
+  jsr OSLCDMSG
+
+  ; --- LINE 3 -----------------
+  stz STDOUT_IDX                              ; Set offset pointer
+
+  LOAD_MSG stat_msg_pexit
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
+  lda PRG_EXIT_CODE
   jsr display_stat_hex
 
+  LOAD_MSG stat_msg_spacer
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
+  LOAD_MSG stat_msg_spacer
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
+
   LOAD_MSG stat_msg_exmem
-  jsr OSWRMSG
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
   lda EXTMEM_BANK
   jsr OSB2ISTR
-  jsr display_stat_sbuf
+  STR_BUF_TO_MSG_VEC                          ; Set MSG_VEC to point to this
+  jsr OSSOAPP
+
+  STDOUT_TO_MSG_VEC
+  jsr OSWRMSG
+  NEWLINE
+  jsr OSLCDMSG
 
   jmp cmdprc_end
 
+
 .display_stat_hex
-  pha
-  jsr OSWRMSG
-  pla
-  jsr OSB2HEX
-.display_stat_sbuf
-  jsr OSWRSBUF
-  lda #' '
-  jsr OSWRCH
+  jsr OSB2HEX                                 ; Result will be in STR_BUF
+  STR_BUF_TO_MSG_VEC                          ; Set MSG_VEC to point to this
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
   rts

@@ -5,6 +5,7 @@
   jsr read_hex_addr         ; Get address - puts bytes in FUNC_RES_L, FUNC_RES_H
   lda FUNC_ERR
   bne cmdprcPEEK_fail
+  ldx STDIN_IDX
   lda STDIN_BUF,X           ; Check there's nothing left in the RX buffer
   bne cmdprcPEEK_fail       ; Should be null. Anything else is a mistake
   lda (FUNC_RES_L)
@@ -26,6 +27,7 @@
   jsr read_hex_byte         ; Get byte value - puts result in FUNC_RESULT
   lda FUNC_ERR
   bne cmdprcPOKE_fail
+  ldx STDIN_IDX
   lda STDIN_BUF,X           ; Check there's nothing left in the RX buffer
   bne cmdprcPOKE_fail       ; Should be null. Anything else is a mistake
   lda FUNC_RESULT           ; Store the byte in the given address
@@ -35,7 +37,7 @@
   jmp cmdprc_fail
 .cmdprcPOKE_end
   jmp cmdprc_end
-  
+
 \ ------------------------------------------------------------------------------
 \ --- CMD: PRT  :  PRINT A FILE ... one day...
 \ ------------------------------------------------------------------------------

@@ -171,20 +171,20 @@ ALIGN &100                  ; Start on new page
 .err_timeout_SAO
   equs "SA Off Timeout", 0
 .err_filesvropen
-  equs "File open failed on server", 0
+  ;     01234567890123456789
+  equs "Server F/open failed", 0
 .err_filesvrls
-  equs "File list failed on server", 0
+  equs "Server F/list failed", 0
 .err_filename_badchar
   equs "Bad filename",0
 .err_filename_badlen
-  equs "Bad f/n length",0
+  equs "Bad filename length",0
 .err_end_of_buffer
   equs "End of buffer",0
 .err_not_a_number
   equs "Not a number",0
 .err_extmem_write
-  ;     1234567890ABCDEF
-  equs "Extmem bank not writeable",0
+  equs "Extmem not writeable",0
 .err_extmem_bank
   equs "Ext mem bank error",0
 .err_addr
@@ -194,7 +194,7 @@ ALIGN &100                  ; Start on new page
 .err_file_open
   equs "Error opening file",0
 .err_delfile_fail
-  ;     1234567890ABCDEF
+  ;     01234567890123456789
   equs "Delete file failed",0
 .err_filenotfound
   equs "File not found",0
@@ -234,6 +234,9 @@ ALIGN &100                  ; Start on new page
 .memory_header
   equs "----  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F", 10, 0
 
+.lcd_ln_base_addr           ; Lookup table - base addresses for lines
+  equs $00,$40,$14,$54
+
 .stat_msg_lomem
   equs "LOMEM:",0
 .stat_msg_faddr
@@ -246,6 +249,8 @@ ALIGN &100                  ; Start on new page
   equs "EXMEM:",0
 .stat_msg_pexit
   equs "PEXIT:",0
+.stat_msg_spacer
+  equs "  ",0
 
 \ MESSAGES
 

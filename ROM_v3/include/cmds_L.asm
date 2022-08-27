@@ -111,6 +111,7 @@
   lda FUNC_ERR              ; Check for error
   bne cmdprcLP_fail
 .cmdprcLP_chk_nul           ; Check there's nothing left in the RX buffer
+  ldx STDIN_IDX
   lda STDIN_BUF,X           ; Should be null. Anything else is a mistake
   bne cmdprcLP_input_fail
   lda FUNC_RESULT           ; Get the result from jsr read_hex_byte

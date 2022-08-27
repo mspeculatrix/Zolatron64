@@ -85,9 +85,11 @@
 \ ------------------------------------------------------------------------------
 \ Clear the RS, RW & E bits on PORT A
 .lcd_clear_sig
+  pha
   lda LCDV_PORTA
   and #%00011111
   sta LCDV_PORTA
+  pla
   rts
 
 \ ------------------------------------------------------------------------------
@@ -120,18 +122,22 @@
   beq lcd_prt_linebuf_prt
   clc
   adc #LCD_LN_BUF_SZ          ; Otherwise, add line length to the offset
-  dey                         ; and go around again
+  dey                         ; Decrement line number and go around again
   jmp lcd_prt_linebuf_set_offset
 .lcd_prt_linebuf_prt
   tay                         ; Store the offset in Y
-  ldx #0                      ; to keep track of how many chars printed
+  ldx #0                      ; To keep track of how many chars printed
+;  jsr OSB2HEX
+;  jsr OSWRSBUF
+;  lda #' '
+;  jsr OSWRCH
 .lcd_prt_linebuf_prtchr
   lda LCD_BUF,Y               ; Load a char from the buffer
   beq lcd_prt_linebuf_end     ; Finish if we loaded a null terminator
   jsr lcd_prt_chr             ; Display the character
   iny                         ; Increment buffer offset
   inx                         ; Increment character counter
-  cpx #LCD_COLS               ; Have we printed a line's worth?
+  cpx #LCD_LN_BUF_SZ          ; Have we printed a line's worth?
   beq lcd_prt_linebuf_end     ; If so, done.
   jmp lcd_prt_linebuf_prtchr  ; Else, go around again
 .lcd_prt_linebuf_end
@@ -180,7 +186,7 @@
 \ ------------------------------------------------------------------------------
 \ Clear the LCD screen
 .lcd_cls
-  jsr lcd_clear_buf                       ; Clear the line buffers
+  jsr lcd_clear_buf                       ; Overwrite LCD_BUF with spaces
   lda #LCD_CLS                            ; Clear display, reset display memory
   jsr lcd_cmd
   rts
@@ -234,37 +240,37 @@
   cpx #LCD_BUF_SZ               ; At end of buffer?
   bne lcd_println_shift_buf     ; If not, loop
 .lcd_println_newline
-  tya
-  tax
-  ldy #0
-.lcd_println_new_txt            ; Move new message into last line of buffer
-  lda (MSG_VEC),Y
-  beq lcd_println_pad           ; If this char is a null, we're done
-  sta LCD_BUF,X
-  iny                           ; else, increment offsets
+  tya                           ; Y contains LCD_BUF index
+  tax                           ; Transfer this to X
+  ldy #0                        ; Index for new text pointed to by MSG_VEC
+.lcd_println_new_txt            ; Add new message to last line of buffer
+  lda (MSG_VEC),Y               ; Get next char from new text
+  beq lcd_println_pad           ; If this char is a null, go to padding
+  sta LCD_BUF,X                 ; Otherwise store it in the LCD buffer
+  iny                           ; Increment indexes
   inx
   cpy #LCD_LN_BUF_SZ            ; Have we done a line's worth?
-  beq lcd_println_terminate
-  jmp lcd_println_new_txt
+  beq lcd_println_terminate     ; If yes, make sure we include a terminator
+  jmp lcd_println_new_txt       ; Otherwise loop
 .lcd_println_pad                ; Pad line with spaces
   lda #CHR_SPACE
 .lcd_println_pad_next
-  cpy #LCD_LN_BUF_SZ
-  beq lcd_println_terminate
-  sta LCD_BUF,X
-  iny
+  cpy #LCD_LN_BUF_SZ            ; Have we already got a line's worth?
+  beq lcd_println_terminate     ; If so, ensure we have a terminator
+  sta LCD_BUF,X                 ; Otherwise add the space to the buffer
+  iny                           ; Increment indexes
   inx
-  jmp lcd_println_pad_next
-.lcd_println_terminate        ; Ensure last char in line buffer is a 0
-  dex
+  jmp lcd_println_pad_next      ; Loop
+.lcd_println_terminate          ; Ensure last char in line buffer is a 0
+  dex                           ; X is currently one MORE than index for EOL
   stz LCD_BUF,X
-.lcd_println_refresh          ; Rewrite all lines of display
-  ldy #0
-.lcd_println_refresh_next
+;.lcd_println_refresh            ; Rewrite all lines of display
+  ldy #0                        ; Index of lines
+.lcd_println_refresh
   jsr lcd_prt_linebuf
   iny
-  cpy #LCD_LINES
-  bne lcd_println_refresh_next
+  cpy #LCD_LINES                ; Have we done all lines yet?
+  bne lcd_println_refresh       ; If not, loop
   ply : plx : pla
   rts
 
@@ -272,7 +278,7 @@
 \ ---  LCD_PRT_CHR
 \ ---  Implements: OSLCDCH
 \ ------------------------------------------------------------------------------
-.lcd_prt_chr                        ; assumes character is in A
+.lcd_prt_chr
   pha
   jsr lcd_wait                      ; check LCD is ready to receive
   sta LCDV_PORTB
@@ -289,12 +295,12 @@
 \ ON ENTRY: Assumes error code in FUNC_ERR
 .lcd_prt_err
   lda FUNC_ERR
-  dec A                   ; to get offset for table
-  asl A                   ; shift left to multiply by 2
-  tax                     ; move to X to use as offset
-  lda err_ptrs,X          ; get LSB of relevant address from the cmd_ptrs table
+  dec A                   ; To get offset for table
+  asl A                   ; Shift left to multiply by 2
+  tax                     ; Move to X to use as offset
+  lda err_ptrs,X          ; Get LSB of relevant address from the cmd_ptrs table
   sta MSG_VEC             ; and put in MSG_VEC
-  lda err_ptrs+1,X        ; get MSB
+  lda err_ptrs+1,X        ; Get MSB
   sta MSG_VEC+1           ; and put in MSG_VEC high byte
   jsr lcd_println
   rts
@@ -303,12 +309,13 @@
 \ ---  LCD_SET_CURSOR
 \ ---  Implements: OSLCDSC
 \ ------------------------------------------------------------------------------
-\ ON ENTRY: X & Y co-ords have been put in X and Y.
+\ ON ENTRY: X & Y co-ords must be in X and Y.
 \           - X should contain the X param in range 0-19.
 \           - Y should be 0-3.
 .lcd_set_cursor
   stx TMP_VAL
   lda lcd_ln_base_addr,Y  ; Base address for line, from lookup table
+  clc
   adc TMP_VAL
   ora #LCD_SET_DDRAM      ; OR with LCD_SET_DDRAM command byte
   jsr lcd_cmd

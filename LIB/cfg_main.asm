@@ -156,6 +156,11 @@ MACRO PRT_MSG msg_addr, func_addr
   jsr func_addr
 ENDMACRO
 
+MACRO NEWLINE
+  lda #CHR_LINEEND
+  jsr OSWRCH
+ENDMACRO
+
 MACRO CLEAR_INPUT_BUF
   stz STDIN_IDX
   lda STDIN_STATUS_REG ; reset the nul received flag
@@ -169,4 +174,18 @@ MACRO SERIAL_PROMPT
   lda #>prompt_msg                              ; MSB of message
   sta MSG_VEC+1
   jsr OSWRMSG
+ENDMACRO
+
+MACRO STDOUT_TO_MSG_VEC
+  lda #<STDOUT_BUF
+  sta MSG_VEC
+  lda #>STDOUT_BUF
+  sta MSG_VEC+1
+ENDMACRO
+
+MACRO STR_BUF_TO_MSG_VEC
+  lda #<STR_BUF
+  sta MSG_VEC
+  lda #>STR_BUF
+  sta MSG_VEC+1
 ENDMACRO

@@ -38,7 +38,7 @@ ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROMSTART          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v3.0", 0
+  equs "ZolOS v3.1", 0
 .startcode
   sei                 ; Don't interrupt me yet
   cld                 ; We don' need no steenkin' BCD
@@ -111,7 +111,7 @@ INCLUDE "include/os_call_vectors.asm"
   jsr OSWRCH
   PRT_MSG version_str, duart_println
 
-  jsr lcd_clear_buf                 ; Clear LCD buffer
+  jsr OSLCDCLS
   PRT_MSG start_msg, lcd_println
   PRT_MSG version_str, lcd_println  ; Print initial messages on LCD
 
@@ -141,15 +141,42 @@ INCLUDE "include/os_call_vectors.asm"
 
 
 ; --- TEST CODE ----------------------------------------------------------------
-  LOAD_MSG test_msg
-  jsr stdout_append
-  LOAD_MSG test_msg2
-  jsr stdout_append
-  jsr stdout_to_msg_vec
+;  LOAD_MSG test_msg
+;  jsr stdout_append
+;  LOAD_MSG test_msg2
+;  jsr stdout_append
+;  jsr stdout_to_msg_vec
   ;jsr OSWRMSG
-  jsr OSLCDMSG
-  stz STDOUT_IDX
-  stz STDOUT_BUF
+;  jsr OSLCDMSG
+;  stz STDOUT_IDX
+;  stz STDOUT_BUF
+
+;  lda #10
+;  jsr OSWRCH
+;  LOAD_MSG lcdbuf_msg
+;  jsr OSWRMSG
+;  lda #<LCD_BUF
+;  sta TMP_ADDR_A
+;  lda #>LCD_BUF
+;  sta TMP_ADDR_A+1
+;  jsr OSU16HEX
+;  jsr OSWRSBUF
+;  lda #10
+;  jsr OSWRCH
+;  LOAD_MSG lcdbufsz_msg
+;  jsr OSWRMSG
+;  lda #LCD_BUF_SZ
+;  jsr OSB2HEX
+;  jsr OSWRSBUF
+;  lda #10
+;  jsr OSWRCH
+;  jmp real_start
+
+;.lcdbuf_msg
+;  equs "LCD_BUF:",0
+;.lcdbufsz_msg
+;  equs "LCD_BUF_SZ:",0
+;.real_start
 ; ------------------------------------------------------------------------------
 
   LED_OFF LED_ERR
@@ -321,4 +348,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-3.0.bin", startrom, endrom
+SAVE "bin/z64-ROM-3.1.bin", startrom, endrom
