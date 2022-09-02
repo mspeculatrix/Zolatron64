@@ -1,12 +1,16 @@
-; COMMAND TOKENS - cfg_ROM.asm
-; These should be in alphabetical order. Where two or more commands share the
-; same few chars at the start, the longer commands should come first.
-; The order also has to be the same as that in data_tables.asm.
+\ cfg_ROM.asm
+
+\ COMMAND TOKENS - cfg_ROM.asm
+\ These should be in alphabetical order. Where two or more commands share the
+\ same few chars at the start, the longer commands should come first.
+\ The order also has to be the same as that in data_tables.asm.
+\ There's nothing special about the numbers, per se - they just need to
+\ be different.
 CMD_TKN_NUL   = $00                    ; What happens when you just hit RTN
 CMD_TKN_FAIL  = $01                    ; Syntax error & whatnot
 CMD_TKN_STAR  = $80                    ; *
-CMD_TKN_QUERY = CMD_TKN_STAR + 1       ; ?
-CMD_TKN_BANG  = CMD_TKN_QUERY + 1      ; !
+CMD_TKN_QUERY = CMD_TKN_STAR + 1       ; ? - Synonym for PEEK
+CMD_TKN_BANG  = CMD_TKN_QUERY + 1      ; ! - Synonym for POKE
 CMD_TKN_BRK   = CMD_TKN_BANG + 1       ; BRK - soft reset
 CMD_TKN_DEL   = CMD_TKN_BRK + 1        ; DEL - delete file
 CMD_TKN_DUMP  = CMD_TKN_DEL + 1        ; DUMP - save memory to storage

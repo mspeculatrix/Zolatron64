@@ -1,17 +1,21 @@
 ; PAGE TWO CONFIG -- cfg_page_2.asm --------------------------------------------
 
 \-------------------------------------------------------------------------------
-\ OS CALLS  - OS Indirection Table
-\ Jump table for OS calls. Requires corresponding entries in:
-\    - z64-main.asm   - OS Call Jump Table
+\ OS CALLS  - Vector Locations
+\ Vector locations for OS calls. These hold the address of the actual functions
+\ that implement the OS operations.
+\ Requires corresponding entries in:
+\    - z64-main.asm        - OS Call Jump Table
 \    - os_call_vectors.asm - map functions to vectors
-\    - cfg_main.asm   - OS Function Address Table
+\    - cfg_main.asm        - OS Function Address Table
 \-------------------------------------------------------------------------------
 ; READ
-OSRDHBYTE_VEC  = $0200
+OSRDASC_VEC    = $0200
+OSRDBYTE_VEC   = OSRDASC_VEC +2
+OSRDCH_VEC     = OSRDBYTE_VEC + 2
+OSRDHBYTE_VEC  = OSRDCH_VEC + 2
 OSRDHADDR_VEC  = OSRDHBYTE_VEC + 2
-OSRDCH_VEC     = OSRDHADDR_VEC + 2
-OSRDINT16_VEC  = OSRDCH_VEC + 2
+OSRDINT16_VEC  = OSRDHADDR_VEC + 2
 OSRDFNAME_VEC  = OSRDINT16_VEC + 2
 ; WRITE
 OSWRBUF_VEC    = OSRDFNAME_VEC + 2

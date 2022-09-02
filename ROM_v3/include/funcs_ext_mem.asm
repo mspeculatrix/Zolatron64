@@ -1,3 +1,5 @@
+\ funcs_ext_mem.asm
+
 \ ------------------------------------------------------------------------------
 \ ---  EXTMEM_RAM_CHK
 \ ------------------------------------------------------------------------------
@@ -5,6 +7,9 @@
 \ available.
 \ ON EXIT : - FUNC_ERR = 0 if bank is RAM and is available.
 \           - FUNC_ERR = 1 if bank is ROM or Extended ROM-RAM board not fitted.
+\ A - O
+\ X - O
+\ Y - n/a
 .extmem_ram_chk
   stz FUNC_ERR            ; Default to 0
   lda EXTMEM_LOC          ; Load what's currently in first byte of ext memory
@@ -23,6 +28,7 @@
   lda #ERR_EXTMEM_WR
   sta FUNC_ERR
   lda SYS_REG
+  eor #$FF                ; Flip all the bits
   and #SYS_EXMEM_NO
   sta SYS_REG
   jmp extmem_ram_chk_done
@@ -43,6 +49,9 @@
 ; selected bank is ROM or RAM. Need the check above for that.
 ; ON EXIT : - Carry clear if Ext Mem board fitted.
 ;           - Carry set if board NOT fitted.
+\ A - O
+\ X - n/a
+\ Y - n/a
 .extmem_stat
   clc
   lda SYS_REG
@@ -62,6 +71,9 @@
 \ ON EXIT : - Bank number set in EXTMEM_BANK
 \           - Bank selected through latch register
 \           - Error in FUNC_ERR
+\ A - O
+\ X - n/a
+\ Y - n/a
 .extmem_readset_bank
   stz FUNC_ERR							              ; Reset
   jsr OSRDINT16                           ; Read a decimal number from STDIN_BUF
@@ -78,3 +90,9 @@
   sta FUNC_ERR
 .extmem_readset_bank_end
   rts
+
+\ --- DATA --------------------
+.exmem_fitted_msg
+  equs "Extended memory",0
+.exmem_absent_msg
+  equs "No extended memory",0

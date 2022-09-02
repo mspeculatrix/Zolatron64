@@ -1,6 +1,9 @@
+\ cmds_H.asm
+
 \ ------------------------------------------------------------------------------
 \ --- CMD: HELP  :  PRINT HELP TEXT
 \ ------------------------------------------------------------------------------
+\ Usage: HELP
 \ Print a list of available commands to STDOUT.
 .cmdprcHELP
   ldx #0                    ; Offset for help table

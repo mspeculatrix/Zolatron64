@@ -46,18 +46,17 @@ ORG ROMSTART          ; This is where the actual code starts.
   txs                 ; the LSB, as MSB is assumed to be $01
 
 ; Initialise registers etc
-  stz TIMER_STATUS_REG
-  stz EXTMEM_BANK
-  stz EXTMEM_SLOT_SEL
-  stz FUNC_ERR
+  stz EXTMEM_BANK           ; Default to extended memory bank 0
+  stz EXTMEM_SLOT_SEL       ;    "     "    "       "     "   "
+  stz FUNC_ERR              ; Zero out function return values
   stz FUNC_RESULT
-  stz STDIN_BUF
-  stz STDIN_IDX
-  stz STDIN_STATUS_REG
-  stz STDOUT_BUF
+  stz STDIN_BUF             ; Set first byte of STDIN buffer to a nul (0)
+  stz STDIN_IDX             ; and set the corresponding index
+  stz STDOUT_BUF            ; Do the same for the STDOUT buffer
   stz STDOUT_IDX
+  stz STDIN_STATUS_REG      ; Zero out the STDIN register
 
-  lda #<USR_PAGE      ; Initialise LOMEM to start of user RAM
+  lda #<USR_PAGE            ; Initialise LOMEM to start of user RAM
   sta LOMEM
   lda #>USR_PAGE
   sta LOMEM + 1
@@ -96,14 +95,14 @@ INCLUDE "include/os_call_vectors.asm"
 \ ----     MAIN PROGRAM                                                     ----
 \ ------------------------------------------------------------------------------
 .main
-  LED_ON LED_ERR
+  LED_ON LED_ERR                ; Turn on all the LEDs for a light show
   LED_ON LED_BUSY
   LED_ON LED_OK
   LED_ON LED_FILE_ACT
   LED_ON LED_DEBUG
 
 ; Print initial message & prompt via serial
-  lda #CHR_LINEEND                  ; start with a couple of line feeds
+  lda #CHR_LINEEND                  ; Start with a couple of line feeds
   jsr OSWRCH
   jsr OSWRCH
   PRT_MSG start_msg, duart_println
@@ -139,53 +138,13 @@ INCLUDE "include/os_call_vectors.asm"
   lda #>500
   sta LCDV_TIMER_INTVL+1
 
-
-; --- TEST CODE ----------------------------------------------------------------
-;  LOAD_MSG test_msg
-;  jsr stdout_append
-;  LOAD_MSG test_msg2
-;  jsr stdout_append
-;  jsr stdout_to_msg_vec
-  ;jsr OSWRMSG
-;  jsr OSLCDMSG
-;  stz STDOUT_IDX
-;  stz STDOUT_BUF
-
-;  lda #10
-;  jsr OSWRCH
-;  LOAD_MSG lcdbuf_msg
-;  jsr OSWRMSG
-;  lda #<LCD_BUF
-;  sta TMP_ADDR_A
-;  lda #>LCD_BUF
-;  sta TMP_ADDR_A+1
-;  jsr OSU16HEX
-;  jsr OSWRSBUF
-;  lda #10
-;  jsr OSWRCH
-;  LOAD_MSG lcdbufsz_msg
-;  jsr OSWRMSG
-;  lda #LCD_BUF_SZ
-;  jsr OSB2HEX
-;  jsr OSWRSBUF
-;  lda #10
-;  jsr OSWRCH
-;  jmp real_start
-
-;.lcdbuf_msg
-;  equs "LCD_BUF:",0
-;.lcdbufsz_msg
-;  equs "LCD_BUF_SZ:",0
-;.real_start
-; ------------------------------------------------------------------------------
-
-  LED_OFF LED_ERR
+  LED_OFF LED_ERR               ; Turn off the LEDs
   LED_OFF LED_BUSY
   LED_OFF LED_OK
   LED_OFF LED_FILE_ACT
   LED_OFF LED_DEBUG
 
-  cli                     	        ; Enable interrupts
+  cli                     	    ; Enable interrupts
 
 .soft_reset
   SERIAL_PROMPT
@@ -290,15 +249,18 @@ ALIGN &100                                        ; Start on new page
 \ Jump table for OS calls. Requires corresponding entries in:
 \    - cfg_page_2.asm - OS Indirection Table
 \    - cfg_main.asm   - OS Function Address Table
+\    - os_call_vectors.asm - map functions to vectors
 \    - this file      - OS default config routine & this OS Call Jump Table
 \ These entries must be in the same order as those in the OS Function Address
 \ Table in cfg_main.asm.
 \-------------------------------------------------------------------------------
 ORG $FF00
 .os_calls
+  jmp (OSRDASC_VEC)
+  jmp (OSRDBYTE_VEC)
+  jmp (OSRDCH_VEC)
   jmp (OSRDHBYTE_VEC)
   jmp (OSRDHADDR_VEC)
-  jmp (OSRDCH_VEC)
   jmp (OSRDINT16_VEC)
   jmp (OSRDFNAME_VEC)
 

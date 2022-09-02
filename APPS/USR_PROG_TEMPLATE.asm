@@ -32,7 +32,7 @@ ORG USR_PAGE
   equb >reset
   equb <endcode             ; @ $0807 Addr of first byte after end of program
   equb >endcode
- equb 'P'                  ; @ $0808 D=data, L=library, O=overlay, X=OS ext
+  equb "E"                  ; @ $0808 D=data, L=library, O=overlay, X=OS ext
   equs 0,0,0                ; -- Reserved for future use --
 .prog_name
   equs "TEMPLATE",0         ; @ $080D Short name, max 15 chars - nul terminated

@@ -1,4 +1,6 @@
-\ LCD FUNCTIONS -- funcs_4x20_lcd.asm ------------------------------------------
+\ funcs_4x20_lcd.asm
+
+\ LCD FUNCTIONS ----------------------------------------------------------------
 
 \ Character addresses for 20x4 display:
 \ Line 0 :  0 ($0)  -  19 ($13)
@@ -12,8 +14,14 @@
 \ ---  Implements: OSDELAY
 \ ------------------------------------------------------------------------------
 \ General-purpose delay function. Blocking.
-\ ON ENTRY: Assumes a 16-bit value in LCDV_TIMER_INTVL. This number should be
-\           the length of the desired delay in milliseconds.
+\ This isn't specific to the LCD, but we're using the LCD's VIA to provide
+\ the timer.
+\ ON ENTRY: - Assumes a 16-bit value in LCDV_TIMER_INTVL.
+\             This number should be the length of the desired delay
+\             in milliseconds.
+\ A - P
+\ X - n/a
+\ Y - n/a
 .delay
   pha
   stz LCDV_TIMER_COUNT		    ; Zero-out counter
@@ -70,6 +78,9 @@
 \ ---  LCD_CLEAR_BUF
 \ ------------------------------------------------------------------------------
 \ Fill the LCD buffer with spaces
+\ A - O
+\ X - n/a
+\ Y - O
 .lcd_clear_buf
   ldy #0
   lda #CHR_SPACE
@@ -84,6 +95,9 @@
 \ ---  LCD_CLEAR_SIG
 \ ------------------------------------------------------------------------------
 \ Clear the RS, RW & E bits on PORT A
+\ A - P
+\ X - n/a
+\ Y - n/a
 .lcd_clear_sig
   pha
   lda LCDV_PORTA
@@ -96,22 +110,26 @@
 \ ---  LCD_CMD
 \ ------------------------------------------------------------------------------
 \ Send a command to the LCD
-\ ON ENTRY: A must contain command byte
+\ ON ENTRY: - A must contain command byte
+\ A - O
+\ X - n/a
+\ Y - n/a
 .lcd_cmd
-;  pha                              ; preserve A on the stack
   jsr lcd_wait                      ; check LCD is ready to receive
   sta LCDV_PORTB                    ; assumes command byte is in A
   jsr lcd_clear_sig                 ; Clear RS/RW/E bits. Writing to instr reg
   LCD_SET_CTL LCD_EX                ; Set E bit to send instruction
   jsr lcd_clear_sig
-;  pla
   rts
 
 \ ------------------------------------------------------------------------------
 \ ---  LCD_PRT_LINEBUF
 \ ------------------------------------------------------------------------------
 \ Prints a line's worth from the LCD_BUF buffer.
-\ ON ENTRY: Y must contain line index - 0-3 for a 4-line display
+\ ON ENTRY: - Y must contain line index - 0-3 for a 4-line display
+\ A - P
+\ X - P
+\ Y - P
 .lcd_prt_linebuf
   pha : phx : phy
   ldx #0                      ; Set cursor to start of line
@@ -144,6 +162,9 @@
 \ ---  LCD_WAIT
 \ ------------------------------------------------------------------------------
 \ Wait until LCD is ready to receive next byte. Blocking!
+\ A - P
+\ X - n/a
+\ Y - n/a
 .lcd_wait         ; Check to see if LCD is ready to receive next byte
   pha             ; Save current contents of A in stack, so it isn't corrupted
   lda #%00000000  ; Set Port B as input
@@ -181,6 +202,9 @@
 \ ---  Implements: OSLCDCLS
 \ ------------------------------------------------------------------------------
 \ Clear the LCD screen
+\ A - O
+\ X - n/a
+\ Y - n/a
 .lcd_cls
   jsr lcd_clear_buf                       ; Overwrite LCD_BUF with spaces
   lda #LCD_CLS                            ; Clear display, reset display memory
@@ -192,7 +216,10 @@
 \ ---  Implements: OSLCDB2HEX
 \ ------------------------------------------------------------------------------
 \ Prints an 8-bit value as a 2-char hex string
-\ ON ENTRY: A must contain value of byte to be printed.
+\ ON ENTRY: - A must contain value of byte to be printed.
+\ A - O
+\ X - n/a
+\ Y - n/a
 .lcd_print_byte
   jsr byte_to_hex_str               ; Results in three bytes starting at STR_BUF
   lda STR_BUF
@@ -206,7 +233,10 @@
 \ ---  Implements: OSLCDWRBUF
 \ ------------------------------------------------------------------------------
 \ Prints the contents of STDOUT_BUF to LCD
-\ ON ENTRY: Expects a nul-terminated string in STDOUT_BUF
+\ ON ENTRY: - Expects a nul-terminated string in STDOUT_BUF
+\ A - P
+\ X - n/a
+\ Y - n/a
 .lcd_prt_buf
   pha
   lda #<STDOUT_BUF
@@ -222,7 +252,10 @@
 \ ---  Implements: OSLCDSBUF
 \ ------------------------------------------------------------------------------
 \ Prints the contents of STR_BUF to LCD
-\ ON ENTRY: Expects a nul-terminated string in STR_BUF
+\ ON ENTRY: - Expects a nul-terminated string in STR_BUF
+\ A - P
+\ X - n/a
+\ Y - n/a
 .lcd_prt_sbuf
   pha
   lda #<STR_BUF
@@ -238,7 +271,10 @@
 \ ---  Implements: OSLCDMSG
 \ ------------------------------------------------------------------------------
 \ Prints text to the LCD.
-\ ON ENTRY: MSG_VEC should point to location of text.
+\ ON ENTRY: - MSG_VEC should point to location of text.
+\ A - P
+\ X - P
+\ Y - P
 .lcd_println
   pha : phx : phy
   ; Start index, to start copying FROM is start of line 1
@@ -291,6 +327,11 @@
 \ ---  LCD_PRT_CHR
 \ ---  Implements: OSLCDCH
 \ ------------------------------------------------------------------------------
+\ Print a character to the LCD.
+\ ON ENTRY: - A must contain ASCII code for character.
+\ A - P
+\ X - n/a
+\ Y - n/a
 .lcd_prt_chr
   pha
   jsr lcd_wait                      ; check LCD is ready to receive
@@ -305,7 +346,11 @@
 \ ---  LCD_PRT_ERR
 \ ---  Implements: OSLCDERR
 \ ------------------------------------------------------------------------------
-\ ON ENTRY: Assumes error code in FUNC_ERR
+\ Print an error message to the LCD.
+\ ON ENTRY: - Assumes error code in FUNC_ERR
+\ A - O
+\ X - O
+\ Y - n/a
 .lcd_prt_err
   lda FUNC_ERR
   dec A                   ; To get offset for table
@@ -322,9 +367,13 @@
 \ ---  LCD_SET_CURSOR
 \ ---  Implements: OSLCDSC
 \ ------------------------------------------------------------------------------
-\ ON ENTRY: X & Y co-ords must be in X and Y.
-\           - X should contain the X param in range 0-19.
-\           - Y should be 0-3.
+\ Move the cursor to a specified position.
+\ ON ENTRY: - X & Y co-ords must be in X and Y.
+\               - X should contain the X param in range 0-19.
+\               - Y should be 0-3.
+\ A - O
+\ X - O
+\ Y - n/a
 .lcd_set_cursor
   stx TMP_VAL
   lda lcd_ln_base_addr,Y  ; Base address for line, from lookup table
@@ -333,3 +382,7 @@
   ora #LCD_SET_DDRAM      ; OR with LCD_SET_DDRAM command byte
   jsr lcd_cmd
   rts
+
+\ --- DATA -------------------
+.lcd_ln_base_addr             ; Lookup table - base addresses for lines
+  equs $00,$40,$14,$54

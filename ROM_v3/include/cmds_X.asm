@@ -1,12 +1,13 @@
+\ cmds_X.asm
+
 \ ------------------------------------------------------------------------------
 \ --- CMD: XLIST  :  LIST PROGRAMS IN EXTENDED MEMORY
 \ ------------------------------------------------------------------------------
+\ Usage: XLIST
 \ List the programs in extended memory. This assumes that the programs comply
 \ with the protocol of having a nul-terminated name string at $080D.
 .cmdprcXLIST
   LED_ON LED_FILE_ACT
-  lda EXTMEM_BANK                 ; Load the num of current selected bank
-  sta TMP_VAL                     ; and save it for later
   ldy #0                          ; Number of memory bank
 .cmdprcXLIST_loop
   sty EXTMEM_SLOT_SEL             ; Select the ext memory slot
@@ -28,10 +29,10 @@
   lda #'*'
 .cmdprcXLIST_currbank_done
   jsr OSWRCH
-  lda EXTMEM_LOC                  ; Load the first byte of the code and compare
-  cmp #$4C                        ; to JMP instruction - if not this then prob
-  bne cmdprcXLIST_name_loop_done  ; no program loaded in this bank.
-  lda EXTMEM_LOC+9                ; Load the data type code
+;  lda EXTMEM_LOC                  ; Load the first byte of the code and compare
+;  cmp #$4C                        ; to JMP instruction - if not this then prob
+;  bne cmdprcXLIST_name_loop_done  ; no program loaded in this bank.
+  lda EXTMEM_LOC + CODEHDR_TYPE   ; Load the data type code
   sta TEST_VAL
   beq cmdprcXLIST_name_loop_done  ; If a zero, nothing more to do
   ldx #0                          ; Index for loop
@@ -66,8 +67,8 @@
   jmp cmdprcXLIST_loop
 .cmdprcXLIST_done
   LED_OFF LED_FILE_ACT
-  lda TMP_VAL                     ; Retrieve previous bank selection
-  sta EXTMEM_SLOT_SEL             ; and restore it
+  lda EXTMEM_BANK                 ; Restore the currently selected bank
+  sta EXTMEM_SLOT_SEL
   jmp cmdprc_end
 
 \ ------------------------------------------------------------------------------
@@ -76,7 +77,8 @@
 \ Usage: XLOAD <filename> <memory_bank>
 \ This is for loading program code into extended memory. The given filename
 \ should not have an extension (.BIN will be added by ZolaDOS).
-\ The memory_bank must be in the range 0-15.
+\ The memory_bank must be in the range 0-15. The code will check that the
+\ selected bank is writeable (ie, that it has not been switched to ROM).
 .cmdprcXLOAD
   jsr read_filename          ; Read filename from STDIN_BUF, put in STR_BUF
   lda FUNC_ERR
@@ -122,15 +124,16 @@
 \ ------------------------------------------------------------------------------
 \ --- CMD: XRUN  :  RUN PROGRAM IN CURRENT EXTENDED MEMORY BANK
 \ ------------------------------------------------------------------------------
+\ Usage: XRUN
+\ Performs a jump to EXTMEM_LOC. First checks for a 'P' code - indicating that
+\ an executable program is loaded in the currently selected bank.
 .cmdprcXRUN
   stz STDIN_BUF                         ; Zero out input buffer
   stz STDIN_IDX                         ; and its index pointer
   stz PRG_EXIT_CODE                     ; Reset Program Exit Code
   LED_OFF LED_BUSY
-  lda EXTMEM_BANK                       ; Load the num of current selected bank
-  sta EXTMEM_SLOT_SEL                   ; Select bank by writing to this addr
   lda EXTMEM_LOC + CODEHDR_TYPE
-  cmp #'P'
+  cmp #'E'
   bne cmdprcXRUN_err
   jmp EXTMEM_LOC
 .cmdprcXRUN_err
@@ -146,7 +149,21 @@
 .cmdprcXSEL
   jsr extmem_readset_bank
   lda FUNC_ERR
-  beq cmdprcXSEL_end
+  beq cmdprcXSEL_success
   jsr OSWRERR
+  jmp cmdprcXSEL_end
+.cmdprcXSEL_success
+  LOAD_MSG bank_select_msg
+  jsr OSSOAPP
+  lda EXTMEM_BANK
+  jsr OSB2ISTR
+  STR_BUF_TO_MSG_VEC
+  jsr OSSOAPP
+  jsr OSWRBUF
+  jsr OSLCDWRBUF
 .cmdprcXSEL_end
   jmp cmdprc_end
+
+\ --- DATA ----------------
+.bank_select_msg
+  equs "Bank selected: ",0

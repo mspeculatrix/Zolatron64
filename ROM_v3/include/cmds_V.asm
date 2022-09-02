@@ -1,6 +1,10 @@
+\ cmds_V.asm
+
 \ ------------------------------------------------------------------------------
 \ --- CMD: VERS  :  PRINT FIRMWARE VERSION
 \ ------------------------------------------------------------------------------
+\ Usage: VERS
+\ Print the ZolOS version string to STDOUT and LCD.
 .cmdprcVERS
   lda #<version_str             ; LSB of message
   sta MSG_VEC

@@ -1,7 +1,3 @@
-; ***** HUNT the ZUMPUS *****
-;
-; Extended memory/ROM version.
-;
 ; Code for Zolatron 64 6502-based microcomputer.
 ;
 ; GitHub: https://github.com/mspeculatrix/Zolatron64/
@@ -9,7 +5,7 @@
 ;
 ; Written for the Beebasm assembler
 ; Assemble with:
-; beebasm -v -i ZUMPUSR.asm
+; beebasm -v -i ZUMPUS.asm
 
 CPU 1                               ; use 65C02 instruction set
 
@@ -27,11 +23,11 @@ INCLUDE "zumpus_cfg.asm"
 ORG EXTMEM_LOC
 .header                     ; HEADER INFO
   INCLUDE "../../LIB/header_std.asm"
-  equb "P"                  ; @ $8008 A code of P denotes a standalone program
+  equb 'E'                  ; Mark as executable code
   equs 0,0,0                ; -- Reserved for future use --
-  equs "ZUMPUSR",0           ; @ $800D Short name, max 15 chars - nul terminated
+  equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
-  equs "1.0",0              ; Version string - nul terminated
+  equs "1.1",0              ; Version string - nul terminated
 
 .startprog
 .reset                      ; Sometimes this may be different from startprog
@@ -70,13 +66,6 @@ ORG EXTMEM_LOC
   LOAD_MSG instr_prompt       ; Ask if player wants instructions
   jsr OSWRMSG
   jsr yesno                   ; Get response
-  ; --- DEBUGGING ------------------
-;  lda FUNC_RESULT
-;  jsr OSB2ISTR
-;  jsr OSWRSBUF
-;  lda #' '
-;  jsr OSWRCH
-  ; --------------------------------
   lda FUNC_RESULT
   cmp #YESNO_YES
   bne init                    ; If no, jump ahead
@@ -152,7 +141,7 @@ ORG EXTMEM_LOC
   lda STDIN_STATUS_REG                    ; Get our info register
   eor #STDIN_NUL_RCVD_FL                  ; Zero the received flag
   sta STDIN_STATUS_REG                    ; and re-save the register
-  stz STDIN_IDX
+  stz STDIN_IDX                           ; Want to read from firs char in buf
 
   ; We're expecting the first item to be 'I', 'M', 'S' or 'Q'
   jsr OSRDCH
@@ -199,17 +188,6 @@ ORG EXTMEM_LOC
   bne zum_cmd_shoot_parse       ; Already awake - nothing to do here
   ldx #3                        ; Divisor for MOD
   jsr roll_dice                 ; A will contain 0, 1 or 2
-  ; --- DEBUGGING ----------------
-;  pha
-;  tay
-;  lda #'!'
-;  jsr OSWRCH
-;  tya
-;  jsr OSB2ISTR
-;  jsr OSWRSBUF
-;  NEWLINE
-;  pla
-  ; ------------------------------
   cmp #1
   beq zum_cmd_shoot_wakez       ; If 1, Z awakes
   jmp zum_cmd_shoot_parse       ; Otherwise, get on with next bit
@@ -226,7 +204,7 @@ ORG EXTMEM_LOC
   lda FUNC_ERR                  ; Check for error
   bne zum_cs_oserr
   lda FUNC_RES_L
-  beq zum_cs_range_err   ; 0 is not an option
+  beq zum_cs_range_err          ; 0 is not an option
   cmp #6
   bcs zum_cs_range_err
   jmp zum_cmd_shoot_staple
@@ -240,14 +218,6 @@ ORG EXTMEM_LOC
   sta STAPLE_RANGE
   dec STAPLE_COUNT              ; We have one fewer staples now
 .zum_cmd_shoot_flight
-  ; --- DEBUGGING -----------------
-;  lda ROOM_NUM
-;  inc A
-;  jsr OSB2ISTR
-;  jsr OSWRSBUF
-;  lda #' '
-;  jsr OSWRCH
-  ; -------------------------------
   lda ROOM_NUM
   cmp ZUMPUS_LOC
   beq zum_cmd_shoot_hit         ; Z in same room as staple
@@ -411,10 +381,8 @@ INCLUDE "./zumpus_funcs.asm"
 INCLUDE "./zumpus_data.asm"
 INCLUDE "../../LIB/funcs_math.asm"
 
-ORG EXTMEM_LOC + 8188                       ; To fill out 8K ROM
 .endtag
   equs "EOF",0
 .endcode
-
 
 SAVE "../bin/ZUMPUSR.BIN", header, endcode

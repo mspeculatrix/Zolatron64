@@ -14,15 +14,13 @@ TMP_ADDR_B_L  = TMP_ADDR_B	        ; $58 - Alias -
 TMP_ADDR_B_H  = TMP_ADDR_B + 1      ; $59
 TMP_ADDR_C    = TMP_ADDR_B_H + 1    ; $5A
 TMP_ADDR_C_L  = TMP_ADDR_C	        ; $5A - Alias -
-TMP_ADDR_C_H  = TMP_ADDR_C_L + 1	; $5B
+TMP_ADDR_C_H  = TMP_ADDR_C_L + 1	  ; $5B
 
 FILE_ADDR     = TMP_ADDR_C_H + 1    ; $5C
 LOMEM         = FILE_ADDR + 2       ; $5E First available byte after user prog
 
-STDIN_STATUS_REG = LOMEM + 2	      ; Used to store various flags
-PROC_REG = STDIN_STATUS_REG + 1  	  ; Process flags
-TIMER_STATUS_REG = PROC_REG + 1	    ; Timer status register
-SYS_REG = TIMER_STATUS_REG + 1      ; System Register
+STDIN_STATUS_REG = LOMEM + 2	      ; $60 Used to store various flags
+SYS_REG = STDIN_STATUS_REG + 1      ; $63 System Register
 ; SYSTEM REGISTER
 ; Bit     Flag name          Function
 ;  0

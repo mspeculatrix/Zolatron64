@@ -64,7 +64,7 @@
   stz FUNC_ERR                  ; Set default
   jsr OSRDINT16                 ; Read the room number from STDIN_BUF
   lda FUNC_ERR                  ; Check for error
-  bne get_input_room_oserr  
+  bne get_input_room_oserr
   lda #<P_CONN_ROOMS            ; Load pointer to conn room data in TMP_ADDR_A
   sta TMP_ADDR_A                ;  "
   lda #>P_CONN_ROOMS            ;  "
@@ -90,7 +90,7 @@
 \ ---  INIT_CHECK_UNIQUE
 \ ------------------------------------------------------------------------------
 \ Used when setting up game and assigning random locations to the various
-\ characters. This basically ensures that each character is assigned a 
+\ characters. This basically ensures that each character is assigned a
 \ different room.
 .init_check_unique
   phx
@@ -481,10 +481,9 @@
   lda #YESNO_NO
 .yesno_done
   sta FUNC_RESULT
-  stz STDIN_IDX                         ; Clear input buffer 
+  stz STDIN_IDX                         ; Clear input buffer
   stz STDIN_BUF                         ;  "
   lda STDIN_STATUS_REG                    ; Get our info register
   and #STDIN_CLEAR_FLAGS                  ; Clear the received flags
   sta STDIN_STATUS_REG                    ; and re-save the register
   rts
-

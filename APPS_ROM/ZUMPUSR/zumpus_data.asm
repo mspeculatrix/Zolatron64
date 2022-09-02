@@ -32,22 +32,24 @@
   equs "-----",10,0
 
 .game_title
-  equs "***************************",10
+  equs 10,"***************************",10
   equs "***   HUNT the ZUMPUS   ***",10
   equs "***************************",10,10,0
 
 .instructions
+  equs "You know when Zumpus is in an adjacent room by the smell.",10
+  equs "Similarly, you'll hear the sales reps and feel the lift shafts.",10
   equs "At each turn, you can either move or fire a staple.",10
   equs "To move, type 'm' followed by the number of the room you want to",10
   equs "move into - eg:",10
   equs "   m 15",10
   equs "To shoot, type 's' followed by the number of the room you want to",10
   equs "shoot into and then the distance you want the staple to go in terms",10
-  equs "of number of rooms (1-5) - eg",10
+  equs "of number of rooms (1-5) - eg:",10
   equs "   s 15 3",10
   equs "Note that, after the first room, the staple will take a random",10
   equs "course and might even end up back in the room you're in -",10
-  equs "in which case it's all over for you.",10,10
+  equs "which could be bad.",10,10
   equs "You can also type:",10
   equs "  I - to see these instructions again",10
   equs "  Q - to quit",10,0
@@ -65,7 +67,7 @@
   equs "about wanting to abduct you.",10,10
   equs "Luckily, you finally got around to modifying that staple gun. It's",10
   equs "powerful enough to fire through as many as five adjacent rooms.",10
-  equs "And it stings enough to make the Zumpus want to go home.",10
+  equs "And it stings enough to make Zumpus want to go home.",10
   equs "But be careful - you have only five staples.",10,0
 
 
@@ -83,7 +85,7 @@
 .connecting_rooms_msg
   equs "Connecting rooms are: ",0
 .current_room_msg
-  equs "You are in room ",0
+  equs "You are now in room : ",0
 
 .zumpus_prompt
   equs "Move or Shoot? ",0
@@ -114,7 +116,7 @@
 .shot_nearhit_msg
   equs "Ooo! So close! Zumpus managed to dodge the staple.",10,0
 .shot_self_msg
-  equs "Ouch! The staple came back and hit you!",10,0
+  equs "Ouch! The staple came back and hit you! You're done!",10,0
 .shot_nearself_msg
   equs "Phew! That was close. The staple came back and nearly hit you!",10,0
 
@@ -128,7 +130,7 @@
 .warning_zumpus_awakes
   equs "Oh no. A snort, a fart and a bellow from somewhere in the bowels of the",10
   equs "building suggest that Zumpus has awoken.",10
-  equs "He will now ramble at random around the building.",10
+  equs "He will now slouch at random around the building.",10
   equs "You have been warned...",10,0
 .warning_zumpus_moving
   equs "You hear banging and crashing in the distance.",10,0
@@ -154,4 +156,3 @@
   equs "That didn't make any sense to me.",10,0
 .err_range
   equs "Your range is 1-5 with these staples.",10,0
-

@@ -1,7 +1,9 @@
+\ cmds_S.asm
+
 \ ------------------------------------------------------------------------------
 \ --- CMD: SAVE  :  SAVE MEMORY
 \ ------------------------------------------------------------------------------
-\ *** This is currently a synonym for DUMP. Might change this in the future
+\ *** This is currently identical to DUMP. Might change this in the future
 \     to do something different. ***
 \ Save a block of memory to ZolaDOS device.
 \ Usage: SAVE <start_addr> <end_addr> <filename>
@@ -43,9 +45,9 @@
 \ ------------------------------------------------------------------------------
 \ --- CMD: STAT  :  DISPLAY STATUS
 \ ------------------------------------------------------------------------------
-\ Output some useful info.
+\ Usage: STAT
+\ Output some useful info about registers etc.
 .cmdprcSTAT
-  ;jsr OSLCDCLS
   ; --- LINE 1 -----------------
   stz STDOUT_IDX                              ; Set offset pointer
   LOAD_MSG stat_msg_lomem                     ; Show address of LOMEM
@@ -132,9 +134,9 @@
   LOAD_MSG stat_msg_spacer
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
 
-  LOAD_MSG stat_msg_procreg
+  LOAD_MSG stat_msg_stdin
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
-  lda PROC_REG
+  lda STDIN_STATUS_REG
   jsr display_stat_hex
 
   jsr OSWRBUF
@@ -154,9 +156,9 @@
   LOAD_MSG stat_msg_spacer
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
 
-  LOAD_MSG stat_msg_procreg
+  LOAD_MSG stat_msg_stdin
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
-  lda PROC_REG
+  lda STDIN_STATUS_REG
   jsr display_stat_bin
 
   jsr OSWRBUF
@@ -175,3 +177,23 @@
   STR_BUF_TO_MSG_VEC                          ; Set MSG_VEC to point to this
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
   rts
+
+\ --- DATA --------------------
+.stat_msg_lomem               ; For 'STAT' output
+  equs "LOMEM:",0
+.stat_msg_faddr
+  equs "FADDR:",0
+.stat_msg_fnerr
+  equs "FNERR:",0
+.stat_msg_fnres
+  equs "FNRES:",0
+.stat_msg_exmem
+  equs "EXMEM:",0
+.stat_msg_pexit
+  equs "PEXIT:",0
+.stat_msg_sysreg
+  equs "SYSRG:",0
+.stat_msg_stdin
+  equs "STDIN:",0
+.stat_msg_spacer
+  equs "  ",0

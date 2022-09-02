@@ -1,10 +1,13 @@
-; funcs_io.asm
+\ funcs_io.asm
 
 \ ------------------------------------------------------------------------------
 \ COMMAND INPUT PARSING
 \ Inspired somewhat by keyword parsing in EhBASIC:
 \ https://github.com/Klaus2m5/6502_EhBASIC_V2.22/blob/master/patched/basic.asm
 \ (see line 8273 onward)
+\ A - O
+\ X - O
+\ Y - O
 .parse_input
   lda #CMD_TKN_FAIL         ; We'll use this as the default result
   sta FUNC_RESULT           ;
@@ -99,7 +102,10 @@
 \ ------------------------------------------------------------------------------
 \ Display the contents of memory
 \ ON ENTRY: Start and end addresses must be in TMP_ADDR_A and TMP_ADDR_B.
-; We'll leave TMP_ADDR_B alone, but increment TMP_ADDR_A until the two match.
+\ A - O
+\ X - O
+\ Y - n/a
+; We leave TMP_ADDR_B alone, but increment TMP_ADDR_A until the two match.
 .display_memory
   LOAD_MSG memory_header
   jsr OSWRMSG
@@ -153,6 +159,9 @@
   rts
 
 .display_mem_copy_addr
+\ A - O
+\ X - n/a
+\ Y - n/a
   lda TMP_ADDR_A_L                ; Keep a copy for ASCII display
   sta TMP_ADDR_C_L
   lda TMP_ADDR_A_H
@@ -160,6 +169,9 @@
   rts
 
 .display_mem_ascii
+\ A - O
+\ X - n/a
+\ Y - O
   lda TMP_COUNT
   bne display_mem_ascii_len
   lda #16
@@ -196,42 +208,102 @@
   rts
 
 .display_mem_pad
+\ A - O
+\ X - n/a
+\ Y - n/a
   lda #' '
   jsr OSWRCH
   jsr OSWRCH
   rts
 
 \ ------------------------------------------------------------------------------
-\ ---  READ_CHAR
-\ ---  Implements: OSRDCH
+\ ---  READ_ASCII
+\ ---  Implements: OSRDASC
 \ ------------------------------------------------------------------------------
-\ Get the next non-space character from STDIN_BUF. This doesn't remove anything
-\ from the buffer, but it does update the pointer STDIN_IDX to the next char.
+\ Wrapper to read_byte. Gets the next PRINTABLE character from STDIN_BUF.
+\ Same as read_char (OSRDCH) except that this version treats space chars
+\ as valid. Accepts values $20 - $7E.
 \ ON ENTRY: - Assumes there is something in STDIN_BUF
 \           - Reads the char pointed to by STDIN_IDX
 \ ON EXIT : - Character code is in FUNC_RESULT
 \           - Error code in FUNC_ERR
-.read_char
+\ A - O
+\ X - O
+\ Y - n/a
+.read_ascii
+  jsr read_byte
+  lda FUNC_ERR
+  bne read_ascii_end
+  lda FUNC_RESULT
+  cmp #$20
+  bcc read_ascii                 ; Is less than ' ' ($20)
+  cmp #$7E
+  bcs read_ascii                 ; Is more than tilde ($7E)
+.read_ascii_end
+  rts
+
+
+\ ------------------------------------------------------------------------------
+\ ---  READ_BYTE
+\ ---  Implements: OSRDBYTE
+\ ------------------------------------------------------------------------------
+\ Get the next character from STDIN_BUF - the char pointed to by STDIN_IDX.
+\ Any routine that reads this input will probably want to start at the
+\ beginning of the buffer, and so should reset the index before the first call
+\ to this function - ie: stz STDIN_IDX.
+\ This doesn't remove anything from the buffer, but it does update the pointer
+\ STDIN_IDX to the next char.
+\ ON ENTRY: - Assumes there is something in STDIN_BUF
+\           - Reads the char pointed to by STDIN_IDX
+\ ON EXIT : - Character code is in FUNC_RESULT
+\           - Error code in FUNC_ERR
+\ A - O
+\ X - O
+\ Y - n/a
+.read_byte
   stz FUNC_RESULT
   stz FUNC_ERR
   ldx STDIN_IDX
-.read_char_next
+.read_byte_next
   lda STDIN_BUF,X
+  beq read_byte_EOB             ; 0 means end of buffered text
   sta FUNC_RESULT
-  beq read_char_EOB             ; A 0 means end of buffered text
-  cmp #' '                      ; Is it a space?
-  bne read_char_store           ; If so, try again...
-  inx
-  jmp read_char_next
-.read_char_store
   inx                           ; For next time
   stx STDIN_IDX
-  sta FUNC_RESULT
-  jmp read_char_end
-.read_char_EOB
-  stz STDIN_IDX
+  jmp read_byte_end
+.read_byte_EOB                  ; At the end of the buffer
   lda #ERR_EOB
   sta FUNC_ERR
+  lda STDIN_STATUS_REG          ; Clear the STDIN flags in the status reg
+  and #STDIN_CLEAR_FLAGS
+  sta STDIN_STATUS_REG
+  stz STDIN_IDX                 ; Reset index
+  stz STDIN_BUF
+.read_byte_end
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  READ_CHAR
+\ ---  Implements: OSRDCH
+\ ------------------------------------------------------------------------------
+\ Wrapper to read_byte. Gets the next PRINTABLE character from STDIN_BUF -
+\ ie, in range $21 - $7E. That does NOT include space.
+\ ON ENTRY: - Assumes there is something in STDIN_BUF
+\           - Reads the char pointed to by STDIN_IDX
+\ ON EXIT : - Character code is in FUNC_RESULT
+\           - Error code in FUNC_ERR
+\ A - O
+\ X - O
+\ Y - n/a
+.read_char
+  jsr read_byte
+  lda FUNC_ERR
+  bne read_char_end
+  lda FUNC_RESULT
+  cmp #'!'
+  bcc read_char                 ; Is less than '!' ($21)
+  cmp #$7E
+  bcs read_char                 ; Is more than tilde ($7E)
 .read_char_end
   rts
 
@@ -245,6 +317,9 @@
 \           - Assumes STDIN_IDX points to next byte to be read from STDIN_BUF.
 \ ON EXIT : - 16-bit number in FUNC_RES_L/H
 \           - Error in FUNC_ERR
+\ A - P
+\ X - P
+\ Y - P
 .read_int16
   pha : phx : phy
   stz FUNC_ERR
@@ -324,6 +399,9 @@
 \ ON EXIT : - Nul-terminated filename in STR_BUF
 \           - Error in FUNC_ERR
 \           - STDIN_IDX updated
+\ A - P
+\ X - P
+\ Y - P
 .read_filename
   pha : phx : phy
   stz FUNC_ERR              ; Initialise to 0
@@ -384,6 +462,9 @@
 
 \ Maybe use another address location for storing a parameter which will be
 \ the maximum string length.
+\ A - P
+\ X - P
+\ Y - P
 .read_string          ; **** WORK IN PROGRESS ****
   pha : phx : phy
   stz FUNC_ERR              ; Initialise to 0
@@ -453,6 +534,9 @@
 \           space.
 \ ON EXIT : - 16-bit value in FUNC_RES_L/FUNC_RES_H.
 \           - FUNC_ERR contains error code.
+\ A - P
+\ X - n/a
+\ Y - P
 .read_hex_addr
   pha : phy
   ldy #1                    ; Offset for where we're storing each byte from buf
@@ -478,6 +562,9 @@
 \           terminator or space.
 \ ON EXIT : - Two 16-bit addresses in TMP_ADDR_A and TMP_ADDR_B.
 \           - FUNC_ERR contains error code.
+\ A - O
+\ X - n/a
+\ Y - O
 .read_hex_addr_pair
   ldy #0
 .read_hex_addr_pair_next        ; Get next address from buffer
@@ -507,6 +594,9 @@
 \             of STDIN_BUF from which we want to read next.
 \ ON EXIT : - Value in FUNC_RESULT
 \           - Error in FUNC_ERR
+\ A - P
+\ X - P
+\ Y - P
 .read_hex_byte
   pha : phx : phy
   stz FUNC_ERR              ; Initialise to 0
@@ -543,6 +633,9 @@
 \ ---  Implements: OSWRERR
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: An error code is assumed to be in FUNC_ERR
+\ A - O
+\ X - O
+\ Y - n/a
 .os_print_error
   lda FUNC_ERR
   dec A                   ; To get offset for table
@@ -562,6 +655,9 @@
 \ ON ENTRY: - Assumes index for next char is in STDOUT_IDX
 \           - MSG_VEC/+1 contains pointer to text string
 \ ON EXIT : - FUNC_ERR contains error code - 0 for success
+\ A - O
+\ X - P
+\ Y - P
 .stdout_append
   phx : phy
   stz FUNC_ERR

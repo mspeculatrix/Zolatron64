@@ -1,6 +1,9 @@
+\ cmds_J.asm
+
 \ ------------------------------------------------------------------------------
 \ --- CMD: JMP  :  JUMP TO ADDRESS
 \ ------------------------------------------------------------------------------
+\ Usage: JMP <addr>
 \ Jump to a specified address and execute from there.
 \ Requires a two-byte address in hex.
 .cmdprcJMP
@@ -31,6 +34,7 @@
   LOAD_MSG STDOUT_BUF
   jsr OSLCDMSG
   jmp cmdprc_fail
+; --- DATA ------------------
 .cmdprcJMP_msg
   equs "JUMP:",0
 .cmdprcJMP_msg_err

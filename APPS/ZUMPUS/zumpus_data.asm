@@ -32,11 +32,13 @@
   equs "-----",10,0
 
 .game_title
-  equs "***************************",10
+  equs 10,"***************************",10
   equs "***   HUNT the ZUMPUS   ***",10
   equs "***************************",10,10,0
 
 .instructions
+  equs "You know when Zumpus is in an adjacent room by the smell.",10
+  equs "Similarly, you'll hear the sales reps and feel the lift shafts.",10
   equs "At each turn, you can either move or fire a staple.",10
   equs "To move, type 'm' followed by the number of the room you want to",10
   equs "move into - eg:",10
@@ -83,7 +85,7 @@
 .connecting_rooms_msg
   equs "Connecting rooms are: ",0
 .current_room_msg
-  equs "You are in room ",0
+  equs "You are now in room : ",0
 
 .zumpus_prompt
   equs "Move or Shoot? ",0
@@ -114,7 +116,7 @@
 .shot_nearhit_msg
   equs "Ooo! So close! Zumpus managed to dodge the staple.",10,0
 .shot_self_msg
-  equs "Ouch! The staple came back and hit you!",10,0
+  equs "Ouch! The staple came back and hit you! You're done!",10,0
 .shot_nearself_msg
   equs "Phew! That was close. The staple came back and nearly hit you!",10,0
 
@@ -128,7 +130,7 @@
 .warning_zumpus_awakes
   equs "Oh no. A snort, a fart and a bellow from somewhere in the bowels of the",10
   equs "building suggest that Zumpus has awoken.",10
-  equs "He will now ramble at random around the building.",10
+  equs "He will now slouch at random around the building.",10
   equs "You have been warned...",10,0
 .warning_zumpus_moving
   equs "You hear banging and crashing in the distance.",10,0

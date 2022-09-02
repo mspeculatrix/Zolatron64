@@ -36,6 +36,7 @@ ERR_FILE_EXISTS       = ERR_ADDR + 1                ; 21 15 File exists error
 ERR_FILE_OPEN         = ERR_FILE_EXISTS + 1         ; 22 16 Error opening file
 ERR_DELFILE_FAIL      = ERR_FILE_OPEN + 1           ; 23 17 Failed delete file
 ERR_FILENOTFOUND      = ERR_DELFILE_FAIL + 1        ; 24 18 File not found
+STDIN_BUF_EMPTY       = ERR_FILENOTFOUND + 1        ; 25 19 Input buffer empty
 
 \-------------------------------------------------------------------------------
 \ OS CALLS  - OS Function Address Table
@@ -45,10 +46,12 @@ ERR_FILENOTFOUND      = ERR_DELFILE_FAIL + 1        ; 24 18 File not found
 \    - cfg_page_2.asm - OS Indirection Table
 \-------------------------------------------------------------------------------
 ; READ
-OSRDHBYTE  = $FF00
+OSRDASC    = $FF00
+OSRDBYTE   = OSRDASC + 3
+OSRDCH     = OSRDBYTE + 3
+OSRDHBYTE  = OSRDCH + 3
 OSRDHADDR  = OSRDHBYTE + 3
-OSRDCH     = OSRDHADDR + 3
-OSRDINT16  = OSRDCH + 3
+OSRDINT16  = OSRDHADDR + 3
 OSRDFNAME  = OSRDINT16 + 3
 ; WRITE
 OSWRBUF    = OSRDFNAME + 3
@@ -102,6 +105,9 @@ DATA_TYPE_DAT = 3
 DATA_TYPE_OSX = 4
 MAX_DATA_TYPE = 4
 
+LCD_TYPE_16x2 = 0
+LCD_TYPE_20x4 = 1
+
 ; Code headers. These are offsets from the start of user code (which is at
 ; USR_PAGE for RAM-based code and EXTEM_LOC for ROM-based code)
 CODEHDR_RST  = $05
@@ -125,8 +131,8 @@ STDIN_DAT_RCVD_FL = %00000010    ; We've received some data
 STDIN_BUF_FULL_FL = %00000100    ; Input buffer is full
 STDIN_CLEAR_FLAGS = %11110000    ; To be ANDed with reg to clear RX flags
 
-; PROCESS FLAGS - for use with PROC_REG
-PROC_ZD_INT_FL    = %01000000    ; Interrupt signal received from ZolaDOS
+; PROCESS FLAGS - for use with SYS_REG
+PROC_ZD_INT_FL    = %10000000    ; Interrupt signal received from ZolaDOS
 
 ; Values for stream select. STREAM_SELECT_REG address is defined in
 ; cfg_page_5.asm.

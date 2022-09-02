@@ -1,5 +1,7 @@
-; FUNCTIONS: Conversions -- funcs_conv.asm -------------------------------------
-;
+\ funcs_conv.asm
+
+\ FUNCTIONS: Conversions -------------------------------------------------------
+\
 
 \ ------------------------------------------------------------------------------
 \ ---  BYTE_TO_BIN
@@ -8,6 +10,9 @@
 \ Convert 1-byte integer value to binary string representation.
 \ ON ENTRY: Byte to be converted must be in A.
 \ ON EXIT : Nul-terminated string STR_BUF. Byte 8 is null terminator.
+\ A - O
+\ X - P
+\ Y - P
 .byte_to_bin
   phx : phy
   sta TMP_VAL                   ; Preserve initial value
@@ -18,7 +23,7 @@
   lda TMP_VAL
   and TEST_VAL                  ; AND supplied value with bit mask
   beq byte_to_bin_set_zero
-  lda #'1'
+  lda #'1'                      ; Not a 0 so must be ... umm ...
   jmp byte_to_bin_next
 .byte_to_bin_set_zero
   lda #'0'
@@ -40,6 +45,9 @@
 \ ON ENTRY: Byte to be converted must be in A.
 \ ON EXIT : String in three bytes starting at STR_BUF. Third byte is a null
 \           terminator.
+\ A - O
+\ X - P
+\ Y - P
 .byte_to_hex_str
   phx : phy
   tax                         ; Keep a copy of A in X for later
@@ -61,11 +69,14 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ ---  BYTE_TO_INT_STR  ; Convert 1-byte value to decimal string
+\ ---  BYTE_TO_INT_STR  ; Convert 1-byte value to decimal string representation
 \ ---  Implements: OSB2ISTR
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: A contains the number to be converted
 \ ON EXIT : STR_BUF contains decimal string representation, nul-terminated.
+\ A - O
+\ X - P
+\ Y - P
 .byte_to_int_str
   phx : phy
   stz TMP_IDX             ; Keep track of digits in buffer
@@ -107,7 +118,9 @@
 \ ON ENTRY: ASCII codes for hex value must be in BYTE_CONV_H and BYTE_CONV_L.
 \ ON EXIT : - Byte value is in FUNC_RESULT.
 \           - Error in FUNC_ERR
-
+\ A - P
+\ X - P
+\ Y - n/a
 .hex_str_to_byte              ; assumes text is in BYTE_CONV_H and BYTE_CONV_L
   pha : phx
   stz FUNC_ERR                ; Zero out function error
@@ -146,6 +159,9 @@
 \ ON ENTRY: A contains ASCII character value
 \ ON EXIT : - A contains corresponding numeric value
 \           - Error in FUNC_ERR
+\ A - n/a
+\ X - P
+\ Y - n/a
 .asc_hex_to_dec
   phx
   stz FUNC_ERR                ; Zero-out error
@@ -171,6 +187,9 @@
 \ hex string.
 \ ON ENTRY: 16-bit value expected in TMP_ADDR_A/+1
 \ ON EXIT : Hex string in STR_BUF
+\ A - P
+\ X - n/a
+\ Y - n/a
 .uint16_to_hex_str
   pha
   lda TMP_ADDR_A_L
@@ -197,6 +216,9 @@
 \ representation of the decimal integer value.
 \ ON ENTRY: 16-bit value expected in TMP_ADDR_A/+1
 \ ON EXIT : String in STR_BUF
+\ A - P
+\ X - ?
+\ Y - ?
 .uint16_to_int_str
   pha
   stz STR_BUF
