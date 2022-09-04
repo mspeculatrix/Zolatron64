@@ -38,7 +38,7 @@ ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROMSTART          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v3.1", 0
+  equs "ZolOS v4.0", 0
 .startcode
   sei                 ; Don't interrupt me yet
   cld                 ; We don' need no steenkin' BCD
@@ -312,4 +312,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-3.1.bin", startrom, endrom
+SAVE "bin/z64-ROM-4.0.bin", startrom, endrom
