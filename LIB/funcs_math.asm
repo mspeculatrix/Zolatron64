@@ -7,7 +7,10 @@
 \ ON ENTRY: - A must contain the dividend - the number to be modded
 \			      - X must contain the divisor
 \ ON EXIT : - FUNC_RESULT contains remainder
-\           - X contains quotient (number of divisions. X=0 if num < divisor) 
+\           - X contains quotient (number of divisions. X=0 if num < divisor)
+\ A - O
+\ X - O
+\ Y - n/a
 .uint8_mod8
   stx TMP_VAL
   ldx #0
@@ -29,7 +32,9 @@
 \ ON EXIT : - 16-bit unsigned number in MATH_TMP16, MATH_TMP16+1
 \           - Carry bit will be set if 16-bit overflow occurred.
 \           - Error code in FUNC_ERR
-\ ------------------------------------------------------------------------------
+\ A - O
+\ X - P
+\ Y - O
 .uint16_times10
   phx
   ldx #1                                ; Multiply high byte first
@@ -85,7 +90,9 @@
 \             that addr B is higher than addr A.
 \ ON EXIT : - FUNC_RESULT contains comparison - LESS_THAN if A lower than B,
 \             EQUAL if same, MORE_THAN if higher.
-\ ------------------------------------------------------------------------------
+\ A - O
+\ X - n/a
+\ Y - n/a
 .compare_tmp_addr
   lda TMP_ADDR_A_H                ; Test high bytes first
   cmp TMP_ADDR_B_H
@@ -133,7 +140,7 @@
 ;  lda INT32uA+3
 ;  cmp INT32uB+3
 ;  bcc compare32u_less_than  ; NUMA < NUMB
-;  bne compare32u_more_than	; if NUMA+3 <> NUMB+3 then NUMA > NUMB 
+;  bne compare32u_more_than	; if NUMA+3 <> NUMB+3 then NUMA > NUMB
 ;  lda INT32uA+2
 ;  cmp INT32uB+2
 ;  bcc compare32u_less_than
@@ -157,4 +164,3 @@
 ;  sta FUNC_RESULT
 ;  pla
 ;  rts
-

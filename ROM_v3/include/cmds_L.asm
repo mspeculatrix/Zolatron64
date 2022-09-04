@@ -1,15 +1,16 @@
+\ cmds_L.asm
+
 \-------------------------------------------------------------------------------
 \ --- CMD: LM  :  LIST MEMORY
 \-------------------------------------------------------------------------------
+\ Usage: LM <addr> <addr>
 \ Expects two, two-byte hex addresses and prints the memory contents in that
-\ range. So the format is:
-\     LM hhhh hhhh
+\ range.
 \ The first address must be lower than the second. The two addresses can be
 \ optionally separated by a space.
 \ Variables used: BYTE_CONV_L, TMP_OFFSET, TMP_COUNT, LOOP_COUNT, FUNC_RESULT
 .cmdprcLM
   stz FUNC_ERR
-  ;stx STDIN_IDX
 ; --- GET & CONVERT HEX VALUE PAIRS --------------------------------------------
 ; Get the two, 4-char addresses.
 ; The byte values are stored at the four locations starting at TMP_ADDR_A
@@ -17,22 +18,6 @@
   jsr read_hex_addr_pair
   lda FUNC_ERR
   bne cmdprcLM_addr_fail
-;  ldy #0                        ; Offset from TMP_ADDR_A
-;.cmdprcLM_next_addr             ; Get next address from buffer
-;  jsr read_hex_addr             ; Puts bytes in FUNC_RES_L, FUNC_RES_H
-;  lda FUNC_ERR
-;  bne cmdprcLM_rd_addr_fail
-;  lda FUNC_RES_L
-;  sta TMP_ADDR_A,Y
-;  iny                           ; Increment Y to store the high byte
-;  lda FUNC_RES_H
-;  sta TMP_ADDR_A,Y
-;  cpy #3                        ; If 3, then we've got all four bytes
-;  beq cmdprcLM_check
-;  iny                           ; Otherwise, get next byte
-;  jmp cmdprcLM_next_addr
-;.cmdprcLM_rd_addr_fail
-;  jmp cmdprc_fail
 ; --- CHECK VALUES: Check that values obtained are sane ------------------------
 ; The four bytes defining the memory range are in the four bytes starting
 ; at TMP_ADDR_A. The MSB of the start address must be less than or equal to
@@ -62,9 +47,10 @@
 \ ------------------------------------------------------------------------------
 \ --- CMD: LOAD  :  LOAD FILE
 \ ------------------------------------------------------------------------------
+\ Usage: LOAD <filename>
 \ This is for loading executable files in main memory.
-\ Expects a filename in STDIN_BUF. The filename should not have the '.BIN'
-\ extension (this will be added by ZolaDOS).
+\ The filename should not have the '.BIN' extension (this will be added
+\ automatically by ZolaDOS).
 .cmdprcLOAD
   LED_ON LED_FILE_ACT
   LOAD_MSG loading_msg
@@ -102,6 +88,7 @@
 \ ------------------------------------------------------------------------------
 \ --- CMD: LP  :  LIST MEMORY PAGE
 \ ------------------------------------------------------------------------------
+\ Usage: LP <page>
 \ Expects a two-character hex byte in the input buffer. It uses this as the
 \ high byte of an address and prints out the memory contents for that page (256
 \ bytes). EG: if you enter 'C0', it gives the memory contents for the range
@@ -111,6 +98,7 @@
   lda FUNC_ERR              ; Check for error
   bne cmdprcLP_fail
 .cmdprcLP_chk_nul           ; Check there's nothing left in the RX buffer
+  ldx STDIN_IDX
   lda STDIN_BUF,X           ; Should be null. Anything else is a mistake
   bne cmdprcLP_input_fail
   lda FUNC_RESULT           ; Get the result from jsr read_hex_byte
@@ -133,11 +121,13 @@
 \ ------------------------------------------------------------------------------
 \ --- CMD: LS  :  LIST STORAGE
 \ ------------------------------------------------------------------------------
+\ Usage: LS
 \ Inspired by the Unix ls command. Gets a list of available files from the
-\ ZolaDOS server. The files are shown without their '.BIN' suffixes because,
-\ when loading, we only use the main part of the filename with the LOAD command.
+\ ZolaDOS server.
 .cmdprcLS
   LED_ON LED_FILE_ACT
+  LOAD_MSG ls_req_msg
+  jsr OSLCDMSG
   lda #ZD_OPCODE_LS           ; Start a ZolaDOS process with the code for LS
   jsr zd_init_process
   lda FUNC_ERR
@@ -198,3 +188,7 @@
   ZD_SET_DATADIR_OUTPUT
   LED_OFF LED_FILE_ACT
   jmp cmdprc_end
+
+\ --- DATA -------------------
+.ls_req_msg
+  equs "Requesting list...",0

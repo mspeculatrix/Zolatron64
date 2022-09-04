@@ -5,8 +5,10 @@
 \ ---  Implements: OSPRTINIT
 \ ------------------------------------------------------------------------------
 \ Set up the VIA and initialise the printer by sending an /INIT pulse.
-\ ON EXIT : - Overwrites A.
-.prt_init 
+\ A - O
+\ X - n/a
+\ Y - n/a
+.prt_init
   lda #PRT_CTRL_PT_DIR              ; Set pin directions for control port
   sta PRT_CTRL_DDR
   lda #$FF                          ; Set data port to output
@@ -14,8 +16,8 @@
   stz PRT_DATA_PORT                 ; Set all data pins to 0, because...
   lda PRT_CTRL_PORT                 ; Set outputs high (OFF) to start
   ora #PRT_AF_OFF
-  ora #PRT_STRB_OFF                     
-  and #PRT_INIT_ON                  ; Now send /INIT signal 
+  ora #PRT_STRB_OFF
+  and #PRT_INIT_ON                  ; Now send /INIT signal
   sta PRT_CTRL_PORT
   pha
   PRT_PULSE_DELAY
@@ -30,6 +32,9 @@
 \ ------------------------------------------------------------------------------
 \ Print a character. Blocking.
 \ ON ENTRY: A contains ASCII char code
+\ A - O (via subr)
+\ X - n/a
+\ Y - n/a
 .prt_char
   LED_ON LED_BUSY
   pha
@@ -48,6 +53,9 @@
 \ ------------------------------------------------------------------------------
 \ ON EXIT : - Carry clear if printer not busy
 \           - Carry set if busy
+\ A - O
+\ X - n/a
+\ Y - n/a
 .prt_check_busy
   clc
   lda PRT_CTRL_PORT
@@ -64,11 +72,13 @@
 \ ON ENTRY: MSG_VEC pointer should point to a message to print
 \ ON EXIT : - FUNC_RESULT will contain a result code
 \           - MSG_VEC will point to an error msg if an error occurred
-\           - Overwrites A,Y
+\ A - O
+\ X - n/a
+\ Y - O
 .prt_msg
   ldy #PRT_STATE_CHKS         ; Number of attempts we'll make before giving up
 .prt_msg_chk
-  jsr prt_check_state 
+  jsr prt_check_state
   lda FUNC_RESULT
   beq prt_msg_cont
   dey
@@ -96,7 +106,9 @@
 \ ---  PRT_CHECK_STATE
 \ ------------------------------------------------------------------------------
 \ ON EXIT : - FUNC_RESULT contains error code - 0 = no error
-\           - Overwrites A
+\ A - O
+\ X - n/a
+\ Y - P
 .prt_check_state
   phy
   stz FUNC_RESULT
@@ -131,7 +143,9 @@
 \ Puts a vector to a message into MSG_VEC/+1.
 \ ON ENTRY: Assumes an error/result code in FUNC_RESULT.
 \ ON EXIT : - MSG_VEC/+1 contains vector to appropriate message.
-\           - Overwrites A.
+\ A - O
+\ X - O
+\ Y - n/a
 .prt_load_state_msg
   lda FUNC_RESULT
   asl A                           ; Multiply by 2 to get offset for table
@@ -147,6 +161,9 @@
 \ ---  Implements: OSPRTBUF
 \ ------------------------------------------------------------------------------
 \ Prints STDOUT_BUF. Wrapper to OSPRTMSG
+\ A - O
+\ X - n/a
+\ Y - n/a
 .prt_stdout_buf
   lda #<STDOUT_BUF                              ; LSB of message
   sta MSG_VEC
@@ -159,6 +176,9 @@
 \ --- PRT_STR_BUF
 \ --- Implements: OSPRTSBUF
 \ ------------------------------------------------------------------------------
+\ A - O
+\ X - n/a
+\ Y - n/a
 .prt_str_buf
   lda #<STR_BUF                              ; LSB of message
   sta MSG_VEC
@@ -174,6 +194,9 @@
 \ This uses a timer-based interval for the length of the strobe. Might be
 \ interesting to try a version that instead waits for an /ACK from the printer.
 .prt_strobe
+\ A - O
+\ X - n/a
+\ Y - n/a
   lda PRT_CTRL_PORT
   and #PRT_STRB_ON
   sta PRT_CTRL_PORT

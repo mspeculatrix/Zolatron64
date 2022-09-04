@@ -5,7 +5,7 @@
 \ ---  Implements: OSDELAY
 \ ------------------------------------------------------------------------------
 \ General-purpose delay function. Blocking.
-\ ON ENTRY: Assumes a 16-bit value in LCDV_TIMER_INTVL. This number should be 
+\ ON ENTRY: Assumes a 16-bit value in LCDV_TIMER_INTVL. This number should be
 \           the length of the desired delay in milliseconds.
 .delay
   pha
@@ -15,7 +15,7 @@
   ora #%11000000		          ; Bit 7 enables interrupts, bit 6 enables Timer 1
   sta LCDV_IER
   lda #%01000000              ; Set timer to free-run mode
-  sta LCDV_ACL			
+  sta LCDV_ACL
   lda #$E6				  ; Going to use a base of 1ms. At 1MHz that's 1K cycles but,
   sta LCDV_T1CL     ; allowing for other operations, it's actually 998 ($03E6)
   lda #$03
@@ -24,7 +24,7 @@
   lda #100
 .nop_loop                     ; Adding a small NOP loop to give the timer time
   nop                         ; to increase the counter
-  dec A 
+  dec A
   bne nop_loop
   jsr delay_timer_chk         ; Check how far our counter has got
   lda FUNC_RESULT
@@ -102,7 +102,7 @@
 \ ---  LCD_PRT_LINEBUF
 \ ------------------------------------------------------------------------------
 \ Prints a line's worth from the LCD_BUF buffer.
-\ ON ENTRY: Y must contain line index - 0 or 1 for a 2-line display, 
+\ ON ENTRY: Y must contain line index - 0 or 1 for a 2-line display,
 \                                       0-3 for a 4-line display
 .lcd_prt_linebuf
   pha : phx : phy
@@ -212,49 +212,46 @@
 \ ---  LCD_PRINTLN
 \ ---  Implements: OSLCDMSG
 \ ------------------------------------------------------------------------------
-\ Prints text to the LCD. The address of the text to be printed is assumed
-\ to be pointed to by MSG_VEC. The text is also written to the first line's
-\ worth of the LCD_BUF buffer, with other lines first being moved down a 
-\ line's worth. The last line's worth of existing text is overwritten.
-\ ON ENTRY: Vector address to mesg text in MSG_VEC
+\ Prints text to the LCD.
+\ ON ENTRY: MSG_VEC should point to location of text.
 .lcd_println
   pha : phx : phy
-  ; First, we'll copy existing data in the buffer, so that each byte gets
-  ; shifted one line's worth of bytes later in the buffer. As the last line
-  ; of the buffer is going to be overwritten, and its original contents lost,
-  ; we start with the penultimate line.
-  ldx #LCD_MOVE_SRC           ; Offsets for source (39) & destination (79) for 
-  ldy #LCD_MOVE_DST           ; moving characters within the buffer.
-.lcd_println_move
-  lda LCD_BUF,X               ; Move a character
-  sta LCD_BUF,Y
-  cpx #0                      ; If source is at beginning of buffer, we're done
-  beq lcd_println_move_done
-  dey                         ; Else, decrement offsets for next char positions
-  dex
-  jmp lcd_println_move
-.lcd_println_move_done
+  ; Start index, to start copying FROM is start of line 1
+  ldx #LCD_LN_BUF_SZ
+  ; Start index, for where we want to copy lines TO, is 0
   ldy #0
-.lcd_println_move_msg         ; Move new message into start of buffer
-  lda (MSG_VEC),Y    
-  sta LCD_BUF,Y                    
-  beq lcd_println_pad         ; If this char is a null, we're done
-  iny                         ; else, increment offset
-  cpy #LCD_LN_BUF_SZ          ; Have we done a line's worth?
+.lcd_println_shift_buf
+  lda LCD_BUF,X                 ; X = FROM
+  sta LCD_BUF,Y                 ; Y = TO
+  inx
+  iny
+  cpx #LCD_BUF_SZ               ; At end of buffer?
+  bne lcd_println_shift_buf     ; If not, loop
+.lcd_println_newline
+  tya
+  tax
+  ldy #0
+.lcd_println_new_txt            ; Move new message into last line of buffer
+  lda (MSG_VEC),Y
+  beq lcd_println_pad           ; If this char is a null, we're done
+  sta LCD_BUF,X
+  iny                           ; else, increment offsets
+  inx
+  cpy #LCD_LN_BUF_SZ            ; Have we done a line's worth?
   beq lcd_println_terminate
-  jmp lcd_println_move_msg
-.lcd_println_pad              ; Pad line with spaces
+  jmp lcd_println_new_txt
+.lcd_println_pad                ; Pad line with spaces
   lda #CHR_SPACE
 .lcd_println_pad_next
   cpy #LCD_LN_BUF_SZ
   beq lcd_println_terminate
-  sta LCD_BUF,Y 
+  sta LCD_BUF,X
   iny
+  inx
   jmp lcd_println_pad_next
 .lcd_println_terminate        ; Ensure last char in line buffer is a 0
-  lda #0
-  dey
-  sta LCD_BUF,Y
+  dex
+  stz LCD_BUF,X
 .lcd_println_refresh          ; Rewrite all lines of display
   ldy #0
 .lcd_println_refresh_next
@@ -273,11 +270,11 @@
   pha
   jsr lcd_wait                      ; check LCD is ready to receive
   sta LCDV_PORTB
-  LCD_SET_CTL LCD_RS 
+  LCD_SET_CTL LCD_RS
   LCD_SET_CTL (LCD_RS OR LCD_EX)    ; Keep RS & set E bit to send instruction
   LCD_SET_CTL LCD_RS                ; Clear E bits
   pla
-  rts 
+  rts
 
 \ ------------------------------------------------------------------------------
 \ ---  LCD_PRT_ERR

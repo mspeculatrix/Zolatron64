@@ -22,11 +22,8 @@ INCLUDE "../../LIB/cfg_page_4.asm"
 
 ORG USR_PAGE
 .header                     ; HEADER INFO
-  jmp startprog             ;
-  equw header               ; @ $0803 Entry address
-  equw reset                ; @ $0805 Reset address
-  equw endcode              ; @ $0807 Addr of first byte after end of program
-  equb 'P'
+  INCLUDE "../../LIB/header_std.asm"
+  equb 'E'
   equs 0,0,0                ; -- Reserved for future use --
   equs "TESTA",0            ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
@@ -72,14 +69,23 @@ ORG USR_PAGE
   jsr OSWRMSG
   jsr OSLCDMSG
 
+  stz STDIN_IDX     ; Clear input buffer
+  stx STDIN_BUF
+.get_char
+  lda STDIN_IDX
+  beq get_char
+  lda STDIN_BUF
+  jsr OSWRCH
+  NEWLINE
+
 .prog_end
   jmp OSSFTRST
 
 .start_msg
-  equs "Test A", 0
+  equs "TEST A", 0
 
 .second_msg
-  equs "Hello world!", 0
+  equs "Testing for single key input",10,0
 
 .endtag
   equs "EOF",0

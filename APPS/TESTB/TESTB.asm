@@ -18,11 +18,8 @@ INCLUDE "../../LIB/cfg_page_4.asm"
 
 ORG USR_PAGE
 .header                     ; HEADER INFO
-  jmp startprog             ;
-  equw header               ; @ $0803 Entry address
-  equw reset                ; @ $0805 Reset address
-  equw endcode              ; @ $0807 Addr of first byte after end of program
-  equb 'P'
+  INCLUDE "../../LIB/header_std.asm"
+  equb 'E'
   equs 0,0,0                ; -- Reserved for future use --
   equs "TESTB",0           ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
@@ -42,22 +39,6 @@ ORG USR_PAGE
   jsr OSLCDCLS
 
 .main
-  lda #'A'
-  jsr OSLCDCH
-  jsr OSWRCH
-  lda #'B'
-  jsr OSLCDCH
-  jsr OSWRCH
-  lda #'C'
-  jsr OSLCDCH
-  jsr OSWRCH
-  lda #' '
-  jsr OSWRCH
-
-  jsr OSWRSBUF
-  lda #CHR_LINEEND
-  jsr OSWRCH
-
   LOAD_MSG welcome_msg
   jsr OSWRMSG
   lda #CHR_LINEEND
@@ -102,7 +83,7 @@ ORG USR_PAGE
 ;  rts
 
 .welcome_msg
-  equs "This is a new test", 0
+  equs "TEST B", 0
 
 .second_msg
   equs "A second message", 0

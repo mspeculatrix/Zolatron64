@@ -1,4 +1,9 @@
-; INTERRUPT SERVICE ROUTINE (ISR) -- funcs_isr.asm -----------------------------
+\ funcs_isr.asm
+
+\ INTERRUPT SERVICE ROUTINE (ISR) ----------------------------------------------
+\ A - P
+\ X - P
+\ Y - P
 
 ALIGN &100                ; start on new page
 .IRQ_handler
@@ -51,9 +56,9 @@ ALIGN &100                ; start on new page
   lda ZD_CTRL_PORT
   and #ZD_INT_SEL
   beq isr_end_chks
-  lda PROC_REG
+  lda SYS_REG
   ora #PROC_ZD_INT_FL
-  sta PROC_REG
+  sta SYS_REG
 
 .isr_end_chks
   jmp isr_exit
@@ -101,4 +106,3 @@ ALIGN &100                ; start on new page
 .isr_exit
   ply : plx : pla             ; Resume original register state
   rti
-  

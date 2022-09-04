@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+PROG=${PWD##*/}          # Get name of current directory
+PROG=${PROG:-/}          # Adjust for case where = /
+HOST="imp"
+
+UPLOAD=0
+BURN_ROM=0
+
+usage()
+{
+    echo "Error: Unknown option."
+    echo "Usage: build [-u] [-w] [-t <host>]"
+    echo "    -u  Upload to RPi"
+    echo "    -w  Write to EEPROM"
+    echo "    -t <host> - select Pi to upload to"
+
+}
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -u )    UPLOAD=1
+                ;;
+        -t )    shift
+                HOST=$1
+                ;;
+        -w )    BURN_ROM=1
+                ;;
+        * )     usage
+                exit 1
+    esac
+    shift
+done
+
+echo "Assembling $PROG.asm to $PROG.BIN"
+beebasm -v -i ${PROG}.asm > ${PROG}_out.txt
+
+result=$?
+
+if [ $result -eq 0 ]; then
+    if [ $UPLOAD -eq 1 ]; then
+		echo "Uploading to RPi : $HOST ..."
+		scp -i ~/.ssh/ssh-key ../bin/$PROG.BIN pi@$HOST:zd_files/$PROG.BIN
+	fi
+    if [ $BURN_ROM -eq 1 ]; then
+      	echo "Writing to EEPROM..."
+        echo "- minipro -p AT28C64 -w ../bin/$PROG.bin"
+        minipro -p AT28C64B -w ../bin/$PROG.bin
+    fi
+fi

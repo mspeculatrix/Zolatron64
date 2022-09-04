@@ -1,16 +1,20 @@
 .header
      0800   4C 18 08   JMP &0818
-     0803   00 08
-     0805   18 08
-     0807   08 1B
-     0809   50
+     0803   00
+     0804   08
+     0805   18
+     0806   08
+     0807   6B
+     0808   1B
+     0809   45
      080A   00
      080B   00
      080C   00
+.prog_name
      080D   5A 55 4D ...
      0813   00
 .version_string
-     0814   31 2E 30 
+     0814   31 2E 32 
      0817   00
 .startprog
 .reset
@@ -34,1118 +38,1142 @@
      083A   9C 7F 03   STZ &037F
 Macro NEWLINE:
      083D   A9 0A      LDA #&0A
-     083F   20 12 FF   JSR &FF12
+     083F   20 18 FF   JSR &FF18
 End macro NEWLINE
 Macro LOAD_MSG:
-     0842   A9 D8      LDA #&D8
+     0842   A9 F6      LDA #&F6
      0844   85 50      STA &50
      0846   A9 0D      LDA #&0D
      0848   85 51      STA &51
 End macro LOAD_MSG
-     084A   20 18 FF   JSR &FF18
+     084A   20 1E FF   JSR &FF1E
+     084D   9C FF 03   STZ &03FF
+Macro LOAD_MSG:
+     0850   A9 4D      LDA #&4D
+     0852   85 50      STA &50
+     0854   A9 0E      LDA #&0E
+     0856   85 51      STA &51
+End macro LOAD_MSG
+     0858   20 24 FF   JSR &FF24
+Macro LOAD_MSG:
+     085B   A9 14      LDA #&14
+     085D   85 50      STA &50
+     085F   A9 08      LDA #&08
+     0861   85 51      STA &51
+End macro LOAD_MSG
+     0863   20 24 FF   JSR &FF24
+     0866   20 15 FF   JSR &FF15
 Macro NEWLINE:
-     084D   A9 0A      LDA #&0A
-     084F   20 12 FF   JSR &FF12
+     0869   A9 0A      LDA #&0A
+     086B   20 18 FF   JSR &FF18
+End macro NEWLINE
+Macro NEWLINE:
+     086E   A9 0A      LDA #&0A
+     0870   20 18 FF   JSR &FF18
 End macro NEWLINE
 .instruction_prompt
 Macro LOAD_MSG:
-     0852   A9 A1      LDA #&A1
-     0854   85 50      STA &50
-     0856   A9 14      LDA #&14
-     0858   85 51      STA &51
+     0873   A9 35      LDA #&35
+     0875   85 50      STA &50
+     0877   A9 15      LDA #&15
+     0879   85 51      STA &51
 End macro LOAD_MSG
-     085A   20 18 FF   JSR &FF18
-     085D   20 4E 0D   JSR &0D4E
-     0860   AD 09 04   LDA &0409
-     0863   C9 02      CMP #&02
-     0865   D0 20      BNE &0887
+     087B   20 1E FF   JSR &FF1E
+     087E   20 6C 0D   JSR &0D6C
+     0881   AD 09 04   LDA &0409
+     0884   C9 02      CMP #&02
+     0886   D0 20      BNE &08A8
 Macro LOAD_MSG:
-     0867   A9 50      LDA #&50
-     0869   85 50      STA &50
-     086B   A9 10      LDA #&10
-     086D   85 51      STA &51
+     0888   A9 E2      LDA #&E2
+     088A   85 50      STA &50
+     088C   A9 10      LDA #&10
+     088E   85 51      STA &51
 End macro LOAD_MSG
-     086F   20 18 FF   JSR &FF18
+     0890   20 1E FF   JSR &FF1E
 Macro NEWLINE:
-     0872   A9 0A      LDA #&0A
-     0874   20 12 FF   JSR &FF12
+     0893   A9 0A      LDA #&0A
+     0895   20 18 FF   JSR &FF18
 End macro NEWLINE
 Macro LOAD_MSG:
-     0877   A9 2E      LDA #&2E
-     0879   85 50      STA &50
-     087B   A9 0E      LDA #&0E
-     087D   85 51      STA &51
+     0898   A9 56      LDA #&56
+     089A   85 50      STA &50
+     089C   A9 0E      LDA #&0E
+     089E   85 51      STA &51
 End macro LOAD_MSG
-     087F   20 18 FF   JSR &FF18
+     08A0   20 1E FF   JSR &FF1E
 Macro NEWLINE:
-     0882   A9 0A      LDA #&0A
-     0884   20 12 FF   JSR &FF12
+     08A3   A9 0A      LDA #&0A
+     08A5   20 18 FF   JSR &FF18
 End macro NEWLINE
 .init
 Macro LOAD_MSG:
-     0887   A9 8B      LDA #&8B
-     0889   85 50      STA &50
-     088B   A9 13      LDA #&13
-     088D   85 51      STA &51
+     08A8   A9 19      LDA #&19
+     08AA   85 50      STA &50
+     08AC   A9 14      LDA #&14
+     08AE   85 51      STA &51
 End macro LOAD_MSG
-     088F   20 18 FF   JSR &FF18
+     08B0   20 1E FF   JSR &FF1E
 Macro NEWLINE:
-     0892   A9 0A      LDA #&0A
-     0894   20 12 FF   JSR &FF12
+     08B3   A9 0A      LDA #&0A
+     08B5   20 18 FF   JSR &FF18
 End macro NEWLINE
-     0897   9C 15 05   STZ &0515
-     089A   9C 13 05   STZ &0513
-     089D   A9 05      LDA #&05
-     089F   8D 06 05   STA &0506
-     08A2   A0 00      LDY #&00
+     08B8   9C 15 05   STZ &0515
+     08BB   9C 13 05   STZ &0513
+     08BE   A9 05      LDA #&05
+     08C0   8D 06 05   STA &0506
+     08C3   A0 00      LDY #&00
 .init_loop
 Macro LOAD_MSG:
-     08A4   A9 39      LDA #&39
-     08A6   85 50      STA &50
-     08A8   A9 14      LDA #&14
-     08AA   85 51      STA &51
+     08C5   A9 C7      LDA #&C7
+     08C7   85 50      STA &50
+     08C9   A9 14      LDA #&14
+     08CB   85 51      STA &51
 End macro LOAD_MSG
-     08AC   20 18 FF   JSR &FF18
+     08CD   20 1E FF   JSR &FF1E
 .init_loop_wait
-     08AF   A5 5E      LDA &5E
-     08B1   29 01      AND #&01
-     08B3   D0 03      BNE &08B8
-     08B5   4C AF 08   JMP &08AF
+     08D0   A5 60      LDA &60
+     08D2   29 01      AND #&01
+     08D4   D0 03      BNE &08D9
+     08D6   4C D0 08   JMP &08D0
 .init_set_loc
-     08B8   A2 14      LDX #&14
-     08BA   5A         PHY
-     08BB   20 E9 0B   JSR &0BE9
-     08BE   7A         PLY
-     08BF   99 00 05   STA &0500,Y
-     08C2   9C 7F 03   STZ &037F
-     08C5   A5 5E      LDA &5E
-     08C7   29 F0      AND #&F0
-     08C9   85 5E      STA &5E
-     08CB   20 A7 0B   JSR &0BA7
-     08CE   AD 09 04   LDA &0409
-     08D1   D0 D1      BNE &08A4
-     08D3   C8         INY
-     08D4   C0 06      CPY #&06
-     08D6   F0 03      BEQ &08DB
-     08D8   4C A4 08   JMP &08A4
+     08D9   A2 14      LDX #&14
+     08DB   5A         PHY
+     08DC   20 07 0C   JSR &0C07
+     08DF   7A         PLY
+     08E0   99 00 05   STA &0500,Y
+     08E3   9C 7F 03   STZ &037F
+     08E6   A5 60      LDA &60
+     08E8   29 F0      AND #&F0
+     08EA   85 60      STA &60
+     08EC   20 C5 0B   JSR &0BC5
+     08EF   AD 09 04   LDA &0409
+     08F2   D0 D1      BNE &08C5
+     08F4   C8         INY
+     08F5   C0 06      CPY #&06
+     08F7   F0 03      BEQ &08FC
+     08F9   4C C5 08   JMP &08C5
 .init_done
-     08DB   A9 0A      LDA #&0A
-     08DD   20 12 FF   JSR &FF12
-     08E0   4C E3 08   JMP &08E3
+     08FC   A9 0A      LDA #&0A
+     08FE   20 18 FF   JSR &FF18
 .start_play
 Macro NEWLINE:
-     08E3   A9 0A      LDA #&0A
-     08E5   20 12 FF   JSR &FF12
+     0901   A9 0A      LDA #&0A
+     0903   20 18 FF   JSR &FF18
 End macro NEWLINE
-     08E8   20 90 0C   JSR &0C90
-     08EB   20 7B 0C   JSR &0C7B
+     0906   20 AE 0C   JSR &0CAE
+     0909   20 99 0C   JSR &0C99
 Macro LOAD_MSG:
-     08EE   A9 91      LDA #&91
-     08F0   85 50      STA &50
-     08F2   A9 14      LDA #&14
-     08F4   85 51      STA &51
+     090C   A9 25      LDA #&25
+     090E   85 50      STA &50
+     0910   A9 15      LDA #&15
+     0912   85 51      STA &51
 End macro LOAD_MSG
-     08F6   20 18 FF   JSR &FF18
+     0914   20 1E FF   JSR &FF1E
 .mainloop
-     08F9   A5 5E      LDA &5E
-     08FB   29 01      AND #&01
-     08FD   D0 0A      BNE &0909
-     08FF   AE 7F 03   LDX &037F
-     0902   E0 78      CPX #&78
-     0904   B0 03      BCS &0909
-     0906   4C F9 08   JMP &08F9
+     0917   A5 60      LDA &60
+     0919   29 01      AND #&01
+     091B   D0 0A      BNE &0927
+     091D   AE 7F 03   LDX &037F
+     0920   E0 78      CPX #&78
+     0922   B0 03      BCS &0927
+     0924   4C 17 09   JMP &0917
 .zum_input
-     0909   A5 5E      LDA &5E
-     090B   49 01      EOR #&01
-     090D   85 5E      STA &5E
-     090F   9C 7F 03   STZ &037F
-     0912   20 06 FF   JSR &FF06
-     0915   AD 09 04   LDA &0409
-     0918   C9 49      CMP #&49
-     091A   F0 1A      BEQ &0936
-     091C   C9 4D      CMP #&4D
-     091E   F0 29      BEQ &0949
-     0920   C9 53      CMP #&53
-     0922   F0 3F      BEQ &0963
-     0924   C9 51      CMP #&51
-     0926   F0 0B      BEQ &0933
-     0928   A9 03      LDA #&03
-     092A   8D 0A 04   STA &040A
-     092D   20 48 0C   JSR &0C48
-     0930   4C 4E 0A   JMP &0A4E
+     0927   A5 60      LDA &60
+     0929   49 01      EOR #&01
+     092B   85 60      STA &60
+     092D   9C 7F 03   STZ &037F
+     0930   20 06 FF   JSR &FF06
+     0933   AD 09 04   LDA &0409
+     0936   C9 49      CMP #&49
+     0938   F0 1A      BEQ &0954
+     093A   C9 4D      CMP #&4D
+     093C   F0 29      BEQ &0967
+     093E   C9 53      CMP #&53
+     0940   F0 3F      BEQ &0981
+     0942   C9 51      CMP #&51
+     0944   F0 0B      BEQ &0951
+     0946   A9 03      LDA #&03
+     0948   8D 0A 04   STA &040A
+     094B   20 66 0C   JSR &0C66
+     094E   4C 6C 0A   JMP &0A6C
 .zum_cmd_leave
-     0933   4C 4B 0A   JMP &0A4B
+     0951   4C 69 0A   JMP &0A69
 .zum_cmd_instructions
 Macro LOAD_MSG:
-     0936   A9 2E      LDA #&2E
-     0938   85 50      STA &50
-     093A   A9 0E      LDA #&0E
-     093C   85 51      STA &51
+     0954   A9 56      LDA #&56
+     0956   85 50      STA &50
+     0958   A9 0E      LDA #&0E
+     095A   85 51      STA &51
 End macro LOAD_MSG
-     093E   20 18 FF   JSR &FF18
+     095C   20 1E FF   JSR &FF1E
 Macro NEWLINE:
-     0941   A9 0A      LDA #&0A
-     0943   20 12 FF   JSR &FF12
+     095F   A9 0A      LDA #&0A
+     0961   20 18 FF   JSR &FF18
 End macro NEWLINE
-     0946   4C 4E 0A   JMP &0A4E
+     0964   4C 6C 0A   JMP &0A6C
 .zum_cmd_move
-     0949   20 75 0B   JSR &0B75
-     094C   AD 0A 04   LDA &040A
-     094F   D0 09      BNE &095A
-     0951   AD 12 05   LDA &0512
-     0954   8D 00 05   STA &0500
-     0957   4C 60 09   JMP &0960
+     0967   20 93 0B   JSR &0B93
+     096A   AD 0A 04   LDA &040A
+     096D   D0 09      BNE &0978
+     096F   AD 12 05   LDA &0512
+     0972   8D 00 05   STA &0500
+     0975   4C 7E 09   JMP &097E
 .zum_cmd_move_err
-     095A   20 48 0C   JSR &0C48
-     095D   4C A1 0A   JMP &0AA1
+     0978   20 66 0C   JSR &0C66
+     097B   4C BF 0A   JMP &0ABF
 .zum_cmd_move_end
-     0960   4C 4E 0A   JMP &0A4E
+     097E   4C 6C 0A   JMP &0A6C
 .zum_cmd_shoot
-     0963   AD 15 05   LDA &0515
-     0966   D0 1C      BNE &0984
-     0968   A2 03      LDX #&03
-     096A   20 E9 0B   JSR &0BE9
-     096D   C9 01      CMP #&01
-     096F   F0 03      BEQ &0974
-     0971   4C 84 09   JMP &0984
+     0981   AD 15 05   LDA &0515
+     0984   D0 1C      BNE &09A2
+     0986   A2 03      LDX #&03
+     0988   20 07 0C   JSR &0C07
+     098B   C9 01      CMP #&01
+     098D   F0 03      BEQ &0992
+     098F   4C A2 09   JMP &09A2
 .zum_cmd_shoot_wakez
 Macro LOAD_MSG:
-     0974   A9 CE      LDA #&CE
-     0976   85 50      STA &50
-     0978   A9 18      LDA #&18
-     097A   85 51      STA &51
+     0992   A9 72      LDA #&72
+     0994   85 50      STA &50
+     0996   A9 19      LDA #&19
+     0998   85 51      STA &51
 End macro LOAD_MSG
-     097C   20 18 FF   JSR &FF18
-     097F   A9 01      LDA #&01
-     0981   8D 15 05   STA &0515
+     099A   20 1E FF   JSR &FF1E
+     099D   A9 01      LDA #&01
+     099F   8D 15 05   STA &0515
 .zum_cmd_shoot_parse
-     0984   20 75 0B   JSR &0B75
-     0987   AD 0A 04   LDA &040A
-     098A   D0 13      BNE &099F
-     098C   20 09 FF   JSR &FF09
-     098F   AD 0A 04   LDA &040A
-     0992   D0 0E      BNE &09A2
-     0994   A5 52      LDA &52
-     0996   F0 0D      BEQ &09A5
-     0998   C9 06      CMP #&06
-     099A   B0 09      BCS &09A5
-     099C   4C A8 09   JMP &09A8
+     09A2   20 93 0B   JSR &0B93
+     09A5   AD 0A 04   LDA &040A
+     09A8   D0 13      BNE &09BD
+     09AA   20 0F FF   JSR &FF0F
+     09AD   AD 0A 04   LDA &040A
+     09B0   D0 0E      BNE &09C0
+     09B2   A5 52      LDA &52
+     09B4   F0 0D      BEQ &09C3
+     09B6   C9 06      CMP #&06
+     09B8   B0 09      BCS &09C3
+     09BA   4C C6 09   JMP &09C6
 .zum_cs_err_msg
-     099F   4C 3F 0A   JMP &0A3F
+     09BD   4C 5D 0A   JMP &0A5D
 .zum_cs_oserr
-     09A2   4C 3D 0A   JMP &0A3D
+     09C0   4C 5B 0A   JMP &0A5B
 .zum_cs_range_err
-     09A5   4C 38 0A   JMP &0A38
+     09C3   4C 56 0A   JMP &0A56
 .zum_cmd_shoot_staple
-     09A8   8D 14 05   STA &0514
-     09AB   CE 06 05   DEC &0506
+     09C6   8D 14 05   STA &0514
+     09C9   CE 06 05   DEC &0506
 .zum_cmd_shoot_flight
-     09AE   AD 12 05   LDA &0512
-     09B1   CD 01 05   CMP &0501
-     09B4   F0 10      BEQ &09C6
-     09B6   CD 00 05   CMP &0500
-     09B9   F0 45      BEQ &0A00
-     09BB   CE 14 05   DEC &0514
-     09BE   F0 65      BEQ &0A25
-     09C0   20 CE 0B   JSR &0BCE
-     09C3   4C AE 09   JMP &09AE
+     09CC   AD 12 05   LDA &0512
+     09CF   CD 01 05   CMP &0501
+     09D2   F0 10      BEQ &09E4
+     09D4   CD 00 05   CMP &0500
+     09D7   F0 45      BEQ &0A1E
+     09D9   CE 14 05   DEC &0514
+     09DC   F0 65      BEQ &0A43
+     09DE   20 EC 0B   JSR &0BEC
+     09E1   4C CC 09   JMP &09CC
 .zum_cmd_shoot_hit
-     09C6   A2 04      LDX #&04
-     09C8   20 E9 0B   JSR &0BE9
-     09CB   C9 02      CMP #&02
-     09CD   B0 23      BCS &09F2
+     09E4   A2 04      LDX #&04
+     09E6   20 07 0C   JSR &0C07
+     09E9   C9 02      CMP #&02
+     09EB   B0 23      BCS &0A10
 Macro LOAD_MSG:
-     09CF   A9 79      LDA #&79
-     09D1   85 50      STA &50
-     09D3   A9 17      LDA #&17
-     09D5   85 51      STA &51
+     09ED   A9 0F      LDA #&0F
+     09EF   85 50      STA &50
+     09F1   A9 18      LDA #&18
+     09F3   85 51      STA &51
 End macro LOAD_MSG
-     09D7   20 18 FF   JSR &FF18
-     09DA   AD 15 05   LDA &0515
-     09DD   D0 10      BNE &09EF
-     09DF   A9 01      LDA #&01
-     09E1   8D 15 05   STA &0515
+     09F5   20 1E FF   JSR &FF1E
+     09F8   AD 15 05   LDA &0515
+     09FB   D0 10      BNE &0A0D
+     09FD   A9 01      LDA #&01
+     09FF   8D 15 05   STA &0515
 Macro LOAD_MSG:
-     09E4   A9 CE      LDA #&CE
-     09E6   85 50      STA &50
-     09E8   A9 18      LDA #&18
-     09EA   85 51      STA &51
+     0A02   A9 72      LDA #&72
+     0A04   85 50      STA &50
+     0A06   A9 19      LDA #&19
+     0A08   85 51      STA &51
 End macro LOAD_MSG
-     09EC   20 18 FF   JSR &FF18
+     0A0A   20 1E FF   JSR &FF1E
 .zum_cmd_shoot_nearhit
-     09EF   4C 48 0A   JMP &0A48
+     0A0D   4C 66 0A   JMP &0A66
 .zum_cmd_shoot_win
 Macro LOAD_MSG:
-     09F2   A9 06      LDA #&06
-     09F4   85 50      STA &50
-     09F6   A9 17      LDA #&17
-     09F8   85 51      STA &51
+     0A10   A9 9A      LDA #&9A
+     0A12   85 50      STA &50
+     0A14   A9 17      LDA #&17
+     0A16   85 51      STA &51
 End macro LOAD_MSG
-     09FA   20 18 FF   JSR &FF18
-     09FD   4C 1A 0B   JMP &0B1A
+     0A18   20 1E FF   JSR &FF1E
+     0A1B   4C 38 0B   JMP &0B38
 .zum_cmd_shoot_self
-     0A00   A2 06      LDX #&06
-     0A02   20 E9 0B   JSR &0BE9
-     0A05   C9 03      CMP #&03
-     0A07   F0 0E      BEQ &0A17
+     0A1E   A2 06      LDX #&06
+     0A20   20 07 0C   JSR &0C07
+     0A23   C9 03      CMP #&03
+     0A25   F0 0E      BEQ &0A35
 Macro LOAD_MSG:
-     0A09   A9 D6      LDA #&D6
-     0A0B   85 50      STA &50
-     0A0D   A9 17      LDA #&17
-     0A0F   85 51      STA &51
+     0A27   A9 7A      LDA #&7A
+     0A29   85 50      STA &50
+     0A2B   A9 18      LDA #&18
+     0A2D   85 51      STA &51
 End macro LOAD_MSG
-     0A11   20 18 FF   JSR &FF18
-     0A14   4C 48 0A   JMP &0A48
+     0A2F   20 1E FF   JSR &FF1E
+     0A32   4C 66 0A   JMP &0A66
 .zum_cmd_shoot_selfhit
 Macro LOAD_MSG:
-     0A17   A9 AD      LDA #&AD
-     0A19   85 50      STA &50
-     0A1B   A9 17      LDA #&17
-     0A1D   85 51      STA &51
+     0A35   A9 43      LDA #&43
+     0A37   85 50      STA &50
+     0A39   A9 18      LDA #&18
+     0A3B   85 51      STA &51
 End macro LOAD_MSG
-     0A1F   20 18 FF   JSR &FF18
-     0A22   4C 1A 0B   JMP &0B1A
+     0A3D   20 1E FF   JSR &FF1E
+     0A40   4C 38 0B   JMP &0B38
 .zum_cmd_shoot_missed
-     0A25   AD 15 05   LDA &0515
-     0A28   F0 1E      BEQ &0A48
+     0A43   AD 15 05   LDA &0515
+     0A46   F0 1E      BEQ &0A66
 Macro LOAD_MSG:
-     0A2A   A9 CA      LDA #&CA
-     0A2C   85 50      STA &50
-     0A2E   A9 16      LDA #&16
-     0A30   85 51      STA &51
+     0A48   A9 5E      LDA #&5E
+     0A4A   85 50      STA &50
+     0A4C   A9 17      LDA #&17
+     0A4E   85 51      STA &51
 End macro LOAD_MSG
-     0A32   20 18 FF   JSR &FF18
-     0A35   4C 48 0A   JMP &0A48
+     0A50   20 1E FF   JSR &FF1E
+     0A53   4C 66 0A   JMP &0A66
 .zum_cmd_shoot_range_err
-     0A38   A9 04      LDA #&04
-     0A3A   4C 3F 0A   JMP &0A3F
+     0A56   A9 04      LDA #&04
+     0A58   4C 5D 0A   JMP &0A5D
 .zum_cmd_shoot_oserr
-     0A3D   A9 01      LDA #&01
+     0A5B   A9 01      LDA #&01
 .zum_cmd_shoot_err_msg
-     0A3F   8D 0A 04   STA &040A
-     0A42   20 48 0C   JSR &0C48
-     0A45   4C A1 0A   JMP &0AA1
+     0A5D   8D 0A 04   STA &040A
+     0A60   20 66 0C   JSR &0C66
+     0A63   4C BF 0A   JMP &0ABF
 .zum_cmd_shoot_end
-     0A48   4C 4E 0A   JMP &0A4E
+     0A66   4C 6C 0A   JMP &0A6C
 .zum_cmd_quit
-     0A4B   4C 3F 0B   JMP &0B3F
+     0A69   4C 5D 0B   JMP &0B5D
 .zum_chk_stat
-     0A4E   20 90 0C   JSR &0C90
-     0A51   AD 13 05   LDA &0513
-     0A54   C9 03      CMP #&03
-     0A56   F0 0F      BEQ &0A67
-     0A58   C9 02      CMP #&02
-     0A5A   F0 0E      BEQ &0A6A
-     0A5C   C9 01      CMP #&01
-     0A5E   F0 10      BEQ &0A70
-     0A60   C9 04      CMP #&04
-     0A62   F0 09      BEQ &0A6D
-     0A64   4C A1 0A   JMP &0AA1
+     0A6C   20 AE 0C   JSR &0CAE
+     0A6F   AD 13 05   LDA &0513
+     0A72   C9 03      CMP #&03
+     0A74   F0 0F      BEQ &0A85
+     0A76   C9 02      CMP #&02
+     0A78   F0 0E      BEQ &0A88
+     0A7A   C9 01      CMP #&01
+     0A7C   F0 10      BEQ &0A8E
+     0A7E   C9 04      CMP #&04
+     0A80   F0 09      BEQ &0A8B
+     0A82   4C BF 0A   JMP &0ABF
 .zum_fate_dead
-     0A67   4C F3 0A   JMP &0AF3
+     0A85   4C 11 0B   JMP &0B11
 .zum_fate_fallen
-     0A6A   4C 01 0B   JMP &0B01
+     0A88   4C 1F 0B   JMP &0B1F
 .zum_fate_no_ammo
-     0A6D   4C 0F 0B   JMP &0B0F
+     0A8B   4C 2D 0B   JMP &0B2D
 .zum_input_kidnapped
 Macro LOAD_MSG:
-     0A70   A9 71      LDA #&71
-     0A72   85 50      STA &50
-     0A74   A9 15      LDA #&15
-     0A76   85 51      STA &51
+     0A8E   A9 05      LDA #&05
+     0A90   85 50      STA &50
+     0A92   A9 16      LDA #&16
+     0A94   85 51      STA &51
 End macro LOAD_MSG
-     0A78   20 18 FF   JSR &FF18
+     0A96   20 1E FF   JSR &FF1E
 .zum_input_random_room
-     0A7B   A2 14      LDX #&14
-     0A7D   20 E9 0B   JSR &0BE9
-     0A80   CD 00 05   CMP &0500
-     0A83   F0 F6      BEQ &0A7B
-     0A85   CD 01 05   CMP &0501
-     0A88   F0 F1      BEQ &0A7B
-     0A8A   CD 02 05   CMP &0502
-     0A8D   F0 EC      BEQ &0A7B
-     0A8F   CD 03 05   CMP &0503
-     0A92   F0 E7      BEQ &0A7B
-     0A94   CD 04 05   CMP &0504
-     0A97   F0 E2      BEQ &0A7B
-     0A99   CD 05 05   CMP &0505
-     0A9C   F0 DD      BEQ &0A7B
-     0A9E   8D 00 05   STA &0500
+     0A99   A2 14      LDX #&14
+     0A9B   20 07 0C   JSR &0C07
+     0A9E   CD 00 05   CMP &0500
+     0AA1   F0 F6      BEQ &0A99
+     0AA3   CD 01 05   CMP &0501
+     0AA6   F0 F1      BEQ &0A99
+     0AA8   CD 02 05   CMP &0502
+     0AAB   F0 EC      BEQ &0A99
+     0AAD   CD 03 05   CMP &0503
+     0AB0   F0 E7      BEQ &0A99
+     0AB2   CD 04 05   CMP &0504
+     0AB5   F0 E2      BEQ &0A99
+     0AB7   CD 05 05   CMP &0505
+     0ABA   F0 DD      BEQ &0A99
+     0ABC   8D 00 05   STA &0500
 .zum_input_go_again
-     0AA1   AD 15 05   LDA &0515
-     0AA4   F0 28      BEQ &0ACE
-     0AA6   A2 02      LDX #&02
-     0AA8   20 E9 0B   JSR &0BE9
-     0AAB   C9 01      CMP #&01
-     0AAD   F0 1F      BEQ &0ACE
+     0ABF   AD 15 05   LDA &0515
+     0AC2   F0 28      BEQ &0AEC
+     0AC4   A2 02      LDX #&02
+     0AC6   20 07 0C   JSR &0C07
+     0AC9   C9 01      CMP #&01
+     0ACB   F0 1F      BEQ &0AEC
 Macro LOAD_MSG:
-     0AAF   A9 8A      LDA #&8A
-     0AB1   85 50      STA &50
-     0AB3   A9 19      LDA #&19
-     0AB5   85 51      STA &51
+     0ACD   A9 2F      LDA #&2F
+     0ACF   85 50      STA &50
+     0AD1   A9 1A      LDA #&1A
+     0AD3   85 51      STA &51
 End macro LOAD_MSG
-     0AB7   20 18 FF   JSR &FF18
-     0ABA   AD 01 05   LDA &0501
-     0ABD   8D 12 05   STA &0512
+     0AD5   20 1E FF   JSR &FF1E
+     0AD8   AD 01 05   LDA &0501
+     0ADB   8D 12 05   STA &0512
 .zum_input_go_zmove
-     0AC0   20 CE 0B   JSR &0BCE
-     0AC3   AD 12 05   LDA &0512
-     0AC6   CD 00 05   CMP &0500
-     0AC9   F0 F5      BEQ &0AC0
-     0ACB   8D 01 05   STA &0501
+     0ADE   20 EC 0B   JSR &0BEC
+     0AE1   AD 12 05   LDA &0512
+     0AE4   CD 00 05   CMP &0500
+     0AE7   F0 F5      BEQ &0ADE
+     0AE9   8D 01 05   STA &0501
 .zum_input_go_contd
 Macro LOAD_MSG:
-     0ACE   A9 D1      LDA #&D1
-     0AD0   85 50      STA &50
-     0AD2   A9 0D      LDA #&0D
-     0AD4   85 51      STA &51
+     0AEC   A9 EF      LDA #&EF
+     0AEE   85 50      STA &50
+     0AF0   A9 0D      LDA #&0D
+     0AF2   85 51      STA &51
 End macro LOAD_MSG
-     0AD6   20 18 FF   JSR &FF18
-     0AD9   20 7B 0C   JSR &0C7B
+     0AF4   20 1E FF   JSR &FF1E
+     0AF7   20 99 0C   JSR &0C99
 Macro LOAD_MSG:
-     0ADC   A9 91      LDA #&91
-     0ADE   85 50      STA &50
-     0AE0   A9 14      LDA #&14
-     0AE2   85 51      STA &51
+     0AFA   A9 25      LDA #&25
+     0AFC   85 50      STA &50
+     0AFE   A9 15      LDA #&15
+     0B00   85 51      STA &51
 End macro LOAD_MSG
-     0AE4   20 18 FF   JSR &FF18
-     0AE7   9C 00 03   STZ &0300
-     0AEA   9C 7F 03   STZ &037F
-     0AED   9C 0A 04   STZ &040A
-     0AF0   4C F9 08   JMP &08F9
+     0B02   20 1E FF   JSR &FF1E
+     0B05   9C 00 03   STZ &0300
+     0B08   9C 7F 03   STZ &037F
+     0B0B   9C 0A 04   STZ &040A
+     0B0E   4C 17 09   JMP &0917
 .you_have_died
 Macro LOAD_MSG:
-     0AF3   A9 F3      LDA #&F3
-     0AF5   85 50      STA &50
-     0AF7   A9 14      LDA #&14
-     0AF9   85 51      STA &51
+     0B11   A9 87      LDA #&87
+     0B13   85 50      STA &50
+     0B15   A9 15      LDA #&15
+     0B17   85 51      STA &51
 End macro LOAD_MSG
-     0AFB   20 18 FF   JSR &FF18
-     0AFE   4C 1A 0B   JMP &0B1A
+     0B19   20 1E FF   JSR &FF1E
+     0B1C   4C 38 0B   JMP &0B38
 .falling_down_the_pit
 Macro LOAD_MSG:
-     0B01   A9 35      LDA #&35
-     0B03   85 50      STA &50
-     0B05   A9 15      LDA #&15
-     0B07   85 51      STA &51
+     0B1F   A9 C9      LDA #&C9
+     0B21   85 50      STA &50
+     0B23   A9 15      LDA #&15
+     0B25   85 51      STA &51
 End macro LOAD_MSG
-     0B09   20 18 FF   JSR &FF18
-     0B0C   4C 1A 0B   JMP &0B1A
+     0B27   20 1E FF   JSR &FF1E
+     0B2A   4C 38 0B   JMP &0B38
 .zum_input_ammo_out
 Macro LOAD_MSG:
-     0B0F   A9 5C      LDA #&5C
-     0B11   85 50      STA &50
-     0B13   A9 16      LDA #&16
-     0B15   85 51      STA &51
+     0B2D   A9 F0      LDA #&F0
+     0B2F   85 50      STA &50
+     0B31   A9 16      LDA #&16
+     0B33   85 51      STA &51
 End macro LOAD_MSG
-     0B17   20 18 FF   JSR &FF18
+     0B35   20 1E FF   JSR &FF1E
 .game_end
-     0B1A   9C 7F 03   STZ &037F
-     0B1D   9C 00 03   STZ &0300
+     0B38   9C 7F 03   STZ &037F
+     0B3B   9C 00 03   STZ &0300
 Macro LOAD_MSG:
-     0B20   A9 DE      LDA #&DE
-     0B22   85 50      STA &50
-     0B24   A9 14      LDA #&14
-     0B26   85 51      STA &51
+     0B3E   A9 72      LDA #&72
+     0B40   85 50      STA &50
+     0B42   A9 15      LDA #&15
+     0B44   85 51      STA &51
 End macro LOAD_MSG
-     0B28   20 18 FF   JSR &FF18
+     0B46   20 1E FF   JSR &FF1E
 .game_end_yesno
-     0B2B   20 4E 0D   JSR &0D4E
-     0B2E   AD 09 04   LDA &0409
-     0B31   C9 02      CMP #&02
-     0B33   F0 07      BEQ &0B3C
-     0B35   C9 00      CMP #&00
-     0B37   F0 03      BEQ &0B3C
-     0B39   4C 3F 0B   JMP &0B3F
+     0B49   20 6C 0D   JSR &0D6C
+     0B4C   AD 09 04   LDA &0409
+     0B4F   C9 02      CMP #&02
+     0B51   F0 07      BEQ &0B5A
+     0B53   C9 00      CMP #&00
+     0B55   F0 03      BEQ &0B5A
+     0B57   4C 5D 0B   JMP &0B5D
 .play_again
-     0B3C   4C 87 08   JMP &0887
+     0B5A   4C A8 08   JMP &08A8
 .prog_end
-     0B3F   9C 7F 03   STZ &037F
-     0B42   9C 00 03   STZ &0300
-     0B45   4C F4 FF   JMP &FFF4
+     0B5D   9C 7F 03   STZ &037F
+     0B60   9C 00 03   STZ &0300
+     0B63   4C F4 FF   JMP &FFF4
 .check_connecting_rooms
-     0B48   A0 00      LDY #&00
-     0B4A   9C 09 04   STZ &0409
+     0B66   A0 00      LDY #&00
+     0B68   9C 09 04   STZ &0409
 .check_connecting_rooms_loop
-     0B4D   B1 56      LDA (&56),Y
-     0B4F   CD 12 05   CMP &0512
-     0B52   F0 08      BEQ &0B5C
-     0B54   C8         INY
-     0B55   C0 03      CPY #&03
-     0B57   F0 06      BEQ &0B5F
-     0B59   4C 4D 0B   JMP &0B4D
+     0B6B   B1 56      LDA (&56),Y
+     0B6D   CD 12 05   CMP &0512
+     0B70   F0 08      BEQ &0B7A
+     0B72   C8         INY
+     0B73   C0 03      CPY #&03
+     0B75   F0 06      BEQ &0B7D
+     0B77   4C 6B 0B   JMP &0B6B
 .check_connecting_rooms_valid
-     0B5C   EE 09 04   INC &0409
+     0B7A   EE 09 04   INC &0409
 .check_connecting_rooms_end
-     0B5F   60         RTS
+     0B7D   60         RTS
 .find_adjacent_rooms
-     0B60   18         CLC
-     0B61   0A         ASL A
-     0B62   0A         ASL A
-     0B63   AA         TAX
-     0B64   A0 00      LDY #&00
+     0B7E   18         CLC
+     0B7F   0A         ASL A
+     0B80   0A         ASL A
+     0B81   AA         TAX
+     0B82   A0 00      LDY #&00
 .find_adjacent_rooms_next
-     0B66   BD 81 0D   LDA &0D81,X
-     0B69   91 56      STA (&56),Y
-     0B6B   C8         INY
-     0B6C   E8         INX
-     0B6D   C0 03      CPY #&03
-     0B6F   F0 03      BEQ &0B74
-     0B71   4C 66 0B   JMP &0B66
+     0B84   BD 9F 0D   LDA &0D9F,X
+     0B87   91 56      STA (&56),Y
+     0B89   C8         INY
+     0B8A   E8         INX
+     0B8B   C0 03      CPY #&03
+     0B8D   F0 03      BEQ &0B92
+     0B8F   4C 84 0B   JMP &0B84
 .find_adjacent_rooms_done
-     0B74   60         RTS
+     0B92   60         RTS
 .get_input_room
-     0B75   9C 0A 04   STZ &040A
-     0B78   20 09 FF   JSR &FF09
-     0B7B   AD 0A 04   LDA &040A
-     0B7E   D0 21      BNE &0BA1
-     0B80   A9 07      LDA #&07
-     0B82   85 56      STA &56
-     0B84   A9 05      LDA #&05
-     0B86   85 57      STA &57
-     0B88   A5 52      LDA &52
-     0B8A   3A         DEC A
-     0B8B   8D 12 05   STA &0512
-     0B8E   20 48 0B   JSR &0B48
-     0B91   AD 09 04   LDA &0409
-     0B94   F0 03      BEQ &0B99
-     0B96   4C A6 0B   JMP &0BA6
+     0B93   9C 0A 04   STZ &040A
+     0B96   20 0F FF   JSR &FF0F
+     0B99   AD 0A 04   LDA &040A
+     0B9C   D0 21      BNE &0BBF
+     0B9E   A9 07      LDA #&07
+     0BA0   85 56      STA &56
+     0BA2   A9 05      LDA #&05
+     0BA4   85 57      STA &57
+     0BA6   A5 52      LDA &52
+     0BA8   3A         DEC A
+     0BA9   8D 12 05   STA &0512
+     0BAC   20 66 0B   JSR &0B66
+     0BAF   AD 09 04   LDA &0409
+     0BB2   F0 03      BEQ &0BB7
+     0BB4   4C C4 0B   JMP &0BC4
 .get_input_room_err
-     0B99   A9 02      LDA #&02
-     0B9B   8D 0A 04   STA &040A
-     0B9E   4C A6 0B   JMP &0BA6
+     0BB7   A9 02      LDA #&02
+     0BB9   8D 0A 04   STA &040A
+     0BBC   4C C4 0B   JMP &0BC4
 .get_input_room_oserr
-     0BA1   A9 01      LDA #&01
-     0BA3   8D 0A 04   STA &040A
+     0BBF   A9 01      LDA #&01
+     0BC1   8D 0A 04   STA &040A
 .get_input_room_end
-     0BA6   60         RTS
+     0BC4   60         RTS
 .init_check_unique
-     0BA7   DA         PHX
-     0BA8   9C 09 04   STZ &0409
-     0BAB   C0 00      CPY #&00
-     0BAD   F0 15      BEQ &0BC4
-     0BAF   98         TYA
-     0BB0   AA         TAX
+     0BC5   DA         PHX
+     0BC6   9C 09 04   STZ &0409
+     0BC9   C0 00      CPY #&00
+     0BCB   F0 15      BEQ &0BE2
+     0BCD   98         TYA
+     0BCE   AA         TAX
 .init_check_random_next
-     0BB1   CA         DEX
-     0BB2   B9 00 05   LDA &0500,Y
-     0BB5   DD 00 05   CMP &0500,X
-     0BB8   D0 06      BNE &0BC0
-     0BBA   EE 09 04   INC &0409
-     0BBD   4C C4 0B   JMP &0BC4
+     0BCF   CA         DEX
+     0BD0   B9 00 05   LDA &0500,Y
+     0BD3   DD 00 05   CMP &0500,X
+     0BD6   D0 06      BNE &0BDE
+     0BD8   EE 09 04   INC &0409
+     0BDB   4C E2 0B   JMP &0BE2
 .init_check_random_chk
-     0BC0   E0 00      CPX #&00
-     0BC2   D0 ED      BNE &0BB1
+     0BDE   E0 00      CPX #&00
+     0BE0   D0 ED      BNE &0BCF
 .init_check_random_done
-     0BC4   FA         PLX
-     0BC5   60         RTS
+     0BE2   FA         PLX
+     0BE3   60         RTS
 .print_room_num
-     0BC6   1A         INC A
-     0BC7   20 21 FF   JSR &FF21
-     0BCA   20 1B FF   JSR &FF1B
-     0BCD   60         RTS
+     0BE4   1A         INC A
+     0BE5   20 30 FF   JSR &FF30
+     0BE8   20 21 FF   JSR &FF21
+     0BEB   60         RTS
 .random_room
-     0BCE   A9 0D      LDA #&0D
-     0BD0   85 56      STA &56
-     0BD2   A9 05      LDA #&05
-     0BD4   85 57      STA &57
-     0BD6   AD 12 05   LDA &0512
-     0BD9   20 60 0B   JSR &0B60
-     0BDC   A2 03      LDX #&03
-     0BDE   20 E9 0B   JSR &0BE9
-     0BE1   AA         TAX
-     0BE2   BD 0D 05   LDA &050D,X
-     0BE5   8D 12 05   STA &0512
-     0BE8   60         RTS
+     0BEC   A9 0D      LDA #&0D
+     0BEE   85 56      STA &56
+     0BF0   A9 05      LDA #&05
+     0BF2   85 57      STA &57
+     0BF4   AD 12 05   LDA &0512
+     0BF7   20 7E 0B   JSR &0B7E
+     0BFA   A2 03      LDX #&03
+     0BFC   20 07 0C   JSR &0C07
+     0BFF   AA         TAX
+     0C00   BD 0D 05   LDA &050D,X
+     0C03   8D 12 05   STA &0512
+     0C06   60         RTS
 .roll_dice
-     0BE9   AD 04 A8   LDA &A804
-     0BEC   C9 FF      CMP #&FF
-     0BEE   D0 03      BNE &0BF3
-     0BF0   4C E9 0B   JMP &0BE9
+     0C07   AD 04 A8   LDA &A804
+     0C0A   C9 FF      CMP #&FF
+     0C0C   D0 03      BNE &0C11
+     0C0E   4C 07 0C   JMP &0C07
 .roll_dice_mod
-     0BF3   20 9E 1A   JSR &1A9E
-     0BF6   AD 09 04   LDA &0409
-     0BF9   60         RTS
+     0C11   20 01 1B   JSR &1B01
+     0C14   AD 09 04   LDA &0409
+     0C17   60         RTS
 .set_player_connecting_rooms
-     0BFA   A9 07      LDA #&07
-     0BFC   85 56      STA &56
-     0BFE   A9 05      LDA #&05
-     0C00   85 57      STA &57
-     0C02   AD 00 05   LDA &0500
-     0C05   20 60 0B   JSR &0B60
-     0C08   60         RTS
+     0C18   A9 07      LDA #&07
+     0C1A   85 56      STA &56
+     0C1C   A9 05      LDA #&05
+     0C1E   85 57      STA &57
+     0C20   AD 00 05   LDA &0500
+     0C23   20 7E 0B   JSR &0B7E
+     0C26   60         RTS
 .show_connecting_rooms
 Macro LOAD_MSG:
-     0C09   A9 69      LDA #&69
-     0C0B   85 50      STA &50
-     0C0D   A9 14      LDA #&14
-     0C0F   85 51      STA &51
+     0C27   A9 F7      LDA #&F7
+     0C29   85 50      STA &50
+     0C2B   A9 14      LDA #&14
+     0C2D   85 51      STA &51
 End macro LOAD_MSG
-     0C11   20 18 FF   JSR &FF18
-     0C14   A2 00      LDX #&00
+     0C2F   20 1E FF   JSR &FF1E
+     0C32   A2 00      LDX #&00
 .show_connecting_rooms_next
-     0C16   BD 07 05   LDA &0507,X
-     0C19   DA         PHX
-     0C1A   20 C6 0B   JSR &0BC6
-     0C1D   FA         PLX
-     0C1E   A9 20      LDA #&20
-     0C20   20 12 FF   JSR &FF12
-     0C23   E8         INX
-     0C24   E0 03      CPX #&03
-     0C26   F0 03      BEQ &0C2B
-     0C28   4C 16 0C   JMP &0C16
+     0C34   BD 07 05   LDA &0507,X
+     0C37   DA         PHX
+     0C38   20 E4 0B   JSR &0BE4
+     0C3B   FA         PLX
+     0C3C   A9 20      LDA #&20
+     0C3E   20 18 FF   JSR &FF18
+     0C41   E8         INX
+     0C42   E0 03      CPX #&03
+     0C44   F0 03      BEQ &0C49
+     0C46   4C 34 0C   JMP &0C34
 .show_connecting_rooms_done
 Macro NEWLINE:
-     0C2B   A9 0A      LDA #&0A
-     0C2D   20 12 FF   JSR &FF12
+     0C49   A9 0A      LDA #&0A
+     0C4B   20 18 FF   JSR &FF18
 End macro NEWLINE
-     0C30   60         RTS
+     0C4E   60         RTS
 .show_current_room
 Macro LOAD_MSG:
-     0C31   A9 80      LDA #&80
-     0C33   85 50      STA &50
-     0C35   A9 14      LDA #&14
-     0C37   85 51      STA &51
-End macro LOAD_MSG
-     0C39   20 18 FF   JSR &FF18
-     0C3C   AD 00 05   LDA &0500
-     0C3F   20 C6 0B   JSR &0BC6
-Macro NEWLINE:
-     0C42   A9 0A      LDA #&0A
-     0C44   20 12 FF   JSR &FF12
-End macro NEWLINE
-     0C47   60         RTS
-.show_error_msg
-     0C48   AD 0A 04   LDA &040A
-     0C4B   3A         DEC A
-     0C4C   0A         ASL A
-     0C4D   AA         TAX
-     0C4E   BD FC 19   LDA &19FC,X
+     0C4F   A9 0E      LDA #&0E
      0C51   85 50      STA &50
-     0C53   BD FD 19   LDA &19FD,X
-     0C56   85 51      STA &51
-     0C58   20 18 FF   JSR &FF18
-     0C5B   9C 0A 04   STZ &040A
-     0C5E   60         RTS
-.staple_count
-     0C5F   AD 06 05   LDA &0506
-     0C62   48         PHA
-Macro LOAD_MSG:
-     0C63   A9 5A      LDA #&5A
-     0C65   85 50      STA &50
-     0C67   A9 14      LDA #&14
-     0C69   85 51      STA &51
+     0C53   A9 15      LDA #&15
+     0C55   85 51      STA &51
 End macro LOAD_MSG
-     0C6B   20 18 FF   JSR &FF18
-     0C6E   68         PLA
-     0C6F   AE 06 05   LDX &0506
-.staple_loop
-     0C72   A9 5B      LDA #&5B
-     0C74   20 12 FF   JSR &FF12
-     0C77   CA         DEX
-     0C78   D0 F8      BNE &0C72
-     0C7A   60         RTS
-.status_msg
-     0C7B   20 31 0C   JSR &0C31
-     0C7E   20 FA 0B   JSR &0BFA
-     0C81   20 09 0C   JSR &0C09
-     0C84   20 5F 0C   JSR &0C5F
+     0C57   20 1E FF   JSR &FF1E
+     0C5A   AD 00 05   LDA &0500
+     0C5D   20 E4 0B   JSR &0BE4
 Macro NEWLINE:
-     0C87   A9 0A      LDA #&0A
-     0C89   20 12 FF   JSR &FF12
+     0C60   A9 0A      LDA #&0A
+     0C62   20 18 FF   JSR &FF18
 End macro NEWLINE
-     0C8C   20 D5 0C   JSR &0CD5
-     0C8F   60         RTS
+     0C65   60         RTS
+.show_error_msg
+     0C66   AD 0A 04   LDA &040A
+     0C69   3A         DEC A
+     0C6A   0A         ASL A
+     0C6B   AA         TAX
+     0C6C   BD 5F 1A   LDA &1A5F,X
+     0C6F   85 50      STA &50
+     0C71   BD 60 1A   LDA &1A60,X
+     0C74   85 51      STA &51
+     0C76   20 1E FF   JSR &FF1E
+     0C79   9C 0A 04   STZ &040A
+     0C7C   60         RTS
+.staple_count
+     0C7D   AD 06 05   LDA &0506
+     0C80   48         PHA
+Macro LOAD_MSG:
+     0C81   A9 E8      LDA #&E8
+     0C83   85 50      STA &50
+     0C85   A9 14      LDA #&14
+     0C87   85 51      STA &51
+End macro LOAD_MSG
+     0C89   20 1E FF   JSR &FF1E
+     0C8C   68         PLA
+     0C8D   AE 06 05   LDX &0506
+.staple_loop
+     0C90   A9 5B      LDA #&5B
+     0C92   20 18 FF   JSR &FF18
+     0C95   CA         DEX
+     0C96   D0 F8      BNE &0C90
+     0C98   60         RTS
+.status_msg
+     0C99   20 4F 0C   JSR &0C4F
+     0C9C   20 18 0C   JSR &0C18
+     0C9F   20 27 0C   JSR &0C27
+     0CA2   20 7D 0C   JSR &0C7D
+Macro NEWLINE:
+     0CA5   A9 0A      LDA #&0A
+     0CA7   20 18 FF   JSR &FF18
+End macro NEWLINE
+     0CAA   20 F3 0C   JSR &0CF3
+     0CAD   60         RTS
 .status_update
-     0C90   9C 13 05   STZ &0513
-     0C93   AD 00 05   LDA &0500
-     0C96   CD 01 05   CMP &0501
-     0C99   F0 1C      BEQ &0CB7
-     0C9B   CD 04 05   CMP &0504
-     0C9E   F0 1F      BEQ &0CBF
-     0CA0   CD 05 05   CMP &0505
-     0CA3   F0 1A      BEQ &0CBF
-     0CA5   CD 02 05   CMP &0502
-     0CA8   F0 1D      BEQ &0CC7
-     0CAA   CD 03 05   CMP &0503
-     0CAD   F0 18      BEQ &0CC7
-     0CAF   AD 06 05   LDA &0506
-     0CB2   F0 1B      BEQ &0CCF
-     0CB4   4C D4 0C   JMP &0CD4
+     0CAE   9C 13 05   STZ &0513
+     0CB1   AD 00 05   LDA &0500
+     0CB4   CD 01 05   CMP &0501
+     0CB7   F0 1C      BEQ &0CD5
+     0CB9   CD 04 05   CMP &0504
+     0CBC   F0 1F      BEQ &0CDD
+     0CBE   CD 05 05   CMP &0505
+     0CC1   F0 1A      BEQ &0CDD
+     0CC3   CD 02 05   CMP &0502
+     0CC6   F0 1D      BEQ &0CE5
+     0CC8   CD 03 05   CMP &0503
+     0CCB   F0 18      BEQ &0CE5
+     0CCD   AD 06 05   LDA &0506
+     0CD0   F0 1B      BEQ &0CED
+     0CD2   4C F2 0C   JMP &0CF2
 .dead_as_a_dead_thing
-     0CB7   A9 03      LDA #&03
-     0CB9   8D 13 05   STA &0513
-     0CBC   4C D4 0C   JMP &0CD4
+     0CD5   A9 03      LDA #&03
+     0CD7   8D 13 05   STA &0513
+     0CDA   4C F2 0C   JMP &0CF2
 .down_the_pit
-     0CBF   A9 02      LDA #&02
-     0CC1   8D 13 05   STA &0513
-     0CC4   4C D4 0C   JMP &0CD4
+     0CDD   A9 02      LDA #&02
+     0CDF   8D 13 05   STA &0513
+     0CE2   4C F2 0C   JMP &0CF2
 .status_kidnapped
-     0CC7   A9 01      LDA #&01
-     0CC9   8D 13 05   STA &0513
-     0CCC   4C D4 0C   JMP &0CD4
+     0CE5   A9 01      LDA #&01
+     0CE7   8D 13 05   STA &0513
+     0CEA   4C F2 0C   JMP &0CF2
 .out_of_staples
-     0CCF   A9 04      LDA #&04
-     0CD1   8D 13 05   STA &0513
+     0CED   A9 04      LDA #&04
+     0CEF   8D 13 05   STA &0513
 .status_update_end
-     0CD4   60         RTS
+     0CF2   60         RTS
 .warnings
-     0CD5   A0 00      LDY #&00
-     0CD7   A2 00      LDX #&00
-     0CD9   AD 10 05   LDA &0510
-     0CDC   29 FC      AND #&FC
-     0CDE   8D 10 05   STA &0510
+     0CF3   A0 00      LDY #&00
+     0CF5   A2 00      LDX #&00
+     0CF7   AD 10 05   LDA &0510
+     0CFA   29 FC      AND #&FC
+     0CFC   8D 10 05   STA &0510
 .warning_loop
-     0CE1   BD 07 05   LDA &0507,X
-     0CE4   CD 01 05   CMP &0501
-     0CE7   F0 17      BEQ &0D00
-     0CE9   CD 02 05   CMP &0502
-     0CEC   F0 20      BEQ &0D0E
-     0CEE   CD 03 05   CMP &0503
-     0CF1   F0 1B      BEQ &0D0E
-     0CF3   CD 04 05   CMP &0504
-     0CF6   F0 33      BEQ &0D2B
-     0CF8   CD 05 05   CMP &0505
-     0CFB   F0 2E      BEQ &0D2B
-     0CFD   4C 45 0D   JMP &0D45
+     0CFF   BD 07 05   LDA &0507,X
+     0D02   CD 01 05   CMP &0501
+     0D05   F0 17      BEQ &0D1E
+     0D07   CD 02 05   CMP &0502
+     0D0A   F0 20      BEQ &0D2C
+     0D0C   CD 03 05   CMP &0503
+     0D0F   F0 1B      BEQ &0D2C
+     0D11   CD 04 05   CMP &0504
+     0D14   F0 33      BEQ &0D49
+     0D16   CD 05 05   CMP &0505
+     0D19   F0 2E      BEQ &0D49
+     0D1B   4C 63 0D   JMP &0D63
 .warning_zumpus
 Macro LOAD_MSG:
-     0D00   A9 16      LDA #&16
-     0D02   85 50      STA &50
-     0D04   A9 18      LDA #&18
-     0D06   85 51      STA &51
+     0D1E   A9 BA      LDA #&BA
+     0D20   85 50      STA &50
+     0D22   A9 18      LDA #&18
+     0D24   85 51      STA &51
 End macro LOAD_MSG
-     0D08   20 18 FF   JSR &FF18
-     0D0B   4C 45 0D   JMP &0D45
+     0D26   20 1E FF   JSR &FF1E
+     0D29   4C 63 0D   JMP &0D63
 .warning_bat
-     0D0E   AD 10 05   LDA &0510
-     0D11   29 02      AND #&02
-     0D13   D0 30      BNE &0D45
-     0D15   AD 10 05   LDA &0510
-     0D18   09 02      ORA #&02
-     0D1A   8D 10 05   STA &0510
+     0D2C   AD 10 05   LDA &0510
+     0D2F   29 02      AND #&02
+     0D31   D0 30      BNE &0D63
+     0D33   AD 10 05   LDA &0510
+     0D36   09 02      ORA #&02
+     0D38   8D 10 05   STA &0510
 Macro LOAD_MSG:
-     0D1D   A9 6A      LDA #&6A
-     0D1F   85 50      STA &50
-     0D21   A9 18      LDA #&18
-     0D23   85 51      STA &51
+     0D3B   A9 0E      LDA #&0E
+     0D3D   85 50      STA &50
+     0D3F   A9 19      LDA #&19
+     0D41   85 51      STA &51
 End macro LOAD_MSG
-     0D25   20 18 FF   JSR &FF18
-     0D28   4C 45 0D   JMP &0D45
+     0D43   20 1E FF   JSR &FF1E
+     0D46   4C 63 0D   JMP &0D63
 .warning_pit
-     0D2B   AD 10 05   LDA &0510
-     0D2E   29 01      AND #&01
-     0D30   D0 13      BNE &0D45
-     0D32   AD 10 05   LDA &0510
-     0D35   09 01      ORA #&01
-     0D37   8D 10 05   STA &0510
+     0D49   AD 10 05   LDA &0510
+     0D4C   29 01      AND #&01
+     0D4E   D0 13      BNE &0D63
+     0D50   AD 10 05   LDA &0510
+     0D53   09 01      ORA #&01
+     0D55   8D 10 05   STA &0510
 Macro LOAD_MSG:
-     0D3A   A9 8E      LDA #&8E
-     0D3C   85 50      STA &50
-     0D3E   A9 18      LDA #&18
-     0D40   85 51      STA &51
+     0D58   A9 32      LDA #&32
+     0D5A   85 50      STA &50
+     0D5C   A9 19      LDA #&19
+     0D5E   85 51      STA &51
 End macro LOAD_MSG
-     0D42   20 18 FF   JSR &FF18
+     0D60   20 1E FF   JSR &FF1E
 .warning_next
-     0D45   E8         INX
-     0D46   E0 03      CPX #&03
-     0D48   F0 03      BEQ &0D4D
-     0D4A   4C E1 0C   JMP &0CE1
+     0D63   E8         INX
+     0D64   E0 03      CPX #&03
+     0D66   F0 03      BEQ &0D6B
+     0D68   4C FF 0C   JMP &0CFF
 .warnings_done
-     0D4D   60         RTS
+     0D6B   60         RTS
 .yesno
-     0D4E   A5 5E      LDA &5E
-     0D50   29 01      AND #&01
-     0D52   F0 FA      BEQ &0D4E
-     0D54   9C 7F 03   STZ &037F
-     0D57   20 06 FF   JSR &FF06
-     0D5A   AD 09 04   LDA &0409
-     0D5D   C9 59      CMP #&59
-     0D5F   F0 09      BEQ &0D6A
-     0D61   C9 4E      CMP #&4E
-     0D63   F0 0A      BEQ &0D6F
-     0D65   A9 00      LDA #&00
-     0D67   4C 71 0D   JMP &0D71
+     0D6C   A5 60      LDA &60
+     0D6E   29 01      AND #&01
+     0D70   F0 FA      BEQ &0D6C
+     0D72   9C 7F 03   STZ &037F
+     0D75   20 06 FF   JSR &FF06
+     0D78   AD 09 04   LDA &0409
+     0D7B   C9 59      CMP #&59
+     0D7D   F0 09      BEQ &0D88
+     0D7F   C9 4E      CMP #&4E
+     0D81   F0 0A      BEQ &0D8D
+     0D83   A9 00      LDA #&00
+     0D85   4C 8F 0D   JMP &0D8F
 .yesno_yes
-     0D6A   A9 02      LDA #&02
-     0D6C   4C 71 0D   JMP &0D71
+     0D88   A9 02      LDA #&02
+     0D8A   4C 8F 0D   JMP &0D8F
 .yesno_no
-     0D6F   A9 01      LDA #&01
+     0D8D   A9 01      LDA #&01
 .yesno_done
-     0D71   8D 09 04   STA &0409
-     0D74   9C 7F 03   STZ &037F
-     0D77   9C 00 03   STZ &0300
-     0D7A   A5 5E      LDA &5E
-     0D7C   29 F0      AND #&F0
-     0D7E   85 5E      STA &5E
-     0D80   60         RTS
+     0D8F   8D 09 04   STA &0409
+     0D92   9C 7F 03   STZ &037F
+     0D95   9C 00 03   STZ &0300
+     0D98   A5 60      LDA &60
+     0D9A   29 F0      AND #&F0
+     0D9C   85 60      STA &60
+     0D9E   60         RTS
 .connections
-     0D81   01
-     0D82   04
-     0D83   07
-     0D84   00
-     0D85   00
-     0D86   02
-     0D87   09
-     0D88   00
-     0D89   01
-     0D8A   03
-     0D8B   0C
-     0D8C   00
-     0D8D   02
-     0D8E   04
-     0D8F   0D
-     0D90   00
-     0D91   03
-     0D92   00
-     0D93   05
-     0D94   00
-     0D95   04
-     0D96   06
-     0D97   0E
-     0D98   00
-     0D99   05
-     0D9A   07
-     0D9B   10
-     0D9C   00
-     0D9D   00
-     0D9E   06
-     0D9F   08
-     0DA0   00
+     0D9F   01
+     0DA0   04
      0DA1   07
-     0DA2   09
-     0DA3   11
-     0DA4   00
-     0DA5   01
-     0DA6   08
-     0DA7   0A
-     0DA8   00
-     0DA9   09
-     0DAA   0B
-     0DAB   12
-     0DAC   00
-     0DAD   02
-     0DAE   0A
-     0DAF   0C
+     0DA2   00
+     0DA3   00
+     0DA4   02
+     0DA5   09
+     0DA6   00
+     0DA7   01
+     0DA8   03
+     0DA9   0C
+     0DAA   00
+     0DAB   02
+     0DAC   04
+     0DAD   0D
+     0DAE   00
+     0DAF   03
      0DB0   00
-     0DB1   0B
-     0DB2   0D
-     0DB3   13
-     0DB4   00
-     0DB5   03
-     0DB6   0C
-     0DB7   0E
-     0DB8   00
-     0DB9   05
-     0DBA   0D
-     0DBB   0F
-     0DBC   00
-     0DBD   0E
-     0DBE   10
-     0DBF   13
-     0DC0   00
-     0DC1   06
-     0DC2   0F
-     0DC3   11
-     0DC4   00
-     0DC5   08
-     0DC6   10
-     0DC7   12
-     0DC8   00
-     0DC9   0A
-     0DCA   11
-     0DCB   13
-     0DCC   00
+     0DB1   05
+     0DB2   00
+     0DB3   04
+     0DB4   06
+     0DB5   0E
+     0DB6   00
+     0DB7   05
+     0DB8   07
+     0DB9   10
+     0DBA   00
+     0DBB   00
+     0DBC   06
+     0DBD   08
+     0DBE   00
+     0DBF   07
+     0DC0   09
+     0DC1   11
+     0DC2   00
+     0DC3   01
+     0DC4   08
+     0DC5   0A
+     0DC6   00
+     0DC7   09
+     0DC8   0B
+     0DC9   12
+     0DCA   00
+     0DCB   02
+     0DCC   0A
      0DCD   0C
-     0DCE   0F
-     0DCF   12
-     0DD0   00
+     0DCE   00
+     0DCF   0B
+     0DD0   0D
+     0DD1   13
+     0DD2   00
+     0DD3   03
+     0DD4   0C
+     0DD5   0E
+     0DD6   00
+     0DD7   05
+     0DD8   0D
+     0DD9   0F
+     0DDA   00
+     0DDB   0E
+     0DDC   10
+     0DDD   13
+     0DDE   00
+     0DDF   06
+     0DE0   0F
+     0DE1   11
+     0DE2   00
+     0DE3   08
+     0DE4   10
+     0DE5   12
+     0DE6   00
+     0DE7   0A
+     0DE8   11
+     0DE9   13
+     0DEA   00
+     0DEB   0C
+     0DEC   0F
+     0DED   12
+     0DEE   00
 .breakline
-     0DD1   2D 2D 2D ...
-     0DD6   0A
-     0DD7   00
+     0DEF   2D 2D 2D ...
+     0DF4   0A
+     0DF5   00
 .game_title
-     0DD8   2A 2A 2A ...
-     0DF3   0A
-     0DF4   2A 2A 2A ...
-     0E0F   0A
-     0E10   2A 2A 2A ...
-     0E2B   0A
-     0E2C   0A
-     0E2D   00
+     0DF6   0A
+     0DF7   2A 2A 2A ...
+     0E12   0A
+     0E13   2A 2A 2A ...
+     0E2E   0A
+     0E2F   2A 2A 2A ...
+     0E4A   0A
+     0E4B   0A
+     0E4C   00
+.version_msg
+     0E4D   56 65 72 ...
+     0E55   00
 .instructions
-     0E2E   41 74 20 ...
-     0E61   0A
-     0E62   54 6F 20 ...
-     0EA2   0A
-     0EA3   6D 6F 76 ...
-     0EB2   0A
-     0EB3   20 20 20 ...
-     0EBA   0A
-     0EBB   54 6F 20 ...
-     0EFC   0A
-     0EFD   73 68 6F ...
-     0F40   0A
-     0F41   6F 66 20 ...
-     0F5E   0A
-     0F5F   20 20 20 ...
-     0F68   0A
-     0F69   4E 6F 74 ...
-     0FA7   0A
-     0FA8   63 6F 75 ...
-     0FE1   0A
-     0FE2   69 6E 20 ...
-     1006   0A
-     1007   0A
-     1008   59 6F 75 ...
-     101A   0A
-     101B   20 20 49 ...
-     1040   0A
-     1041   20 20 51 ...
-     104E   0A
-     104F   00
-.start_msg
-     1050   49 74 20 ...
-     1094   0A
-     1095   74 68 65 ...
+     0E56   59 6F 75 ...
+     0E8F   0A
+     0E90   53 69 6D ...
+     0ECF   0A
+     0ED0   41 74 20 ...
+     0F03   0A
+     0F04   54 6F 20 ...
+     0F44   0A
+     0F45   6D 6F 76 ...
+     0F54   0A
+     0F55   20 20 20 ...
+     0F5C   0A
+     0F5D   54 6F 20 ...
+     0F9E   0A
+     0F9F   73 68 6F ...
+     0FE2   0A
+     0FE3   6F 66 20 ...
+     1001   0A
+     1002   20 20 20 ...
+     100B   0A
+     100C   4E 6F 74 ...
+     104A   0A
+     104B   63 6F 75 ...
+     1084   0A
+     1085   77 68 69 ...
+     1098   0A
+     1099   0A
+     109A   59 6F 75 ...
+     10AC   0A
+     10AD   20 20 49 ...
      10D2   0A
-     10D3   44 61 6D ...
-     10FD   0A
-     10FE   0A
-     10FF   41 6C 73 ...
-     113E   0A
-     113F   6C 69 66 ...
-     117E   0A
-     117F   64 6F 6F ...
-     11BF   0A
-     11C0   6F 6E 65 ...
-     11FD   0A
-     11FE   0A
-     11FF   5A 75 6D ...
-     123F   0A
-     1240   6F 64 69 ...
-     1282   0A
-     1283   61 62 6F ...
-     129F   0A
-     12A0   0A
-     12A1   4C 75 63 ...
-     12E3   0A
-     12E4   70 6F 77 ...
-     1323   0A
-     1324   41 6E 64 ...
-     135C   0A
-     135D   42 75 74 ...
-     1389   0A
-     138A   00
+     10D3   20 20 51 ...
+     10E0   0A
+     10E1   00
+.start_msg
+     10E2   49 74 20 ...
+     1126   0A
+     1127   74 68 65 ...
+     1164   0A
+     1165   44 61 6D ...
+     118F   0A
+     1190   0A
+     1191   41 6C 73 ...
+     11D0   0A
+     11D1   6C 69 66 ...
+     1210   0A
+     1211   64 6F 6F ...
+     1251   0A
+     1252   6F 6E 65 ...
+     128F   0A
+     1290   0A
+     1291   5A 75 6D ...
+     12D1   0A
+     12D2   6F 64 69 ...
+     1314   0A
+     1315   61 62 6F ...
+     1331   0A
+     1332   0A
+     1333   4C 75 63 ...
+     1375   0A
+     1376   70 6F 77 ...
+     13B5   0A
+     13B6   41 6E 64 ...
+     13EA   0A
+     13EB   42 75 74 ...
+     1417   0A
+     1418   00
 .init_msg
-     138B   57 65 20 ...
-     13C5   0A
-     13C6   74 68 72 ...
-     1402   0A
-     1403   28 70 72 ...
-     1413   0A
-     1414   00
+     1419   57 65 20 ...
+     1453   0A
+     1454   74 68 72 ...
+     1490   0A
+     1491   28 70 72 ...
+     14A1   0A
+     14A2   00
 .init_done_msg
-     1415   49 6E 69 ...
-     1437   0A
-     1438   00
+     14A3   49 6E 69 ...
+     14C5   0A
+     14C6   00
 .press_enter_msg
-     1439   48 69 74 ...
-     1459   00
+     14C7   48 69 74 ...
+     14E7   00
 .staple_count_msg
-     145A   53 74 61 ...
-     1468   00
+     14E8   53 74 61 ...
+     14F6   00
 .connecting_rooms_msg
-     1469   43 6F 6E ...
-     147F   00
+     14F7   43 6F 6E ...
+     150D   00
 .current_room_msg
-     1480   59 6F 75 ...
-     1490   00
+     150E   59 6F 75 ...
+     1524   00
 .zumpus_prompt
-     1491   4D 6F 76 ...
-     14A0   00
-.instr_prompt
-     14A1   44 6F 20 ...
-     14DD   00
-.go_again_msg
-     14DE   41 6E 6F ...
-     14F2   00
-.you_are_dead
-     14F3   0A
-     14F4   41 52 47 ...
-     1532   0A
-     1533   0A
+     1525   4D 6F 76 ...
      1534   00
+.instr_prompt
+     1535   44 6F 20 ...
+     1571   00
+.go_again_msg
+     1572   41 6E 6F ...
+     1586   00
+.you_are_dead
+     1587   0A
+     1588   41 52 47 ...
+     15A9   49 74 27 ...
+     15C6   0A
+     15C7   0A
+     15C8   00
 .you_have_fallen
-     1535   0A
-     1536   4F 4F 4F ...
-     156E   0A
-     156F   0A
-     1570   00
+     15C9   0A
+     15CA   4F 4F 4F ...
+     1602   0A
+     1603   0A
+     1604   00
 .you_are_kidnapped
-     1571   4F 68 2D ...
-     15B1   0A
-     15B2   48 65 20 ...
-     15F5   0A
-     15F6   6F 66 20 ...
-     163A   0A
-     163B   62 61 63 ...
-     165A   0A
-     165B   00
+     1605   4F 68 2D ...
+     1645   0A
+     1646   48 65 20 ...
+     1689   0A
+     168A   6F 66 20 ...
+     16CE   0A
+     16CF   62 61 63 ...
+     16EE   0A
+     16EF   00
 .you_have_no_staples
-     165C   0A
-     165D   41 6C 61 ...
-     16A0   0A
-     16A1   5A 75 6D ...
-     16C7   0A
-     16C8   0A
-     16C9   00
+     16F0   0A
+     16F1   41 6C 61 ...
+     170F   49 74 27 ...
+     1734   0A
+     1735   5A 75 6D ...
+     175B   0A
+     175C   0A
+     175D   00
 .shot_miss_msg
-     16CA   41 20 64 ...
-     1704   0A
-     1705   00
+     175E   41 20 64 ...
+     1798   0A
+     1799   00
 .shot_hit_msg
-     1706   0A
-     1707   57 45 4C ...
-     1711   0A
-     1712   41 6E 20 ...
-     1753   0A
-     1754   5A 75 6D ...
-     1777   0A
-     1778   00
+     179A   0A
+     179B   57 45 4C ...
+     17A5   0A
+     17A6   0A
+     17A7   41 6E 20 ...
+     17E8   0A
+     17E9   5A 75 6D ...
+     180C   0A
+     180D   0A
+     180E   00
 .shot_nearhit_msg
-     1779   4F 6F 6F ...
-     17AB   0A
-     17AC   00
+     180F   4F 6F 6F ...
+     1841   0A
+     1842   00
 .shot_self_msg
-     17AD   4F 75 63 ...
-     17D4   0A
-     17D5   00
+     1843   4F 75 63 ...
+     1877   0A
+     1878   0A
+     1879   00
 .shot_nearself_msg
-     17D6   50 68 65 ...
-     1814   0A
-     1815   00
+     187A   50 68 65 ...
+     18B8   0A
+     18B9   00
 .warning_zumpus_msg
-     1816   55 67 68 ...
-     1850   0A
-     1851   42 65 77 ...
-     1868   0A
-     1869   00
+     18BA   55 67 68 ...
+     18F4   0A
+     18F5   42 65 77 ...
+     190C   0A
+     190D   00
 .warning_bat_msg
-     186A   43 61 6E ...
-     188C   0A
-     188D   00
+     190E   43 61 6E ...
+     1930   0A
+     1931   00
 .warning_pit_msg
-     188E   49 74 27 ...
-     18CC   0A
-     18CD   00
-.warning_zumpus_awakes
-     18CE   4F 68 20 ...
-     1915   0A
-     1916   62 75 69 ...
-     193E   0A
-     193F   48 65 20 ...
+     1932   49 74 27 ...
      1970   0A
-     1971   59 6F 75 ...
-     1988   0A
-     1989   00
+     1971   00
+.warning_zumpus_awakes
+     1972   4F 68 20 ...
+     19AC   0A
+     19AD   62 6F 77 ...
+     19E3   0A
+     19E4   48 65 20 ...
+     1A15   0A
+     1A16   59 6F 75 ...
+     1A2D   0A
+     1A2E   00
 .warning_zumpus_moving
-     198A   59 6F 75 ...
-     19B8   0A
-     19B9   00
-.err_input
-     19BA   48 75 68 ...
-     19DA   0A
-     19DB   00
-.err_invalid_room
-     19DC   59 6F 75 ...
-     19FA   0A
-     19FB   00
+     1A2F   59 6F 75 ...
+     1A5D   0A
+     1A5E   00
 .error_msg_ptrs
-     19FC   04 1A
-     19FE   2D 1A
-     1A00   54 1A
-     1A02   77 1A
+     1A5F   67 1A
+     1A61   90 1A
+     1A63   B7 1A
+     1A65   DA 1A
 .err_os_err
-     1A04   49 20 68 ...
-     1A2B   0A
-     1A2C   00
+     1A67   49 20 68 ...
+     1A8E   0A
+     1A8F   00
 .err_rm_not_reachable
-     1A2D   59 6F 75 ...
-     1A52   0A
-     1A53   00
+     1A90   59 6F 75 ...
+     1AB5   0A
+     1AB6   00
 .err_syntax
-     1A54   54 68 61 ...
-     1A75   0A
-     1A76   00
+     1AB7   54 68 61 ...
+     1AD8   0A
+     1AD9   00
 .err_range
-     1A77   59 6F 75 ...
-     1A9C   0A
-     1A9D   00
+     1ADA   59 6F 75 ...
+     1AFF   0A
+     1B00   00
 .uint8_mod8
-     1A9E   8E 02 04   STX &0402
-     1AA1   A2 00      LDX #&00
+     1B01   8E 02 04   STX &0402
+     1B04   A2 00      LDX #&00
 .uint8_mod8_loop
-     1AA3   8D 09 04   STA &0409
-     1AA6   38         SEC
-     1AA7   ED 02 04   SBC &0402
-     1AAA   90 04      BCC &1AB0
-     1AAC   E8         INX
-     1AAD   4C A3 1A   JMP &1AA3
+     1B06   8D 09 04   STA &0409
+     1B09   38         SEC
+     1B0A   ED 02 04   SBC &0402
+     1B0D   90 04      BCC &1B13
+     1B0F   E8         INX
+     1B10   4C 06 1B   JMP &1B06
 .uint8_mod8_result
-     1AB0   60         RTS
+     1B13   60         RTS
 .uint16_times10
-     1AB1   DA         PHX
-     1AB2   A2 01      LDX #&01
+     1B14   DA         PHX
+     1B15   A2 01      LDX #&01
 .uint16_times10_outer
-     1AB4   A0 00      LDY #&00
-     1AB6   BD 2E 04   LDA &042E,X
-     1AB9   9D 12 05   STA &0512,X
-     1ABC   8D 02 04   STA &0402
+     1B17   A0 00      LDY #&00
+     1B19   BD 2E 04   LDA &042E,X
+     1B1C   9D 12 05   STA &0512,X
+     1B1F   8D 02 04   STA &0402
 .uint16_times10_loop
-     1ABF   18         CLC
-     1AC0   6D 02 04   ADC &0402
-     1AC3   B0 03      BCS &1AC8
-     1AC5   4C CF 1A   JMP &1ACF
+     1B22   18         CLC
+     1B23   6D 02 04   ADC &0402
+     1B26   B0 03      BCS &1B2B
+     1B28   4C 32 1B   JMP &1B32
 .uint16_times10_carry
-     1AC8   E0 00      CPX #&00
-     1ACA   D0 03      BNE &1ACF
-     1ACC   EE 2F 04   INC &042F
+     1B2B   E0 00      CPX #&00
+     1B2D   D0 03      BNE &1B32
+     1B2F   EE 2F 04   INC &042F
 .uint16_times10_next_inc
-     1ACF   C8         INY
-     1AD0   C0 09      CPY #&09
-     1AD2   F0 03      BEQ &1AD7
-     1AD4   4C BF 1A   JMP &1ABF
+     1B32   C8         INY
+     1B33   C0 09      CPY #&09
+     1B35   F0 03      BEQ &1B3A
+     1B37   4C 22 1B   JMP &1B22
 .uint16_times10_next_byte
-     1AD7   9D 2E 04   STA &042E,X
-     1ADA   E0 00      CPX #&00
-     1ADC   F0 04      BEQ &1AE2
-     1ADE   CA         DEX
-     1ADF   4C B4 1A   JMP &1AB4
+     1B3A   9D 2E 04   STA &042E,X
+     1B3D   E0 00      CPX #&00
+     1B3F   F0 04      BEQ &1B45
+     1B41   CA         DEX
+     1B42   4C 17 1B   JMP &1B17
 .uint16_times10_done
-     1AE2   FA         PLX
-     1AE3   60         RTS
+     1B45   FA         PLX
+     1B46   60         RTS
 .compare_tmp_addr
-     1AE4   A5 57      LDA &57
-     1AE6   C5 59      CMP &59
-     1AE8   90 0F      BCC &1AF9
-     1AEA   D0 12      BNE &1AFE
-     1AEC   A5 56      LDA &56
-     1AEE   C5 58      CMP &58
-     1AF0   90 07      BCC &1AF9
-     1AF2   D0 0A      BNE &1AFE
-     1AF4   A9 01      LDA #&01
-     1AF6   4C 00 1B   JMP &1B00
+     1B47   A5 57      LDA &57
+     1B49   C5 59      CMP &59
+     1B4B   90 0F      BCC &1B5C
+     1B4D   D0 12      BNE &1B61
+     1B4F   A5 56      LDA &56
+     1B51   C5 58      CMP &58
+     1B53   90 07      BCC &1B5C
+     1B55   D0 0A      BNE &1B61
+     1B57   A9 01      LDA #&01
+     1B59   4C 63 1B   JMP &1B63
 .compare_tmp_addr_less
-     1AF9   A9 00      LDA #&00
-     1AFB   4C 00 1B   JMP &1B00
+     1B5C   A9 00      LDA #&00
+     1B5E   4C 63 1B   JMP &1B63
 .compare_tmp_addr_more
-     1AFE   A9 02      LDA #&02
+     1B61   A9 02      LDA #&02
 .compare_tmp_addr_end
-     1B00   8D 09 04   STA &0409
-     1B03   60         RTS
+     1B63   8D 09 04   STA &0409
+     1B66   60         RTS
 .endtag
-     1B04   45 4F 46 
-     1B07   00
+     1B67   45 4F 46 
+     1B6A   00
 .endcode
 Saving file '../bin/ZUMPUS.BIN'

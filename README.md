@@ -10,11 +10,12 @@ Each I/O board has its own address decoding (1K blocks).
 
 Currently, the modules are:
   - Main board: 65C02 CPU @ 1MHz, 32KB RAM, 16KB ROM (EEPROM), oscillator.
-  - VIA Interface boards: 65C22 VIA chip providing general-purpose I/O. One of these boards is currently used to drive a 16x2 character LCD display and five status LEDs.
-  - Serial board: 6551-based UART used for conole connection.
-  - Dual UART board: NXP SC28L92 providing two serial ports and other general-purpose I/O.
-  - Raspberry Pi board: Has a 65C22 VIA and a Raspberry Pi Zero 2 W which provides terminal access and acts as a mass storage device.
-  - Parallel port board: Uses a 65C22 VIA connecting to a 25-pin Centronics-like port for connecting to my dot-matrix printer (work in progress).
+  - VIA Interface boards: 65C22 VIA chip providing general-purpose I/O. One of these boards is currently used to drive a 16x2 character LCD display and five status LEDs. The other provides two eight-bit user ports.
+  - (Serial board: 6551-based UART used for console connection - not currently in use).
+  - Dual UART board: NXP SC28L92 providing two serial ports and other general-purpose I/O. One of the serial ports has now taken over the role of providing console access to the Z64.
+  - Raspberry Pi board: Has a 65C22 VIA talking to a Raspberry Pi Zero 2 W which provides terminal access (via the serial port) and acts as a mass storage device.
+  - Parallel port board: Uses a 65C22 VIA connecting to a 25-pin Centronics-like port for connecting to my dot-matrix printer.
+  - Extended memory board: Has a 128KB RAM chip providing 16 x 8KB memory banks mapped in at address $8000. The four lowest slots (0-3) can also be used to address EEPROMs. Switching between EEPROMs and RAM is via jumpers. Selecting which of the 16 banks is currently mapped in is via software. Using an ATF1502ASL CPLD on this board for decoding.
 
 Using Beebasm as the assembler.
 

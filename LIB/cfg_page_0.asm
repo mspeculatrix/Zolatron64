@@ -12,13 +12,15 @@ TMP_ADDR_A_H  = TMP_ADDR_A + 1      ; $57
 TMP_ADDR_B    = TMP_ADDR_A_H + 1    ; $58 Temp 2-byte vector/store for address
 TMP_ADDR_B_L  = TMP_ADDR_B	        ; $58 - Alias -
 TMP_ADDR_B_H  = TMP_ADDR_B + 1      ; $59
-FILE_ADDR     = TMP_ADDR_B_H + 1    ; $5A
-LOMEM         = FILE_ADDR + 2       ; $5C First available byte after user prog
+TMP_ADDR_C    = TMP_ADDR_B_H + 1    ; $5A
+TMP_ADDR_C_L  = TMP_ADDR_C	        ; $5A - Alias -
+TMP_ADDR_C_H  = TMP_ADDR_C_L + 1	  ; $5B
 
-STDIN_STATUS_REG = LOMEM + 2	      ; $5E Used to store various flags
-PROC_REG = STDIN_STATUS_REG + 1  	  ; $5F Process flags
-TIMER_STATUS_REG = PROC_REG + 1	    ; $60 Timer status register
-SYS_REG = TIMER_STATUS_REG + 1      ; $61 System Register
+FILE_ADDR     = TMP_ADDR_C_H + 1    ; $5C
+LOMEM         = FILE_ADDR + 2       ; $5E First available byte after user prog
+
+STDIN_STATUS_REG = LOMEM + 2	      ; $60 Used to store various flags
+SYS_REG = STDIN_STATUS_REG + 1      ; $63 System Register
 ; SYSTEM REGISTER
 ; Bit     Flag name          Function
 ;  0
@@ -26,8 +28,8 @@ SYS_REG = TIMER_STATUS_REG + 1      ; $61 System Register
 ;  2
 ;  3
 ;  4
-;  5
+;  5      LCD_SIZE           0 = 2x16, 1 = 4x20
 ;  6
 ;  7
-SYS_EXMEM_YES = %00000010
-SYS_EXMEM_NO = %11111101
+SYS_EXMEM_YES = %00000010 ; ORA with reg to set flag
+SYS_EXMEM_NO = %11111101  ; AND with reg to unset flag

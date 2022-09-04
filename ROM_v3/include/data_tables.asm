@@ -1,4 +1,6 @@
-\ DATA & TABLES -- data_tables.asm --------------------------------------------
+\ data_tables.asm
+
+\ --- DATA & TABLES ------------------------------------------------------------
 
 ALIGN &100                  ; Start on new page
 
@@ -11,6 +13,8 @@ ALIGN &100                  ; Start on new page
 \ the command files that includes).
 .cmdprcptrs
   equw cmdprcSTAR           ; *
+  equw cmdprcPEEK           ; ? - synonym for PEEK
+  equw cmdprcPOKE           ; ! - synonym for POKE
   equw cmdprcBRK            ; BRK
   equw cmdprcDEL            ; DEL
   equw cmdprcDUMP           ; DUMP
@@ -34,17 +38,24 @@ ALIGN &100                  ; Start on new page
 
 \ FIRST CHARACTER TABLE
 \ Initial characters of our commands. The parsing system first looks to see if
-\ the initial character is in this list.
+\ the initial character is in this list and uses its position in the list to
+\ understand where to go next by looking it up in the Command Pointers table
+\ below.
 .cmd_ch1_tbl
-  equs "*BDHJLPRSVX"
+  equs "*?!BDHJLPRSVX"
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
 \ These are vectors to the Command Table labels below. Once the parsing routine
 \ has found the initial character, it uses its position in the First
-\ Character Table (above) to determine an offset into this table.
+\ Character Table (above) to determine an offset into this table. This table,
+\ which lists the labels of the alphabetic sections in the Command Table
+\ (below) gives the OS the address to go to next - ie, the appropriate label
+\ of the Command Table section.
 .cmd_ptrs                   ; Pointers to command table sections
   equw cmd_tbl_STAR         ; Commands starting '*'
+  equw cmd_tbl_QUERY        ; Commands starting '?'
+  equw cmd_tbl_BANG         ; Commands starting '!'
   equw cmd_tbl_ASCB         ; Commands starting 'B'
   equw cmd_tbl_ASCD         ; Commands starting 'D'
   equw cmd_tbl_ASCH         ; Commands starting 'H'
@@ -58,12 +69,20 @@ ALIGN &100                  ; Start on new page
 
 \ COMMAND TABLE
 \ Having found the an address in the Command Pointers table above, the parsing
-\ rutine then jumps to the corresponding label in this section to match the
+\ routine then jumps to the corresponding label in this section to match the
 \ rest of the characters in the command. When a match is made, it then reads
 \ the corresponding token value following the command name.
 .cmd_tbl_STAR                  ; Commands starting '*'
   equb CMD_TKN_STAR            ; Not sure what I'm using this for yet
   equb EOCMD_SECTION           ; Comes at end of each section
+
+.cmd_tbl_QUERY                 ; Commands starting '?'
+  equb CMD_TKN_PEEK            ; Synonym for PEEK
+  equb EOCMD_SECTION
+
+.cmd_tbl_BANG                  ; Commands starting '!'
+  equb CMD_TKN_POKE            ; Synonym for POKE
+  equb EOCMD_SECTION
 
 .cmd_tbl_ASCB                  ; Commands starting 'B'
   equs "RK", CMD_TKN_BRK       ; BRK
@@ -115,10 +134,13 @@ ALIGN &100                  ; Start on new page
   equs "SEL", CMD_TKN_XSEL     ; XSEL
   equb EOCMD_SECTION
 
-\ ===== ERROR TABLES ========+==================================================
-\ See cfg_main.asm for the corresponding error numbers. This list needs to be in
-\ the same order as that list.
+\ ===== ERROR TABLES ===========================================================
+
 \ Error Message Pointer Table
+\ See cfg_main.asm for the corresponding error numbers. This list needs to be in
+\ the same order as that list because that list acts as an index into this one.
+\ This list in turn provides the address of the (label of) the appropriate
+\ text in the Error Messages section.
 .err_ptrs
   equw err_msg_cmd
   equw err_msg_hex_bin_conv
@@ -142,6 +164,7 @@ ALIGN &100                  ; Start on new page
 
   equw err_extmem_write
   equw err_extmem_bank
+  equw err_extmem_exec
 
   equw err_addr
   equw err_file_exists
@@ -149,7 +172,9 @@ ALIGN &100                  ; Start on new page
   equw err_delfile_fail
   equw err_filenotfound
 
-\ Error Message Table
+  equw err_stdin_buf_empty
+
+\ Error Messages
 .err_msg_cmd
   equs "Bad command! Bad, bad command!", 0
 .err_msg_hex_bin_conv
@@ -171,22 +196,24 @@ ALIGN &100                  ; Start on new page
 .err_timeout_SAO
   equs "SA Off Timeout", 0
 .err_filesvropen
-  equs "File open failed on server", 0
+  ;     01234567890123456789
+  equs "Server f/open error", 0
 .err_filesvrls
-  equs "File list failed on server", 0
+  equs "Server f/list error", 0
 .err_filename_badchar
   equs "Bad filename",0
 .err_filename_badlen
-  equs "Bad f/n length",0
+  equs "Bad filename length",0
 .err_end_of_buffer
   equs "End of buffer",0
 .err_not_a_number
   equs "Not a number",0
 .err_extmem_write
-  ;     1234567890ABCDEF
-  equs "Extmem bank not writeable",0
+  equs "Extmem not writeable",0
 .err_extmem_bank
   equs "Ext mem bank error",0
+.err_extmem_exec
+  equs "Ext mem not executable",0
 .err_addr
   equs "Address error",0
 .err_file_exists
@@ -194,18 +221,21 @@ ALIGN &100                  ; Start on new page
 .err_file_open
   equs "Error opening file",0
 .err_delfile_fail
-  ;     1234567890ABCDEF
+  ;     01234567890123456789
   equs "Delete file failed",0
 .err_filenotfound
   equs "File not found",0
+.err_stdin_buf_empty
+  equs "Input buffer empty",0
 
 \ ===== MISC TABLES & STRINGS ==================================================
 
-\ Valid data types for extended memory.
-.ext_data_types
-  equs "PODX",0
+.ext_data_types               ; Valid data type characters for extended memory
+  equs "EODX",0
 
-.help_table
+.help_table                   ; Text for 'HELP' output
+  equs "?",0
+  equs "!",0
   equs "BRK",0
   equs "DEL",0
   equs "DUMP",0
@@ -228,34 +258,19 @@ ALIGN &100                  ; Start on new page
   equb EOTBL_MKR
 
 \ HEX CHARACTER TABLE
-.hex_chr_tbl
+.hex_chr_tbl                  ; For converting numeric value to hex character
   equs "0123456789ABCDEF"
 
-.memory_header
-  equs "----  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F", 10, 0
-
-.stat_msg_lomem
-  equs "LOMEM:",0
-.stat_msg_faddr
-  equs "FADDR:",0
-.stat_msg_fnerr
-  equs "FNERR:",0
-.stat_msg_fnres
-  equs "FNRES:",0
-.stat_msg_exmem
-  equs "EXMEM:",0
-.stat_msg_pexit
-  equs "PEXIT:",0
+.memory_header                ; For 'LM' and 'LP' output
+  equs "----  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F   "
+  equs "0123456789ABCDEF", 10, 0
 
 \ MESSAGES
 
-.exmem_fitted_msg
-  equs "Extended memory",0
-.exmem_absent_msg
-  equs "No ext memory",0
-
 .test_msg
-  equs "Hello World!", 0
+  equs "Hello World!",0
+.test_msg2
+  equs "Test message",0
 
 .prompt_msg
   equs CHR_LINEEND, "Z>", 0

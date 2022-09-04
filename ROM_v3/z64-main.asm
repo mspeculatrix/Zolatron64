@@ -26,7 +26,7 @@ INCLUDE "../LIB/cfg_page_4.asm"                   ; Misc buffers etc
 INCLUDE "include/cfg_ROM.asm"
 INCLUDE "../LIB/cfg_uart_SC28L92.asm"
 ; INCLUDE "../LIB/cfg_flash-io-snd.asm"
-INCLUDE "../LIB/cfg_2x16_lcd.asm"
+INCLUDE "../LIB/cfg_4x20_lcd.asm"
 INCLUDE "../LIB/cfg_ZolaDOS.asm"
 INCLUDE "../LIB/cfg_user_port.asm"
 INCLUDE "../LIB/cfg_parallel.asm"
@@ -38,7 +38,7 @@ ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROMSTART          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v3.0", 0
+  equs "ZolOS v3.1", 0
 .startcode
   sei                 ; Don't interrupt me yet
   cld                 ; We don' need no steenkin' BCD
@@ -46,16 +46,17 @@ ORG ROMSTART          ; This is where the actual code starts.
   txs                 ; the LSB, as MSB is assumed to be $01
 
 ; Initialise registers etc
-  stz TIMER_STATUS_REG
-  stz EXTMEM_BANK
-  stz EXTMEM_SLOT_SEL
-  stz FUNC_ERR
+  stz EXTMEM_BANK           ; Default to extended memory bank 0
+  stz EXTMEM_SLOT_SEL       ;    "     "    "       "     "   "
+  stz FUNC_ERR              ; Zero out function return values
   stz FUNC_RESULT
-  stz STDIN_BUF
-  stz STDIN_IDX
-  stz STDIN_STATUS_REG
+  stz STDIN_BUF             ; Set first byte of STDIN buffer to a nul (0)
+  stz STDIN_IDX             ; and set the corresponding index
+  stz STDOUT_BUF            ; Do the same for the STDOUT buffer
+  stz STDOUT_IDX
+  stz STDIN_STATUS_REG      ; Zero out the STDIN register
 
-  lda #<USR_PAGE      ; Initialise LOMEM to start of user RAM
+  lda #<USR_PAGE            ; Initialise LOMEM to start of user RAM
   sta LOMEM
   lda #>USR_PAGE
   sta LOMEM + 1
@@ -74,7 +75,7 @@ INCLUDE "include/os_call_vectors.asm"
   jsr lcd_cmd
   lda #LCD_MODE         ; Display on; cursor off; blink off
   jsr lcd_cmd
-  lda #LCD_CLS          ; clear display, reset display memory
+  lda #LCD_CLS          ; Clear display, reset display memory
   jsr lcd_cmd
 
 ; SETUP USER PORT
@@ -90,12 +91,35 @@ INCLUDE "include/os_call_vectors.asm"
 ; SETUP SERIAL PORTS
   jsr duart_init
 
+\ ------------------------------------------------------------------------------
+\ ----     MAIN PROGRAM                                                     ----
+\ ------------------------------------------------------------------------------
+.main
+  LED_ON LED_ERR                ; Turn on all the LEDs for a light show
+  LED_ON LED_BUSY
+  LED_ON LED_OK
+  LED_ON LED_FILE_ACT
+  LED_ON LED_DEBUG
+
+; Print initial message & prompt via serial
+  lda #CHR_LINEEND                  ; Start with a couple of line feeds
+  jsr OSWRCH
+  jsr OSWRCH
+  PRT_MSG start_msg, duart_println
+  lda #CHR_LINEEND
+  jsr OSWRCH
+  PRT_MSG version_str, duart_println
+
+  jsr OSLCDCLS
+  PRT_MSG start_msg, lcd_println
+  PRT_MSG version_str, lcd_println  ; Print initial messages on LCD
+
 ; CHECK FOR EXTENDED ROM/RAM BOARD
-  lda #4                        ; Use bank 4. This is never a ROM
-  sta EXTMEM_SLOT_SEL           ; Select it
-  jsr extmem_ram_chk            ; Run a check. Also sets the bit in SYS_REG
+  lda #4                            ; Use bank 4. This is never a ROM
+  sta EXTMEM_SLOT_SEL               ; Select it
+  jsr extmem_ram_chk                ; Run a check. Also sets the bit in SYS_REG
   lda FUNC_ERR
-  bne boot_exmem_err            ; If error 0, no problem
+  bne boot_exmem_err                ; If error 0, no problem
   LOAD_MSG exmem_fitted_msg
   jmp boot_exmem_def
 .boot_exmem_err
@@ -105,39 +129,16 @@ INCLUDE "include/os_call_vectors.asm"
   jsr OSWRCH
   jsr OSWRMSG
   jsr OSLCDMSG
-  lda #0                        ; Now revert to 0 as default
-  sta EXTMEM_SLOT_SEL           ; Select it
-  sta EXTMEM_BANK               ; Store it for some reason
+  lda #0                            ; Now revert to 0 as default
+  sta EXTMEM_SLOT_SEL               ; Select it
+  sta EXTMEM_BANK                   ; Store it for some reason
 
   lda #<500                         ; Interval for delay function - in ms
   sta LCDV_TIMER_INTVL
   lda #>500
   sta LCDV_TIMER_INTVL+1
 
-\ ------------------------------------------------------------------------------
-\ ----     MAIN PROGRAM                                                     ----
-\ ------------------------------------------------------------------------------
-.main
-  LED_ON LED_ERR
-  LED_ON LED_BUSY
-  LED_ON LED_OK
-  LED_ON LED_FILE_ACT
-  LED_ON LED_DEBUG
-
-; Print initial message & prompt via serial
-  lda #CHR_LINEEND                  ; start with a couple of line feeds
-  jsr OSWRCH
-  jsr OSWRCH
-  PRT_MSG start_msg, duart_println
-  lda #CHR_LINEEND
-  jsr OSWRCH
-  PRT_MSG version_str, duart_println
-
-  jsr lcd_clear_buf                 ; Clear LCD buffer
-  PRT_MSG version_str, lcd_println  ; Print initial messages on LCD
-  PRT_MSG start_msg, lcd_println
-
-  LED_OFF LED_ERR
+  LED_OFF LED_ERR                   ; Turn off the LEDs
   LED_OFF LED_BUSY
   LED_OFF LED_OK
   LED_OFF LED_FILE_ACT
@@ -167,7 +168,7 @@ INCLUDE "include/os_call_vectors.asm"
 \ --------- end of main loop ---------------------------------------------------
 
 .process_input
-  \\ We're here because the null received bit is set or STDIN_BUF full
+  \ We're here because the null received bit is set or STDIN_BUF full
   LED_ON LED_BUSY
   LED_OFF LED_ERR
   LED_OFF LED_OK
@@ -235,7 +236,7 @@ INCLUDE "include/funcs_io.asm"
 INCLUDE "include/funcs_isr.asm"
 INCLUDE "include/funcs_ext_mem.asm"
 INCLUDE "../LIB/funcs_math.asm"
-INCLUDE "include/funcs_2x16_lcd.asm"
+INCLUDE "include/funcs_4x20_lcd.asm"
 INCLUDE "include/funcs_prt.asm"
 INCLUDE "include/data_tables.asm"
 
@@ -248,15 +249,17 @@ ALIGN &100                                        ; Start on new page
 \ Jump table for OS calls. Requires corresponding entries in:
 \    - cfg_page_2.asm - OS Indirection Table
 \    - cfg_main.asm   - OS Function Address Table
-\    - this file      - OS default config routine & this OS Call Jump Table
+\    - os_call_vectors.asm - map functions to vectors
 \ These entries must be in the same order as those in the OS Function Address
-\ Table in cfg_main.asm.
+\ Table in cfg_main.asm and the Vector Location Table in cfg_page_2.asm.
 \-------------------------------------------------------------------------------
 ORG $FF00
 .os_calls
+  jmp (OSRDASC_VEC)
+  jmp (OSRDBYTE_VEC)
+  jmp (OSRDCH_VEC)
   jmp (OSRDHBYTE_VEC)
   jmp (OSRDHADDR_VEC)
-  jmp (OSRDCH_VEC)
   jmp (OSRDINT16_VEC)
   jmp (OSRDFNAME_VEC)
 
@@ -265,7 +268,10 @@ ORG $FF00
   jmp (OSWRERR_VEC)
   jmp (OSWRMSG_VEC)
   jmp (OSWRSBUF_VEC)
+  jmp (OSSOAPP_VEC)
+  jmp (OSSOCH_VEC)
 
+  jmp (OSB2BIN_VEC)
   jmp (OSB2HEX_VEC)
   jmp (OSB2ISTR_VEC)
   jmp (OSHEX2B_VEC)
@@ -279,6 +285,7 @@ ORG $FF00
   jmp (OSLCDB2HEX_VEC)
   jmp (OSLCDSBUF_VEC)
   jmp (OSLCDSC_VEC)
+  jmp (OSLCDWRBUF_VEC)
 
   jmp (OSPRTBUF_VEC)
   jmp (OSPRTCH_VEC)
@@ -291,8 +298,8 @@ ORG $FF00
   jmp (OSZDLOAD_VEC)
   jmp (OSZDSAVE_VEC)
 
-  jmp (OSUSRINT_VEC)
   jmp (OSDELAY_VEC)
+  jmp (OSUSRINT_VEC)
 
 ORG $FFF4
 .reset
@@ -305,4 +312,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-3.0.bin", startrom, endrom
+SAVE "bin/z64-ROM-3.1.bin", startrom, endrom
