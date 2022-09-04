@@ -63,6 +63,10 @@
   sta OSSOAPP_VEC
   lda #>stdout_append
   sta OSSOAPP_VEC + 1
+  lda #<stdout_add_char               ; OSSOCH
+  sta OSSOCH_VEC
+  lda #>stdout_add_char
+  sta OSSOCH_VEC + 1
 \ --- CONVERSIONS --------------------------------------------------------------
   lda #<byte_to_bin                   ; OSB2BIN
   sta OSB2BIN_VEC

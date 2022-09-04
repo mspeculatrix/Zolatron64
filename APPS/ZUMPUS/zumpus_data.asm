@@ -30,11 +30,12 @@
 
 .breakline
   equs "-----",10,0
-
 .game_title
   equs 10,"***************************",10
   equs "***   HUNT the ZUMPUS   ***",10
   equs "***************************",10,10,0
+.version_msg
+  equs "Version ",0
 
 .instructions
   equs "You know when Zumpus is in an adjacent room by the smell.",10
@@ -95,7 +96,8 @@
   equs "Another game (Y/n)? ",0
 
 .you_are_dead
-  equs 10,"ARGH!! The Zumpus has found you! It's been nice knowing you...",10,10,0
+  equs 10,"ARGH!! The Zumpus has found you! "
+  equs "It's been nice knowing you...",10,10,0
 .you_have_fallen
   equs 10,"OOOOOOOoooooo........ Down the lift shaft you go. Sorry!",10,10,0
 .you_are_kidnapped
@@ -104,19 +106,20 @@
   equs "of bad food and cheap drinks means he becomes exhausted and scuttles",10
   equs "back, wheezing, to his cubicle.",10,0
 .you_have_no_staples
-  equs 10,"Alas, you are out of staples. It's now only a matter of time before",10
+  equs 10,"Alas, you are out of staples. "
+  equs "It's now only a matter of time before",10
   equs "Zumpus gets you. So long old friend...",10,10,0
 
 .shot_miss_msg
   equs "A distant snicker of contempt tells you the staple missed.",10,0
 .shot_hit_msg
-  equs 10,"WELL DONE!",10
+  equs 10,"WELL DONE!",10,10
   equs "An anguished wail of pain and indignation means you scored a hit!",10
-  equs "Zumpus flees the building. You win!",10,0
+  equs "Zumpus flees the building. You win!",10,10,0
 .shot_nearhit_msg
   equs "Ooo! So close! Zumpus managed to dodge the staple.",10,0
 .shot_self_msg
-  equs "Ouch! The staple came back and hit you! You're done!",10,0
+  equs "Ouch! The staple came back and hit you! You're done!",10,10,0
 .shot_nearself_msg
   equs "Phew! That was close. The staple came back and nearly hit you!",10,0
 
@@ -128,18 +131,14 @@
 .warning_pit_msg
   equs "It's chilly in here, and there's a sensation like sucking air.",10,0
 .warning_zumpus_awakes
-  equs "Oh no. A snort, a fart and a bellow from somewhere in the bowels of the",10
-  equs "building suggest that Zumpus has awoken.",10
+  equs "Oh no. A snort, a fart and a bellow from somewhere in the ",10
+  equs "bowels of the building suggest that Zumpus has awoken.",10
   equs "He will now slouch at random around the building.",10
   equs "You have been warned...",10,0
 .warning_zumpus_moving
   equs "You hear banging and crashing in the distance.",10,0
 
 \ ---  ERRORS  -----------------------------------------------------------------
-.err_input
-  equs "Huh? I didn't understand that...",10,0
-.err_invalid_room
-  equs "You can't get there from here.",10,0
 
 ; ERROR MESSAGE TABLE
 .error_msg_ptrs

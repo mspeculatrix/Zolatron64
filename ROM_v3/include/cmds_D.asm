@@ -39,7 +39,7 @@
 \ automatically by ZolaDOS.
 .cmdprcDUMP
   LED_ON LED_FILE_ACT
-  LOAD_MSG saving_msg
+  LOAD_MSG cdmprcDUMP_msg
   jsr OSWRMSG
   jsr OSLCDMSG
   jsr read_hex_addr_pair              ; Get addresses from input
@@ -70,3 +70,7 @@
 .cmdprcDUMP_end
   LED_OFF LED_FILE_ACT
   jmp cmdprc_end
+
+\ --- DATA ------------------
+.cdmprcDUMP_msg
+  equs "Dumping memory ... ",0

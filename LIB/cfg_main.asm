@@ -40,7 +40,7 @@ STDIN_BUF_EMPTY       = ERR_FILENOTFOUND + 1        ; 25 19 Input buffer empty
 
 \-------------------------------------------------------------------------------
 \ OS CALLS  - OS Function Address Table
-\ Jump table for OS calls. Requires corresponding entries in:
+\ Requires corresponding entries in:
 \    - z64-main.asm   - OS Call Jump Table
 \    - os_call_vectors.asm - map functions to vectors
 \    - cfg_page_2.asm - OS Indirection Table
@@ -60,8 +60,9 @@ OSWRERR    = OSWRCH + 3
 OSWRMSG    = OSWRERR + 3
 OSWRSBUF   = OSWRMSG + 3
 OSSOAPP    = OSWRSBUF + 3
+OSSOCH     = OSSOAPP + 3
 ; CONVERSIONS
-OSB2BIN    = OSSOAPP + 3
+OSB2BIN    = OSSOCH + 3
 OSB2HEX    = OSB2BIN + 3
 OSB2ISTR   = OSB2HEX + 3
 OSHEX2B    = OSB2ISTR + 3
@@ -98,6 +99,7 @@ USR_PAGE = $0800          ; Address where user programs load
 ROMSTART = $C000
 EXTMEM_SLOT_SEL  = $BFE0  ; Write to this address to select memory slot (0-15)
 EXTMEM_LOC = $8000        ; This is where extended memory lives
+EXTMEM_END = $9FFF        ; Last writable byte in extended memory bank
 
 DATA_TYPE_EXE = 1
 DATA_TYPE_OVR = 2

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 PROG=${PWD##*/}          # Get name of current directory
 PROG=${PROG:-/}          # Adjust for case where = /
-REMUSER="zd"
 HOST="imp"
 
 UPLOAD=0
@@ -13,7 +12,7 @@ usage()
     echo "Usage: build [-u] [-w] [-t <host>]"
     echo "    -u  Upload to RPi"
     echo "    -w  Write to EEPROM"
-    echo "    -t <host> - select remote host"
+    echo "    -t <host> - select Pi to upload to"
 
 }
 
@@ -40,7 +39,7 @@ result=$?
 if [ $result -eq 0 ]; then
     if [ $UPLOAD -eq 1 ]; then
 		echo "Uploading to RPi : $HOST ..."
-		scp -i ~/.ssh/ssh-key ../bin/$PROG.BIN $REMUSER@$HOST:zd_files/$PROG.BIN
+		scp -i ~/.ssh/ssh-key ../bin/$PROG.BIN pi@$HOST:zd_files/$PROG.BIN
 	fi
     if [ $BURN_ROM -eq 1 ]; then
       	echo "Writing to EEPROM..."

@@ -649,12 +649,34 @@
   rts
 
 \ ------------------------------------------------------------------------------
+\ ---  STDOUT_ADD_CHAR
+\ ---  Implements: OSSOCH
+\ ------------------------------------------------------------------------------
+\ ON ENTRY: - A contains ASCII code for character
+\ ON EXIT : - FUNC_ERR contains error code - 0 for success
+\           - STDOUT_IDX updated
+\ A - O
+\ X - P
+\ Y - P
+.stdout_add_char
+  phx
+  stz FUNC_ERR
+  ldx STDOUT_IDX
+  sta STDOUT_BUF,X
+  inx
+  stx STDOUT_IDX
+  plx
+  rts
+
+
+\ ------------------------------------------------------------------------------
 \ ---  STDOUT_APPEND
 \ ---  Implements: OSSOAPP
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: - Assumes index for next char is in STDOUT_IDX
 \           - MSG_VEC/+1 contains pointer to text string
 \ ON EXIT : - FUNC_ERR contains error code - 0 for success
+\           - STDOUT_IDX updated
 \ A - O
 \ X - P
 \ Y - P

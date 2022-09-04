@@ -1,7 +1,7 @@
 ; PAGE TWO CONFIG -- cfg_page_2.asm --------------------------------------------
 
 \-------------------------------------------------------------------------------
-\ OS CALLS  - Vector Locations
+\ OS CALLS  - Vector Location Table
 \ Vector locations for OS calls. These hold the address of the actual functions
 \ that implement the OS operations.
 \ Requires corresponding entries in:
@@ -24,8 +24,9 @@ OSWRERR_VEC	   = OSWRCH_VEC + 2
 OSWRMSG_VEC    = OSWRERR_VEC + 2
 OSWRSBUF_VEC   = OSWRMSG_VEC + 2
 OSSOAPP_VEC    = OSWRSBUF_VEC + 2
+OSSOCH_VEC     = OSSOAPP_VEC + 2
 ; CONVERSIONS
-OSB2BIN_VEC    = OSSOAPP_VEC + 2
+OSB2BIN_VEC    = OSSOCH_VEC + 2
 OSB2HEX_VEC    = OSB2BIN_VEC + 2
 OSB2ISTR_VEC   = OSB2HEX_VEC +2
 OSHEX2B_VEC    = OSB2ISTR_VEC +2

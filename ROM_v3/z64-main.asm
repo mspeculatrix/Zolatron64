@@ -75,7 +75,7 @@ INCLUDE "include/os_call_vectors.asm"
   jsr lcd_cmd
   lda #LCD_MODE         ; Display on; cursor off; blink off
   jsr lcd_cmd
-  lda #LCD_CLS          ; clear display, reset display memory
+  lda #LCD_CLS          ; Clear display, reset display memory
   jsr lcd_cmd
 
 ; SETUP USER PORT
@@ -115,11 +115,11 @@ INCLUDE "include/os_call_vectors.asm"
   PRT_MSG version_str, lcd_println  ; Print initial messages on LCD
 
 ; CHECK FOR EXTENDED ROM/RAM BOARD
-  lda #4                        ; Use bank 4. This is never a ROM
-  sta EXTMEM_SLOT_SEL           ; Select it
-  jsr extmem_ram_chk            ; Run a check. Also sets the bit in SYS_REG
+  lda #4                            ; Use bank 4. This is never a ROM
+  sta EXTMEM_SLOT_SEL               ; Select it
+  jsr extmem_ram_chk                ; Run a check. Also sets the bit in SYS_REG
   lda FUNC_ERR
-  bne boot_exmem_err            ; If error 0, no problem
+  bne boot_exmem_err                ; If error 0, no problem
   LOAD_MSG exmem_fitted_msg
   jmp boot_exmem_def
 .boot_exmem_err
@@ -129,22 +129,22 @@ INCLUDE "include/os_call_vectors.asm"
   jsr OSWRCH
   jsr OSWRMSG
   jsr OSLCDMSG
-  lda #0                        ; Now revert to 0 as default
-  sta EXTMEM_SLOT_SEL           ; Select it
-  sta EXTMEM_BANK               ; Store it for some reason
+  lda #0                            ; Now revert to 0 as default
+  sta EXTMEM_SLOT_SEL               ; Select it
+  sta EXTMEM_BANK                   ; Store it for some reason
 
-  lda #<500                     ; Interval for delay function - in ms
+  lda #<500                         ; Interval for delay function - in ms
   sta LCDV_TIMER_INTVL
   lda #>500
   sta LCDV_TIMER_INTVL+1
 
-  LED_OFF LED_ERR               ; Turn off the LEDs
+  LED_OFF LED_ERR                   ; Turn off the LEDs
   LED_OFF LED_BUSY
   LED_OFF LED_OK
   LED_OFF LED_FILE_ACT
   LED_OFF LED_DEBUG
 
-  cli                     	    ; Enable interrupts
+  cli                     	        ; Enable interrupts
 
 .soft_reset
   SERIAL_PROMPT
@@ -168,7 +168,7 @@ INCLUDE "include/os_call_vectors.asm"
 \ --------- end of main loop ---------------------------------------------------
 
 .process_input
-  \\ We're here because the null received bit is set or STDIN_BUF full
+  \ We're here because the null received bit is set or STDIN_BUF full
   LED_ON LED_BUSY
   LED_OFF LED_ERR
   LED_OFF LED_OK
@@ -250,9 +250,8 @@ ALIGN &100                                        ; Start on new page
 \    - cfg_page_2.asm - OS Indirection Table
 \    - cfg_main.asm   - OS Function Address Table
 \    - os_call_vectors.asm - map functions to vectors
-\    - this file      - OS default config routine & this OS Call Jump Table
 \ These entries must be in the same order as those in the OS Function Address
-\ Table in cfg_main.asm.
+\ Table in cfg_main.asm and the Vector Location Table in cfg_page_2.asm.
 \-------------------------------------------------------------------------------
 ORG $FF00
 .os_calls
@@ -270,6 +269,7 @@ ORG $FF00
   jmp (OSWRMSG_VEC)
   jmp (OSWRSBUF_VEC)
   jmp (OSSOAPP_VEC)
+  jmp (OSSOCH_VEC)
 
   jmp (OSB2BIN_VEC)
   jmp (OSB2HEX_VEC)
