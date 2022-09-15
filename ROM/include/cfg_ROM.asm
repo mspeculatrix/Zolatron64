@@ -12,7 +12,8 @@ CMD_TKN_STAR  = $80                    ; *
 CMD_TKN_QUERY = CMD_TKN_STAR + 1       ; ? - Synonym for PEEK
 CMD_TKN_BANG  = CMD_TKN_QUERY + 1      ; ! - Synonym for POKE
 CMD_TKN_BRK   = CMD_TKN_BANG + 1       ; BRK - soft reset
-CMD_TKN_DEL   = CMD_TKN_BRK + 1        ; DEL - delete file
+CMD_TKN_CLEAR = CMD_TKN_BRK + 1        ; CLEAR - clear program
+CMD_TKN_DEL   = CMD_TKN_CLEAR + 1      ; DEL - delete file
 CMD_TKN_DUMP  = CMD_TKN_DEL + 1        ; DUMP - save memory to storage
 CMD_TKN_HELP  = CMD_TKN_DUMP + 1       ; HELP
 CMD_TKN_JMP   = CMD_TKN_HELP + 1       ; JMP - jump to memory location
@@ -28,9 +29,13 @@ CMD_TKN_SAVE  = CMD_TKN_RUN + 1        ; SAVE
 CMD_TKN_STAT  = CMD_TKN_SAVE + 1       ; STAT
 CMD_TKN_VERS  = CMD_TKN_STAT + 1       ; VERS - show version
 CMD_TKN_XLOAD = CMD_TKN_VERS + 1       ; XLOAD - load file to ext memory
-CMD_TKN_XLIST = CMD_TKN_XLOAD + 1	     ; XLIST - list programs in ext memory
-CMD_TKN_XRUN  = CMD_TKN_XLIST + 1      ; XRUN - run program in current bank
+CMD_TKN_XLS   = CMD_TKN_XLOAD + 1	   ; XLS - list programs in ext memory
+CMD_TKN_XOPEN = CMD_TKN_XLS + 1        ; XOPEN - load data file into ext memory
+CMD_TKN_XRUN  = CMD_TKN_XOPEN + 1      ; XRUN - run program in current bank
 CMD_TKN_XSEL  = CMD_TKN_XRUN + 1       ; XSEL - select ext memory bank
 
-CMD_MAX_LEN = 8            ; Max number of chars in command names
-CMDS_PER_LINE = 6          ; Number of cmds we'll print per line when using HELP
+CMD_MAX_LEN = 8           ; Max number of chars in command names
+CMDS_PER_LINE = 6         ; Number of cmds we'll print per line when using HELP
+
+CLEAR_BYTES = 64          ; Number of bytes to clear at start of memory to
+                          ; clear a program with CLEAR command

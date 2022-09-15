@@ -12,13 +12,13 @@
 \ Y - n/a
 .extmem_ram_chk
   stz FUNC_ERR            ; Default to 0
-  lda EXTMEM_LOC          ; Load what's currently in first byte of ext memory
+  lda EXTMEM_START          ; Load what's currently in first byte of ext memory
   sta TMP_VAL             ; Keep a copy here, to restore later
   ldx #0                  ; We're going to check that we can write to this
 .extmem_ram_chk_loop      ; bank. If not, it's probably a ROM. We'll write a
-  txa                     ; sequence of numbers to EXTMEM_LOC and read them back
-  sta EXTMEM_LOC          ; Store loop value in memory
-  cmp EXTMEM_LOC          ; Is X the same as what's now stored in this location?
+  txa                     ; sequence of numbers to EXTMEM_START and read them back
+  sta EXTMEM_START          ; Store loop value in memory
+  cmp EXTMEM_START          ; Is X the same as what's now stored in this location?
   bne extmem_ram_chk_err
   inx
   cpx #5
@@ -38,7 +38,7 @@
   sta SYS_REG
 .extmem_ram_chk_done
   lda TMP_VAL             ; Restore original value of byte, so this process is
-  sta EXTMEM_LOC          ; non-destructive
+  sta EXTMEM_START          ; non-destructive
   rts
 
 \ ------------------------------------------------------------------------------

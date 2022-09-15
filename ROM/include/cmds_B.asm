@@ -11,6 +11,6 @@
   txs
   stz STDIN_IDX           ; Reset RX buffer index
   LED_OFF LED_BUSY        ; Make sure this is off
-  jmp ROMSTART            ; Jump to start of ROM code
+  jmp ROM_START            ; Jump to start of ROM code
 .cmdprcBRK_fail
   jmp cmdprc_fail

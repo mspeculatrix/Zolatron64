@@ -34,12 +34,11 @@ ZD_OPCODE_CLOSE = 11
 ZD_OPCODE_SAVE_CRT = 16               ; Save command - create file, no overwrite
 ZD_OPCODE_SAVE_OVR = 17               ; Save - overwrite okay
 ZD_OPCODE_SAVE_APP = 18               ; Save - append
-; Following save modes will case ZolaDOS to append '.TXT' to the filename.
-ZD_OPCODE_SAVE_TXC = 19               ; Save - create file, no overwrite
-ZD_OPCODE_SAVE_TXO = 20               ; Save - overwite okay
-ZD_OPCODE_SAVE_TXA = 21               ; Save - append
 ; No extension appended - command must use full filename
-ZD_OPCODE_DEL  = 32                   ; Delete file
+ZD_OPCODE_SAVE_DATC = 19              ; Save - create file, no overwrite
+ZD_OPCODE_SAVE_DATO = 20              ; Save - overwite okay
+ZD_OPCODE_SAVE_DATA = 21              ; Save - append
+ZD_OPCODE_DEL       = 32              ; Delete file
 
 ZD_MIN_FN_LEN = 3         ; Minimum filename length
 ZD_MAX_FN_LEN = 12        ; Maximum filename length, not including extension
@@ -71,15 +70,17 @@ ZD_DATA_SET_IN  = %00000000
 ZD_CTRL_PINDIR  = %00001111
 
 ; These values work
-;ZD_STROBETIME    = $07D0             ;
-;ZD_SIGNALDELAY   = $07D0             ; 03E8=1ms, 07D0=2ms, 1388=5ms approx
+;ZD_STROBETIME    = $02EE             ;
+;ZD_SIGNALDELAY   = $0280             ; 03E8=1ms
 ;ZD_TIMEOUT_INTVL = $270E             ; Timer cycles between each interrupt
-;ZD_TIMEOUT_LIMIT = $000F             ; Times interrupt fires before we timeout
+;ZD_TIMEOUT_LIMIT = $004F             ; Times interrupt fires before we timeout
 ; Versions for tweaking/experimenting
-ZD_STROBETIME    = $02EE         ; $02EE works
-ZD_SIGNALDELAY   = $0280         ; 03E8=1ms (works), 07D0=2ms, 1388=5ms approx
-ZD_TIMEOUT_INTVL = $270E         ; No. of timer cycles between interrupts
-ZD_TIMEOUT_LIMIT = $004F         ; Times interrupt fires before timeout - was 2F
+ZD_STROBETIME    = $0220
+; Tried & failed: 0177, 0210
+ZD_SIGNALDELAY   = $0270
+; Tried & failed: 0140, 0200, 0260
+ZD_TIMEOUT_INTVL = $270E              ; No. of timer cycles between interrupts
+ZD_TIMEOUT_LIMIT = $004F              ; Times interrupt fires before timeout
 
 MACRO ZD_SET_CA_ON
   lda ZD_CTRL_PORT

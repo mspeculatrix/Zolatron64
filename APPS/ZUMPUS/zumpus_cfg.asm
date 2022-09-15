@@ -39,6 +39,12 @@ P_CONDITION  = ROOM_NUM + 1         ; 0514        Player's condition
 STAPLE_RANGE = P_CONDITION + 1      ; 0515
 Z_STATE      = STAPLE_RANGE + 1     ; 0516        Zumpus awake or asleep
 
+DATA_START   = $7000				; There will be 4 bytes of header
+GAMES_PLAYED = DATA_START + 4		; 8-bit number
+GAMES_WON    = GAMES_PLAYED + 1     ; 8-bit number
+DATA_END     = GAMES_WON + 1        ; For nul EOF marker
+DATA_SIZE    = DATA_END - DATA_START
+
 ; ERROR CODES --- should be sequential, starting at 1 (0 means no error)
 ; Used for looking up error message in Error Message Table in zumpus_data.asm
 ERR_OS_ERROR = 1

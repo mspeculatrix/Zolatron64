@@ -1,11 +1,18 @@
 \ zumpus_main.asm
-
-  equb 'E'                  ; Mark as executable code
+.header                     ; HEADER INFO
+  jmp startprog             ;
+  equb "E"                  ; Designate executable file
+  equb <header              ; Entry address
+  equb >header
+  equb <reset               ; Reset address
+  equb >reset
+  equb <endcode             ; Addr of first byte after end of program
+  equb >endcode
   equs 0,0,0                ; -- Reserved for future use --
 .prog_name
   equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
-  equs "1.2",0              ; Version string - nul terminated
+  equs "1.3",0              ; Version string - nul terminated
 
 .startprog
 .reset                      ; Sometimes this may be different from startprog
@@ -14,8 +21,7 @@
   ldx #$ff                  ; Set stack pointer to $01FF - only need to set the
   txs                       ; LSB, as MSB is assumed to be $01
 
-  lda #0
-  sta PRG_EXIT_CODE         ; Not sure we're using this yet
+  stz PRG_EXIT_CODE         ; Not sure we're using this yet
   cli
 
 ; Using Timer 1 for random numbers. Basically, this will run constantly in
@@ -36,6 +42,27 @@
 .main
   stz STDIN_BUF               ; Clear input buffer
   stz STDIN_IDX
+
+\ SET UP DATA SECTION
+  lda #$FF                    ; Header
+  sta DATA_START              ;   "
+  lda #<DATA_START            ; Load address
+  sta DATA_START + 1          ;   "
+  lda #>DATA_START            ;   "
+  sta DATA_START + 2          ;   "
+  lda #'D'                    ; File type indicator
+  sta DATA_START + 3          ;   "
+  ldx #4                      ; Zero-out data section
+.main_data_clr_loop
+  stz DATA_START,X
+  inx
+  cpx #DATA_SIZE
+  beq main_data_clr_end
+  jmp main_data_clr_loop
+.main_data_clr_end
+  lda #0
+  sta DATA_END                ; End of file marker
+
   NEWLINE
   LOAD_MSG game_title
   jsr OSWRMSG
@@ -47,6 +74,11 @@
   jsr OSWRBUF
   NEWLINE
   NEWLINE
+  jsr read_gamedata
+  NEWLINE
+  jsr show_stats
+  NEWLINE
+
 .instruction_prompt
   LOAD_MSG instr_prompt       ; Ask if player wants instructions
   jsr OSWRMSG
@@ -69,6 +101,14 @@
   stz P_CONDITION                 ; Set Player's condition to default
   lda #NUM_STAPLES                ; Set initial number of staples
   sta STAPLE_COUNT
+
+  lda GAMES_PLAYED
+  cmp #$FF                        ; If already at max, ignore
+  beq init_contd
+  inc A                           ; Otherwise, increment number
+  sta GAMES_PLAYED                ; and store
+
+.init_contd
 ; Randomise initial locations of player & threats
   ldy #0                          ; Counter for number of locs we've set
 .init_loop
@@ -134,6 +174,8 @@
   beq zum_cmd_instructions
   cmp #'M'
   beq zum_cmd_move
+  cmp #'R'
+  beq zum_reset_stats
   cmp #'S'
   beq zum_cmd_shoot
   cmp #'Q'
@@ -163,7 +205,15 @@
   jmp zum_input_go_again
 .zum_cmd_move_end
   jmp zum_chk_stat
-
+; ---  RESET STATS -------------------------------------------------------------
+.zum_reset_stats
+  stz GAMES_WON
+  lda #1
+  sta GAMES_PLAYED
+  LOAD_MSG stats_reset_msg
+  jsr OSWRMSG
+  NEWLINE
+  jmp zum_chk_stat
 ; ---  SHOOTING ----------------------------------------------------------------
 .zum_cmd_shoot
   ; The input buf should contain the room number & range of shot.
@@ -229,6 +279,12 @@
 .zum_cmd_shoot_win
   LOAD_MSG shot_hit_msg
   jsr OSWRMSG
+  lda GAMES_WON
+  cmp #$FF
+  beq zum_cmd_shoot_win_end
+  inc A
+  sta GAMES_WON
+.zum_cmd_shoot_win_end
   jmp game_end
 .zum_cmd_shoot_self             ; Have we hit ourself?
   ldx #6                        ; Divisor for MOD
@@ -357,6 +413,9 @@
 .play_again
   jmp init
 .prog_end
+  jsr write_gamedata
+  NEWLINE
+  jsr show_stats
   stz STDIN_IDX
   stz STDIN_BUF
   jmp OSSFTRST

@@ -19,9 +19,11 @@
   jsr duart_snd_strbuf
   jmp cmdprcPEEK_end
 .cmdprcPEEK_fail
+  lda #SYNTAX_ERR_CODE
+  sta FUNC_ERR
   jmp cmdprc_fail
 .cmdprcPEEK_end
-  jmp cmdprc_end
+  jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: POKE  :  SET BYTE IN MEMORY
@@ -44,12 +46,14 @@
   sta (FUNC_RES_L)
   jmp cmdprcPOKE_end
 .cmdprcPOKE_fail
+  lda #SYNTAX_ERR_CODE
+  sta FUNC_ERR
   jmp cmdprc_fail
 .cmdprcPOKE_end
-  jmp cmdprc_end
+  jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------
-\ --- CMD: PRT  :  PRINT A FILE ... or something ... one day ...
+\ --- CMD: PRT  :  PRINT A FILE ... or something ... one day ... maybe ...
 \ ------------------------------------------------------------------------------
 .cmdprcPRT
-  jmp cmdprc_end
+  jmp cmdprc_success

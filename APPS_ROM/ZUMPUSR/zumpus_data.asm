@@ -71,7 +71,6 @@
   equs "And it stings enough to make Zumpus want to go home.",10
   equs "But be careful - you have only five staples.",10,0
 
-
 .init_msg
   equs "We need to initialise the random locations for you and the",10
   equs "threats. This means hitting the ENTER key at least six times",10
@@ -137,6 +136,27 @@
   equs "You have been warned...",10,0
 .warning_zumpus_moving
   equs "You hear banging and crashing in the distance.",10,0
+
+.games_played_msg
+  equs "Games played: ",0
+.games_won_msg
+  equs "Games won   : ",0
+.games_lost_msg
+  equs "Games lost  : ",0
+.game_data_file
+  equs "ZUMPUS.DAT",0
+.readdata_failed_msg
+  equs "Couldn't load data file",0
+.readdata_success_msg
+  equs "Data file loaded",0
+.writedata_failed_msg
+  equs "Couldn't save data file",0
+.writedata_success_msg
+  equs "Data file saved",0
+.many_games_str
+  equs "many",0
+.stats_reset_msg
+  equs "Game stats reset",0
 
 \ ---  ERRORS  -----------------------------------------------------------------
 

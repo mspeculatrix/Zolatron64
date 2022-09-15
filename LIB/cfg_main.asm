@@ -37,6 +37,7 @@ ERR_FILE_OPEN         = ERR_FILE_EXISTS + 1         ; 22 16 Error opening file
 ERR_DELFILE_FAIL      = ERR_FILE_OPEN + 1           ; 23 17 Failed delete file
 ERR_FILENOTFOUND      = ERR_DELFILE_FAIL + 1        ; 24 18 File not found
 STDIN_BUF_EMPTY       = ERR_FILENOTFOUND + 1        ; 25 19 Input buffer empty
+ERR_NO_EXECUTABLE     = STDIN_BUF_EMPTY + 1         ; 26 1A No exec prog loaded
 
 \-------------------------------------------------------------------------------
 \ OS CALLS  - OS Function Address Table
@@ -95,27 +96,27 @@ OSUSRINT   = OSDELAY + 3
 OSSFTRST   = $FFF4         ; Use direct JMP with these (not indirected/vectored)
 OSHRDRST   = $FFF7
 
-USR_PAGE = $0800          ; Address where user programs load
-ROMSTART = $C000
-EXTMEM_SLOT_SEL  = $BFE0  ; Write to this address to select memory slot (0-15)
-EXTMEM_LOC = $8000        ; This is where extended memory lives
-EXTMEM_END = $9FFF        ; Last writable byte in extended memory bank
-
-DATA_TYPE_EXE = 1
-DATA_TYPE_OVR = 2
-DATA_TYPE_DAT = 3
-DATA_TYPE_OSX = 4
-MAX_DATA_TYPE = 4
+USR_START = $0800          ; Address where user programs load
+ROM_START = $C000
+EXTMEM_SLOT_SEL  = $BFE0   ; Write to this address to select memory slot (0-15)
+EXTMEM_START = $8000       ; This is where extended memory lives
+EXTMEM_END = $9FFF         ; Last writable byte in extended memory bank
 
 LCD_TYPE_16x2 = 0
 LCD_TYPE_20x4 = 1
 
 ; Code headers. These are offsets from the start of user code (which is at
-; USR_PAGE for RAM-based code and EXTEM_LOC for ROM-based code)
-CODEHDR_RST  = $05
-CODEHDR_END  = $07
-CODEHDR_TYPE = $09
-CODEHDR_NAME = $0D
+; USR_START for RAM-based code and EXTEM_LOC for ROM-based code)
+CODEHDR_TYPE  = $03
+CODEHDR_ENTRY = $04
+CODEHDR_RST   = $06
+CODEHDR_END   = $08
+CODEHDR_NAME  = $0D
+
+TYPECODE_DATA = 'D'
+TYPECODE_EXEC = 'E'
+TYPECODE_OSEX = 'X'
+TYPECODE_OVLY = 'O'
 
 EOCMD_SECTION = 0                   ; End of section marker for command table
 EOTBL_MKR     = 255                 ; End of table marker

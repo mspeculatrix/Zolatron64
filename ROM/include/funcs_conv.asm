@@ -92,8 +92,7 @@
   iny
   sta STR_BUF,Y           ; Move it to the next position
   dey
-  cpy #0                  ; If the index is 0, we've finished with moving digits
-  beq byte_to_int_str_add_loop_done
+  beq byte_to_int_str_add_loop_done   ; If index=0, finished with moving digits
   dey                     ; Otherwise, decrement the offset and go around again
   jmp byte_to_int_str_add_loop
 .byte_to_int_str_add_loop_done
@@ -127,8 +126,7 @@
   stz FUNC_RESULT             ; Zero-out return result
   lda BYTE_CONV_H             ; Load the high nibble character
   jsr asc_hex_to_dec          ; Convert to number - result is in A
-  ldx #$0
-  cpx FUNC_ERR
+  ldx FUNC_ERR
   bne hex_str_to_byte_err
   asl A                       ; Shift to high nibble
   asl A
@@ -137,8 +135,7 @@
   sta FUNC_RESULT             ; And store
   lda BYTE_CONV_L             ; Get the low nibble character
   jsr asc_hex_to_dec          ; Convert to number - result is in A
-  ldx #$00
-  cpx FUNC_ERR
+  ldx FUNC_ERR
   bne hex_str_to_byte_err
   ora FUNC_RESULT             ; OR with previous result
   sta FUNC_RESULT             ; and store final result
@@ -226,3 +223,35 @@
   ; ??????
   pla
   rts
+
+;.byte_to_int_str
+;  phx : phy
+;  stz TMP_IDX             ; Keep track of digits in buffer
+;  stz STR_BUF             ; Set nul terminator at start of buffer
+;.byte_to_int_str_next_digit
+;  ldx #10                 ; Divisor for MOD function
+;  jsr uint8_mod8          ; FUNC_RESULT contains remainder, X contains quotient
+;  txa                     ; Transfer quotient to A as dividend for next round
+;  pha                     ; Protect it for now
+;  ldy TMP_IDX             ; Use the index as an offset
+;.byte_to_int_str_add_loop
+;  lda STR_BUF,Y           ; Load whatever is currently at the index position
+;  iny
+;  sta STR_BUF,Y           ; Move it to the next position
+;  dey
+;  beq byte_to_int_str_add_loop_done   ; If index=0, finished with moving digits
+;  dey                     ; Otherwise, decrement the offset and go around again
+;  jmp byte_to_int_str_add_loop
+;.byte_to_int_str_add_loop_done
+;  inc TMP_IDX             ; Increment our digit index
+;  lda FUNC_RESULT         ; Get the remainder from the MOD operation
+;  clc
+;  adc #$30                ; Add $30 to get the ASCII code
+;  sta STR_BUF             ; And store it in the first byte of the buffer
+;  pla                     ; Bring back that quotient, as dividend for next loop
+;  cpx #0                  ; If it's 0, we're done...
+;  beq byte_to_int_str_done
+;  jmp byte_to_int_str_next_digit
+;.byte_to_int_str_done
+;  ply : plx
+;  rts

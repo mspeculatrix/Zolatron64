@@ -21,11 +21,18 @@ MACRO NEWLINE
   jsr OSWRCH
 ENDMACRO
 
-ORG USR_PAGE
+ORG USR_START
 .header                     ; HEADER INFO
-  INCLUDE "../../LIB/header_std.asm"
-  equb "E"
+  jmp startprog             ;
+  equb "E"                  ; Designate executable file
+  equb <header              ; @ $0802 Entry address
+  equb >header
+  equb <reset               ; @ $0804 Reset address
+  equb >reset
+  equb <endcode             ; @ $0806 Addr of first byte after end of program
+  equb >endcode
   equs 0,0,0                ; -- Reserved for future use --
+.prog_name
   equs "ADVENTURE",0        ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
   equs "1.0",0              ; Version string - nul terminated

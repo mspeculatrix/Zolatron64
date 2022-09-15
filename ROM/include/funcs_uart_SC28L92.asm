@@ -71,10 +71,10 @@
   jsr duart_wait_send_clr         ; Wait for serial port to be ready
   sta SC28L92_TxFIFOA             ; Write to data register. This sends the byte
   iny                             ; Increment index
-  beq duart_println_inc_addr    ; Y has rolled over so update vector
+  beq duart_println_inc_addr      ; Y has rolled over so update vector
   jmp duart_println_chr           ; Go back for next character
 .duart_println_inc_addr
-  inc MSG_VEC + 1              ; Increment high byte
+  inc MSG_VEC + 1                 ; Increment high byte
   jmp duart_println_chr           ; Go back for next character
 .duart_println_end
   ply : pla

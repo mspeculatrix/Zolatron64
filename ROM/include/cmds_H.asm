@@ -44,4 +44,4 @@
 .cmdprcHELP_end
   lda #CHR_LINEEND          ; Print a line feed
   jsr OSWRCH
-  jmp cmdprc_end
+  jmp cmdprc_success

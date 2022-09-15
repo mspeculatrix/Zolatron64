@@ -35,10 +35,10 @@ INCLUDE "../LIB/cfg_prt.asm"
 \ ----- INITIALISATION ---------------------------------------------------------
 ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
 .startrom             ; This is where the ROM bytes start for the file, but...
-ORG ROMSTART          ; This is where the actual code starts.
+ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v4.0", 0
+  equs "ZolOS v4.1", 0
 .startcode
   sei                 ; Don't interrupt me yet
   cld                 ; We don' need no steenkin' BCD
@@ -56,9 +56,9 @@ ORG ROMSTART          ; This is where the actual code starts.
   stz STDOUT_IDX
   stz STDIN_STATUS_REG      ; Zero out the STDIN register
 
-  lda #<USR_PAGE            ; Initialise LOMEM to start of user RAM
+  lda #<USR_START            ; Initialise LOMEM to start of user RAM
   sta LOMEM
-  lda #>USR_PAGE
+  lda #>USR_START
   sta LOMEM + 1
 
 INCLUDE "include/os_call_vectors.asm"
@@ -132,11 +132,18 @@ INCLUDE "include/os_call_vectors.asm"
   lda #0                            ; Now revert to 0 as default
   sta EXTMEM_SLOT_SEL               ; Select it
   sta EXTMEM_BANK                   ; Store it for some reason
+  NEWLINE
 
+; SET UP DELAY TIMER
   lda #<500                         ; Interval for delay function - in ms
   sta LCDV_TIMER_INTVL
   lda #>500
   sta LCDV_TIMER_INTVL+1
+
+; READY MESSAGE
+  LOAD_MSG ready_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
 
   LED_OFF LED_ERR                   ; Turn off the LEDs
   LED_OFF LED_BUSY
@@ -147,6 +154,12 @@ INCLUDE "include/os_call_vectors.asm"
   cli                     	        ; Enable interrupts
 
 .soft_reset
+  lda PRG_EXIT_CODE
+  beq soft_start
+  LED_ON LED_ERR
+  jmp mainloop
+.soft_start
+  LED_ON LED_OK
   SERIAL_PROMPT
 
 \ ------------------------------------------------------------------------------
@@ -173,6 +186,7 @@ INCLUDE "include/os_call_vectors.asm"
   LED_OFF LED_ERR
   LED_OFF LED_OK
   LED_OFF LED_DEBUG
+  LED_OFF LED_FILE_ACT
   lda STDIN_STATUS_REG                    ; Get our info register
   and #STDIN_CLEAR_FLAGS                  ; Clear the received flags
   sta STDIN_STATUS_REG                    ; and re-save the register
@@ -195,7 +209,7 @@ INCLUDE "include/os_call_vectors.asm"
   sta TBL_VEC_H                   ; and also store in table vector
   jmp (TBL_VEC_L)                 ; Now jump to location indicated by pointer
 .process_input_fail
-  LED_OFF LED_ERR
+  LED_ON LED_ERR
   lda #PARSE_ERR_CODE
   sta FUNC_ERR
   jsr os_print_error
@@ -210,6 +224,7 @@ INCLUDE "include/os_call_vectors.asm"
 .cmdprcSTAR
   jmp cmdprc_end
 INCLUDE "include/cmds_B.asm"
+INCLUDE "include/cmds_C.asm"
 INCLUDE "include/cmds_D.asm"
 INCLUDE "include/cmds_H.asm"
 INCLUDE "include/cmds_J.asm"
@@ -219,7 +234,11 @@ INCLUDE "include/cmds_R.asm"
 INCLUDE "include/cmds_S.asm"
 INCLUDE "include/cmds_V.asm"
 INCLUDE "include/cmds_X.asm"
+.cmdprc_success
+  LED_ON LED_OK
+  jmp cmdprc_end
 .cmdprc_fail
+  LED_ON LED_ERR
   jsr os_print_error
 .cmdprc_end
   SERIAL_PROMPT
@@ -312,4 +331,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-4.0.bin", startrom, endrom
+SAVE "bin/z64-ROM-4.1.bin", startrom, endrom

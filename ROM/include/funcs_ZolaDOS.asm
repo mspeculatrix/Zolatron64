@@ -163,7 +163,7 @@
   bne zd_rcv_data_end         ; If not 0, then we're done, otherwise...
   jmp zd_rcv_data_loop        ; Go around for the next byte
 .zd_rcv_data_chkSA
-  jsr zd_strobeDelay
+  jsr zd_strobeDelay          ; *** TRY REMOVING THIS??? ***
   jsr zd_waitForSAoff
 .zd_rcv_data_end
   rts
@@ -504,10 +504,10 @@
 
 \ --- DATA ---------------------------------------------------------------------
 .deleting_msg
-  equs "Deleting ...",0
+  equs "Deleting ... ",0
 .loading_msg
   equs "Loading ... ",0
 .saving_msg
   equs "Saving ... ",0
 .file_act_complete_msg
-  equs "Done",0
+  equs "OK",0

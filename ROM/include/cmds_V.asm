@@ -12,4 +12,4 @@
   sta MSG_VEC+1
   jsr duart_println
   jsr OSLCDMSG
-  jmp cmdprc_end
+  jmp cmdprc_success

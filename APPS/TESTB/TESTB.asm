@@ -9,6 +9,9 @@
 
 CPU 1                               ; use 65C02 instruction set
 
+RAND_SEED = $6000
+SEED_VAL = 65
+
 INCLUDE "../../LIB/cfg_main.asm"
 INCLUDE "../../LIB/cfg_page_0.asm"
 ; PAGE 1 is the STACK
@@ -16,11 +19,18 @@ INCLUDE "../../LIB/cfg_page_2.asm"
 ; PAGE 3 is used for STDIN & STDOUT buffers, plus indexes
 INCLUDE "../../LIB/cfg_page_4.asm"
 
-ORG USR_PAGE
+ORG USR_START
 .header                     ; HEADER INFO
-  INCLUDE "../../LIB/header_std.asm"
-  equb 'E'
+  jmp startprog             ;
+  equb "E"                  ; Designate executable file
+  equb <header              ; Entry address
+  equb >header
+  equb <reset               ; Reset address
+  equb >reset
+  equb <endcode             ; Addr of first byte after end of program
+  equb >endcode
   equs 0,0,0                ; -- Reserved for future use --
+.prog_name
   equs "TESTB",0           ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
   equs "1.0",0              ; Version string - nul terminated
@@ -34,6 +44,10 @@ ORG USR_PAGE
 
   lda #0
   sta PRG_EXIT_CODE
+
+  ;lda #SEED_VAL
+  ;sta RAND_SEED
+
   cli
 
   jsr OSLCDCLS
@@ -48,39 +62,40 @@ ORG USR_PAGE
   LOAD_MSG second_msg
   jsr OSWRMSG
   jsr OSLCDMSG
-;  inc BARLED_L
-;  bne main_loop
-;  inc BARLED_H
-;.main_loop
-;  lda BARLED_L
-;  sta VIAC_PORTA
-;  lda BARLED_H
-;  sta VIAC_PORTB
-;  cmp #255
-;  beq chk_lowbyte
-;.continue
-;  jsr barled_delay
-;  jmp main
-;.chk_lowbyte
-;  lda BARLED_L
-;  cmp #255
-;  beq prog_end
-;  jmp continue
+
+  NEWLINE
+  lda #245
+  jsr OSB2ISTR
+  jsr OSWRSBUF
+  NEWLINE
+
+  ldx #0
+.seed_loop
+  jsr rand8_seed
+  lda RAND_SEED
+  jsr OSB2ISTR
+  jsr OSWRSBUF
+  NEWLINE
+  dex
+  bne seed_loop
 
 .prog_end
   jmp OSSFTRST
 
-;.barled_delay
-;  ldx #2
-;.barled_delay_x_loop
-;  ldy #255
-;.barled_delay_y_loop
-;  nop
-;  dey
-;  bne barled_delay_y_loop
-;  dex
-;  bne barled_delay_x_loop
-;  rts
+\ Changes RAND_SEED in an apparently random order, although the list is
+\ actually always the same. They're just consecutive incrementing or
+\ decrementing numbers.
+.rand8_seed
+  lda RAND_SEED
+  beq rand8_seed_eor
+  asl A
+  beq rand8_seed_no_eor
+  bcc rand8_seed_no_eor
+.rand8_seed_eor
+  eor #$1D
+.rand8_seed_no_eor
+  sta RAND_SEED
+  rts
 
 .welcome_msg
   equs "TEST B", 0

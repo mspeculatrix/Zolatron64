@@ -42,7 +42,7 @@
   lda STDIN_BUF,X           ; Should be null. Anything else is a mistake
   bne cmdprcLM_chk_fail
   jsr display_memory
-  jmp cmdprc_end
+  jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: LOAD  :  LOAD FILE
@@ -56,15 +56,16 @@
   LOAD_MSG loading_msg
   jsr OSWRMSG
   jsr OSLCDMSG
-  lda #<USR_PAGE              ; This is where we're going to put the code
+  lda #<USR_START             ; This is where we're going to put the code
   sta FILE_ADDR
-  lda #>USR_PAGE
+  lda #>USR_START
   sta FILE_ADDR + 1
   jsr read_filename           ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne cmdprcLOAD_err
   lda #ZD_OPCODE_LOAD         ; Use opcode for loading .BIN files
   jsr zd_loadfile
+  LED_OFF LED_FILE_ACT
   lda FUNC_ERR
   bne cmdprcLOAD_err
   jmp cmdprcLOAD_success
@@ -72,18 +73,16 @@
   LED_ON LED_ERR
   jsr os_print_error          ; There should be an error code in FUNC_ERR
   jsr OSLCDERR
-  jmp cmdprcLOAD_end
+  jmp cmdprc_fail
 .cmdprcLOAD_success
   LOAD_MSG file_act_complete_msg
   jsr OSWRMSG
   jsr OSLCDMSG
-  lda USR_PAGE+CODEHDR_END    ; Get info about first free byte after prog
+  lda USR_START+CODEHDR_END    ; Get info about first free byte after prog
   sta LOMEM                   ; to put into our LOMEM variable
-  lda USR_PAGE+CODEHDR_END+1
+  lda USR_START+CODEHDR_END+1
   sta LOMEM + 1
-.cmdprcLOAD_end
-  LED_OFF LED_FILE_ACT
-  jmp cmdprc_end
+  jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: LP  :  LIST MEMORY PAGE
@@ -100,7 +99,7 @@
 .cmdprcLP_chk_nul           ; Check there's nothing left in the RX buffer
   ldx STDIN_IDX
   lda STDIN_BUF,X           ; Should be null. Anything else is a mistake
-  bne cmdprcLP_input_fail
+  bne cmdprcLP_fail
   lda FUNC_RESULT           ; Get the result from jsr read_hex_byte
   sta TMP_ADDR_A_H          ; Put the same byte in the high bytes of both
   sta TMP_ADDR_B_H          ; the start address and end address
@@ -109,14 +108,11 @@
   lda #$FF                  ; The low byte of the end address is $FF
   sta TMP_ADDR_B_L
   jsr display_memory        ; Use our display memory routine to display
-  jmp cmdprcLP_end
-.cmdprcLP_input_fail
+  jmp cmdprc_success
+.cmdprcLP_fail
   lda #SYNTAX_ERR_CODE
   sta FUNC_ERR
-.cmdprcLP_fail
   jmp cmdprc_fail
-.cmdprcLP_end
-  jmp cmdprc_end
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: LS  :  LIST STORAGE
@@ -132,7 +128,7 @@
   jsr zd_init_process
   lda FUNC_ERR
   beq cmdprcLS_rcv_data       ; If result is 0, that's OK
-  jmp cmdprc_fail
+  jmp cmdprcLS_fail             ; Otherwise, we've failed
 .cmdprcLS_rcv_data            ; ----- TRANSFER DATA ----------------------------
   ZD_SET_DATADIR_INPUT
   lda #<ZD_WKSPC              ; This is where we're going to put the data
@@ -143,8 +139,7 @@
   lda FUNC_ERR
   beq cmdprcLS_show           ; If no error, go to the bit that displays data
 .cmdprcLS_err                 ; Otherwise deal with the error
-;  LED_ON LED_ERR
-  jmp cmdprc_fail
+  jmp cmdprcLS_fail
 .cmdprcLS_show
   ldx #0                      ; Counter for number of FNs per line
   ldy #0                      ; Counter for number chars per filename
@@ -187,8 +182,10 @@
 .cmdprcLS_end
   ZD_SET_DATADIR_OUTPUT
   LED_OFF LED_FILE_ACT
-  jmp cmdprc_end
-
+  jmp cmdprc_success
+.cmdprcLS_fail
+  LED_OFF LED_FILE_ACT
+  jmp cmdprc_fail
 \ --- DATA -------------------
 .ls_req_msg
-  equs "Requesting list...",0
+  equs "Requesting file list",0

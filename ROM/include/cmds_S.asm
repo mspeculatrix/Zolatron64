@@ -1,46 +1,54 @@
 \ cmds_S.asm
 
 \ ------------------------------------------------------------------------------
-\ --- CMD: SAVE  :  SAVE MEMORY
+\ --- CMD: SAVE  :  SAVE PROGRAM
 \ ------------------------------------------------------------------------------
-\ *** This is currently identical to DUMP. Might change this in the future
-\     to do something different. ***
-\ Save a block of memory to ZolaDOS device.
-\ Usage: SAVE <start_addr> <end_addr> <filename>
-\ The start and end addresses must be 4-char hex addresses.
+\ Save the currently loaded program to persistent storage. Useful if we want to
+\ save a copy of an executable under another name. Also might be useful for any
+\ programs that are self-modifying or which store data within the program space.
+\ Usage: SAVE <filename>
 .cmdprcSAVE
+  jsr check_exec                      ; Check executable code is loaded
+  lda FUNC_ERR
+  bne cmdprcSAVE_err
+  jsr read_filename                   ; Puts filename in STR_BUF
+  lda FUNC_ERR
+  bne cmdprcSAVE_err
+  ldx STDIN_IDX
+  lda STDIN_BUF,X                     ; Check nothing left in the RX buffer
+  bne cmdprcSAVE_synerr               ; Anything but null is a mistake
   LED_ON LED_FILE_ACT
   LOAD_MSG saving_msg
   jsr OSWRMSG
   jsr OSLCDMSG
-  jsr read_hex_addr_pair              ; Get addresses from input
-  lda FUNC_ERR
-  bne cmdprcSAVE_err
-  jsr compare_tmp_addr                ; Check that address A is lower than B
-  lda FUNC_RESULT                     ; Result should be 0 (LESS_THAN)
-  bne cmdprcSAVE_addr_err
-  jsr read_filename                   ; Puts filename in STR_BUF
-  lda FUNC_ERR
-  bne cmdprcSAVE_err
+  lda #<USR_START                     ; Set memory addresses
+  sta TMP_ADDR_A                      ;  "    "       "
+  lda #>USR_START                     ;  "    "       "
+  sta TMP_ADDR_A + 1                  ;  "    "       "
+  lda LOMEM                           ;  "    "       "
+  sta TMP_ADDR_B                      ;  "    "       "
+  lda LOMEM + 1                       ;  "    "       "
+  sta TMP_ADDR_B + 1                  ;  "    "       "
   lda #ZD_OPCODE_SAVE_CRT             ; Set save type - in this case, CREATE
   jsr zd_save_data                    ; Now save the memory contents
+  LED_OFF LED_FILE_ACT
   lda FUNC_ERR
   beq cmdprcSAVE_success
+  jmp cmdprcSAVE_err
+.cmdprcSAVE_synerr
+  lda #SYNTAX_ERR_CODE
+  sta FUNC_ERR
   jmp cmdprcSAVE_err
 .cmdprcSAVE_addr_err
   lda #ERR_ADDR
   sta FUNC_ERR
 .cmdprcSAVE_err
-  jsr OSWRERR
-  jsr OSLCDERR
-  jmp cmdprcSAVE_end
+  jmp cmdprc_fail
 .cmdprcSAVE_success
   LOAD_MSG file_act_complete_msg
   jsr OSWRMSG
   jsr OSLCDMSG
-.cmdprcSAVE_end
-  LED_OFF LED_FILE_ACT
-  jmp cmdprc_end
+  jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: STAT  :  DISPLAY STATUS
@@ -143,28 +151,24 @@
   NEWLINE
   jsr OSLCDWRBUF
 
-  ; --- LINE 5 - Console-only  -----------------
+  ; --- LINES 5&6 - Console-only  -----------------
   stz STDOUT_IDX                              ; Set offset pointer
-
   LOAD_MSG stat_msg_sysreg
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
   lda SYS_REG
   jsr display_stat_bin
+  jsr OSWRBUF
+  NEWLINE
 
-  LOAD_MSG stat_msg_spacer
-  jsr OSSOAPP                                 ; Add to STDOUT_BUF
-  LOAD_MSG stat_msg_spacer
-  jsr OSSOAPP                                 ; Add to STDOUT_BUF
-
+  stz STDOUT_IDX                              ; Set offset pointer
   LOAD_MSG stat_msg_stdin
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
   lda STDIN_STATUS_REG
   jsr display_stat_bin
-
   jsr OSWRBUF
   NEWLINE
 
-  jmp cmdprc_end
+  jmp cmdprc_success
 
 .display_stat_bin
   jsr OSB2BIN

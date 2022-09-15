@@ -265,11 +265,6 @@
   LOAD_MSG staple_count_msg
   jsr OSWRMSG
   pla
-;  clc
-;  adc #$30                            ; To get ASCII char
-;  jsr OSWRCH
-;  lda #' '
-;  jsr OSWRCH
   ldx STAPLE_COUNT
 .staple_loop
   lda #91                             ; Open square bracket
@@ -391,6 +386,103 @@
   lda #STATE_NO_STAPLES
   sta P_CONDITION
 .status_update_end
+  rts
+
+\ ------------------------------------------------------------------------------
+\ --- FILE OPERATIONS
+\ ------------------------------------------------------------------------------
+
+
+.set_datafile
+  ldx #0                              ; Set filename
+.set_datafile_loop
+  lda game_data_file,X
+  sta STR_BUF,X
+  inx
+  cmp #0
+  bne set_datafile_loop
+  rts
+
+.read_gamedata
+  stz FUNC_ERR
+  lda #<DATA_START                    ; Set location for loading data
+  sta FILE_ADDR
+  lda #>DATA_START
+  sta FILE_ADDR + 1
+  jsr set_datafile                    ; Set data filename
+  lda #ZD_OPCODE_DLOAD                ; Set opcode for loading data
+  jsr OSZDLOAD                        ; Load data
+  lda FUNC_ERR
+  beq read_gamedata_success
+  LOAD_MSG readdata_failed_msg
+  jmp read_gamedata_end
+.read_gamedata_success
+  LOAD_MSG readdata_success_msg
+.read_gamedata_end
+  jsr OSWRMSG
+  rts
+
+.write_gamedata
+  stz FUNC_ERR
+  lda #<DATA_START                    ; Set start location of data
+  sta TMP_ADDR_A
+  lda #>DATA_START
+  sta TMP_ADDR_A + 1
+  lda #<DATA_END                      ; Set end location of data
+  sta TMP_ADDR_B
+  lda #>DATA_END
+  sta TMP_ADDR_B + 1
+  jsr set_datafile                    ; Set data filename
+  lda #ZD_OPCODE_SAVE_DATO            ; Set opcode for saving data
+  jsr OSZDSAVE                        ; Save data
+  lda FUNC_ERR
+  beq write_gamedata_success
+  LOAD_MSG writedata_failed_msg
+  jmp write_gamedata_end
+.write_gamedata_success
+  LOAD_MSG writedata_success_msg
+.write_gamedata_end
+  jsr OSWRMSG
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  SHOW_STATS
+\ ------------------------------------------------------------------------------
+.show_stats
+  stz STDOUT_IDX
+  LOAD_MSG games_played_msg
+  jsr OSSOAPP
+  lda #' '
+  jsr OSSOCH
+  lda GAMES_PLAYED
+  cmp #$FF
+  beq show_stats_many_games
+  jsr OSB2ISTR
+  STR_BUF_TO_MSG_VEC
+  jmp show_stats_games
+.show_stats_many_games
+  LOAD_MSG many_games_str
+.show_stats_games
+  jsr OSSOAPP
+  jsr OSWRBUF
+  NEWLINE
+  stz STDOUT_IDX
+  LOAD_MSG games_won_msg
+  jsr OSSOAPP
+  lda #' '
+  jsr OSSOCH
+  lda GAMES_WON
+  cmp #$FF
+  beq show_stats_many_won
+  jsr OSB2ISTR
+  STR_BUF_TO_MSG_VEC
+  jmp show_stats_won
+.show_stats_many_won
+  LOAD_MSG many_games_str
+.show_stats_won
+  jsr OSSOAPP
+  jsr OSWRBUF
+  NEWLINE
   rts
 
 \ ------------------------------------------------------------------------------

@@ -20,15 +20,12 @@ INCLUDE "../../LIB/cfg_user_port.asm"
 
 INCLUDE "zumpus_cfg.asm"
 
-ORG USR_PAGE
-.header                     ; HEADER INFO
-  INCLUDE "../../LIB/header_std.asm"
-
+ORG USR_START
 INCLUDE "./zumpus_main.asm"
-
 INCLUDE "./zumpus_funcs.asm"
 INCLUDE "./zumpus_data.asm"
 INCLUDE "../../LIB/funcs_math.asm"
+INCLUDE "../../LIB/cfg_ZolaDOS.asm"
 
 .endtag
   equs "EOF",0

@@ -102,13 +102,13 @@
   cmp TMP_ADDR_B_L                ; test the low bytes
   bcc compare_tmp_addr_less
   bne compare_tmp_addr_more
-  lda #EQUAL				          ; A = B
+  lda #EQUAL				              ; A = B
   jmp compare_tmp_addr_end
 .compare_tmp_addr_less
-  lda #LESS_THAN			        ; A < B
+  lda #LESS_THAN			            ; A < B
   jmp compare_tmp_addr_end
 .compare_tmp_addr_more
-  lda #MORE_THAN			        ; A > B
+  lda #MORE_THAN			            ; A > B
 .compare_tmp_addr_end
   sta FUNC_RESULT
   rts

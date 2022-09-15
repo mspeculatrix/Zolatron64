@@ -20,11 +20,18 @@ INCLUDE "../../LIB/cfg_page_2.asm"
 ; PAGE 3 is used for STDIN & STDOUT buffers, plus indexes
 INCLUDE "../../LIB/cfg_page_4.asm"
 
-ORG USR_PAGE
+ORG USR_START
 .header                     ; HEADER INFO
-  INCLUDE "../../LIB/header_std.asm"
-  equb 'E'
+  jmp startprog             ;
+  equb "E"                  ; Designate executable file
+  equb <header              ; @ $0802 Entry address
+  equb >header
+  equb <reset               ; @ $0804 Reset address
+  equb >reset
+  equb <endcode             ; @ $0806 Addr of first byte after end of program
+  equb >endcode
   equs 0,0,0                ; -- Reserved for future use --
+.prog_name
   equs "TESTA",0            ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
   equs "1.0",0              ; Version string - nul terminated
@@ -69,7 +76,7 @@ ORG USR_PAGE
   jsr OSWRMSG
   jsr OSLCDMSG
 
-  stz STDIN_IDX     ; Clear input buffer
+  stz STDIN_IDX                           ; Clear input buffer
   stx STDIN_BUF
 .get_char
   lda STDIN_IDX
@@ -79,13 +86,18 @@ ORG USR_PAGE
   NEWLINE
 
 .prog_end
+  stz STDIN_IDX                           ; Clear input buffer
+  stx STDIN_BUF
+  lda STDIN_STATUS_REG                    ; Get our info register
+  and #STDIN_CLEAR_FLAGS                  ; Clear the received flags
+  sta STDIN_STATUS_REG                    ; and re-save the register
   jmp OSSFTRST
 
 .start_msg
   equs "TEST A", 0
 
 .second_msg
-  equs "Testing for single key input",10,0
+  equs "Testing for single key input:",0
 
 .endtag
   equs "EOF",0

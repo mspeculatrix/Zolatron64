@@ -3,11 +3,11 @@
 This is V3 of the ROM. It considers the following boards to be intrinsic parts of the computer (which need to be served by the OS):
 
 * CPU board (duh!)
-* LCDV  - LCD/LED board - VIA provides timer 1 for delay function
-* DUART - SC28L92 DUART board
-* ZD    - RPi/ZolaDOS board
+* LCDV  - LCD/LED board - VIA also provides timer 1 for delay function
+* DUART - SC28L92 DUART board - two serial ports plus other I/O
+* ZD    - RPi/ZolaDOS board - provides terminal & mass storage
 * USRP  - User Port VIA board (provides timers available for user programs)
-* EXMEM - Extended memory board
+* EXMEM - Extended memory (ROM/RAM) board
 * PRT   - Parallel interface board
 
 The Zolatron's ROM code occupies the top 16KB of the address space – $C000-$FFFF.

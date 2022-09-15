@@ -16,6 +16,7 @@ ALIGN &100                  ; Start on new page
   equw cmdprcPEEK           ; ? - synonym for PEEK
   equw cmdprcPOKE           ; ! - synonym for POKE
   equw cmdprcBRK            ; BRK
+  equw cmdprcCLEAR          ; CLEAR
   equw cmdprcDEL            ; DEL
   equw cmdprcDUMP           ; DUMP
   equw cmdprcHELP           ; HELP
@@ -32,7 +33,8 @@ ALIGN &100                  ; Start on new page
   equw cmdprcSTAT           ; STAT
   equw cmdprcVERS           ; VERS - version
   equw cmdprcXLOAD          ; XLOAD
-  equw cmdprcXLIST          ; XLIST
+  equw cmdprcXLS            ; XLS
+  equw cmdprcXOPEN          ; XOPEN
   equw cmdprcXRUN           ; XRUN
   equw cmdprcXSEL           ; XSEL
 
@@ -42,7 +44,7 @@ ALIGN &100                  ; Start on new page
 \ understand where to go next by looking it up in the Command Pointers table
 \ below.
 .cmd_ch1_tbl
-  equs "*?!BDHJLPRSVX"
+  equs "*?!BCDHJLPRSVX"
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -57,6 +59,7 @@ ALIGN &100                  ; Start on new page
   equw cmd_tbl_QUERY        ; Commands starting '?'
   equw cmd_tbl_BANG         ; Commands starting '!'
   equw cmd_tbl_ASCB         ; Commands starting 'B'
+  equw cmd_tbl_ASCC         ; Commands starting 'C'
   equw cmd_tbl_ASCD         ; Commands starting 'D'
   equw cmd_tbl_ASCH         ; Commands starting 'H'
   equw cmd_tbl_ASCJ         ; Commands starting 'J'
@@ -86,6 +89,10 @@ ALIGN &100                  ; Start on new page
 
 .cmd_tbl_ASCB                  ; Commands starting 'B'
   equs "RK", CMD_TKN_BRK       ; BRK
+  equb EOCMD_SECTION
+
+.cmd_tbl_ASCC                  ; Commands starting 'C'
+  equs "LEAR", CMD_TKN_CLEAR       ; CLEAR
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCD                  ; Commands starting 'D'
@@ -129,7 +136,8 @@ ALIGN &100                  ; Start on new page
 
 .cmd_tbl_ASCX                  ; Commands starting 'X'
   equs "LOAD", CMD_TKN_XLOAD   ; XLOAD
-  equs "LIST", CMD_TKN_XLIST   ; XLIST
+  equs "LS", CMD_TKN_XLS       ; XLS
+  equs "OPEN", CMD_TKN_XOPEN   ; XOPEN
   equs "RUN", CMD_TKN_XRUN     ; XRUN
   equs "SEL", CMD_TKN_XSEL     ; XSEL
   equb EOCMD_SECTION
@@ -174,6 +182,8 @@ ALIGN &100                  ; Start on new page
 
   equw err_stdin_buf_empty
 
+  equw err_no_executable
+
 \ Error Messages
 .err_msg_cmd
   equs "Bad command! Bad, bad command!", 0
@@ -217,26 +227,30 @@ ALIGN &100                  ; Start on new page
 .err_addr
   equs "Address error",0
 .err_file_exists
-  equs "File exists",0
+  ;     01234567890123456789
+  equs "Error: File exists",0
 .err_file_open
   equs "Error opening file",0
 .err_delfile_fail
-  ;     01234567890123456789
   equs "Delete file failed",0
 .err_filenotfound
   equs "File not found",0
 .err_stdin_buf_empty
   equs "Input buffer empty",0
+.err_no_executable
+  equs "No program loaded",0
+
 
 \ ===== MISC TABLES & STRINGS ==================================================
 
 .ext_data_types               ; Valid data type characters for extended memory
-  equs "EODX",0
+  equs "DEOX",0
 
 .help_table                   ; Text for 'HELP' output
   equs "?",0
   equs "!",0
   equs "BRK",0
+  equs "CLEAR",0
   equs "DEL",0
   equs "DUMP",0
   equs "HELP",0
@@ -252,7 +266,8 @@ ALIGN &100                  ; Start on new page
   equs "STAT",0
   equs "VERS",0
   equs "XLOAD",0
-  equs "XLIST",0
+  equs "XLS",0
+  equs "XOPEN",0
   equs "XRUN",0
   equs "XSEL",0
   equb EOTBL_MKR
@@ -277,6 +292,8 @@ ALIGN &100                  ; Start on new page
 
 .start_msg
 	equs "Zolatron 64", 0
+.ready_msg
+  equs "Ready",0
 
 ;ALIGN &100                  ; Start on new page
 ;.identity_table             ; Not using yet

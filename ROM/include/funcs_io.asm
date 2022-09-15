@@ -599,25 +599,23 @@
 \ Y - P
 .read_hex_byte
   pha : phx : phy
-  stz FUNC_ERR              ; Initialise to 0
-  ldy #1                    ; Offset for where we're storing each byte from buf
+  stz FUNC_ERR                ; Initialise to 0
+  ldy #1                      ; Offset for storing each byte from buf
   ldx STDIN_IDX
 .read_hexbyte_next_char
-  lda STDIN_BUF,X           ; Get next byte from buffer
-  inx                       ; Increment for next time
-  cmp #0                    ; Is the buffer char a null? Shouldn't be
-  beq read_hexbyte_fail     ; - that's an error
-  cmp #CHR_SPACE            ; If it's a space, ignore it & get next byte
+  lda STDIN_BUF,X             ; Get next byte from buffer
+  beq read_hexbyte_fail       ; If 0, that's an error
+  inx                         ; Increment for next time
+  cmp #CHR_SPACE              ; If it's a space, ignore it & get next byte
   beq read_hexbyte_next_char
-  sta BYTE_CONV_L,Y         ; Store in BYTE_CONV buffer, high byte first
-  cpy #0
-  beq read_hexbyte_conv     ; If 0, we've now got the second of the 2 bytes
-  dey                       ; Otherwise go get low byte
-  jmp read_hexbyte_next_char
+  sta BYTE_CONV_L,Y           ; Store in BYTE_CONV buffer, high byte first
+  dey                         ; Decrement offset
+  bmi read_hexbyte_conv       ; Has rolled over to $FF, so done
+  jmp read_hexbyte_next_char  ; Otherwise, get next byte
 .read_hexbyte_conv
   ; We've got our pair of bytes in BYTE_CONV_L and BYTE_CONV_L+1
-  jsr hex_str_to_byte       ; Convert them - result is in FUNC_RESULT
-  lda FUNC_ERR              ; Check to see if there was an error
+  jsr hex_str_to_byte         ; Convert them - result is in FUNC_RESULT
+  lda FUNC_ERR                ; Check to see if there was an error
   bne read_hexbyte_fail
   jmp read_hexbyte_end
 .read_hexbyte_fail

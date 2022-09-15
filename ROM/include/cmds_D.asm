@@ -25,9 +25,10 @@
 .cmdprcDEL_err
   jsr os_print_error              ; There should be an error code in FUNC_ERR
   jsr OSLCDERR
+  jmp cmdprc_fail
 .cmdprcDEL_end
   LED_OFF LED_FILE_ACT
-  jmp cmdprc_end
+  jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: DUMP  :  DUMP MEMORY TO PERSISTENT STORE
@@ -51,25 +52,30 @@
   jsr read_filename                   ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne cmdprcDUMP_err
+  ldx STDIN_IDX
+  lda STDIN_BUF,X                 ; Check there's nothing left in the RX buffer
+  bne cmdprcDUMP_synerr           ; Should be null. Anything else is a mistake
   lda #ZD_OPCODE_SAVE_CRT             ; Set save type - in this case, CREATE
   jsr zd_save_data                    ; Now save the memory contents
   lda FUNC_ERR
-  beq cmdprcDUMP_success
+  bne cmdprcDUMP_err
+  jmp cmdprcDUMP_success
+.cmdprcDUMP_synerr
+  lda #SYNTAX_ERR_CODE
+  sta FUNC_ERR
   jmp cmdprcDUMP_err
 .cmdprcDUMP_addr_err
   lda #ERR_ADDR
   sta FUNC_ERR
 .cmdprcDUMP_err
-  jsr OSWRERR                         ; There should be an error code in
-  jsr OSLCDERR                        ; FUNC_ERR
-  jmp cmdprcDUMP_end
+  LED_OFF LED_FILE_ACT
+  jmp cmdprc_fail                   ; Will display error in FUNC_ERR
 .cmdprcDUMP_success
+  LED_OFF LED_FILE_ACT
   LOAD_MSG file_act_complete_msg
   jsr OSWRMSG
   jsr OSLCDMSG
-.cmdprcDUMP_end
-  LED_OFF LED_FILE_ACT
-  jmp cmdprc_end
+  jmp cmdprc_success
 
 \ --- DATA ------------------
 .cdmprcDUMP_msg

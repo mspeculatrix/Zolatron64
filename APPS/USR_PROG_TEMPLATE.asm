@@ -23,16 +23,16 @@ INCLUDE "../../LIB/cfg_page_4.asm"
 ; INCLUDE "../../LIB/cfg_chk_char.asm"
 ; INCLUDE "../../LIB/cfg_math.asm"
 
-ORG USR_PAGE
+ORG USR_START
 .header                     ; HEADER INFO
   jmp startprog             ; $4C followed by 2-byte address
-  equb <header              ; @ $0803 Entry address
+  equb "E"                  ; @ $0803 E=executable, D=data, O=overlay, X=OS ext
+  equb <header              ; @ $0804 Entry address
   equb >header
-  equb <reset               ; @ $0805 Reset address
+  equb <reset               ; @ $0806 Reset address
   equb >reset
-  equb <endcode             ; @ $0807 Addr of first byte after end of program
+  equb <endcode             ; @ $0808 Addr of first byte after end of program
   equb >endcode
-  equb "E"                  ; @ $0808 D=data, L=library, O=overlay, X=OS ext
   equs 0,0,0                ; -- Reserved for future use --
 .prog_name
   equs "TEMPLATE",0         ; @ $080D Short name, max 15 chars - nul terminated

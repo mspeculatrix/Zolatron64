@@ -8,19 +8,8 @@
 ALIGN &100                ; start on new page
 .IRQ_handler
   pha : phx : phy         ; preserve CPU state on the stack
-  ; Check which device caused the interrupt.
 
-; --- CHECK VIA C TIMER --------------------------------------------------------
-;.isr_via_c_timer
-;  bit USRP_IFR                ; Bit 6 copied to overflow flag
-;  bvc isr_via_c_timer_next    ; Overflow clear, so not this... on to next check
-;  bit USRP_T1CL		            ; Clears interrupt
-;  inc USRP_TIMER_COUNT
-;  bne isr_via_c_timer_end
-;  inc USRP_TIMER_COUNT + 1	  ; previous byte rolled over
-;.isr_via_c_timer_end
-;  jmp isr_end_chks
-;.isr_via_c_timer_next
+\ Check which device caused the interrupt.
 
 ; --- CHECK ZOLADOS VIA TIMEOUT TIMER ------------------------------------------
 .isr_zd_timer
