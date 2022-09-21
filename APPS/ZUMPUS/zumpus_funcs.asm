@@ -414,6 +414,8 @@
   jsr OSZDLOAD                        ; Load data
   lda FUNC_ERR
   beq read_gamedata_success
+  jsr OSWRERR                         ; For debugging
+  NEWLINE
   LOAD_MSG readdata_failed_msg
   jmp read_gamedata_end
 .read_gamedata_success

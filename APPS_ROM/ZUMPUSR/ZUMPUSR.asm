@@ -34,4 +34,4 @@ ORG EXTMEM_END             ; To pad out space
   equb 0
 .endcode
 
-SAVE "../bin/ZUMPUSR.BIN", header, endcode
+SAVE "../bin/ZUMPUSR.EXE", header, endcode

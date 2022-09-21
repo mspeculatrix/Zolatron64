@@ -33,7 +33,7 @@ ORG USR_START
   equb >endcode
   equs 0,0,0                ; -- Reserved for future use --
 .prog_name
-  equs "PRT",0            ; @ $080D Short name, max 15 chars - nul terminated
+  equs "PRTTEST",0            ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
   equs "1.0",0              ; Version string - nul terminated
 
@@ -59,16 +59,14 @@ ORG USR_START
   jsr OSPRTMSG
   lda FUNC_RESULT
   bne done
-;  LOAD_MSG test_line
-;  jsr OSPRTMSG
-  ;lda #10
-  ;jsr OSPRTCH
-  ;lda #10
-  ;jsr OSPRTCH
-;  jsr OSLCDMSG
+  LOAD_MSG test_line
+  jsr OSPRTMSG
+  lda #10
+  jsr OSPRTCH
+  lda #10
+  jsr OSPRTCH
 
 .done
-  jsr OSPRTSTMSG
   jsr OSWRMSG
   jsr OSLCDMSG
 
@@ -87,4 +85,4 @@ ORG USR_START
   equs "EOF",0
 .endcode
 
-SAVE "../bin/PRT.BIN", header, endcode
+SAVE "../bin/PRTTEST.EXE", header, endcode

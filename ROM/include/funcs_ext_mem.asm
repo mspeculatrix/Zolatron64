@@ -93,6 +93,7 @@
 
 \ --- DATA --------------------
 .exmem_fitted_msg
-  equs "Extended memory",0
+  equs "+ Extended memory",0
 .exmem_absent_msg
-  equs "No extended memory",0
+  ;     01234567890123456789
+  equs "- No extended memory",0

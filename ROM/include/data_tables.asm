@@ -184,6 +184,11 @@ ALIGN &100                  ; Start on new page
 
   equw err_no_executable
 
+  equw err_printer_state_ol
+  equw err_printer_state_pe
+  equw err_printer_state_err
+  equw err_printer_not_present
+
 \ Error Messages
 .err_msg_cmd
   equs "Bad command! Bad, bad command!", 0
@@ -206,7 +211,6 @@ ALIGN &100                  ; Start on new page
 .err_timeout_SAO
   equs "SA Off Timeout", 0
 .err_filesvropen
-  ;     01234567890123456789
   equs "Server f/open error", 0
 .err_filesvrls
   equs "Server f/list error", 0
@@ -227,7 +231,6 @@ ALIGN &100                  ; Start on new page
 .err_addr
   equs "Address error",0
 .err_file_exists
-  ;     01234567890123456789
   equs "Error: File exists",0
 .err_file_open
   equs "Error opening file",0
@@ -239,7 +242,14 @@ ALIGN &100                  ; Start on new page
   equs "Input buffer empty",0
 .err_no_executable
   equs "No program loaded",0
-
+.err_printer_state_ol
+  equs "Printer offline",0
+.err_printer_state_pe
+  equs "Printer: paper out",0
+.err_printer_state_err
+  equs "Printer error",0
+.err_printer_not_present
+  equs "No printer interface",0
 
 \ ===== MISC TABLES & STRINGS ==================================================
 
@@ -261,6 +271,7 @@ ALIGN &100                  ; Start on new page
   equs "LP",0
   equs "PEEK",0
   equs "POKE",0
+  equs "PRT",0
   equs "RUN",0
   equs "SAVE",0
   equs "STAT",0

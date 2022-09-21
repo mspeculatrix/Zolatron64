@@ -71,15 +71,13 @@
   jmp cmdprcLOAD_success
 .cmdprcLOAD_err
   LED_ON LED_ERR
-  jsr os_print_error          ; There should be an error code in FUNC_ERR
-  jsr OSLCDERR
   jmp cmdprc_fail
 .cmdprcLOAD_success
   LOAD_MSG file_act_complete_msg
   jsr OSWRMSG
   jsr OSLCDMSG
   lda USR_START+CODEHDR_END    ; Get info about first free byte after prog
-  sta LOMEM                   ; to put into our LOMEM variable
+  sta LOMEM                    ; to put into our LOMEM variable
   lda USR_START+CODEHDR_END+1
   sta LOMEM + 1
   jmp cmdprc_success

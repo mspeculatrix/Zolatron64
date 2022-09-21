@@ -18,6 +18,6 @@ USRP_T1CL  = USRP_BASE_ADDR + $04       ; Timer 1 counter low
 USRP_T1CH  = USRP_BASE_ADDR + $05	      ; Timer 1 counter high
 USRP_T2CL  = USRP_BASE_ADDR + $08       ; Timer 2 counter low
 USRP_T2CH  = USRP_BASE_ADDR + $09	      ; Timer 2 counter high
-USRP_ACL   = USRP_BASE_ADDR + $0B		    ; Auxiliary Control register
+USRP_ACR   = USRP_BASE_ADDR + $0B		    ; Auxiliary Control register
 USRP_IER   = USRP_BASE_ADDR + $0E 	    ; Interrupt Enable Register
 USRP_IFR   = USRP_BASE_ADDR + $0D		    ; Interrupt Flag Register

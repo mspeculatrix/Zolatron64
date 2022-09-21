@@ -12,7 +12,7 @@
 .prog_name
   equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
-  equs "1.3",0              ; Version string - nul terminated
+  equs "1.3.1",0              ; Version string - nul terminated
 
 .startprog
 .reset                      ; Sometimes this may be different from startprog
@@ -21,7 +21,8 @@
   ldx #$ff                  ; Set stack pointer to $01FF - only need to set the
   txs                       ; LSB, as MSB is assumed to be $01
 
-  stz PRG_EXIT_CODE         ; Not sure we're using this yet
+  lda #0
+  sta PRG_EXIT_CODE         ; Not sure we're using this yet
   cli
 
 ; Using Timer 1 for random numbers. Basically, this will run constantly in
@@ -33,7 +34,7 @@
   lda #%01000000		          ; Bit 7 off - don't need interrupts
   sta USRP_IER
   lda #%01000000              ; Set timer to free-run mode
-  sta USRP_ACL
+  sta USRP_ACR
   lda #59                     ; Start value
   sta USRP_T1CL
   lda #0
@@ -102,13 +103,14 @@
   lda #NUM_STAPLES                ; Set initial number of staples
   sta STAPLE_COUNT
 
-  lda GAMES_PLAYED
-  cmp #$FF                        ; If already at max, ignore
-  beq init_contd
+  lda GAMES_PLAYED                ; Update count of games played
   inc A                           ; Otherwise, increment number
-  sta GAMES_PLAYED                ; and store
+  bne init_contd                  ; Did not roll over
+  lda #$FF                        ; If it did, reset to maximum value
 
 .init_contd
+  sta GAMES_PLAYED                ; and store
+
 ; Randomise initial locations of player & threats
   ldy #0                          ; Counter for number of locs we've set
 .init_loop
@@ -117,8 +119,7 @@
 .init_loop_wait
   lda STDIN_STATUS_REG
   and #STDIN_NUL_RCVD_FL          ; Has nul flag been set?
-  bne init_set_loc                ; If yes, proceed with setting random loc
-  jmp init_loop_wait              ; Otherwise, loop
+  beq init_loop_wait              ; If not, loop
 .init_set_loc
   ldx #NUM_ROOMS                  ; Divisor for MOD
   phy
@@ -208,12 +209,11 @@
 ; ---  RESET STATS -------------------------------------------------------------
 .zum_reset_stats
   stz GAMES_WON
-  lda #1
-  sta GAMES_PLAYED
+  stz GAMES_PLAYED
   LOAD_MSG stats_reset_msg
   jsr OSWRMSG
   NEWLINE
-  jmp zum_chk_stat
+  jmp init
 ; ---  SHOOTING ----------------------------------------------------------------
 .zum_cmd_shoot
   ; The input buf should contain the room number & range of shot.

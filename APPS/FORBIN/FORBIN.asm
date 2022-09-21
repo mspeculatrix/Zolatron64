@@ -1,15 +1,17 @@
 ; Code for Zolatron 64 6502-based microcomputer.
 ;
-; Program to test out the printing functions of ZolaDOS.
-;
 ; GitHub: https://github.com/mspeculatrix/Zolatron64/
 ; Blog: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
 ;
 ; Written for the Beebasm assembler
 ; Assemble with:
-; beebasm -v -i PRT.asm
+; beebasm -v -i TESTA.asm
 
 CPU 1                               ; use 65C02 instruction set
+
+BARLED = $0230				      ; for the bar LED display
+BARLED_L = BARLED
+BARLED_H = BARLED + 1
 
 INCLUDE "../../LIB/cfg_main.asm"
 INCLUDE "../../LIB/cfg_page_0.asm"
@@ -17,9 +19,6 @@ INCLUDE "../../LIB/cfg_page_0.asm"
 INCLUDE "../../LIB/cfg_page_2.asm"
 ; PAGE 3 is used for STDIN & STDOUT buffers, plus indexes
 INCLUDE "../../LIB/cfg_page_4.asm"
-;INCLUDE "../../LIB/cfg_parallel.asm"
-INCLUDE "../../LIB/cfg_2x16_lcd.asm"
-INCLUDE "../../LIB/cfg_prt.asm"
 
 ORG USR_START
 .header                     ; HEADER INFO
@@ -33,35 +32,46 @@ ORG USR_START
   equb >endcode
   equs 0,0,0                ; -- Reserved for future use --
 .prog_name
-  equs "PRTFILE",0          ; @ $080D Short name, max 15 chars - nul terminated
+  equs "FORBIN",0            ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
-  equs "0.1",0              ; Version string - nul terminated
+  equs "1.0",0              ; Version string - nul terminated
 
 .startprog
 .reset
-  sei             ; Don't interrupt me yet
-  cld             ; Don't want BCD
-  ldx #$FF        ; Set stack pointer to $01FF - only need to set the
+  sei             ; don't interrupt me yet
+  cld             ; we don' need no steenkin' BCD
+  ldx #$ff        ; set stack pointer to $01FF - only need to set the
   txs             ; LSB, as MSB is assumed to be $01
-  stz PRG_EXIT_CODE
+
+  lda #0
+  sta PRG_EXIT_CODE
   cli
 
+  jsr OSLCDCLS
+
 .main
-  jsr OSPRTINIT
 
+  jsr OSLCDCLS
 
+  LOAD_MSG colossus_msg
+  jsr OSWRMSG
+  NEWLINE
+  jsr OSLCDMSG
 
-.filename_prompt
-  equs "Name of file to print: ",0
+.prog_end
+  stz STDIN_IDX                           ; Clear input buffer
+  stx STDIN_BUF
+  lda STDIN_STATUS_REG                    ; Get our info register
+  and #STDIN_CLEAR_FLAGS                  ; Clear the received flags
+  sta STDIN_STATUS_REG                    ; and re-save the register
+  jmp OSSFTRST
 
-.another_file_prompt
-  equs "Do you want to print another file (y/n)? ",0
-
-.quit_msg
-  equs "All done.",0
+.colossus_msg
+  ;     12345678901234567890
+  equs "** WARN **",10,"THERE IS ANOTHER",10,"SYSTEM",10,0
 
 .endtag
   equs "EOF",0
 .endcode
 
-SAVE "../bin/PRTFILE.EXE", header, endcode
+SAVE "../bin/FORBIN.EXE", header, endcode

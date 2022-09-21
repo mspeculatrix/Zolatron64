@@ -34,7 +34,7 @@
   lda #%01000000		          ; Bit 7 off - don't need interrupts
   sta USRP_IER
   lda #%01000000              ; Set timer to free-run mode
-  sta USRP_ACL
+  sta USRP_ACR
   lda #59                     ; Start value
   sta USRP_T1CL
   lda #0

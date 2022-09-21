@@ -20,7 +20,7 @@
   ZD_SET_CO_ON                      ; Signal to server that Z64 is online.
   sta ZD_IER
   lda #%00000000                    ; Set timer to one-shot mode
-  sta ZD_ACL
+  sta ZD_ACR
   stz ZD_TIMER_COUNT		            ; Zero-out counter
   stz ZD_TIMER_COUNT + 1            ; "
   ; Initialise outputs
@@ -127,6 +127,17 @@
   ZD_SET_CA_OFF
   ZD_SET_CR_OFF
   ZD_SET_DATADIR_OUTPUT
+  rts
+
+\ ---  ZD_OPEN_FILE
+.zd_open_file
+\ ON ENTRY: - A must contain ZD OPCODE - eg, #ZD_OPCODE_LOAD
+\           - STR_BUF must contain filename
+\           - ??? FILE_ADDR/+1 must contain address to which we wish to load file.
+  jsr zd_handshake            ; ----- INITIATE ---------------------------------
+  lda FUNC_ERR
+  bne zd_openf_end            ; If this is anything but 0, that's an error
+.zd_openf_end
   rts
 
 \ ------------------------------------------------------------------------------
@@ -286,7 +297,7 @@
   lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
   sta ZD_IER
   lda #%00000000                    ; set timer to one-shot mode
-  sta ZD_ACL
+  sta ZD_ACR
   lda #<ZD_SIGNALDELAY              ; Set timer delay
   sta ZD_T1CL
   lda #>ZD_SIGNALDELAY
@@ -299,6 +310,29 @@
   rts
 
 \ ------------------------------------------------------------------------------
+\ ---  ZD_STREAMIN *** UNDER CONSTRUCTION ***
+\ ---  Implements: OSZDSTRIN (to be added)
+\ ------------------------------------------------------------------------------
+\ Stream in a file from storage in ZD_STREAM_SZ size chunks.
+\ ON ENTRY: - FILE_ADDR/+1 must contain address for where we're going to buffer
+\             the data.
+\           - STR_BUF must contain filename
+\ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
+.zd_streamin
+  lda #ZD_OPCODE_OPEN
+  jsr zd_handshake            ; ----- INITIATE ---------------------------------
+  lda FUNC_ERR
+  bne zd_streamin_end         ; If this is anything but 0, that's an error
+
+
+
+.zd_streamin_close
+  lda #ZD_OPCODE_CLOSE
+  jsr zd_init_process
+.zd_streamin_end
+  rts
+
+\ ------------------------------------------------------------------------------
 \ ---  ZD_STROBEDELAY
 \ ------------------------------------------------------------------------------
 \ A - O
@@ -308,7 +342,7 @@
   lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
   sta ZD_IER
   lda #%00000000                    ; Set timer to one-shot mode
-  sta ZD_ACL
+  sta ZD_ACR
   lda #<ZD_STROBETIME               ; Set timer delay
   sta ZD_T1CL
   lda #>ZD_STROBETIME
@@ -406,7 +440,7 @@
   lda #%11000000		; setting bit 7 enables interrupts and bit 6 enables Timer 1
   sta ZD_IER
   lda #%01000000                    ; set timer to free-run mode
-  sta ZD_ACL
+  sta ZD_ACR
   lda #>ZD_TIMEOUT_INTVL
   sta ZD_T1CL
   lda #<ZD_TIMEOUT_INTVL

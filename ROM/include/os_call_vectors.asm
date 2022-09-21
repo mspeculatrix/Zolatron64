@@ -38,6 +38,10 @@
   sta OSRDFNAME_VEC
   lda #>read_filename
   sta OSRDFNAME_VEC + 1
+  lda #<read_string                   ; OSRDSTR
+  sta OSRDSTR_VEC
+  lda #>read_string
+  sta OSRDSTR_VEC + 1
 \ --- WRITE --------------------------------------------------------------------
   lda #<duart_sendbuf                 ; OSWRBUF
   sta OSWRBUF_VEC
@@ -134,6 +138,10 @@
   sta OSPRTCH_VEC
   lda #>prt_char
   sta OSPRTCH_VEC + 1
+  lda #<prt_check_state               ; OSPRTCHK
+  sta OSPRTCHK_VEC
+  lda #>prt_check_state
+  sta OSPRTCHK_VEC + 1
   lda #<prt_init                      ; OSPRTINIT
   sta OSPRTINIT_VEC
   lda #>prt_init
@@ -146,10 +154,10 @@
   sta OSPRTSBUF_VEC
   lda #>prt_str_buf
   sta OSPRTSBUF_VEC + 1
-  lda #<prt_load_state_msg            ; OSPRTSTMSG
-  sta OSPRTSTMSG_VEC
-  lda #>prt_load_state_msg
-  sta OSPRTSTMSG_VEC + 1
+\  lda #<prt_load_state_msg            ; OSPRTSTMSG
+\  sta OSPRTSTMSG_VEC
+\  lda #>prt_load_state_msg
+\  sta OSPRTSTMSG_VEC + 1
 \ --- ZOLADOS ------------------------------------------------------------------
   lda #<zd_delfile                    ; OSZDDEL
   sta OSZDDEL_VEC

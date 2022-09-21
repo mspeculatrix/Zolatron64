@@ -107,4 +107,4 @@ ORG USR_START
   equs "EOF",0
 .endcode
 
-SAVE "../bin/TESTB.BIN", header, endcode
+SAVE "../bin/TESTB.EXE", header, endcode

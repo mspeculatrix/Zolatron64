@@ -11,7 +11,7 @@ PRT_DATA_DDR  = PRT_BASE_ADDR + $03     ; Port A Data Direction Register
 PRT_CTRL_PORT = PRT_BASE_ADDR + $00     ; VIA Port B control register
 PRT_CTRL_DDR  = PRT_BASE_ADDR + $02     ; Port B Data Direction Register
 
-; Printer signal masks 
+; Printer signal masks
 ; INPUTS: AND with PRT_CTRL_PORT to read state
 PRT_SEL  = %00000001              ; PB0 - Input  - Active HIGH - Online
 PRT_PE   = %00000010              ; PB1 - Input  - Active HIGH - Optional
@@ -28,10 +28,6 @@ PRT_AF_OFF   = %01000000
 PRT_STRB_ON  = %01111111          ; PB7 - Output - Active LOW - 0.5-500µs pulse
 PRT_STRB_OFF = %10000000
 
-PRT_STATE_OK      = 0
-PRT_STATE_OFFLINE = 1
-PRT_STATE_PE      = 2
-PRT_STATE_ERR     = 3
 PRT_STATE_CHKS    = 128           ; Times we'll check state before aborting
 
 PRT_CTRL_PT_DIR  = %11010000      ; For DDR on control port

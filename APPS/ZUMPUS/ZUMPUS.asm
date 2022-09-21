@@ -31,4 +31,4 @@ INCLUDE "../../LIB/cfg_ZolaDOS.asm"
   equs "EOF",0
 .endcode
 
-SAVE "../bin/ZUMPUS.BIN", header, endcode
+SAVE "../bin/ZUMPUS.EXE", header, endcode

@@ -460,61 +460,69 @@
   ply : plx : pla
   rts
 
-\ Maybe use another address location for storing a parameter which will be
-\ the maximum string length.
+\ ------------------------------------------------------------------------------
+\ ---  READ_STR
+\ ---  Implements: OSRDSTR
+\ ------------------------------------------------------------------------------
+\ Reads string from STDIN_BUF. The string is terminated when the routine
+\ encounters a nul or a space (except when spaces occur before it has
+\ read any other type of character). It accepts only printable characters in
+\ certain ranges:
+\     -./0-9:
+\     @A-Z
+\     a-z
+\ If it finds anything else, it will report an error.
+\ ON ENTRY: - Expects a string in STDIN_BUF
+\           - STDIN_IDX should point to first char in buffer to read
+\ ON EXIT : - String is in STR_BUF
+\           - FUNC_ERR contains error code (0 = success)
+\           - STDIN_IDX is updated
 \ A - P
 \ X - P
 \ Y - P
-.read_string          ; **** WORK IN PROGRESS ****
+.read_string
   pha : phx : phy
-  stz FUNC_ERR              ; Initialise to 0
-  ldy #0                    ; Offset for where we're storing each byte
+  stz FUNC_ERR                ; Initialise to 0
+  ldy #0                      ; Offset for where we're storing each byte
   ldx STDIN_IDX
-  stz TMP_VAL               ; Flag regarding whether we've already read chars
+  stz TMP_VAL                 ; Flag to indicate whether we've read chars
 .read_string_next_char
-  lda STDIN_BUF,X           ; Get next byte from buffer
-  beq read_string_check     ; If a null (0), at end of input
-  cmp #CHR_SPACE            ; If it's a space, ignore it & get next byte
-  beq read_string_chkspc
-  cmp #CHR_LINEEND          ; If LF, end of input.
+  lda STDIN_BUF,X             ; Get next byte from buffer
+  beq read_string_check       ; If a null (0), at end of input
+  cmp #CHR_SPACE              ; If it's a space, we either haven't started the
+  beq read_string_chkspc      ; string yet, or we're done - let's check
+  cmp #CHR_LINEEND            ; If LF, at end end of input
   beq read_string_check
-  \ Acceptable char ranges:
-  \     -./0-9:
-  \     @A-Z
-  \     a-z
   cmp #'-'
-  bcc read_string_fail      ; A is less than lowest acceptable char
+  bcc read_string_fail        ; A is less than lowest acceptable char
   cmp #':'+1
-  bcc read_string_charOK    ; A less than top of first range, so okay
+  bcc read_string_charOK      ; A less than top of first range, so okay
   cmp #'@'
-  bcc read_string_fail      ; More than first range but less than second. Fail
+  bcc read_string_fail        ; More than first range but less than second. Fail
   cmp #'Z'+1
-  bcc read_string_charOK    ; Falls within second range
+  bcc read_string_charOK      ; Falls within second range
   cmp #'a'
-  bcc read_string_fail      ; More than second range but less than third. Fail
+  bcc read_string_fail        ; More than second range but less than third. Fail
   cmp #'z'+1
-  bcs read_string_fail      ; Within third range, so okay
+  bcs read_string_fail        ; Within third range, so okay
 .read_string_charOK
-  sta STR_BUF,Y             ; Store in STR_BUF buffer
-  iny                       ; Increment STR_BUF index
-  inc TMP_VAL
+  sta STR_BUF,Y               ; Store in STR_BUF buffer
+  iny                         ; Increment STR_BUF index
+  inc TMP_VAL                 ; To indicate we've started storing chars
 .read_string_loop
-  inx                       ; Increment input buffer index
+  inx                         ; Increment input buffer index
   jmp read_string_next_char
-.read_string_chkspc
+.read_string_chkspc           ; We come here when we've encountered a space
   lda TMP_VAL
-  beq read_string_loop      ; 0, so not started receiving chars yet
-  jmp read_string_check     ; Otherwise, we're done
+  beq read_string_loop        ; if 0, not started receiving chars yet
+  jmp read_string_check       ; Otherwise, we're done
 .read_string_fail
   lda #FN_CHAR_ERR_CODE
   sta FUNC_ERR
   jmp read_string_end
-.read_string_check  ;
-  sta STR_BUF,Y             ; Make sure we have a null terminator
-  cpy #ZD_MIN_FN_LEN        ; Minimum filename length
-  bcc read_string_err
-  cpy #ZD_MAX_FN_LEN+1      ; Maximum filename length
-  bcc read_string_end
+.read_string_check
+  stz STR_BUF,Y             ; Make sure we have a null terminator
+  jmp read_string_end
 .read_string_err
   lda #FN_LEN_ERR_CODE
   sta FUNC_ERR
@@ -643,7 +651,8 @@
   sta MSG_VEC             ; and put in MSG_VEC
   lda err_ptrs+1,X        ; Get MSB
   sta MSG_VEC+1           ; and put in MSG_VEC high byte
-  jsr OSWRMSG             ; Print to standard stream
+  jsr OSWRMSG             ; Print to console
+  jsr OSLCDMSG            ; Print to LCD
   rts
 
 \ ------------------------------------------------------------------------------

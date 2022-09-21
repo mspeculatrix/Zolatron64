@@ -29,7 +29,7 @@
   sta TMP_ADDR_B                      ;  "    "       "
   lda LOMEM + 1                       ;  "    "       "
   sta TMP_ADDR_B + 1                  ;  "    "       "
-  lda #ZD_OPCODE_SAVE_CRT             ; Set save type - in this case, CREATE
+  lda #ZD_OPCODE_SAVE_CRT             ; Set save type - in this case, CREATE EXE
   jsr zd_save_data                    ; Now save the memory contents
   LED_OFF LED_FILE_ACT
   lda FUNC_ERR

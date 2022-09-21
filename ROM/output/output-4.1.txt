@@ -1,175 +1,175 @@
 .startrom
-     C000   4C 0E C0   JMP &C00E
+     C000   4C 10 C0   JMP &C010
 .version_str
      C003   5A 6F 6C ...
-     C00D   00
+     C00F   00
 .startcode
-     C00E   78         SEI
-     C00F   D8         CLD
-     C010   A2 FF      LDX #&FF
-     C012   9A         TXS
-     C013   9C 00 04   STZ &0400
-     C016   9C E0 BF   STZ &BFE0
-     C019   9C 0A 04   STZ &040A
-     C01C   9C 09 04   STZ &0409
+     C010   78         SEI
+     C011   D8         CLD
+     C012   A2 FF      LDX #&FF
+     C014   9A         TXS
+     C015   9C 00 04   STZ &0400
+     C018   9C E0 BF   STZ &BFE0
+     C01B   64 55      STZ &55
+     C01D   64 54      STZ &54
      C01F   9C 00 03   STZ &0300
      C022   9C 7F 03   STZ &037F
      C025   9C 80 03   STZ &0380
      C028   9C FF 03   STZ &03FF
-     C02B   64 60      STZ &60
+     C02B   64 62      STZ &62
      C02D   A9 00      LDA #&00
-     C02F   85 5E      STA &5E
+     C02F   85 60      STA &60
      C031   A9 08      LDA #&08
-     C033   85 5F      STA &5F
-     C035   A9 06      LDA #&06
+     C033   85 61      STA &61
+     C035   A9 F0      LDA #&F0
      C037   8D 00 02   STA &0200
-     C03A   A9 D2      LDA #&D2
+     C03A   A9 D1      LDA #&D1
      C03C   8D 01 02   STA &0201
-     C03F   A9 1A      LDA #&1A
+     C03F   A9 02      LDA #&02
      C041   8D 02 02   STA &0202
      C044   A9 D2      LDA #&D2
      C046   8D 03 02   STA &0203
-     C049   A9 44      LDA #&44
+     C049   A9 28      LDA #&28
      C04B   8D 04 02   STA &0204
      C04E   A9 D2      LDA #&D2
      C050   8D 05 02   STA &0205
-     C053   A9 DA      LDA #&DA
+     C053   A9 B1      LDA #&B1
      C055   8D 06 02   STA &0206
      C058   A9 D3      LDA #&D3
      C05A   8D 07 02   STA &0207
-     C05D   A9 9F      LDA #&9F
+     C05D   A9 79      LDA #&79
      C05F   8D 08 02   STA &0208
      C062   A9 D3      LDA #&D3
      C064   8D 09 02   STA &0209
-     C067   A9 58      LDA #&58
+     C067   A9 3A      LDA #&3A
      C069   8D 0A 02   STA &020A
      C06C   A9 D2      LDA #&D2
      C06E   8D 0B 02   STA &020B
-     C071   A9 D5      LDA #&D5
+     C071   A9 B5      LDA #&B5
      C073   8D 0C 02   STA &020C
      C076   A9 D2      LDA #&D2
      C078   8D 0D 02   STA &020D
-     C07B   A9 4C      LDA #&4C
+     C07B   A9 56      LDA #&56
      C07D   8D 0E 02   STA &020E
      C080   A9 CC      LDA #&CC
      C082   8D 0F 02   STA &020F
-     C085   A9 67      LDA #&67
+     C085   A9 71      LDA #&71
      C087   8D 10 02   STA &0210
      C08A   A9 CC      LDA #&CC
      C08C   8D 11 02   STA &0211
-     C08F   A9 0F      LDA #&0F
+     C08F   A9 E3      LDA #&E3
      C091   8D 12 02   STA &0212
-     C094   A9 D4      LDA #&D4
+     C094   A9 D3      LDA #&D3
      C096   8D 13 02   STA &0213
-     C099   A9 22      LDA #&22
+     C099   A9 2C      LDA #&2C
      C09B   8D 14 02   STA &0214
      C09E   A9 CC      LDA #&CC
      C0A0   8D 15 02   STA &0215
-     C0A3   A9 3E      LDA #&3E
+     C0A3   A9 48      LDA #&48
      C0A5   8D 16 02   STA &0216
      C0A8   A9 CC      LDA #&CC
      C0AA   8D 17 02   STA &0217
-     C0AD   A9 33      LDA #&33
+     C0AD   A9 08      LDA #&08
      C0AF   8D 18 02   STA &0218
      C0B2   A9 D4      LDA #&D4
      C0B4   8D 19 02   STA &0219
-     C0B7   A9 23      LDA #&23
+     C0B7   A9 F9      LDA #&F9
      C0B9   8D 1A 02   STA &021A
-     C0BC   A9 D4      LDA #&D4
+     C0BC   A9 D3      LDA #&D3
      C0BE   8D 1B 02   STA &021B
-     C0C1   A9 CA      LDA #&CA
+     C0C1   A9 C3      LDA #&C3
      C0C3   8D 1C 02   STA &021C
      C0C6   A9 CF      LDA #&CF
      C0C8   8D 1D 02   STA &021D
-     C0CB   A9 F6      LDA #&F6
+     C0CB   A9 EF      LDA #&EF
      C0CD   8D 1E 02   STA &021E
      C0D0   A9 CF      LDA #&CF
      C0D2   8D 1F 02   STA &021F
-     C0D5   A9 15      LDA #&15
+     C0D5   A9 0E      LDA #&0E
      C0D7   8D 20 02   STA &0220
      C0DA   A9 D0      LDA #&D0
      C0DC   8D 21 02   STA &0221
-     C0DF   A9 4C      LDA #&4C
+     C0DF   A9 44      LDA #&44
      C0E1   8D 22 02   STA &0222
      C0E4   A9 D0      LDA #&D0
      C0E6   8D 23 02   STA &0223
-     C0E9   A9 98      LDA #&98
+     C0E9   A9 86      LDA #&86
      C0EB   8D 24 02   STA &0224
      C0EE   A9 D0      LDA #&D0
      C0F0   8D 25 02   STA &0225
-     C0F3   A9 80      LDA #&80
+     C0F3   A9 70      LDA #&70
      C0F5   8D 26 02   STA &0226
      C0F8   A9 D0      LDA #&D0
      C0FA   8D 27 02   STA &0227
-     C0FD   A9 D8      LDA #&D8
+     C0FD   A9 F2      LDA #&F2
      C0FF   8D 28 02   STA &0228
      C102   A9 D7      LDA #&D7
      C104   8D 29 02   STA &0229
-     C107   A9 5C      LDA #&5C
+     C107   A9 56      LDA #&56
      C109   8D 2A 02   STA &022A
      C10C   A9 D7      LDA #&D7
      C10E   8D 2B 02   STA &022B
-     C111   A9 FF      LDA #&FF
+     C111   A9 19      LDA #&19
      C113   8D 2C 02   STA &022C
-     C116   A9 D7      LDA #&D7
+     C116   A9 D8      LDA #&D8
      C118   8D 2D 02   STA &022D
-     C11B   A9 91      LDA #&91
+     C11B   A9 8B      LDA #&8B
      C11D   8D 2E 02   STA &022E
      C120   A9 D7      LDA #&D7
      C122   8D 2F 02   STA &022F
-     C125   A9 65      LDA #&65
+     C125   A9 5F      LDA #&5F
      C127   8D 48 FF   STA &FF48
      C12A   A9 D7      LDA #&D7
      C12C   8D 49 FF   STA &FF49
-     C12F   A9 83      LDA #&83
+     C12F   A9 7D      LDA #&7D
      C131   8D 32 02   STA &0232
      C134   A9 D7      LDA #&D7
      C136   8D 33 02   STA &0233
-     C139   A9 13      LDA #&13
+     C139   A9 2C      LDA #&2C
      C13B   8D 34 02   STA &0234
      C13E   A9 D8      LDA #&D8
      C140   8D 35 02   STA &0235
-     C143   A9 75      LDA #&75
+     C143   A9 6F      LDA #&6F
      C145   8D 36 02   STA &0236
      C148   A9 D7      LDA #&D7
      C14A   8D 37 02   STA &0237
-     C14D   A9 F6      LDA #&F6
+     C14D   A9 2D      LDA #&2D
      C14F   8D 38 02   STA &0238
-     C152   A9 D8      LDA #&D8
+     C152   A9 D9      LDA #&D9
      C154   8D 39 02   STA &0239
-     C157   A9 53      LDA #&53
+     C157   A9 40      LDA #&40
      C159   8D 3A 02   STA &023A
      C15C   A9 D8      LDA #&D8
      C15E   8D 3B 02   STA &023B
-     C161   A9 27      LDA #&27
+     C161   A9 A5      LDA #&A5
      C163   8D 3C 02   STA &023C
      C166   A9 D8      LDA #&D8
      C168   8D 3D 02   STA &023D
-     C16B   A9 83      LDA #&83
+     C16B   A9 CE      LDA #&CE
      C16D   8D 3E 02   STA &023E
      C170   A9 D8      LDA #&D8
      C172   8D 3F 02   STA &023F
-     C175   A9 02      LDA #&02
+     C175   A9 FA      LDA #&FA
      C177   8D 40 02   STA &0240
-     C17A   A9 D9      LDA #&D9
+     C17A   A9 D8      LDA #&D8
      C17C   8D 41 02   STA &0241
-     C17F   A9 E6      LDA #&E6
+     C17F   A9 39      LDA #&39
      C181   8D 42 02   STA &0242
-     C184   A9 D8      LDA #&D8
+     C184   A9 D9      LDA #&D9
      C186   8D 43 02   STA &0243
-     C189   A9 E0      LDA #&E0
+     C189   A9 EA      LDA #&EA
      C18B   8D 44 02   STA &0244
      C18E   A9 CC      LDA #&CC
      C190   8D 45 02   STA &0245
-     C193   A9 0D      LDA #&0D
+     C193   A9 13      LDA #&13
      C195   8D 46 02   STA &0246
      C198   A9 CD      LDA #&CD
      C19A   8D 47 02   STA &0247
-     C19D   A9 80      LDA #&80
+     C19D   A9 82      LDA #&82
      C19F   8D 48 02   STA &0248
      C1A2   A9 CD      LDA #&CD
      C1A4   8D 49 02   STA &0249
-     C1A7   A9 72      LDA #&72
+     C1A7   A9 6F      LDA #&6F
      C1A9   8D 4A 02   STA &024A
      C1AC   A9 D6      LDA #&D6
      C1AE   8D 4B 02   STA &024B
@@ -177,2595 +177,2646 @@
      C1B3   8D 02 A0   STA &A002
      C1B6   8D 03 A0   STA &A003
      C1B9   A9 38      LDA #&38
-     C1BB   20 EB D6   JSR &D6EB
+     C1BB   20 E5 D6   JSR &D6E5
      C1BE   A9 0C      LDA #&0C
-     C1C0   20 EB D6   JSR &D6EB
+     C1C0   20 E5 D6   JSR &D6E5
      C1C3   A9 01      LDA #&01
-     C1C5   20 EB D6   JSR &D6EB
+     C1C5   20 E5 D6   JSR &D6E5
      C1C8   A9 FF      LDA #&FF
      C1CA   8D 03 A8   STA &A803
      C1CD   8D 02 A8   STA &A802
      C1D0   9C 01 A8   STZ &A801
      C1D3   9C 00 A8   STZ &A800
-     C1D6   20 6E CC   JSR &CC6E
-     C1D9   20 E0 CB   JSR &CBE0
+     C1D6   20 78 CC   JSR &CC78
+     C1D9   20 EA CB   JSR &CBEA
+     C1DC   20 66 D8   JSR &D866
 .main
 Macro LED_ON:
-     C1DC   48         PHA
-     C1DD   AD 01 A0   LDA &A001
-     C1E0   09 01      ORA #&01
-     C1E2   8D 01 A0   STA &A001
-     C1E5   68         PLA
+     C1DF   48         PHA
+     C1E0   AD 01 A0   LDA &A001
+     C1E3   09 01      ORA #&01
+     C1E5   8D 01 A0   STA &A001
+     C1E8   68         PLA
 End macro LED_ON
 Macro LED_ON:
-     C1E6   48         PHA
-     C1E7   AD 01 A0   LDA &A001
-     C1EA   09 02      ORA #&02
-     C1EC   8D 01 A0   STA &A001
-     C1EF   68         PLA
+     C1E9   48         PHA
+     C1EA   AD 01 A0   LDA &A001
+     C1ED   09 02      ORA #&02
+     C1EF   8D 01 A0   STA &A001
+     C1F2   68         PLA
 End macro LED_ON
 Macro LED_ON:
-     C1F0   48         PHA
-     C1F1   AD 01 A0   LDA &A001
-     C1F4   09 04      ORA #&04
-     C1F6   8D 01 A0   STA &A001
-     C1F9   68         PLA
+     C1F3   48         PHA
+     C1F4   AD 01 A0   LDA &A001
+     C1F7   09 04      ORA #&04
+     C1F9   8D 01 A0   STA &A001
+     C1FC   68         PLA
 End macro LED_ON
 Macro LED_ON:
-     C1FA   48         PHA
-     C1FB   AD 01 A0   LDA &A001
-     C1FE   09 08      ORA #&08
-     C200   8D 01 A0   STA &A001
-     C203   68         PLA
+     C1FD   48         PHA
+     C1FE   AD 01 A0   LDA &A001
+     C201   09 08      ORA #&08
+     C203   8D 01 A0   STA &A001
+     C206   68         PLA
 End macro LED_ON
 Macro LED_ON:
-     C204   48         PHA
-     C205   AD 01 A0   LDA &A001
-     C208   09 10      ORA #&10
-     C20A   8D 01 A0   STA &A001
-     C20D   68         PLA
+     C207   48         PHA
+     C208   AD 01 A0   LDA &A001
+     C20B   09 10      ORA #&10
+     C20D   8D 01 A0   STA &A001
+     C210   68         PLA
 End macro LED_ON
-     C20E   A9 0A      LDA #&0A
-     C210   20 18 FF   JSR &FF18
-     C213   20 18 FF   JSR &FF18
+     C211   9C 30 04   STZ &0430
+     C214   A9 0A      LDA #&0A
+     C216   20 18 FF   JSR &FF18
+     C219   20 18 FF   JSR &FF18
 Macro PRT_MSG:
-     C216   A9 8B      LDA #&8B
-     C218   85 50      STA &50
-     C21A   A9 DD      LDA #&DD
-     C21C   85 51      STA &51
-     C21E   20 22 CC   JSR &CC22
+     C21C   A9 DD      LDA #&DD
+     C21E   85 50      STA &50
+     C220   A9 DD      LDA #&DD
+     C222   85 51      STA &51
+     C224   20 2C CC   JSR &CC2C
 End macro PRT_MSG
-     C221   A9 0A      LDA #&0A
-     C223   20 18 FF   JSR &FF18
+     C227   A9 0A      LDA #&0A
+     C229   20 18 FF   JSR &FF18
 Macro PRT_MSG:
-     C226   A9 03      LDA #&03
-     C228   85 50      STA &50
-     C22A   A9 C0      LDA #&C0
-     C22C   85 51      STA &51
-     C22E   20 22 CC   JSR &CC22
+     C22C   A9 03      LDA #&03
+     C22E   85 50      STA &50
+     C230   A9 C0      LDA #&C0
+     C232   85 51      STA &51
+     C234   20 2C CC   JSR &CC2C
 End macro PRT_MSG
-     C231   20 3F FF   JSR &FF3F
+     C237   20 3F FF   JSR &FF3F
 Macro PRT_MSG:
-     C234   A9 8B      LDA #&8B
-     C236   85 50      STA &50
-     C238   A9 DD      LDA #&DD
-     C23A   85 51      STA &51
-     C23C   20 91 D7   JSR &D791
+     C23A   A9 DD      LDA #&DD
+     C23C   85 50      STA &50
+     C23E   A9 DD      LDA #&DD
+     C240   85 51      STA &51
+     C242   20 8B D7   JSR &D78B
 End macro PRT_MSG
 Macro PRT_MSG:
-     C23F   A9 03      LDA #&03
-     C241   85 50      STA &50
-     C243   A9 C0      LDA #&C0
-     C245   85 51      STA &51
-     C247   20 91 D7   JSR &D791
+     C245   A9 03      LDA #&03
+     C247   85 50      STA &50
+     C249   A9 C0      LDA #&C0
+     C24B   85 51      STA &51
+     C24D   20 8B D7   JSR &D78B
 End macro PRT_MSG
-     C24A   A9 04      LDA #&04
-     C24C   8D E0 BF   STA &BFE0
-     C24F   20 87 D5   JSR &D587
-     C252   AD 0A 04   LDA &040A
-     C255   D0 0B      BNE &C262
+     C250   A9 04      LDA #&04
+     C252   8D E0 BF   STA &BFE0
+     C255   20 87 D5   JSR &D587
+     C258   A5 55      LDA &55
+     C25A   D0 0B      BNE &C267
 Macro LOAD_MSG:
-     C257   A9 E9      LDA #&E9
-     C259   85 50      STA &50
-     C25B   A9 D5      LDA #&D5
-     C25D   85 51      STA &51
+     C25C   A9 E4      LDA #&E4
+     C25E   85 50      STA &50
+     C260   A9 D5      LDA #&D5
+     C262   85 51      STA &51
 End macro LOAD_MSG
-     C25F   4C 6A C2   JMP &C26A
+     C264   4C 6F C2   JMP &C26F
 .boot_exmem_err
 Macro LOAD_MSG:
-     C262   A9 F9      LDA #&F9
-     C264   85 50      STA &50
-     C266   A9 D5      LDA #&D5
-     C268   85 51      STA &51
+     C267   A9 F6      LDA #&F6
+     C269   85 50      STA &50
+     C26B   A9 D5      LDA #&D5
+     C26D   85 51      STA &51
 End macro LOAD_MSG
 .boot_exmem_def
-     C26A   A9 0A      LDA #&0A
-     C26C   20 18 FF   JSR &FF18
-     C26F   20 1E FF   JSR &FF1E
-     C272   20 45 FF   JSR &FF45
-     C275   A9 00      LDA #&00
-     C277   8D E0 BF   STA &BFE0
-     C27A   8D 00 04   STA &0400
+     C26F   A9 0A      LDA #&0A
+     C271   20 18 FF   JSR &FF18
+     C274   20 1E FF   JSR &FF1E
+     C277   20 45 FF   JSR &FF45
+     C27A   A9 00      LDA #&00
+     C27C   8D E0 BF   STA &BFE0
+     C27F   8D 00 04   STA &0400
 Macro NEWLINE:
-     C27D   A9 0A      LDA #&0A
-     C27F   20 18 FF   JSR &FF18
+     C282   A9 0A      LDA #&0A
+     C284   20 18 FF   JSR &FF18
 End macro NEWLINE
-     C282   A9 F4      LDA #&F4
-     C284   8D 36 04   STA &0436
-     C287   A9 01      LDA #&01
-     C289   8D 37 04   STA &0437
+     C287   A9 F4      LDA #&F4
+     C289   8D 34 04   STA &0434
+     C28C   A9 01      LDA #&01
+     C28E   8D 35 04   STA &0435
+     C291   A5 63      LDA &63
+     C293   09 04      ORA #&04
+     C295   D0 0B      BNE &C2A2
 Macro LOAD_MSG:
-     C28C   A9 97      LDA #&97
-     C28E   85 50      STA &50
-     C290   A9 DD      LDA #&DD
-     C292   85 51      STA &51
+     C297   A9 80      LDA #&80
+     C299   85 50      STA &50
+     C29B   A9 D9      LDA #&D9
+     C29D   85 51      STA &51
 End macro LOAD_MSG
-     C294   20 1E FF   JSR &FF1E
-     C297   20 45 FF   JSR &FF45
-Macro LED_OFF:
-     C29A   48         PHA
-     C29B   A9 FF      LDA #&FF
-     C29D   49 01      EOR #&01
-     C29F   2D 01 A0   AND &A001
-     C2A2   8D 01 A0   STA &A001
-     C2A5   68         PLA
-End macro LED_OFF
-Macro LED_OFF:
-     C2A6   48         PHA
-     C2A7   A9 FF      LDA #&FF
-     C2A9   49 02      EOR #&02
-     C2AB   2D 01 A0   AND &A001
-     C2AE   8D 01 A0   STA &A001
-     C2B1   68         PLA
-End macro LED_OFF
-Macro LED_OFF:
-     C2B2   48         PHA
-     C2B3   A9 FF      LDA #&FF
-     C2B5   49 04      EOR #&04
-     C2B7   2D 01 A0   AND &A001
-     C2BA   8D 01 A0   STA &A001
-     C2BD   68         PLA
-End macro LED_OFF
-Macro LED_OFF:
-     C2BE   48         PHA
-     C2BF   A9 FF      LDA #&FF
-     C2C1   49 08      EOR #&08
-     C2C3   2D 01 A0   AND &A001
-     C2C6   8D 01 A0   STA &A001
-     C2C9   68         PLA
-End macro LED_OFF
-Macro LED_OFF:
-     C2CA   48         PHA
-     C2CB   A9 FF      LDA #&FF
-     C2CD   49 10      EOR #&10
-     C2CF   2D 01 A0   AND &A001
-     C2D2   8D 01 A0   STA &A001
-     C2D5   68         PLA
-End macro LED_OFF
-     C2D6   58         CLI
+     C29F   4C AA C2   JMP &C2AA
+.parallel_ok
+Macro LOAD_MSG:
+     C2A2   A9 6B      LDA #&6B
+     C2A4   85 50      STA &50
+     C2A6   A9 D9      LDA #&D9
+     C2A8   85 51      STA &51
+End macro LOAD_MSG
+.parallel_msg
+     C2AA   20 1E FF   JSR &FF1E
+Macro NEWLINE:
+     C2AD   A9 0A      LDA #&0A
+     C2AF   20 18 FF   JSR &FF18
+End macro NEWLINE
+     C2B2   20 45 FF   JSR &FF45
+.ready
+Macro LOAD_MSG:
+     C2B5   A9 E9      LDA #&E9
+     C2B7   85 50      STA &50
+     C2B9   A9 DD      LDA #&DD
+     C2BB   85 51      STA &51
+End macro LOAD_MSG
+     C2BD   20 1E FF   JSR &FF1E
+     C2C0   20 45 FF   JSR &FF45
+     C2C3   58         CLI
 .soft_reset
-     C2D7   AD 32 04   LDA &0432
-     C2DA   F0 0D      BEQ &C2E9
-Macro LED_ON:
+Macro LED_OFF:
+     C2C4   48         PHA
+     C2C5   A9 FF      LDA #&FF
+     C2C7   49 01      EOR #&01
+     C2C9   2D 01 A0   AND &A001
+     C2CC   8D 01 A0   STA &A001
+     C2CF   68         PLA
+End macro LED_OFF
+Macro LED_OFF:
+     C2D0   48         PHA
+     C2D1   A9 FF      LDA #&FF
+     C2D3   49 02      EOR #&02
+     C2D5   2D 01 A0   AND &A001
+     C2D8   8D 01 A0   STA &A001
+     C2DB   68         PLA
+End macro LED_OFF
+Macro LED_OFF:
      C2DC   48         PHA
-     C2DD   AD 01 A0   LDA &A001
-     C2E0   09 01      ORA #&01
-     C2E2   8D 01 A0   STA &A001
-     C2E5   68         PLA
+     C2DD   A9 FF      LDA #&FF
+     C2DF   49 04      EOR #&04
+     C2E1   2D 01 A0   AND &A001
+     C2E4   8D 01 A0   STA &A001
+     C2E7   68         PLA
+End macro LED_OFF
+Macro LED_OFF:
+     C2E8   48         PHA
+     C2E9   A9 FF      LDA #&FF
+     C2EB   49 08      EOR #&08
+     C2ED   2D 01 A0   AND &A001
+     C2F0   8D 01 A0   STA &A001
+     C2F3   68         PLA
+End macro LED_OFF
+Macro LED_OFF:
+     C2F4   48         PHA
+     C2F5   A9 FF      LDA #&FF
+     C2F7   49 10      EOR #&10
+     C2F9   2D 01 A0   AND &A001
+     C2FC   8D 01 A0   STA &A001
+     C2FF   68         PLA
+End macro LED_OFF
+     C300   AD 30 04   LDA &0430
+     C303   F0 0D      BEQ &C312
+Macro LED_ON:
+     C305   48         PHA
+     C306   AD 01 A0   LDA &A001
+     C309   09 01      ORA #&01
+     C30B   8D 01 A0   STA &A001
+     C30E   68         PLA
 End macro LED_ON
-     C2E6   4C FE C2   JMP &C2FE
+     C30F   4C 27 C3   JMP &C327
 .soft_start
 Macro LED_ON:
-     C2E9   48         PHA
-     C2EA   AD 01 A0   LDA &A001
-     C2ED   09 04      ORA #&04
-     C2EF   8D 01 A0   STA &A001
-     C2F2   68         PLA
+     C312   48         PHA
+     C313   AD 01 A0   LDA &A001
+     C316   09 04      ORA #&04
+     C318   8D 01 A0   STA &A001
+     C31B   68         PLA
 End macro LED_ON
 Macro SERIAL_PROMPT:
-     C2F3   A9 87      LDA #&87
-     C2F5   85 50      STA &50
-     C2F7   A9 DD      LDA #&DD
-     C2F9   85 51      STA &51
-     C2FB   20 1E FF   JSR &FF1E
+     C31C   A9 D9      LDA #&D9
+     C31E   85 50      STA &50
+     C320   A9 DD      LDA #&DD
+     C322   85 51      STA &51
+     C324   20 1E FF   JSR &FF1E
 End macro SERIAL_PROMPT
 .mainloop
-     C2FE   A5 60      LDA &60
-     C300   29 01      AND #&01
-     C302   D0 0A      BNE &C30E
-     C304   AE 7F 03   LDX &037F
-     C307   E0 78      CPX #&78
-     C309   B0 03      BCS &C30E
-     C30B   4C FE C2   JMP &C2FE
+     C327   A5 62      LDA &62
+     C329   29 01      AND #&01
+     C32B   D0 0A      BNE &C337
+     C32D   AE 7F 03   LDX &037F
+     C330   E0 78      CPX #&78
+     C332   B0 03      BCS &C337
+     C334   4C 27 C3   JMP &C327
 .process_input
 Macro LED_ON:
-     C30E   48         PHA
-     C30F   AD 01 A0   LDA &A001
-     C312   09 02      ORA #&02
-     C314   8D 01 A0   STA &A001
-     C317   68         PLA
+     C337   48         PHA
+     C338   AD 01 A0   LDA &A001
+     C33B   09 02      ORA #&02
+     C33D   8D 01 A0   STA &A001
+     C340   68         PLA
 End macro LED_ON
 Macro LED_OFF:
-     C318   48         PHA
-     C319   A9 FF      LDA #&FF
-     C31B   49 01      EOR #&01
-     C31D   2D 01 A0   AND &A001
-     C320   8D 01 A0   STA &A001
-     C323   68         PLA
+     C341   48         PHA
+     C342   A9 FF      LDA #&FF
+     C344   49 01      EOR #&01
+     C346   2D 01 A0   AND &A001
+     C349   8D 01 A0   STA &A001
+     C34C   68         PLA
 End macro LED_OFF
 Macro LED_OFF:
-     C324   48         PHA
-     C325   A9 FF      LDA #&FF
-     C327   49 04      EOR #&04
-     C329   2D 01 A0   AND &A001
-     C32C   8D 01 A0   STA &A001
-     C32F   68         PLA
+     C34D   48         PHA
+     C34E   A9 FF      LDA #&FF
+     C350   49 04      EOR #&04
+     C352   2D 01 A0   AND &A001
+     C355   8D 01 A0   STA &A001
+     C358   68         PLA
 End macro LED_OFF
 Macro LED_OFF:
-     C330   48         PHA
-     C331   A9 FF      LDA #&FF
-     C333   49 10      EOR #&10
-     C335   2D 01 A0   AND &A001
-     C338   8D 01 A0   STA &A001
-     C33B   68         PLA
+     C359   48         PHA
+     C35A   A9 FF      LDA #&FF
+     C35C   49 10      EOR #&10
+     C35E   2D 01 A0   AND &A001
+     C361   8D 01 A0   STA &A001
+     C364   68         PLA
 End macro LED_OFF
 Macro LED_OFF:
-     C33C   48         PHA
-     C33D   A9 FF      LDA #&FF
-     C33F   49 08      EOR #&08
-     C341   2D 01 A0   AND &A001
-     C344   8D 01 A0   STA &A001
-     C347   68         PLA
+     C365   48         PHA
+     C366   A9 FF      LDA #&FF
+     C368   49 08      EOR #&08
+     C36A   2D 01 A0   AND &A001
+     C36D   8D 01 A0   STA &A001
+     C370   68         PLA
 End macro LED_OFF
-     C348   A5 60      LDA &60
-     C34A   29 F0      AND #&F0
-     C34C   85 60      STA &60
-     C34E   20 C9 D0   JSR &D0C9
-     C351   AD 09 04   LDA &0409
-     C354   C9 00      CMP #&00
-     C356   F0 2C      BEQ &C384
-     C358   C9 01      CMP #&01
-     C35A   F0 16      BEQ &C372
-     C35C   C9 03      CMP #&03
-     C35E   F0 12      BEQ &C372
-     C360   38         SEC
-     C361   E9 80      SBC #&80
-     C363   0A         ASL A
-     C364   A8         TAY
-     C365   B9 00 DA   LDA &DA00,Y
-     C368   85 54      STA &54
-     C36A   B9 01 DA   LDA &DA01,Y
-     C36D   85 55      STA &55
-     C36F   6C 54 00   JMP (&0054)
+     C371   A5 62      LDA &62
+     C373   29 F0      AND #&F0
+     C375   85 62      STA &62
+     C377   20 B7 D0   JSR &D0B7
+     C37A   A5 54      LDA &54
+     C37C   C9 00      CMP #&00
+     C37E   F0 2B      BEQ &C3AB
+     C380   C9 01      CMP #&01
+     C382   F0 16      BEQ &C39A
+     C384   C9 03      CMP #&03
+     C386   F0 12      BEQ &C39A
+     C388   38         SEC
+     C389   E9 80      SBC #&80
+     C38B   0A         ASL A
+     C38C   A8         TAY
+     C38D   B9 00 DA   LDA &DA00,Y
+     C390   85 56      STA &56
+     C392   B9 01 DA   LDA &DA01,Y
+     C395   85 57      STA &57
+     C397   6C 56 00   JMP (&0056)
 .process_input_fail
 Macro LED_ON:
-     C372   48         PHA
-     C373   AD 01 A0   LDA &A001
-     C376   09 01      ORA #&01
-     C378   8D 01 A0   STA &A001
-     C37B   68         PLA
+     C39A   48         PHA
+     C39B   AD 01 A0   LDA &A001
+     C39E   09 01      ORA #&01
+     C3A0   8D 01 A0   STA &A001
+     C3A3   68         PLA
 End macro LED_ON
-     C37C   A9 03      LDA #&03
-     C37E   8D 0A 04   STA &040A
-     C381   20 0F D4   JSR &D40F
+     C3A4   A9 03      LDA #&03
+     C3A6   85 55      STA &55
+     C3A8   20 E3 D3   JSR &D3E3
 .process_input_nul
 Macro SERIAL_PROMPT:
-     C384   A9 87      LDA #&87
-     C386   85 50      STA &50
-     C388   A9 DD      LDA #&DD
-     C38A   85 51      STA &51
-     C38C   20 1E FF   JSR &FF1E
+     C3AB   A9 D9      LDA #&D9
+     C3AD   85 50      STA &50
+     C3AF   A9 DD      LDA #&DD
+     C3B1   85 51      STA &51
+     C3B3   20 1E FF   JSR &FF1E
 End macro SERIAL_PROMPT
-     C38F   4C CB CB   JMP &CBCB
+     C3B6   4C D5 CB   JMP &CBD5
 .cmdprcSTAR
-     C392   4C C0 CB   JMP &CBC0
+     C3B9   4C CA CB   JMP &CBCA
 .cmdprcBRK
-     C395   BD 00 03   LDA &0300,X
-     C398   D0 15      BNE &C3AF
-     C39A   A2 FF      LDX #&FF
-     C39C   9A         TXS
-     C39D   9C 7F 03   STZ &037F
+     C3BC   BD 00 03   LDA &0300,X
+     C3BF   D0 15      BNE &C3D6
+     C3C1   A2 FF      LDX #&FF
+     C3C3   9A         TXS
+     C3C4   9C 7F 03   STZ &037F
 Macro LED_OFF:
-     C3A0   48         PHA
-     C3A1   A9 FF      LDA #&FF
-     C3A3   49 02      EOR #&02
-     C3A5   2D 01 A0   AND &A001
-     C3A8   8D 01 A0   STA &A001
-     C3AB   68         PLA
+     C3C7   48         PHA
+     C3C8   A9 FF      LDA #&FF
+     C3CA   49 02      EOR #&02
+     C3CC   2D 01 A0   AND &A001
+     C3CF   8D 01 A0   STA &A001
+     C3D2   68         PLA
 End macro LED_OFF
-     C3AC   4C 00 C0   JMP &C000
+     C3D3   4C 00 C0   JMP &C000
 .cmdprcBRK_fail
-     C3AF   4C B3 CB   JMP &CBB3
+     C3D6   4C BD CB   JMP &CBBD
 .cmdprcCLEAR
-     C3B2   A2 00      LDX #&00
+     C3D9   A2 00      LDX #&00
 .cmdprcCLEAR_loop
-     C3B4   9E 00 08   STZ &0800,X
-     C3B7   E8         INX
-     C3B8   E0 40      CPX #&40
-     C3BA   D0 F8      BNE &C3B4
+     C3DB   9E 00 08   STZ &0800,X
+     C3DE   E8         INX
+     C3DF   E0 40      CPX #&40
+     C3E1   D0 F8      BNE &C3DB
 Macro LOAD_MSG:
-     C3BC   A9 D2      LDA #&D2
-     C3BE   85 50      STA &50
-     C3C0   A9 C3      LDA #&C3
-     C3C2   85 51      STA &51
+     C3E3   A9 F9      LDA #&F9
+     C3E5   85 50      STA &50
+     C3E7   A9 C3      LDA #&C3
+     C3E9   85 51      STA &51
 End macro LOAD_MSG
-     C3C4   20 1E FF   JSR &FF1E
+     C3EB   20 1E FF   JSR &FF1E
 Macro NEWLINE:
-     C3C7   A9 0A      LDA #&0A
-     C3C9   20 18 FF   JSR &FF18
+     C3EE   A9 0A      LDA #&0A
+     C3F0   20 18 FF   JSR &FF18
 End macro NEWLINE
-     C3CC   20 45 FF   JSR &FF45
-     C3CF   4C A6 CB   JMP &CBA6
+     C3F3   20 45 FF   JSR &FF45
+     C3F6   4C B0 CB   JMP &CBB0
 .cdmprcCLEAR_msg
-     C3D2   50 72 6F ...
-     C3E1   00
+     C3F9   50 72 6F ...
+     C408   00
 .cmdprcDEL
 Macro LED_ON:
-     C3E2   48         PHA
-     C3E3   AD 01 A0   LDA &A001
-     C3E6   09 08      ORA #&08
-     C3E8   8D 01 A0   STA &A001
-     C3EB   68         PLA
+     C409   48         PHA
+     C40A   AD 01 A0   LDA &A001
+     C40D   09 08      ORA #&08
+     C40F   8D 01 A0   STA &A001
+     C412   68         PLA
 End macro LED_ON
 Macro LOAD_MSG:
-     C3EC   A9 A0      LDA #&A0
-     C3EE   85 50      STA &50
-     C3F0   A9 CF      LDA #&CF
-     C3F2   85 51      STA &51
+     C413   A9 99      LDA #&99
+     C415   85 50      STA &50
+     C417   A9 CF      LDA #&CF
+     C419   85 51      STA &51
 End macro LOAD_MSG
-     C3F4   20 1E FF   JSR &FF1E
-     C3F7   20 45 FF   JSR &FF45
-     C3FA   20 D5 D2   JSR &D2D5
-     C3FD   AD 0A 04   LDA &040A
-     C400   D0 19      BNE &C41B
-     C402   20 E0 CC   JSR &CCE0
-     C405   AD 0A 04   LDA &040A
-     C408   D0 11      BNE &C41B
+     C41B   20 1E FF   JSR &FF1E
+     C41E   20 45 FF   JSR &FF45
+     C421   20 B5 D2   JSR &D2B5
+     C424   A5 55      LDA &55
+     C426   D0 18      BNE &C440
+     C428   20 EA CC   JSR &CCEA
+     C42B   A5 55      LDA &55
+     C42D   D0 11      BNE &C440
 Macro LOAD_MSG:
-     C40A   A9 C7      LDA #&C7
-     C40C   85 50      STA &50
-     C40E   A9 CF      LDA #&CF
-     C410   85 51      STA &51
+     C42F   A9 C0      LDA #&C0
+     C431   85 50      STA &50
+     C433   A9 CF      LDA #&CF
+     C435   85 51      STA &51
 End macro LOAD_MSG
-     C412   20 1E FF   JSR &FF1E
-     C415   20 45 FF   JSR &FF45
-     C418   4C 24 C4   JMP &C424
+     C437   20 1E FF   JSR &FF1E
+     C43A   20 45 FF   JSR &FF45
+     C43D   4C 43 C4   JMP &C443
 .cmdprcDEL_err
-     C41B   20 0F D4   JSR &D40F
-     C41E   20 42 FF   JSR &FF42
-     C421   4C B3 CB   JMP &CBB3
+     C440   4C BD CB   JMP &CBBD
 .cmdprcDEL_end
 Macro LED_OFF:
-     C424   48         PHA
-     C425   A9 FF      LDA #&FF
-     C427   49 08      EOR #&08
-     C429   2D 01 A0   AND &A001
-     C42C   8D 01 A0   STA &A001
-     C42F   68         PLA
+     C443   48         PHA
+     C444   A9 FF      LDA #&FF
+     C446   49 08      EOR #&08
+     C448   2D 01 A0   AND &A001
+     C44B   8D 01 A0   STA &A001
+     C44E   68         PLA
 End macro LED_OFF
-     C430   4C A6 CB   JMP &CBA6
+     C44F   4C B0 CB   JMP &CBB0
 .cmdprcDUMP
 Macro LED_ON:
-     C433   48         PHA
-     C434   AD 01 A0   LDA &A001
-     C437   09 08      ORA #&08
-     C439   8D 01 A0   STA &A001
-     C43C   68         PLA
+     C452   48         PHA
+     C453   AD 01 A0   LDA &A001
+     C456   09 08      ORA #&08
+     C458   8D 01 A0   STA &A001
+     C45B   68         PLA
 End macro LED_ON
 Macro LOAD_MSG:
-     C43D   A9 B1      LDA #&B1
-     C43F   85 50      STA &50
-     C441   A9 C4      LDA #&C4
-     C443   85 51      STA &51
+     C45C   A9 CA      LDA #&CA
+     C45E   85 50      STA &50
+     C460   A9 C4      LDA #&C4
+     C462   85 51      STA &51
 End macro LOAD_MSG
-     C445   20 1E FF   JSR &FF1E
-     C448   20 45 FF   JSR &FF45
-     C44B   20 BC D3   JSR &D3BC
-     C44E   AD 0A 04   LDA &040A
-     C451   D0 32      BNE &C485
-     C453   20 52 D6   JSR &D652
-     C456   AD 09 04   LDA &0409
-     C459   D0 25      BNE &C480
-     C45B   20 D5 D2   JSR &D2D5
-     C45E   AD 0A 04   LDA &040A
-     C461   D0 22      BNE &C485
-     C463   AE 7F 03   LDX &037F
-     C466   BD 00 03   LDA &0300,X
-     C469   D0 0D      BNE &C478
-     C46B   A9 10      LDA #&10
-     C46D   20 80 CD   JSR &CD80
-     C470   AD 0A 04   LDA &040A
-     C473   D0 10      BNE &C485
-     C475   4C 94 C4   JMP &C494
+     C464   20 1E FF   JSR &FF1E
+     C467   20 45 FF   JSR &FF45
+     C46A   20 94 D3   JSR &D394
+     C46D   A5 55      LDA &55
+     C46F   D0 2D      BNE &C49E
+     C471   20 50 D6   JSR &D650
+     C474   A5 54      LDA &54
+     C476   D0 22      BNE &C49A
+     C478   20 B5 D2   JSR &D2B5
+     C47B   A5 55      LDA &55
+     C47D   D0 1F      BNE &C49E
+     C47F   AE 7F 03   LDX &037F
+     C482   BD 00 03   LDA &0300,X
+     C485   D0 0C      BNE &C493
+     C487   A9 10      LDA #&10
+     C489   20 82 CD   JSR &CD82
+     C48C   A5 55      LDA &55
+     C48E   D0 0E      BNE &C49E
+     C490   4C AD C4   JMP &C4AD
 .cmdprcDUMP_synerr
-     C478   A9 05      LDA #&05
-     C47A   8D 0A 04   STA &040A
-     C47D   4C 85 C4   JMP &C485
+     C493   A9 05      LDA #&05
+     C495   85 55      STA &55
+     C497   4C 9E C4   JMP &C49E
 .cmdprcDUMP_addr_err
-     C480   A9 14      LDA #&14
-     C482   8D 0A 04   STA &040A
+     C49A   A9 14      LDA #&14
+     C49C   85 55      STA &55
 .cmdprcDUMP_err
 Macro LED_OFF:
-     C485   48         PHA
-     C486   A9 FF      LDA #&FF
-     C488   49 08      EOR #&08
-     C48A   2D 01 A0   AND &A001
-     C48D   8D 01 A0   STA &A001
-     C490   68         PLA
+     C49E   48         PHA
+     C49F   A9 FF      LDA #&FF
+     C4A1   49 08      EOR #&08
+     C4A3   2D 01 A0   AND &A001
+     C4A6   8D 01 A0   STA &A001
+     C4A9   68         PLA
 End macro LED_OFF
-     C491   4C B3 CB   JMP &CBB3
+     C4AA   4C BD CB   JMP &CBBD
 .cmdprcDUMP_success
 Macro LED_OFF:
-     C494   48         PHA
-     C495   A9 FF      LDA #&FF
-     C497   49 08      EOR #&08
-     C499   2D 01 A0   AND &A001
-     C49C   8D 01 A0   STA &A001
-     C49F   68         PLA
+     C4AD   48         PHA
+     C4AE   A9 FF      LDA #&FF
+     C4B0   49 08      EOR #&08
+     C4B2   2D 01 A0   AND &A001
+     C4B5   8D 01 A0   STA &A001
+     C4B8   68         PLA
 End macro LED_OFF
 Macro LOAD_MSG:
-     C4A0   A9 C7      LDA #&C7
-     C4A2   85 50      STA &50
-     C4A4   A9 CF      LDA #&CF
-     C4A6   85 51      STA &51
+     C4B9   A9 C0      LDA #&C0
+     C4BB   85 50      STA &50
+     C4BD   A9 CF      LDA #&CF
+     C4BF   85 51      STA &51
 End macro LOAD_MSG
-     C4A8   20 1E FF   JSR &FF1E
-     C4AB   20 45 FF   JSR &FF45
-     C4AE   4C A6 CB   JMP &CBA6
+     C4C1   20 1E FF   JSR &FF1E
+     C4C4   20 45 FF   JSR &FF45
+     C4C7   4C B0 CB   JMP &CBB0
 .cdmprcDUMP_msg
-     C4B1   44 75 6D ...
-     C4C4   00
+     C4CA   44 75 6D ...
+     C4DD   00
 .cmdprcHELP
-     C4C5   A2 00      LDX #&00
-     C4C7   A0 00      LDY #&00
-     C4C9   9C 02 04   STZ &0402
+     C4DE   A2 00      LDX #&00
+     C4E0   A0 00      LDY #&00
+     C4E2   9C 02 04   STZ &0402
 .cmdprcHELP_next_chr
-     C4CC   BD AE DC   LDA &DCAE,X
-     C4CF   F0 0C      BEQ &C4DD
-     C4D1   C9 FF      CMP #&FF
-     C4D3   F0 33      BEQ &C508
-     C4D5   20 18 FF   JSR &FF18
-     C4D8   E8         INX
-     C4D9   C8         INY
-     C4DA   4C CC C4   JMP &C4CC
+     C4E5   BD FC DC   LDA &DCFC,X
+     C4E8   F0 0C      BEQ &C4F6
+     C4EA   C9 FF      CMP #&FF
+     C4EC   F0 33      BEQ &C521
+     C4EE   20 18 FF   JSR &FF18
+     C4F1   E8         INX
+     C4F2   C8         INY
+     C4F3   4C E5 C4   JMP &C4E5
 .cmdprcHELP_padcmd
-     C4DD   AD 02 04   LDA &0402
-     C4E0   C9 06      CMP #&06
-     C4E2   F0 16      BEQ &C4FA
-     C4E4   EE 02 04   INC &0402
+     C4F6   AD 02 04   LDA &0402
+     C4F9   C9 06      CMP #&06
+     C4FB   F0 16      BEQ &C513
+     C4FD   EE 02 04   INC &0402
 .cmdprcHELP_addspc
-     C4E7   C0 08      CPY #&08
-     C4E9   F0 09      BEQ &C4F4
-     C4EB   A9 20      LDA #&20
-     C4ED   20 18 FF   JSR &FF18
-     C4F0   C8         INY
-     C4F1   4C E7 C4   JMP &C4E7
+     C500   C0 08      CPY #&08
+     C502   F0 09      BEQ &C50D
+     C504   A9 20      LDA #&20
+     C506   20 18 FF   JSR &FF18
+     C509   C8         INY
+     C50A   4C 00 C5   JMP &C500
 .cmdprcHELP_cmddone
-     C4F4   A0 00      LDY #&00
-     C4F6   E8         INX
-     C4F7   4C CC C4   JMP &C4CC
+     C50D   A0 00      LDY #&00
+     C50F   E8         INX
+     C510   4C E5 C4   JMP &C4E5
 .cmdprcHELP_nextline
-     C4FA   A0 00      LDY #&00
-     C4FC   E8         INX
-     C4FD   9C 02 04   STZ &0402
-     C500   A9 0A      LDA #&0A
-     C502   20 18 FF   JSR &FF18
-     C505   4C CC C4   JMP &C4CC
+     C513   A0 00      LDY #&00
+     C515   E8         INX
+     C516   9C 02 04   STZ &0402
+     C519   A9 0A      LDA #&0A
+     C51B   20 18 FF   JSR &FF18
+     C51E   4C E5 C4   JMP &C4E5
 .cmdprcHELP_end
-     C508   A9 0A      LDA #&0A
-     C50A   20 18 FF   JSR &FF18
-     C50D   4C A6 CB   JMP &CBA6
+     C521   A9 0A      LDA #&0A
+     C523   20 18 FF   JSR &FF18
+     C526   4C B0 CB   JMP &CBB0
 .cmdprcJMP
 Macro LOAD_MSG:
-     C510   A9 78      LDA #&78
-     C512   85 50      STA &50
-     C514   A9 C5      LDA #&C5
-     C516   85 51      STA &51
+     C529   A9 90      LDA #&90
+     C52B   85 50      STA &50
+     C52D   A9 C5      LDA #&C5
+     C52F   85 51      STA &51
 End macro LOAD_MSG
-     C518   20 33 D4   JSR &D433
-     C51B   20 9F D3   JSR &D39F
-     C51E   AD 0A 04   LDA &040A
-     C521   D0 3C      BNE &C55F
-     C523   A5 52      LDA &52
-     C525   85 56      STA &56
-     C527   A5 53      LDA &53
-     C529   85 57      STA &57
-     C52B   20 98 D0   JSR &D098
+     C531   20 08 D4   JSR &D408
+     C534   20 79 D3   JSR &D379
+     C537   A5 55      LDA &55
+     C539   D0 3C      BNE &C577
+     C53B   A5 52      LDA &52
+     C53D   85 58      STA &58
+     C53F   A5 53      LDA &53
+     C541   85 59      STA &59
+     C543   20 86 D0   JSR &D086
 Macro STR_BUF_TO_MSG_VEC:
-     C52E   A9 0D      LDA #&0D
-     C530   85 50      STA &50
-     C532   A9 04      LDA #&04
-     C534   85 51      STA &51
+     C546   A9 0B      LDA #&0B
+     C548   85 50      STA &50
+     C54A   A9 04      LDA #&04
+     C54C   85 51      STA &51
 End macro STR_BUF_TO_MSG_VEC
-     C536   20 33 D4   JSR &D433
+     C54E   20 08 D4   JSR &D408
 Macro STDOUT_TO_MSG_VEC:
-     C539   A9 80      LDA #&80
-     C53B   85 50      STA &50
-     C53D   A9 03      LDA #&03
-     C53F   85 51      STA &51
+     C551   A9 80      LDA #&80
+     C553   85 50      STA &50
+     C555   A9 03      LDA #&03
+     C557   85 51      STA &51
 End macro STDOUT_TO_MSG_VEC
-     C541   20 45 FF   JSR &FF45
-     C544   A2 FF      LDX #&FF
-     C546   9A         TXS
-     C547   9C 7F 03   STZ &037F
-     C54A   9C FF 03   STZ &03FF
-     C54D   9C 80 03   STZ &0380
+     C559   20 45 FF   JSR &FF45
+     C55C   A2 FF      LDX #&FF
+     C55E   9A         TXS
+     C55F   9C 7F 03   STZ &037F
+     C562   9C FF 03   STZ &03FF
+     C565   9C 80 03   STZ &0380
 Macro LED_OFF:
-     C550   48         PHA
-     C551   A9 FF      LDA #&FF
-     C553   49 02      EOR #&02
-     C555   2D 01 A0   AND &A001
-     C558   8D 01 A0   STA &A001
-     C55B   68         PLA
+     C568   48         PHA
+     C569   A9 FF      LDA #&FF
+     C56B   49 02      EOR #&02
+     C56D   2D 01 A0   AND &A001
+     C570   8D 01 A0   STA &A001
+     C573   68         PLA
 End macro LED_OFF
-     C55C   6C 52 00   JMP (&0052)
+     C574   6C 52 00   JMP (&0052)
 .cmdprcJMP_fail
 Macro LOAD_MSG:
-     C55F   A9 7E      LDA #&7E
-     C561   85 50      STA &50
-     C563   A9 C5      LDA #&C5
-     C565   85 51      STA &51
+     C577   A9 96      LDA #&96
+     C579   85 50      STA &50
+     C57B   A9 C5      LDA #&C5
+     C57D   85 51      STA &51
 End macro LOAD_MSG
-     C567   20 33 D4   JSR &D433
+     C57F   20 08 D4   JSR &D408
 Macro LOAD_MSG:
-     C56A   A9 80      LDA #&80
-     C56C   85 50      STA &50
-     C56E   A9 03      LDA #&03
-     C570   85 51      STA &51
+     C582   A9 80      LDA #&80
+     C584   85 50      STA &50
+     C586   A9 03      LDA #&03
+     C588   85 51      STA &51
 End macro LOAD_MSG
-     C572   20 45 FF   JSR &FF45
-     C575   4C B3 CB   JMP &CBB3
+     C58A   20 45 FF   JSR &FF45
+     C58D   4C BD CB   JMP &CBBD
 .cmdprcJMP_msg
-     C578   4A 55 4D ...
-     C57D   00
+     C590   4A 55 4D ...
+     C595   00
 .cmdprcJMP_msg_err
-     C57E   45 72 72 ...
-     C583   00
+     C596   45 72 72 ...
+     C59B   00
 .cmdprcLM
-     C584   9C 0A 04   STZ &040A
-     C587   20 BC D3   JSR &D3BC
-     C58A   AD 0A 04   LDA &040A
-     C58D   D0 0B      BNE &C59A
+     C59C   64 55      STZ &55
+     C59E   20 94 D3   JSR &D394
+     C5A1   A5 55      LDA &55
+     C5A3   D0 0A      BNE &C5AF
 .cmdprcLM_check
-     C58F   20 52 D6   JSR &D652
-     C592   AD 09 04   LDA &0409
-     C595   D0 03      BNE &C59A
-     C597   4C AA C5   JMP &C5AA
+     C5A5   20 50 D6   JSR &D650
+     C5A8   A5 54      LDA &54
+     C5AA   D0 03      BNE &C5AF
+     C5AC   4C BD C5   JMP &C5BD
 .cmdprcLM_addr_fail
-     C59A   A9 14      LDA #&14
-     C59C   8D 0A 04   STA &040A
-     C59F   4C B3 CB   JMP &CBB3
+     C5AF   A9 14      LDA #&14
+     C5B1   85 55      STA &55
+     C5B3   4C BD CB   JMP &CBBD
 .cmdprcLM_chk_fail
-     C5A2   A9 05      LDA #&05
-     C5A4   8D 0A 04   STA &040A
-     C5A7   4C B3 CB   JMP &CBB3
+     C5B6   A9 05      LDA #&05
+     C5B8   85 55      STA &55
+     C5BA   4C BD CB   JMP &CBBD
 .cmdprcLM_chk_nul
-     C5AA   AE 7F 03   LDX &037F
-     C5AD   BD 00 03   LDA &0300,X
-     C5B0   D0 F0      BNE &C5A2
-     C5B2   20 4C D1   JSR &D14C
-     C5B5   4C A6 CB   JMP &CBA6
+     C5BD   AE 7F 03   LDX &037F
+     C5C0   BD 00 03   LDA &0300,X
+     C5C3   D0 F1      BNE &C5B6
+     C5C5   20 36 D1   JSR &D136
+     C5C8   4C B0 CB   JMP &CBB0
 .cmdprcLOAD
 Macro LED_ON:
-     C5B8   48         PHA
-     C5B9   AD 01 A0   LDA &A001
-     C5BC   09 08      ORA #&08
-     C5BE   8D 01 A0   STA &A001
-     C5C1   68         PLA
+     C5CB   48         PHA
+     C5CC   AD 01 A0   LDA &A001
+     C5CF   09 08      ORA #&08
+     C5D1   8D 01 A0   STA &A001
+     C5D4   68         PLA
 End macro LED_ON
 Macro LOAD_MSG:
-     C5C2   A9 AE      LDA #&AE
-     C5C4   85 50      STA &50
-     C5C6   A9 CF      LDA #&CF
-     C5C8   85 51      STA &51
+     C5D5   A9 A7      LDA #&A7
+     C5D7   85 50      STA &50
+     C5D9   A9 CF      LDA #&CF
+     C5DB   85 51      STA &51
 End macro LOAD_MSG
-     C5CA   20 1E FF   JSR &FF1E
-     C5CD   20 45 FF   JSR &FF45
-     C5D0   A9 00      LDA #&00
-     C5D2   85 5C      STA &5C
-     C5D4   A9 08      LDA #&08
-     C5D6   85 5D      STA &5D
-     C5D8   20 D5 D2   JSR &D2D5
-     C5DB   AD 0A 04   LDA &040A
-     C5DE   D0 19      BNE &C5F9
-     C5E0   A9 02      LDA #&02
-     C5E2   20 0D CD   JSR &CD0D
+     C5DD   20 1E FF   JSR &FF1E
+     C5E0   20 45 FF   JSR &FF45
+     C5E3   A9 00      LDA #&00
+     C5E5   85 5E      STA &5E
+     C5E7   A9 08      LDA #&08
+     C5E9   85 5F      STA &5F
+     C5EB   20 B5 D2   JSR &D2B5
+     C5EE   A5 55      LDA &55
+     C5F0   D0 18      BNE &C60A
+     C5F2   A9 02      LDA #&02
+     C5F4   20 13 CD   JSR &CD13
 Macro LED_OFF:
-     C5E5   48         PHA
-     C5E6   A9 FF      LDA #&FF
-     C5E8   49 08      EOR #&08
-     C5EA   2D 01 A0   AND &A001
-     C5ED   8D 01 A0   STA &A001
-     C5F0   68         PLA
-End macro LED_OFF
-     C5F1   AD 0A 04   LDA &040A
-     C5F4   D0 03      BNE &C5F9
-     C5F6   4C 0C C6   JMP &C60C
-.cmdprcLOAD_err
-Macro LED_ON:
-     C5F9   48         PHA
-     C5FA   AD 01 A0   LDA &A001
-     C5FD   09 01      ORA #&01
+     C5F7   48         PHA
+     C5F8   A9 FF      LDA #&FF
+     C5FA   49 08      EOR #&08
+     C5FC   2D 01 A0   AND &A001
      C5FF   8D 01 A0   STA &A001
      C602   68         PLA
+End macro LED_OFF
+     C603   A5 55      LDA &55
+     C605   D0 03      BNE &C60A
+     C607   4C 17 C6   JMP &C617
+.cmdprcLOAD_err
+Macro LED_ON:
+     C60A   48         PHA
+     C60B   AD 01 A0   LDA &A001
+     C60E   09 01      ORA #&01
+     C610   8D 01 A0   STA &A001
+     C613   68         PLA
 End macro LED_ON
-     C603   20 0F D4   JSR &D40F
-     C606   20 42 FF   JSR &FF42
-     C609   4C B3 CB   JMP &CBB3
+     C614   4C BD CB   JMP &CBBD
 .cmdprcLOAD_success
 Macro LOAD_MSG:
-     C60C   A9 C7      LDA #&C7
-     C60E   85 50      STA &50
-     C610   A9 CF      LDA #&CF
-     C612   85 51      STA &51
+     C617   A9 C0      LDA #&C0
+     C619   85 50      STA &50
+     C61B   A9 CF      LDA #&CF
+     C61D   85 51      STA &51
 End macro LOAD_MSG
-     C614   20 1E FF   JSR &FF1E
-     C617   20 45 FF   JSR &FF45
-     C61A   AD 08 08   LDA &0808
-     C61D   85 5E      STA &5E
-     C61F   AD 09 08   LDA &0809
-     C622   85 5F      STA &5F
-     C624   4C A6 CB   JMP &CBA6
+     C61F   20 1E FF   JSR &FF1E
+     C622   20 45 FF   JSR &FF45
+     C625   AD 08 08   LDA &0808
+     C628   85 60      STA &60
+     C62A   AD 09 08   LDA &0809
+     C62D   85 61      STA &61
+     C62F   4C B0 CB   JMP &CBB0
 .cmdprcLP
-     C627   20 DA D3   JSR &D3DA
-     C62A   AD 0A 04   LDA &040A
-     C62D   D0 1D      BNE &C64C
+     C632   20 B1 D3   JSR &D3B1
+     C635   A5 55      LDA &55
+     C637   D0 1C      BNE &C655
 .cmdprcLP_chk_nul
-     C62F   AE 7F 03   LDX &037F
-     C632   BD 00 03   LDA &0300,X
-     C635   D0 15      BNE &C64C
-     C637   AD 09 04   LDA &0409
-     C63A   85 57      STA &57
-     C63C   85 59      STA &59
-     C63E   A9 00      LDA #&00
-     C640   85 56      STA &56
-     C642   A9 FF      LDA #&FF
-     C644   85 58      STA &58
-     C646   20 4C D1   JSR &D14C
-     C649   4C A6 CB   JMP &CBA6
+     C639   AE 7F 03   LDX &037F
+     C63C   BD 00 03   LDA &0300,X
+     C63F   D0 14      BNE &C655
+     C641   A5 54      LDA &54
+     C643   85 59      STA &59
+     C645   85 5B      STA &5B
+     C647   A9 00      LDA #&00
+     C649   85 58      STA &58
+     C64B   A9 FF      LDA #&FF
+     C64D   85 5A      STA &5A
+     C64F   20 36 D1   JSR &D136
+     C652   4C B0 CB   JMP &CBB0
 .cmdprcLP_fail
-     C64C   A9 05      LDA #&05
-     C64E   8D 0A 04   STA &040A
-     C651   4C B3 CB   JMP &CBB3
+     C655   A9 05      LDA #&05
+     C657   85 55      STA &55
+     C659   4C BD CB   JMP &CBBD
 .cmdprcLS
 Macro LED_ON:
-     C654   48         PHA
-     C655   AD 01 A0   LDA &A001
-     C658   09 08      ORA #&08
-     C65A   8D 01 A0   STA &A001
-     C65D   68         PLA
+     C65C   48         PHA
+     C65D   AD 01 A0   LDA &A001
+     C660   09 08      ORA #&08
+     C662   8D 01 A0   STA &A001
+     C665   68         PLA
 End macro LED_ON
 Macro LOAD_MSG:
-     C65E   A9 05      LDA #&05
-     C660   85 50      STA &50
-     C662   A9 C7      LDA #&C7
-     C664   85 51      STA &51
+     C666   A9 0B      LDA #&0B
+     C668   85 50      STA &50
+     C66A   A9 C7      LDA #&C7
+     C66C   85 51      STA &51
 End macro LOAD_MSG
-     C666   20 45 FF   JSR &FF45
-     C669   A9 08      LDA #&08
-     C66B   20 A4 CC   JSR &CCA4
-     C66E   AD 0A 04   LDA &040A
-     C671   F0 03      BEQ &C676
-     C673   4C F6 C6   JMP &C6F6
+     C66E   20 45 FF   JSR &FF45
+     C671   A9 08      LDA #&08
+     C673   20 AE CC   JSR &CCAE
+     C676   A5 55      LDA &55
+     C678   F0 03      BEQ &C67D
+     C67A   4C FC C6   JMP &C6FC
 .cmdprcLS_rcv_data
 Macro ZD_SET_DATADIR_INPUT:
-     C676   A9 00      LDA #&00
-     C678   8D 03 A4   STA &A403
-     C67B   AD 00 A4   LDA &A400
-     C67E   29 F7      AND #&F7
-     C680   8D 00 A4   STA &A400
+     C67D   A9 00      LDA #&00
+     C67F   8D 03 A4   STA &A403
+     C682   AD 00 A4   LDA &A400
+     C685   29 F7      AND #&F7
+     C687   8D 00 A4   STA &A400
 End macro ZD_SET_DATADIR_INPUT
-     C683   A9 02      LDA #&02
-     C685   85 5C      STA &5C
-     C687   A9 06      LDA #&06
-     C689   85 5D      STA &5D
-     C68B   20 3E CD   JSR &CD3E
-     C68E   AD 0A 04   LDA &040A
-     C691   F0 03      BEQ &C696
+     C68A   A9 02      LDA #&02
+     C68C   85 5E      STA &5E
+     C68E   A9 06      LDA #&06
+     C690   85 5F      STA &5F
+     C692   20 42 CD   JSR &CD42
+     C695   A5 55      LDA &55
+     C697   F0 03      BEQ &C69C
 .cmdprcLS_err
-     C693   4C F6 C6   JMP &C6F6
+     C699   4C FC C6   JMP &C6FC
 .cmdprcLS_show
-     C696   A2 00      LDX #&00
-     C698   A0 00      LDY #&00
-     C69A   A9 02      LDA #&02
-     C69C   85 56      STA &56
-     C69E   A9 06      LDA #&06
-     C6A0   85 57      STA &57
+     C69C   A2 00      LDX #&00
+     C69E   A0 00      LDY #&00
+     C6A0   A9 02      LDA #&02
+     C6A2   85 58      STA &58
+     C6A4   A9 06      LDA #&06
+     C6A6   85 59      STA &59
 .cmdprcLS_show_loop
-     C6A2   B2 56      LDA (&56)
-     C6A4   F0 11      BEQ &C6B7
-     C6A6   C9 FF      CMP #&FF
-     C6A8   F0 30      BEQ &C6DA
-     C6AA   20 18 FF   JSR &FF18
-     C6AD   C8         INY
+     C6A8   B2 58      LDA (&58)
+     C6AA   F0 11      BEQ &C6BD
+     C6AC   C9 FF      CMP #&FF
+     C6AE   F0 30      BEQ &C6E0
+     C6B0   20 18 FF   JSR &FF18
+     C6B3   C8         INY
 .cmdprcLS_show_loopback
-     C6AE   E6 56      INC &56
-     C6B0   D0 02      BNE &C6B4
-     C6B2   E6 57      INC &57
+     C6B4   E6 58      INC &58
+     C6B6   D0 02      BNE &C6BA
+     C6B8   E6 59      INC &59
 .cmdprcLS_show_loopback_contd
-     C6B4   4C A2 C6   JMP &C6A2
+     C6BA   4C A8 C6   JMP &C6A8
 .cmdprcLS_show_pad
-     C6B7   E8         INX
-     C6B8   E0 04      CPX #&04
-     C6BA   D0 0C      BNE &C6C8
-     C6BC   A9 0A      LDA #&0A
-     C6BE   20 18 FF   JSR &FF18
-     C6C1   A2 00      LDX #&00
-     C6C3   A0 00      LDY #&00
-     C6C5   4C AE C6   JMP &C6AE
+     C6BD   E8         INX
+     C6BE   E0 04      CPX #&04
+     C6C0   D0 0C      BNE &C6CE
+     C6C2   A9 0A      LDA #&0A
+     C6C4   20 18 FF   JSR &FF18
+     C6C7   A2 00      LDX #&00
+     C6C9   A0 00      LDY #&00
+     C6CB   4C B4 C6   JMP &C6B4
 .cmdprcLS_show_pad_next
-     C6C8   C0 12      CPY #&12
-     C6CA   F0 09      BEQ &C6D5
-     C6CC   A9 20      LDA #&20
-     C6CE   20 18 FF   JSR &FF18
-     C6D1   C8         INY
-     C6D2   4C C8 C6   JMP &C6C8
+     C6CE   C0 12      CPY #&12
+     C6D0   F0 09      BEQ &C6DB
+     C6D2   A9 20      LDA #&20
+     C6D4   20 18 FF   JSR &FF18
+     C6D7   C8         INY
+     C6D8   4C CE C6   JMP &C6CE
 .cmdprcLS_show_pad_end
-     C6D5   A0 00      LDY #&00
-     C6D7   4C AE C6   JMP &C6AE
+     C6DB   A0 00      LDY #&00
+     C6DD   4C B4 C6   JMP &C6B4
 .cmdprcLS_end
 Macro ZD_SET_DATADIR_OUTPUT:
-     C6DA   A9 FF      LDA #&FF
-     C6DC   8D 03 A4   STA &A403
-     C6DF   AD 00 A4   LDA &A400
-     C6E2   09 08      ORA #&08
-     C6E4   8D 00 A4   STA &A400
+     C6E0   A9 FF      LDA #&FF
+     C6E2   8D 03 A4   STA &A403
+     C6E5   AD 00 A4   LDA &A400
+     C6E8   09 08      ORA #&08
+     C6EA   8D 00 A4   STA &A400
 End macro ZD_SET_DATADIR_OUTPUT
 Macro LED_OFF:
-     C6E7   48         PHA
-     C6E8   A9 FF      LDA #&FF
-     C6EA   49 08      EOR #&08
-     C6EC   2D 01 A0   AND &A001
-     C6EF   8D 01 A0   STA &A001
-     C6F2   68         PLA
+     C6ED   48         PHA
+     C6EE   A9 FF      LDA #&FF
+     C6F0   49 08      EOR #&08
+     C6F2   2D 01 A0   AND &A001
+     C6F5   8D 01 A0   STA &A001
+     C6F8   68         PLA
 End macro LED_OFF
-     C6F3   4C A6 CB   JMP &CBA6
+     C6F9   4C B0 CB   JMP &CBB0
 .cmdprcLS_fail
 Macro LED_OFF:
-     C6F6   48         PHA
-     C6F7   A9 FF      LDA #&FF
-     C6F9   49 08      EOR #&08
-     C6FB   2D 01 A0   AND &A001
-     C6FE   8D 01 A0   STA &A001
-     C701   68         PLA
+     C6FC   48         PHA
+     C6FD   A9 FF      LDA #&FF
+     C6FF   49 08      EOR #&08
+     C701   2D 01 A0   AND &A001
+     C704   8D 01 A0   STA &A001
+     C707   68         PLA
 End macro LED_OFF
-     C702   4C B3 CB   JMP &CBB3
+     C708   4C BD CB   JMP &CBBD
 .ls_req_msg
-     C705   52 65 71 ...
-     C719   00
+     C70B   52 65 71 ...
+     C71F   00
 .cmdprcPEEK
-     C71A   20 9F D3   JSR &D39F
-     C71D   AD 0A 04   LDA &040A
-     C720   D0 13      BNE &C735
-     C722   AE 7F 03   LDX &037F
-     C725   BD 00 03   LDA &0300,X
-     C728   D0 0B      BNE &C735
-     C72A   B2 52      LDA (&52)
-     C72C   20 F6 CF   JSR &CFF6
-     C72F   20 3E CC   JSR &CC3E
-     C732   4C 3D C7   JMP &C73D
+     C720   20 79 D3   JSR &D379
+     C723   A5 55      LDA &55
+     C725   D0 13      BNE &C73A
+     C727   AE 7F 03   LDX &037F
+     C72A   BD 00 03   LDA &0300,X
+     C72D   D0 0B      BNE &C73A
+     C72F   B2 52      LDA (&52)
+     C731   20 EF CF   JSR &CFEF
+     C734   20 48 CC   JSR &CC48
+     C737   4C B0 CB   JMP &CBB0
 .cmdprcPEEK_fail
-     C735   A9 05      LDA #&05
-     C737   8D 0A 04   STA &040A
-     C73A   4C B3 CB   JMP &CBB3
-.cmdprcPEEK_end
-     C73D   4C A6 CB   JMP &CBA6
+     C73A   A9 05      LDA #&05
+     C73C   85 55      STA &55
+     C73E   4C BD CB   JMP &CBBD
 .cmdprcPOKE
-     C740   20 9F D3   JSR &D39F
-     C743   AD 0A 04   LDA &040A
-     C746   D0 18      BNE &C760
-     C748   20 DA D3   JSR &D3DA
-     C74B   AD 0A 04   LDA &040A
-     C74E   D0 10      BNE &C760
-     C750   AE 7F 03   LDX &037F
-     C753   BD 00 03   LDA &0300,X
-     C756   D0 08      BNE &C760
-     C758   AD 09 04   LDA &0409
-     C75B   92 52      STA (&52)
-     C75D   4C 68 C7   JMP &C768
+     C741   20 79 D3   JSR &D379
+     C744   A5 55      LDA &55
+     C746   D0 16      BNE &C75E
+     C748   20 B1 D3   JSR &D3B1
+     C74B   A5 55      LDA &55
+     C74D   D0 0F      BNE &C75E
+     C74F   AE 7F 03   LDX &037F
+     C752   BD 00 03   LDA &0300,X
+     C755   D0 07      BNE &C75E
+     C757   A5 54      LDA &54
+     C759   92 52      STA (&52)
+     C75B   4C B0 CB   JMP &CBB0
 .cmdprcPOKE_fail
-     C760   A9 05      LDA #&05
-     C762   8D 0A 04   STA &040A
-     C765   4C B3 CB   JMP &CBB3
-.cmdprcPOKE_end
-     C768   4C A6 CB   JMP &CBA6
+     C75E   A9 05      LDA #&05
+     C760   85 55      STA &55
+     C762   4C BD CB   JMP &CBBD
 .cmdprcPRT
-     C76B   4C A6 CB   JMP &CBA6
+     C765   20 5A FF   JSR &FF5A
+     C768   A5 55      LDA &55
+     C76A   D0 0A      BNE &C776
+     C76C   20 B5 D2   JSR &D2B5
+     C76F   A5 55      LDA &55
+     C771   D0 03      BNE &C776
+     C773   4C 79 C7   JMP &C779
+.cmdprcPRT_fail
+     C776   4C BD CB   JMP &CBBD
+.cmdprcPRT_success
+Macro LOAD_MSG:
+     C779   A9 87      LDA #&87
+     C77B   85 50      STA &50
+     C77D   A9 C7      LDA #&C7
+     C77F   85 51      STA &51
+End macro LOAD_MSG
+     C781   20 1E FF   JSR &FF1E
+     C784   4C B0 CB   JMP &CBB0
+.prt_success_msg
+     C787   4F 4B 
+     C789   0A
+     C78A   00
 .cmdprcRUN
-     C76E   20 85 C7   JSR &C785
-     C771   AD 0A 04   LDA &040A
-     C774   D0 0C      BNE &C782
-     C776   9C 00 03   STZ &0300
-     C779   9C 7F 03   STZ &037F
-     C77C   9C 32 04   STZ &0432
-     C77F   4C 00 08   JMP &0800
+     C78B   20 A1 C7   JSR &C7A1
+     C78E   A5 55      LDA &55
+     C790   D0 0C      BNE &C79E
+     C792   9C 00 03   STZ &0300
+     C795   9C 7F 03   STZ &037F
+     C798   9C 30 04   STZ &0430
+     C79B   4C 00 08   JMP &0800
 .cmdprcRUN_err
-     C782   4C B3 CB   JMP &CBB3
+     C79E   4C BD CB   JMP &CBBD
 .check_exec
-     C785   9C 0A 04   STZ &040A
-     C788   AD 00 08   LDA &0800
-     C78B   C9 4C      CMP #&4C
-     C78D   D0 0A      BNE &C799
-     C78F   AD 03 08   LDA &0803
-     C792   C9 45      CMP #&45
-     C794   D0 03      BNE &C799
-     C796   4C 9E C7   JMP &C79E
+     C7A1   64 55      STZ &55
+     C7A3   AD 00 08   LDA &0800
+     C7A6   C9 4C      CMP #&4C
+     C7A8   D0 0A      BNE &C7B4
+     C7AA   AD 03 08   LDA &0803
+     C7AD   C9 45      CMP #&45
+     C7AF   D0 03      BNE &C7B4
+     C7B1   4C B8 C7   JMP &C7B8
 .check_exec_err
-     C799   A9 1A      LDA #&1A
-     C79B   8D 0A 04   STA &040A
+     C7B4   A9 1A      LDA #&1A
+     C7B6   85 55      STA &55
 .check_exec_end
-     C79E   60         RTS
+     C7B8   60         RTS
 .cmdprcSAVE
-     C79F   20 85 C7   JSR &C785
-     C7A2   AD 0A 04   LDA &040A
-     C7A5   D0 5E      BNE &C805
-     C7A7   20 D5 D2   JSR &D2D5
-     C7AA   AD 0A 04   LDA &040A
-     C7AD   D0 56      BNE &C805
-     C7AF   AE 7F 03   LDX &037F
-     C7B2   BD 00 03   LDA &0300,X
-     C7B5   D0 41      BNE &C7F8
+     C7B9   20 A1 C7   JSR &C7A1
+     C7BC   A5 55      LDA &55
+     C7BE   D0 5A      BNE &C81A
+     C7C0   20 B5 D2   JSR &D2B5
+     C7C3   A5 55      LDA &55
+     C7C5   D0 53      BNE &C81A
+     C7C7   AE 7F 03   LDX &037F
+     C7CA   BD 00 03   LDA &0300,X
+     C7CD   D0 40      BNE &C80F
 Macro LED_ON:
-     C7B7   48         PHA
-     C7B8   AD 01 A0   LDA &A001
-     C7BB   09 08      ORA #&08
-     C7BD   8D 01 A0   STA &A001
-     C7C0   68         PLA
+     C7CF   48         PHA
+     C7D0   AD 01 A0   LDA &A001
+     C7D3   09 08      ORA #&08
+     C7D5   8D 01 A0   STA &A001
+     C7D8   68         PLA
 End macro LED_ON
 Macro LOAD_MSG:
-     C7C1   A9 BB      LDA #&BB
-     C7C3   85 50      STA &50
-     C7C5   A9 CF      LDA #&CF
-     C7C7   85 51      STA &51
+     C7D9   A9 B4      LDA #&B4
+     C7DB   85 50      STA &50
+     C7DD   A9 CF      LDA #&CF
+     C7DF   85 51      STA &51
 End macro LOAD_MSG
-     C7C9   20 1E FF   JSR &FF1E
-     C7CC   20 45 FF   JSR &FF45
-     C7CF   A9 00      LDA #&00
-     C7D1   85 56      STA &56
-     C7D3   A9 08      LDA #&08
-     C7D5   85 57      STA &57
-     C7D7   A5 5E      LDA &5E
-     C7D9   85 58      STA &58
-     C7DB   A5 5F      LDA &5F
-     C7DD   85 59      STA &59
-     C7DF   A9 10      LDA #&10
-     C7E1   20 80 CD   JSR &CD80
+     C7E1   20 1E FF   JSR &FF1E
+     C7E4   20 45 FF   JSR &FF45
+     C7E7   A9 00      LDA #&00
+     C7E9   85 58      STA &58
+     C7EB   A9 08      LDA #&08
+     C7ED   85 59      STA &59
+     C7EF   A5 60      LDA &60
+     C7F1   85 5A      STA &5A
+     C7F3   A5 61      LDA &61
+     C7F5   85 5B      STA &5B
+     C7F7   A9 16      LDA #&16
+     C7F9   20 82 CD   JSR &CD82
 Macro LED_OFF:
-     C7E4   48         PHA
-     C7E5   A9 FF      LDA #&FF
-     C7E7   49 08      EOR #&08
-     C7E9   2D 01 A0   AND &A001
-     C7EC   8D 01 A0   STA &A001
-     C7EF   68         PLA
+     C7FC   48         PHA
+     C7FD   A9 FF      LDA #&FF
+     C7FF   49 08      EOR #&08
+     C801   2D 01 A0   AND &A001
+     C804   8D 01 A0   STA &A001
+     C807   68         PLA
 End macro LED_OFF
-     C7F0   AD 0A 04   LDA &040A
-     C7F3   F0 13      BEQ &C808
-     C7F5   4C 05 C8   JMP &C805
+     C808   A5 55      LDA &55
+     C80A   F0 11      BEQ &C81D
+     C80C   4C 1A C8   JMP &C81A
 .cmdprcSAVE_synerr
-     C7F8   A9 05      LDA #&05
-     C7FA   8D 0A 04   STA &040A
-     C7FD   4C 05 C8   JMP &C805
+     C80F   A9 05      LDA #&05
+     C811   85 55      STA &55
+     C813   4C 1A C8   JMP &C81A
 .cmdprcSAVE_addr_err
-     C800   A9 14      LDA #&14
-     C802   8D 0A 04   STA &040A
+     C816   A9 14      LDA #&14
+     C818   85 55      STA &55
 .cmdprcSAVE_err
-     C805   4C B3 CB   JMP &CBB3
+     C81A   4C BD CB   JMP &CBBD
 .cmdprcSAVE_success
 Macro LOAD_MSG:
-     C808   A9 C7      LDA #&C7
-     C80A   85 50      STA &50
-     C80C   A9 CF      LDA #&CF
-     C80E   85 51      STA &51
+     C81D   A9 C0      LDA #&C0
+     C81F   85 50      STA &50
+     C821   A9 CF      LDA #&CF
+     C823   85 51      STA &51
 End macro LOAD_MSG
-     C810   20 1E FF   JSR &FF1E
-     C813   20 45 FF   JSR &FF45
-     C816   4C A6 CB   JMP &CBA6
+     C825   20 1E FF   JSR &FF1E
+     C828   20 45 FF   JSR &FF45
+     C82B   4C B0 CB   JMP &CBB0
 .cmdprcSTAT
-     C819   9C FF 03   STZ &03FF
+     C82E   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
-     C81C   A9 9B      LDA #&9B
-     C81E   85 50      STA &50
-     C820   A9 C9      LDA #&C9
-     C822   85 51      STA &51
+     C831   A9 AE      LDA #&AE
+     C833   85 50      STA &50
+     C835   A9 C9      LDA #&C9
+     C837   85 51      STA &51
 End macro LOAD_MSG
-     C824   20 24 FF   JSR &FF24
-     C827   A5 5E      LDA &5E
-     C829   85 56      STA &56
-     C82B   A5 5F      LDA &5F
-     C82D   85 57      STA &57
-     C82F   20 98 D0   JSR &D098
+     C839   20 24 FF   JSR &FF24
+     C83C   A5 60      LDA &60
+     C83E   85 58      STA &58
+     C840   A5 61      LDA &61
+     C842   85 59      STA &59
+     C844   20 86 D0   JSR &D086
 Macro STR_BUF_TO_MSG_VEC:
-     C832   A9 0D      LDA #&0D
-     C834   85 50      STA &50
-     C836   A9 04      LDA #&04
-     C838   85 51      STA &51
+     C847   A9 0B      LDA #&0B
+     C849   85 50      STA &50
+     C84B   A9 04      LDA #&04
+     C84D   85 51      STA &51
 End macro STR_BUF_TO_MSG_VEC
-     C83A   20 24 FF   JSR &FF24
+     C84F   20 24 FF   JSR &FF24
 Macro LOAD_MSG:
-     C83D   A9 D3      LDA #&D3
-     C83F   85 50      STA &50
-     C841   A9 C9      LDA #&C9
-     C843   85 51      STA &51
+     C852   A9 E6      LDA #&E6
+     C854   85 50      STA &50
+     C856   A9 C9      LDA #&C9
+     C858   85 51      STA &51
 End macro LOAD_MSG
-     C845   20 24 FF   JSR &FF24
+     C85A   20 24 FF   JSR &FF24
 Macro LOAD_MSG:
-     C848   A9 B0      LDA #&B0
-     C84A   85 50      STA &50
-     C84C   A9 C9      LDA #&C9
-     C84E   85 51      STA &51
+     C85D   A9 C3      LDA #&C3
+     C85F   85 50      STA &50
+     C861   A9 C9      LDA #&C9
+     C863   85 51      STA &51
 End macro LOAD_MSG
-     C850   20 24 FF   JSR &FF24
-     C853   AD 09 04   LDA &0409
-     C856   20 8C C9   JSR &C98C
-     C859   20 15 FF   JSR &FF15
+     C865   20 24 FF   JSR &FF24
+     C868   A5 54      LDA &54
+     C86A   20 9F C9   JSR &C99F
+     C86D   20 15 FF   JSR &FF15
 Macro NEWLINE:
-     C85C   A9 0A      LDA #&0A
-     C85E   20 18 FF   JSR &FF18
+     C870   A9 0A      LDA #&0A
+     C872   20 18 FF   JSR &FF18
 End macro NEWLINE
-     C861   20 51 FF   JSR &FF51
-     C864   9C FF 03   STZ &03FF
+     C875   20 51 FF   JSR &FF51
+     C878   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
-     C867   A9 A2      LDA #&A2
-     C869   85 50      STA &50
-     C86B   A9 C9      LDA #&C9
-     C86D   85 51      STA &51
+     C87B   A9 B5      LDA #&B5
+     C87D   85 50      STA &50
+     C87F   A9 C9      LDA #&C9
+     C881   85 51      STA &51
 End macro LOAD_MSG
-     C86F   20 24 FF   JSR &FF24
-     C872   A5 5C      LDA &5C
-     C874   85 56      STA &56
-     C876   A5 5D      LDA &5D
-     C878   85 57      STA &57
-     C87A   20 98 D0   JSR &D098
+     C883   20 24 FF   JSR &FF24
+     C886   A5 5E      LDA &5E
+     C888   85 58      STA &58
+     C88A   A5 5F      LDA &5F
+     C88C   85 59      STA &59
+     C88E   20 86 D0   JSR &D086
 Macro STR_BUF_TO_MSG_VEC:
-     C87D   A9 0D      LDA #&0D
-     C87F   85 50      STA &50
-     C881   A9 04      LDA #&04
-     C883   85 51      STA &51
+     C891   A9 0B      LDA #&0B
+     C893   85 50      STA &50
+     C895   A9 04      LDA #&04
+     C897   85 51      STA &51
 End macro STR_BUF_TO_MSG_VEC
-     C885   20 24 FF   JSR &FF24
+     C899   20 24 FF   JSR &FF24
 Macro LOAD_MSG:
-     C888   A9 D3      LDA #&D3
-     C88A   85 50      STA &50
-     C88C   A9 C9      LDA #&C9
-     C88E   85 51      STA &51
+     C89C   A9 E6      LDA #&E6
+     C89E   85 50      STA &50
+     C8A0   A9 C9      LDA #&C9
+     C8A2   85 51      STA &51
 End macro LOAD_MSG
-     C890   20 24 FF   JSR &FF24
+     C8A4   20 24 FF   JSR &FF24
 Macro LOAD_MSG:
-     C893   A9 A9      LDA #&A9
-     C895   85 50      STA &50
-     C897   A9 C9      LDA #&C9
-     C899   85 51      STA &51
+     C8A7   A9 BC      LDA #&BC
+     C8A9   85 50      STA &50
+     C8AB   A9 C9      LDA #&C9
+     C8AD   85 51      STA &51
 End macro LOAD_MSG
-     C89B   20 24 FF   JSR &FF24
-     C89E   AD 0A 04   LDA &040A
-     C8A1   20 8C C9   JSR &C98C
-     C8A4   20 15 FF   JSR &FF15
+     C8AF   20 24 FF   JSR &FF24
+     C8B2   A5 55      LDA &55
+     C8B4   20 9F C9   JSR &C99F
+     C8B7   20 15 FF   JSR &FF15
 Macro NEWLINE:
-     C8A7   A9 0A      LDA #&0A
-     C8A9   20 18 FF   JSR &FF18
+     C8BA   A9 0A      LDA #&0A
+     C8BC   20 18 FF   JSR &FF18
 End macro NEWLINE
-     C8AC   20 51 FF   JSR &FF51
-     C8AF   9C FF 03   STZ &03FF
+     C8BF   20 51 FF   JSR &FF51
+     C8C2   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
-     C8B2   A9 BE      LDA #&BE
-     C8B4   85 50      STA &50
-     C8B6   A9 C9      LDA #&C9
-     C8B8   85 51      STA &51
+     C8C5   A9 D1      LDA #&D1
+     C8C7   85 50      STA &50
+     C8C9   A9 C9      LDA #&C9
+     C8CB   85 51      STA &51
 End macro LOAD_MSG
-     C8BA   20 24 FF   JSR &FF24
-     C8BD   AD 32 04   LDA &0432
-     C8C0   20 8C C9   JSR &C98C
+     C8CD   20 24 FF   JSR &FF24
+     C8D0   AD 30 04   LDA &0430
+     C8D3   20 9F C9   JSR &C99F
 Macro LOAD_MSG:
-     C8C3   A9 D3      LDA #&D3
-     C8C5   85 50      STA &50
-     C8C7   A9 C9      LDA #&C9
-     C8C9   85 51      STA &51
+     C8D6   A9 E6      LDA #&E6
+     C8D8   85 50      STA &50
+     C8DA   A9 C9      LDA #&C9
+     C8DC   85 51      STA &51
 End macro LOAD_MSG
-     C8CB   20 24 FF   JSR &FF24
+     C8DE   20 24 FF   JSR &FF24
 Macro LOAD_MSG:
-     C8CE   A9 D3      LDA #&D3
-     C8D0   85 50      STA &50
-     C8D2   A9 C9      LDA #&C9
-     C8D4   85 51      STA &51
+     C8E1   A9 E6      LDA #&E6
+     C8E3   85 50      STA &50
+     C8E5   A9 C9      LDA #&C9
+     C8E7   85 51      STA &51
 End macro LOAD_MSG
-     C8D6   20 24 FF   JSR &FF24
+     C8E9   20 24 FF   JSR &FF24
 Macro LOAD_MSG:
-     C8D9   A9 B7      LDA #&B7
-     C8DB   85 50      STA &50
-     C8DD   A9 C9      LDA #&C9
-     C8DF   85 51      STA &51
+     C8EC   A9 CA      LDA #&CA
+     C8EE   85 50      STA &50
+     C8F0   A9 C9      LDA #&C9
+     C8F2   85 51      STA &51
 End macro LOAD_MSG
-     C8E1   20 24 FF   JSR &FF24
-     C8E4   AD 00 04   LDA &0400
-     C8E7   20 30 FF   JSR &FF30
+     C8F4   20 24 FF   JSR &FF24
+     C8F7   AD 00 04   LDA &0400
+     C8FA   20 30 FF   JSR &FF30
 Macro STR_BUF_TO_MSG_VEC:
-     C8EA   A9 0D      LDA #&0D
-     C8EC   85 50      STA &50
-     C8EE   A9 04      LDA #&04
-     C8F0   85 51      STA &51
+     C8FD   A9 0B      LDA #&0B
+     C8FF   85 50      STA &50
+     C901   A9 04      LDA #&04
+     C903   85 51      STA &51
 End macro STR_BUF_TO_MSG_VEC
-     C8F2   20 24 FF   JSR &FF24
-     C8F5   20 15 FF   JSR &FF15
+     C905   20 24 FF   JSR &FF24
+     C908   20 15 FF   JSR &FF15
 Macro NEWLINE:
-     C8F8   A9 0A      LDA #&0A
-     C8FA   20 18 FF   JSR &FF18
+     C90B   A9 0A      LDA #&0A
+     C90D   20 18 FF   JSR &FF18
 End macro NEWLINE
-     C8FD   20 51 FF   JSR &FF51
-     C900   9C FF 03   STZ &03FF
+     C910   20 51 FF   JSR &FF51
+     C913   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
-     C903   A9 C5      LDA #&C5
-     C905   85 50      STA &50
-     C907   A9 C9      LDA #&C9
-     C909   85 51      STA &51
+     C916   A9 D8      LDA #&D8
+     C918   85 50      STA &50
+     C91A   A9 C9      LDA #&C9
+     C91C   85 51      STA &51
 End macro LOAD_MSG
-     C90B   20 24 FF   JSR &FF24
-     C90E   A5 61      LDA &61
-     C910   20 8C C9   JSR &C98C
+     C91E   20 24 FF   JSR &FF24
+     C921   A5 63      LDA &63
+     C923   20 9F C9   JSR &C99F
 Macro LOAD_MSG:
-     C913   A9 D3      LDA #&D3
-     C915   85 50      STA &50
-     C917   A9 C9      LDA #&C9
-     C919   85 51      STA &51
+     C926   A9 E6      LDA #&E6
+     C928   85 50      STA &50
+     C92A   A9 C9      LDA #&C9
+     C92C   85 51      STA &51
 End macro LOAD_MSG
-     C91B   20 24 FF   JSR &FF24
+     C92E   20 24 FF   JSR &FF24
 Macro LOAD_MSG:
-     C91E   A9 D3      LDA #&D3
-     C920   85 50      STA &50
-     C922   A9 C9      LDA #&C9
-     C924   85 51      STA &51
+     C931   A9 E6      LDA #&E6
+     C933   85 50      STA &50
+     C935   A9 C9      LDA #&C9
+     C937   85 51      STA &51
 End macro LOAD_MSG
-     C926   20 24 FF   JSR &FF24
+     C939   20 24 FF   JSR &FF24
 Macro LOAD_MSG:
-     C929   A9 CC      LDA #&CC
-     C92B   85 50      STA &50
-     C92D   A9 C9      LDA #&C9
-     C92F   85 51      STA &51
+     C93C   A9 DF      LDA #&DF
+     C93E   85 50      STA &50
+     C940   A9 C9      LDA #&C9
+     C942   85 51      STA &51
 End macro LOAD_MSG
-     C931   20 24 FF   JSR &FF24
-     C934   A5 60      LDA &60
-     C936   20 8C C9   JSR &C98C
-     C939   20 15 FF   JSR &FF15
+     C944   20 24 FF   JSR &FF24
+     C947   A5 62      LDA &62
+     C949   20 9F C9   JSR &C99F
+     C94C   20 15 FF   JSR &FF15
 Macro NEWLINE:
-     C93C   A9 0A      LDA #&0A
-     C93E   20 18 FF   JSR &FF18
+     C94F   A9 0A      LDA #&0A
+     C951   20 18 FF   JSR &FF18
 End macro NEWLINE
-     C941   20 51 FF   JSR &FF51
-     C944   9C FF 03   STZ &03FF
+     C954   20 51 FF   JSR &FF51
+     C957   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
-     C947   A9 C5      LDA #&C5
-     C949   85 50      STA &50
-     C94B   A9 C9      LDA #&C9
-     C94D   85 51      STA &51
+     C95A   A9 D8      LDA #&D8
+     C95C   85 50      STA &50
+     C95E   A9 C9      LDA #&C9
+     C960   85 51      STA &51
 End macro LOAD_MSG
-     C94F   20 24 FF   JSR &FF24
-     C952   A5 61      LDA &61
-     C954   20 7D C9   JSR &C97D
-     C957   20 15 FF   JSR &FF15
+     C962   20 24 FF   JSR &FF24
+     C965   A5 63      LDA &63
+     C967   20 90 C9   JSR &C990
+     C96A   20 15 FF   JSR &FF15
 Macro NEWLINE:
-     C95A   A9 0A      LDA #&0A
-     C95C   20 18 FF   JSR &FF18
+     C96D   A9 0A      LDA #&0A
+     C96F   20 18 FF   JSR &FF18
 End macro NEWLINE
-     C95F   9C FF 03   STZ &03FF
+     C972   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
-     C962   A9 CC      LDA #&CC
-     C964   85 50      STA &50
-     C966   A9 C9      LDA #&C9
-     C968   85 51      STA &51
+     C975   A9 DF      LDA #&DF
+     C977   85 50      STA &50
+     C979   A9 C9      LDA #&C9
+     C97B   85 51      STA &51
 End macro LOAD_MSG
-     C96A   20 24 FF   JSR &FF24
-     C96D   A5 60      LDA &60
-     C96F   20 7D C9   JSR &C97D
-     C972   20 15 FF   JSR &FF15
+     C97D   20 24 FF   JSR &FF24
+     C980   A5 62      LDA &62
+     C982   20 90 C9   JSR &C990
+     C985   20 15 FF   JSR &FF15
 Macro NEWLINE:
-     C975   A9 0A      LDA #&0A
-     C977   20 18 FF   JSR &FF18
+     C988   A9 0A      LDA #&0A
+     C98A   20 18 FF   JSR &FF18
 End macro NEWLINE
-     C97A   4C A6 CB   JMP &CBA6
+     C98D   4C B0 CB   JMP &CBB0
 .display_stat_bin
-     C97D   20 2A FF   JSR &FF2A
+     C990   20 2A FF   JSR &FF2A
 Macro STR_BUF_TO_MSG_VEC:
-     C980   A9 0D      LDA #&0D
-     C982   85 50      STA &50
-     C984   A9 04      LDA #&04
-     C986   85 51      STA &51
+     C993   A9 0B      LDA #&0B
+     C995   85 50      STA &50
+     C997   A9 04      LDA #&04
+     C999   85 51      STA &51
 End macro STR_BUF_TO_MSG_VEC
-     C988   20 24 FF   JSR &FF24
-     C98B   60         RTS
+     C99B   20 24 FF   JSR &FF24
+     C99E   60         RTS
 .display_stat_hex
-     C98C   20 2D FF   JSR &FF2D
+     C99F   20 2D FF   JSR &FF2D
 Macro STR_BUF_TO_MSG_VEC:
-     C98F   A9 0D      LDA #&0D
-     C991   85 50      STA &50
-     C993   A9 04      LDA #&04
-     C995   85 51      STA &51
+     C9A2   A9 0B      LDA #&0B
+     C9A4   85 50      STA &50
+     C9A6   A9 04      LDA #&04
+     C9A8   85 51      STA &51
 End macro STR_BUF_TO_MSG_VEC
-     C997   20 24 FF   JSR &FF24
-     C99A   60         RTS
+     C9AA   20 24 FF   JSR &FF24
+     C9AD   60         RTS
 .stat_msg_lomem
-     C99B   4C 4F 4D ...
-     C9A1   00
+     C9AE   4C 4F 4D ...
+     C9B4   00
 .stat_msg_faddr
-     C9A2   46 41 44 ...
-     C9A8   00
+     C9B5   46 41 44 ...
+     C9BB   00
 .stat_msg_fnerr
-     C9A9   46 4E 45 ...
-     C9AF   00
+     C9BC   46 4E 45 ...
+     C9C2   00
 .stat_msg_fnres
-     C9B0   46 4E 52 ...
-     C9B6   00
+     C9C3   46 4E 52 ...
+     C9C9   00
 .stat_msg_exmem
-     C9B7   45 58 4D ...
-     C9BD   00
+     C9CA   45 58 4D ...
+     C9D0   00
 .stat_msg_pexit
-     C9BE   50 45 58 ...
-     C9C4   00
+     C9D1   50 45 58 ...
+     C9D7   00
 .stat_msg_sysreg
-     C9C5   53 59 53 ...
-     C9CB   00
+     C9D8   53 59 53 ...
+     C9DE   00
 .stat_msg_stdin
-     C9CC   53 54 44 ...
-     C9D2   00
+     C9DF   53 54 44 ...
+     C9E5   00
 .stat_msg_spacer
-     C9D3   20 20 
-     C9D5   00
+     C9E6   20 20 
+     C9E8   00
 .cmdprcVERS
-     C9D6   A9 03      LDA #&03
-     C9D8   85 50      STA &50
-     C9DA   A9 C0      LDA #&C0
-     C9DC   85 51      STA &51
-     C9DE   20 22 CC   JSR &CC22
-     C9E1   20 45 FF   JSR &FF45
-     C9E4   4C A6 CB   JMP &CBA6
+     C9E9   A9 03      LDA #&03
+     C9EB   85 50      STA &50
+     C9ED   A9 C0      LDA #&C0
+     C9EF   85 51      STA &51
+     C9F1   20 2C CC   JSR &CC2C
+     C9F4   20 45 FF   JSR &FF45
+     C9F7   4C B0 CB   JMP &CBB0
 .cmdprcXLS
 Macro LED_ON:
-     C9E7   48         PHA
-     C9E8   AD 01 A0   LDA &A001
-     C9EB   09 08      ORA #&08
-     C9ED   8D 01 A0   STA &A001
-     C9F0   68         PLA
+     C9FA   48         PHA
+     C9FB   AD 01 A0   LDA &A001
+     C9FE   09 08      ORA #&08
+     CA00   8D 01 A0   STA &A001
+     CA03   68         PLA
 End macro LED_ON
-     C9F1   A0 00      LDY #&00
+     CA04   A0 00      LDY #&00
 .cmdprcXLS_loop
-     C9F3   8C E0 BF   STY &BFE0
-     C9F6   C0 0A      CPY #&0A
-     C9F8   B0 05      BCS &C9FF
-     C9FA   A9 20      LDA #&20
-     C9FC   20 18 FF   JSR &FF18
+     CA06   8C E0 BF   STY &BFE0
+     CA09   C0 0A      CPY #&0A
+     CA0B   B0 05      BCS &CA12
+     CA0D   A9 20      LDA #&20
+     CA0F   20 18 FF   JSR &FF18
 .cmdprcXLS_print_idx
-     C9FF   98         TYA
-     CA00   20 30 FF   JSR &FF30
-     CA03   20 21 FF   JSR &FF21
-     CA06   A9 20      LDA #&20
-     CA08   20 18 FF   JSR &FF18
-     CA0B   CC 00 04   CPY &0400
-     CA0E   F0 05      BEQ &CA15
-     CA10   A9 20      LDA #&20
-     CA12   4C 17 CA   JMP &CA17
+     CA12   98         TYA
+     CA13   20 30 FF   JSR &FF30
+     CA16   20 21 FF   JSR &FF21
+     CA19   A9 20      LDA #&20
+     CA1B   20 18 FF   JSR &FF18
+     CA1E   CC 00 04   CPY &0400
+     CA21   F0 05      BEQ &CA28
+     CA23   A9 20      LDA #&20
+     CA25   4C 2A CA   JMP &CA2A
 .cmdprcXLS_currbank_is
-     CA15   A9 2A      LDA #&2A
+     CA28   A9 2A      LDA #&2A
 .cmdprcXLS_currbank_done
-     CA17   20 18 FF   JSR &FF18
-     CA1A   AD 03 80   LDA &8003
-     CA1D   8D 01 04   STA &0401
-     CA20   F0 51      BEQ &CA73
-     CA22   A2 00      LDX #&00
+     CA2A   20 18 FF   JSR &FF18
+     CA2D   AD 03 80   LDA &8003
+     CA30   8D 01 04   STA &0401
+     CA33   F0 51      BEQ &CA86
+     CA35   A2 00      LDX #&00
 .cmdprcXLS_dtype_loop
-     CA24   BD A9 DC   LDA &DCA9,X
-     CA27   F0 4A      BEQ &CA73
-     CA29   CD 01 04   CMP &0401
-     CA2C   F0 04      BEQ &CA32
-     CA2E   E8         INX
-     CA2F   4C 24 CA   JMP &CA24
+     CA37   BD F7 DC   LDA &DCF7,X
+     CA3A   F0 4A      BEQ &CA86
+     CA3C   CD 01 04   CMP &0401
+     CA3F   F0 04      BEQ &CA45
+     CA41   E8         INX
+     CA42   4C 37 CA   JMP &CA37
 .cmdprcXLS_dtype_prt
-     CA32   AD 01 04   LDA &0401
-     CA35   20 18 FF   JSR &FF18
-     CA38   A9 20      LDA #&20
-     CA3A   20 18 FF   JSR &FF18
-     CA3D   AD 01 04   LDA &0401
-     CA40   C9 44      CMP #&44
-     CA42   F0 16      BEQ &CA5A
-     CA44   C9 4F      CMP #&4F
-     CA46   F0 20      BEQ &CA68
+     CA45   AD 01 04   LDA &0401
+     CA48   20 18 FF   JSR &FF18
+     CA4B   A9 20      LDA #&20
+     CA4D   20 18 FF   JSR &FF18
+     CA50   AD 01 04   LDA &0401
+     CA53   C9 44      CMP #&44
+     CA55   F0 16      BEQ &CA6D
+     CA57   C9 4F      CMP #&4F
+     CA59   F0 20      BEQ &CA7B
 .cmdprcXLS_name
-     CA48   A2 00      LDX #&00
+     CA5B   A2 00      LDX #&00
 .cmdprcXLS_name_loop
-     CA4A   BD 0D 80   LDA &800D,X
-     CA4D   F0 24      BEQ &CA73
-     CA4F   20 18 FF   JSR &FF18
-     CA52   E8         INX
-     CA53   C9 0C      CMP #&0C
-     CA55   F0 1C      BEQ &CA73
-     CA57   4C 4A CA   JMP &CA4A
+     CA5D   BD 0D 80   LDA &800D,X
+     CA60   F0 24      BEQ &CA86
+     CA62   20 18 FF   JSR &FF18
+     CA65   E8         INX
+     CA66   C9 0C      CMP #&0C
+     CA68   F0 1C      BEQ &CA86
+     CA6A   4C 5D CA   JMP &CA5D
 .cmdprcXLS_data_label
 Macro LOAD_MSG:
-     CA5A   A9 8D      LDA #&8D
-     CA5C   85 50      STA &50
-     CA5E   A9 CB      LDA #&CB
-     CA60   85 51      STA &51
+     CA6D   A9 97      LDA #&97
+     CA6F   85 50      STA &50
+     CA71   A9 CB      LDA #&CB
+     CA73   85 51      STA &51
 End macro LOAD_MSG
-     CA62   20 1E FF   JSR &FF1E
-     CA65   4C 73 CA   JMP &CA73
+     CA75   20 1E FF   JSR &FF1E
+     CA78   4C 86 CA   JMP &CA86
 .cmdprcXLS_overlay_label
 Macro LOAD_MSG:
-     CA68   A9 98      LDA #&98
-     CA6A   85 50      STA &50
-     CA6C   A9 CB      LDA #&CB
-     CA6E   85 51      STA &51
+     CA7B   A9 A2      LDA #&A2
+     CA7D   85 50      STA &50
+     CA7F   A9 CB      LDA #&CB
+     CA81   85 51      STA &51
 End macro LOAD_MSG
-     CA70   20 1E FF   JSR &FF1E
+     CA83   20 1E FF   JSR &FF1E
 .cmdprcXLS_name_loop_done
-     CA73   A9 0A      LDA #&0A
-     CA75   20 18 FF   JSR &FF18
-     CA78   C8         INY
-     CA79   C0 10      CPY #&10
-     CA7B   F0 03      BEQ &CA80
-     CA7D   4C F3 C9   JMP &C9F3
+     CA86   A9 0A      LDA #&0A
+     CA88   20 18 FF   JSR &FF18
+     CA8B   C8         INY
+     CA8C   C0 10      CPY #&10
+     CA8E   F0 03      BEQ &CA93
+     CA90   4C 06 CA   JMP &CA06
 .cmdprcXLS_done
 Macro LED_OFF:
-     CA80   48         PHA
-     CA81   A9 FF      LDA #&FF
-     CA83   49 08      EOR #&08
-     CA85   2D 01 A0   AND &A001
-     CA88   8D 01 A0   STA &A001
-     CA8B   68         PLA
+     CA93   48         PHA
+     CA94   A9 FF      LDA #&FF
+     CA96   49 08      EOR #&08
+     CA98   2D 01 A0   AND &A001
+     CA9B   8D 01 A0   STA &A001
+     CA9E   68         PLA
 End macro LED_OFF
-     CA8C   AD 00 04   LDA &0400
-     CA8F   8D E0 BF   STA &BFE0
-     CA92   4C A6 CB   JMP &CBA6
+     CA9F   AD 00 04   LDA &0400
+     CAA2   8D E0 BF   STA &BFE0
+     CAA5   4C B0 CB   JMP &CBB0
 .cmdprcXLOAD
-     CA95   A9 02      LDA #&02
-     CA97   20 B2 CA   JSR &CAB2
-     CA9A   AD 0A 04   LDA &040A
-     CA9D   F0 03      BEQ &CAA2
-     CA9F   4C B3 CB   JMP &CBB3
+     CAA8   A9 02      LDA #&02
+     CAAA   20 C3 CA   JSR &CAC3
+     CAAD   A5 55      LDA &55
+     CAAF   F0 03      BEQ &CAB4
+     CAB1   4C BD CB   JMP &CBBD
 .cmdprcXLOAD_success
-     CAA2   4C A6 CB   JMP &CBA6
+     CAB4   4C B0 CB   JMP &CBB0
 .cmdprcXOPEN
-     CAA5   A9 03      LDA #&03
-     CAA7   20 B2 CA   JSR &CAB2
-     CAAA   AD 0A 04   LDA &040A
-     CAAD   F0 F3      BEQ &CAA2
-     CAAF   4C B3 CB   JMP &CBB3
+     CAB7   A9 03      LDA #&03
+     CAB9   20 C3 CA   JSR &CAC3
+     CABC   A5 55      LDA &55
+     CABE   F0 F4      BEQ &CAB4
+     CAC0   4C BD CB   JMP &CBBD
 .xload_file
-     CAB2   48         PHA
-     CAB3   20 D5 D2   JSR &D2D5
-     CAB6   AD 0A 04   LDA &040A
-     CAB9   D0 58      BNE &CB13
-     CABB   20 C9 D5   JSR &D5C9
-     CABE   AD 0A 04   LDA &040A
-     CAC1   D0 50      BNE &CB13
-     CAC3   20 87 D5   JSR &D587
-     CAC6   AD 0A 04   LDA &040A
-     CAC9   D0 48      BNE &CB13
-     CACB   4C D6 CA   JMP &CAD6
+     CAC3   48         PHA
+     CAC4   20 B5 D2   JSR &D2B5
+     CAC7   A5 55      LDA &55
+     CAC9   D0 54      BNE &CB1F
+     CACB   20 C7 D5   JSR &D5C7
+     CACE   A5 55      LDA &55
+     CAD0   D0 4D      BNE &CB1F
+     CAD2   20 87 D5   JSR &D587
+     CAD5   A5 55      LDA &55
+     CAD7   D0 46      BNE &CB1F
+     CAD9   4C E3 CA   JMP &CAE3
 .xload_file_bank_chk_err
-     CACE   A9 11      LDA #&11
-     CAD0   8D 0A 04   STA &040A
-     CAD3   4C 13 CB   JMP &CB13
+     CADC   A9 11      LDA #&11
+     CADE   85 55      STA &55
+     CAE0   4C 1F CB   JMP &CB1F
 .xload_file_loadfile
 Macro LED_ON:
-     CAD6   48         PHA
-     CAD7   AD 01 A0   LDA &A001
-     CADA   09 08      ORA #&08
-     CADC   8D 01 A0   STA &A001
-     CADF   68         PLA
+     CAE3   48         PHA
+     CAE4   AD 01 A0   LDA &A001
+     CAE7   09 08      ORA #&08
+     CAE9   8D 01 A0   STA &A001
+     CAEC   68         PLA
 End macro LED_ON
 Macro LOAD_MSG:
-     CAE0   A9 AE      LDA #&AE
-     CAE2   85 50      STA &50
-     CAE4   A9 CF      LDA #&CF
-     CAE6   85 51      STA &51
+     CAED   A9 A7      LDA #&A7
+     CAEF   85 50      STA &50
+     CAF1   A9 CF      LDA #&CF
+     CAF3   85 51      STA &51
 End macro LOAD_MSG
-     CAE8   20 1E FF   JSR &FF1E
-     CAEB   20 45 FF   JSR &FF45
-     CAEE   A9 00      LDA #&00
-     CAF0   85 5C      STA &5C
-     CAF2   A9 80      LDA #&80
-     CAF4   85 5D      STA &5D
-     CAF6   68         PLA
-     CAF7   20 69 FF   JSR &FF69
-     CAFA   AD 0A 04   LDA &040A
-     CAFD   D0 14      BNE &CB13
+     CAF5   20 1E FF   JSR &FF1E
+     CAF8   20 45 FF   JSR &FF45
+     CAFB   A9 00      LDA #&00
+     CAFD   85 5E      STA &5E
+     CAFF   A9 80      LDA #&80
+     CB01   85 5F      STA &5F
+     CB03   68         PLA
+     CB04   20 69 FF   JSR &FF69
+     CB07   A5 55      LDA &55
+     CB09   D0 14      BNE &CB1F
 Macro LOAD_MSG:
-     CAFF   A9 C7      LDA #&C7
-     CB01   85 50      STA &50
-     CB03   A9 CF      LDA #&CF
-     CB05   85 51      STA &51
+     CB0B   A9 C0      LDA #&C0
+     CB0D   85 50      STA &50
+     CB0F   A9 CF      LDA #&CF
+     CB11   85 51      STA &51
 End macro LOAD_MSG
-     CB07   20 1E FF   JSR &FF1E
-     CB0A   20 45 FF   JSR &FF45
-     CB0D   AD 00 04   LDA &0400
-     CB10   8D E0 BF   STA &BFE0
+     CB13   20 1E FF   JSR &FF1E
+     CB16   20 45 FF   JSR &FF45
+     CB19   AD 00 04   LDA &0400
+     CB1C   8D E0 BF   STA &BFE0
 .xload_file_done
 Macro LED_OFF:
-     CB13   48         PHA
-     CB14   A9 FF      LDA #&FF
-     CB16   49 08      EOR #&08
-     CB18   2D 01 A0   AND &A001
-     CB1B   8D 01 A0   STA &A001
-     CB1E   68         PLA
+     CB1F   48         PHA
+     CB20   A9 FF      LDA #&FF
+     CB22   49 08      EOR #&08
+     CB24   2D 01 A0   AND &A001
+     CB27   8D 01 A0   STA &A001
+     CB2A   68         PLA
 End macro LED_OFF
-     CB1F   60         RTS
+     CB2B   60         RTS
 .cmdprcXRUN
-     CB20   9C 00 03   STZ &0300
-     CB23   9C 7F 03   STZ &037F
-     CB26   9C 32 04   STZ &0432
+     CB2C   9C 00 03   STZ &0300
+     CB2F   9C 7F 03   STZ &037F
+     CB32   9C 30 04   STZ &0430
 Macro LED_OFF:
-     CB29   48         PHA
-     CB2A   A9 FF      LDA #&FF
-     CB2C   49 02      EOR #&02
-     CB2E   2D 01 A0   AND &A001
-     CB31   8D 01 A0   STA &A001
-     CB34   68         PLA
+     CB35   48         PHA
+     CB36   A9 FF      LDA #&FF
+     CB38   49 02      EOR #&02
+     CB3A   2D 01 A0   AND &A001
+     CB3D   8D 01 A0   STA &A001
+     CB40   68         PLA
 End macro LED_OFF
-     CB35   AD 03 80   LDA &8003
-     CB38   C9 45      CMP #&45
-     CB3A   D0 03      BNE &CB3F
-     CB3C   4C 00 80   JMP &8000
+     CB41   AD 03 80   LDA &8003
+     CB44   C9 45      CMP #&45
+     CB46   D0 03      BNE &CB4B
+     CB48   4C 00 80   JMP &8000
 .cmdprcXRUN_err
-     CB3F   A9 13      LDA #&13
-     CB41   8D 0A 04   STA &040A
-     CB44   4C B3 CB   JMP &CBB3
+     CB4B   A9 13      LDA #&13
+     CB4D   85 55      STA &55
+     CB4F   4C BD CB   JMP &CBBD
 .cmdprcXSEL
-     CB47   20 C9 D5   JSR &D5C9
-     CB4A   AD 0A 04   LDA &040A
-     CB4D   F0 03      BEQ &CB52
-     CB4F   4C B3 CB   JMP &CBB3
+     CB52   20 C7 D5   JSR &D5C7
+     CB55   A5 55      LDA &55
+     CB57   F0 03      BEQ &CB5C
+     CB59   4C BD CB   JMP &CBBD
 .cmdprcXSEL_success
-     CB52   9C FF 03   STZ &03FF
-     CB55   9C 80 03   STZ &0380
+     CB5C   9C FF 03   STZ &03FF
+     CB5F   9C 80 03   STZ &0380
 Macro LOAD_MSG:
-     CB58   A9 7D      LDA #&7D
-     CB5A   85 50      STA &50
-     CB5C   A9 CB      LDA #&CB
-     CB5E   85 51      STA &51
+     CB62   A9 87      LDA #&87
+     CB64   85 50      STA &50
+     CB66   A9 CB      LDA #&CB
+     CB68   85 51      STA &51
 End macro LOAD_MSG
-     CB60   20 24 FF   JSR &FF24
-     CB63   AD 00 04   LDA &0400
-     CB66   20 30 FF   JSR &FF30
+     CB6A   20 24 FF   JSR &FF24
+     CB6D   AD 00 04   LDA &0400
+     CB70   20 30 FF   JSR &FF30
 Macro STR_BUF_TO_MSG_VEC:
-     CB69   A9 0D      LDA #&0D
-     CB6B   85 50      STA &50
-     CB6D   A9 04      LDA #&04
-     CB6F   85 51      STA &51
+     CB73   A9 0B      LDA #&0B
+     CB75   85 50      STA &50
+     CB77   A9 04      LDA #&04
+     CB79   85 51      STA &51
 End macro STR_BUF_TO_MSG_VEC
-     CB71   20 24 FF   JSR &FF24
-     CB74   20 15 FF   JSR &FF15
-     CB77   20 51 FF   JSR &FF51
-     CB7A   4C A6 CB   JMP &CBA6
+     CB7B   20 24 FF   JSR &FF24
+     CB7E   20 15 FF   JSR &FF15
+     CB81   20 51 FF   JSR &FF51
+     CB84   4C B0 CB   JMP &CBB0
 .bank_select_msg
-     CB7D   42 61 6E ...
-     CB8C   00
+     CB87   42 61 6E ...
+     CB96   00
 .xls_data_label
-     CB8D   2D 2D 20 ...
-     CB97   00
+     CB97   2D 2D 20 ...
+     CBA1   00
 .xls_overlay_label
-     CB98   2D 2D 20 ...
-     CBA5   00
+     CBA2   2D 2D 20 ...
+     CBAF   00
 .cmdprc_success
 Macro LED_ON:
-     CBA6   48         PHA
-     CBA7   AD 01 A0   LDA &A001
-     CBAA   09 04      ORA #&04
-     CBAC   8D 01 A0   STA &A001
-     CBAF   68         PLA
+     CBB0   48         PHA
+     CBB1   AD 01 A0   LDA &A001
+     CBB4   09 04      ORA #&04
+     CBB6   8D 01 A0   STA &A001
+     CBB9   68         PLA
 End macro LED_ON
-     CBB0   4C C0 CB   JMP &CBC0
+     CBBA   4C CA CB   JMP &CBCA
 .cmdprc_fail
 Macro LED_ON:
-     CBB3   48         PHA
-     CBB4   AD 01 A0   LDA &A001
-     CBB7   09 01      ORA #&01
-     CBB9   8D 01 A0   STA &A001
-     CBBC   68         PLA
+     CBBD   48         PHA
+     CBBE   AD 01 A0   LDA &A001
+     CBC1   09 01      ORA #&01
+     CBC3   8D 01 A0   STA &A001
+     CBC6   68         PLA
 End macro LED_ON
-     CBBD   20 0F D4   JSR &D40F
+     CBC7   20 E3 D3   JSR &D3E3
 .cmdprc_end
 Macro SERIAL_PROMPT:
-     CBC0   A9 87      LDA #&87
-     CBC2   85 50      STA &50
-     CBC4   A9 DD      LDA #&DD
-     CBC6   85 51      STA &51
-     CBC8   20 1E FF   JSR &FF1E
+     CBCA   A9 D9      LDA #&D9
+     CBCC   85 50      STA &50
+     CBCE   A9 DD      LDA #&DD
+     CBD0   85 51      STA &51
+     CBD2   20 1E FF   JSR &FF1E
 End macro SERIAL_PROMPT
 .process_input_done
-     CBCB   9C 7F 03   STZ &037F
-     CBCE   9C 00 03   STZ &0300
+     CBD5   9C 7F 03   STZ &037F
+     CBD8   9C 00 03   STZ &0300
 Macro LED_OFF:
-     CBD1   48         PHA
-     CBD2   A9 FF      LDA #&FF
-     CBD4   49 02      EOR #&02
-     CBD6   2D 01 A0   AND &A001
-     CBD9   8D 01 A0   STA &A001
-     CBDC   68         PLA
+     CBDB   48         PHA
+     CBDC   A9 FF      LDA #&FF
+     CBDE   49 02      EOR #&02
+     CBE0   2D 01 A0   AND &A001
+     CBE3   8D 01 A0   STA &A001
+     CBE6   68         PLA
 End macro LED_OFF
-     CBDD   4C FE C2   JMP &C2FE
+     CBE7   4C 27 C3   JMP &C327
 .duart_init
-     CBE0   48         PHA
-     CBE1   A9 B0      LDA #&B0
-     CBE3   8D 02 B4   STA &B402
-     CBE6   A9 04      LDA #&04
-     CBE8   8D 02 B4   STA &B402
-     CBEB   A9 01      LDA #&01
+     CBEA   48         PHA
+     CBEB   A9 B0      LDA #&B0
      CBED   8D 02 B4   STA &B402
-     CBF0   A9 98      LDA #&98
-     CBF2   8D 00 B4   STA &B400
-     CBF5   A9 10      LDA #&10
+     CBF0   A9 04      LDA #&04
+     CBF2   8D 02 B4   STA &B402
+     CBF5   A9 01      LDA #&01
      CBF7   8D 02 B4   STA &B402
-     CBFA   A9 13      LDA #&13
+     CBFA   A9 98      LDA #&98
      CBFC   8D 00 B4   STA &B400
-     CBFF   A9 07      LDA #&07
-     CC01   8D 00 B4   STA &B400
-     CC04   AD 04 B4   LDA &B404
-     CC07   09 80      ORA #&80
-     CC09   8D 04 B4   STA &B404
-     CC0C   A9 BB      LDA #&BB
-     CC0E   8D 01 B4   STA &B401
-     CC11   A9 02      LDA #&02
-     CC13   8D 05 B4   STA &B405
-     CC16   68         PLA
-     CC17   60         RTS
-.duart_wait_send_clr
-     CC18   48         PHA
-.duart_wait_loop
-     CC19   AD 01 B4   LDA &B401
-     CC1C   29 04      AND #&04
-     CC1E   F0 F9      BEQ &CC19
+     CBFF   A9 10      LDA #&10
+     CC01   8D 02 B4   STA &B402
+     CC04   A9 13      LDA #&13
+     CC06   8D 00 B4   STA &B400
+     CC09   A9 07      LDA #&07
+     CC0B   8D 00 B4   STA &B400
+     CC0E   AD 04 B4   LDA &B404
+     CC11   09 80      ORA #&80
+     CC13   8D 04 B4   STA &B404
+     CC16   A9 BB      LDA #&BB
+     CC18   8D 01 B4   STA &B401
+     CC1B   A9 02      LDA #&02
+     CC1D   8D 05 B4   STA &B405
      CC20   68         PLA
      CC21   60         RTS
-.duart_println
+.duart_wait_send_clr
      CC22   48         PHA
-     CC23   5A         PHY
-     CC24   A0 00      LDY #&00
+.duart_wait_loop
+     CC23   AD 01 B4   LDA &B401
+     CC26   29 04      AND #&04
+     CC28   F0 F9      BEQ &CC23
+     CC2A   68         PLA
+     CC2B   60         RTS
+.duart_println
+     CC2C   48         PHA
+     CC2D   5A         PHY
+     CC2E   A0 00      LDY #&00
 .duart_println_chr
-     CC26   B1 50      LDA (&50),Y
-     CC28   F0 11      BEQ &CC3B
-     CC2A   20 18 CC   JSR &CC18
-     CC2D   8D 03 B4   STA &B403
-     CC30   C8         INY
-     CC31   F0 03      BEQ &CC36
-     CC33   4C 26 CC   JMP &CC26
+     CC30   B1 50      LDA (&50),Y
+     CC32   F0 11      BEQ &CC45
+     CC34   20 22 CC   JSR &CC22
+     CC37   8D 03 B4   STA &B403
+     CC3A   C8         INY
+     CC3B   F0 03      BEQ &CC40
+     CC3D   4C 30 CC   JMP &CC30
 .duart_println_inc_addr
-     CC36   E6 51      INC &51
-     CC38   4C 26 CC   JMP &CC26
+     CC40   E6 51      INC &51
+     CC42   4C 30 CC   JMP &CC30
 .duart_println_end
-     CC3B   7A         PLY
-     CC3C   68         PLA
-     CC3D   60         RTS
+     CC45   7A         PLY
+     CC46   68         PLA
+     CC47   60         RTS
 .duart_snd_strbuf
-     CC3E   48         PHA
-     CC3F   A9 0D      LDA #&0D
-     CC41   85 50      STA &50
-     CC43   A9 04      LDA #&04
-     CC45   85 51      STA &51
-     CC47   20 22 CC   JSR &CC22
-     CC4A   68         PLA
-     CC4B   60         RTS
+     CC48   48         PHA
+     CC49   A9 0B      LDA #&0B
+     CC4B   85 50      STA &50
+     CC4D   A9 04      LDA #&04
+     CC4F   85 51      STA &51
+     CC51   20 2C CC   JSR &CC2C
+     CC54   68         PLA
+     CC55   60         RTS
 .duart_sendbuf
-     CC4C   A2 00      LDX #&00
+     CC56   A2 00      LDX #&00
 .duart_sendbuf_next_char
-     CC4E   BD 80 03   LDA &0380,X
-     CC51   F0 13      BEQ &CC66
-     CC53   20 18 CC   JSR &CC18
-     CC56   8D 03 B4   STA &B403
-     CC59   E8         INX
-     CC5A   EC FF 03   CPX &03FF
-     CC5D   F0 07      BEQ &CC66
-     CC5F   E0 78      CPX #&78
-     CC61   F0 03      BEQ &CC66
-     CC63   4C 4E CC   JMP &CC4E
+     CC58   BD 80 03   LDA &0380,X
+     CC5B   F0 13      BEQ &CC70
+     CC5D   20 22 CC   JSR &CC22
+     CC60   8D 03 B4   STA &B403
+     CC63   E8         INX
+     CC64   EC FF 03   CPX &03FF
+     CC67   F0 07      BEQ &CC70
+     CC69   E0 78      CPX #&78
+     CC6B   F0 03      BEQ &CC70
+     CC6D   4C 58 CC   JMP &CC58
 .duart_sendbuf_end
-     CC66   60         RTS
+     CC70   60         RTS
 .duart_sendchar
-     CC67   20 18 CC   JSR &CC18
-     CC6A   8D 03 B4   STA &B403
-     CC6D   60         RTS
+     CC71   20 22 CC   JSR &CC22
+     CC74   8D 03 B4   STA &B403
+     CC77   60         RTS
 .zd_init
-     CC6E   A9 0F      LDA #&0F
-     CC70   8D 02 A4   STA &A402
-     CC73   A9 FF      LDA #&FF
-     CC75   8D 03 A4   STA &A403
-     CC78   9C 01 A4   STZ &A401
-     CC7B   A9 C0      LDA #&C0
+     CC78   A9 0F      LDA #&0F
+     CC7A   8D 02 A4   STA &A402
+     CC7D   A9 FF      LDA #&FF
+     CC7F   8D 03 A4   STA &A403
+     CC82   9C 01 A4   STZ &A401
+     CC85   A9 C0      LDA #&C0
 Macro ZD_SET_CO_ON:
-     CC7D   AD 00 A4   LDA &A400
-     CC80   09 04      ORA #&04
-     CC82   8D 00 A4   STA &A400
+     CC87   AD 00 A4   LDA &A400
+     CC8A   09 04      ORA #&04
+     CC8C   8D 00 A4   STA &A400
 End macro ZD_SET_CO_ON
-     CC85   8D 0E A4   STA &A40E
-     CC88   A9 00      LDA #&00
-     CC8A   8D 0B A4   STA &A40B
-     CC8D   9C 00 06   STZ &0600
-     CC90   9C 01 06   STZ &0601
+     CC8F   8D 0E A4   STA &A40E
+     CC92   A9 00      LDA #&00
+     CC94   8D 0B A4   STA &A40B
+     CC97   9C 00 06   STZ &0600
+     CC9A   9C 01 06   STZ &0601
 Macro ZD_SET_CA_OFF:
-     CC93   AD 00 A4   LDA &A400
-     CC96   09 01      ORA #&01
-     CC98   8D 00 A4   STA &A400
+     CC9D   AD 00 A4   LDA &A400
+     CCA0   09 01      ORA #&01
+     CCA2   8D 00 A4   STA &A400
 End macro ZD_SET_CA_OFF
 Macro ZD_SET_CR_OFF:
-     CC9B   AD 00 A4   LDA &A400
-     CC9E   09 02      ORA #&02
-     CCA0   8D 00 A4   STA &A400
+     CCA5   AD 00 A4   LDA &A400
+     CCA8   09 02      ORA #&02
+     CCAA   8D 00 A4   STA &A400
 End macro ZD_SET_CR_OFF
-     CCA3   60         RTS
+     CCAD   60         RTS
 .zd_init_process
-     CCA4   48         PHA
-     CCA5   A9 FF      LDA #&FF
-     CCA7   8D 03 A4   STA &A403
-     CCAA   AD 00 A4   LDA &A400
-     CCAD   09 08      ORA #&08
-     CCAF   8D 00 A4   STA &A400
-     CCB2   AD 00 A4   LDA &A400
-     CCB5   29 FE      AND #&FE
-     CCB7   8D 00 A4   STA &A400
-     CCBA   68         PLA
-     CCBB   8D 01 A4   STA &A401
-     CCBE   20 62 CE   JSR &CE62
+     CCAE   48         PHA
+     CCAF   A9 FF      LDA #&FF
+     CCB1   8D 03 A4   STA &A403
+     CCB4   AD 00 A4   LDA &A400
+     CCB7   09 08      ORA #&08
+     CCB9   8D 00 A4   STA &A400
+     CCBC   AD 00 A4   LDA &A400
+     CCBF   29 FE      AND #&FE
+     CCC1   8D 00 A4   STA &A400
+     CCC4   68         PLA
+     CCC5   8D 01 A4   STA &A401
+     CCC8   20 58 CE   JSR &CE58
 Macro ZD_SET_CR_ON:
-     CCC1   AD 00 A4   LDA &A400
-     CCC4   29 FD      AND #&FD
-     CCC6   8D 00 A4   STA &A400
+     CCCB   AD 00 A4   LDA &A400
+     CCCE   29 FD      AND #&FD
+     CCD0   8D 00 A4   STA &A400
 End macro ZD_SET_CR_ON
-     CCC9   20 62 CE   JSR &CE62
-     CCCC   20 5E CF   JSR &CF5E
+     CCD3   20 58 CE   JSR &CE58
+     CCD6   20 5B CF   JSR &CF5B
 Macro ZD_SET_CR_OFF:
-     CCCF   AD 00 A4   LDA &A400
-     CCD2   09 02      ORA #&02
-     CCD4   8D 00 A4   STA &A400
+     CCD9   AD 00 A4   LDA &A400
+     CCDC   09 02      ORA #&02
+     CCDE   8D 00 A4   STA &A400
 End macro ZD_SET_CR_OFF
 Macro ZD_SET_CA_OFF:
-     CCD7   AD 00 A4   LDA &A400
-     CCDA   09 01      ORA #&01
-     CCDC   8D 00 A4   STA &A400
+     CCE1   AD 00 A4   LDA &A400
+     CCE4   09 01      ORA #&01
+     CCE6   8D 00 A4   STA &A400
 End macro ZD_SET_CA_OFF
 .zd_svr_resp_init_end
-     CCDF   60         RTS
+     CCE9   60         RTS
 .zd_delfile
-     CCE0   A9 20      LDA #&20
-     CCE2   20 E6 CC   JSR &CCE6
-     CCE5   60         RTS
+     CCEA   A9 20      LDA #&20
+     CCEC   20 F0 CC   JSR &CCF0
+     CCEF   60         RTS
 .zd_handshake
-     CCE6   9C 0A 04   STZ &040A
-     CCE9   9C 09 04   STZ &0409
-     CCEC   20 A4 CC   JSR &CCA4
-     CCEF   AD 0A 04   LDA &040A
-     CCF2   D0 18      BNE &CD0C
-     CCF4   20 1D CE   JSR &CE1D
-     CCF7   AD 0A 04   LDA &040A
-     CCFA   D0 10      BNE &CD0C
+     CCF0   64 55      STZ &55
+     CCF2   64 54      STZ &54
+     CCF4   20 AE CC   JSR &CCAE
+     CCF7   A5 55      LDA &55
+     CCF9   D0 17      BNE &CD12
+     CCFB   20 16 CE   JSR &CE16
+     CCFE   A5 55      LDA &55
+     CD00   D0 10      BNE &CD12
 Macro ZD_SET_DATADIR_INPUT:
-     CCFC   A9 00      LDA #&00
-     CCFE   8D 03 A4   STA &A403
-     CD01   AD 00 A4   LDA &A400
-     CD04   29 F7      AND #&F7
-     CD06   8D 00 A4   STA &A400
+     CD02   A9 00      LDA #&00
+     CD04   8D 03 A4   STA &A403
+     CD07   AD 00 A4   LDA &A400
+     CD0A   29 F7      AND #&F7
+     CD0C   8D 00 A4   STA &A400
 End macro ZD_SET_DATADIR_INPUT
-     CD09   20 9E CE   JSR &CE9E
+     CD0F   20 A3 CE   JSR &CEA3
 .zd_handshake_end
-     CD0C   60         RTS
+     CD12   60         RTS
 .zd_loadfile
-     CD0D   20 E6 CC   JSR &CCE6
-     CD10   AD 0A 04   LDA &040A
-     CD13   D0 0B      BNE &CD20
+     CD13   20 F0 CC   JSR &CCF0
+     CD16   A5 55      LDA &55
+     CD18   D0 0A      BNE &CD24
 .zd_loadf_rcv_data
-     CD15   20 3D CF   JSR &CF3D
-     CD18   AD 0A 04   LDA &040A
-     CD1B   D0 03      BNE &CD20
-     CD1D   20 3E CD   JSR &CD3E
+     CD1A   20 3C CF   JSR &CF3C
+     CD1D   A5 55      LDA &55
+     CD1F   D0 03      BNE &CD24
+     CD21   20 42 CD   JSR &CD42
 .zd_loadf_end
 Macro ZD_SET_CA_OFF:
-     CD20   AD 00 A4   LDA &A400
-     CD23   09 01      ORA #&01
-     CD25   8D 00 A4   STA &A400
+     CD24   AD 00 A4   LDA &A400
+     CD27   09 01      ORA #&01
+     CD29   8D 00 A4   STA &A400
 End macro ZD_SET_CA_OFF
 Macro ZD_SET_CR_OFF:
-     CD28   AD 00 A4   LDA &A400
-     CD2B   09 02      ORA #&02
-     CD2D   8D 00 A4   STA &A400
+     CD2C   AD 00 A4   LDA &A400
+     CD2F   09 02      ORA #&02
+     CD31   8D 00 A4   STA &A400
 End macro ZD_SET_CR_OFF
 Macro ZD_SET_DATADIR_OUTPUT:
-     CD30   A9 FF      LDA #&FF
-     CD32   8D 03 A4   STA &A403
-     CD35   AD 00 A4   LDA &A400
-     CD38   09 08      ORA #&08
-     CD3A   8D 00 A4   STA &A400
+     CD34   A9 FF      LDA #&FF
+     CD36   8D 03 A4   STA &A403
+     CD39   AD 00 A4   LDA &A400
+     CD3C   09 08      ORA #&08
+     CD3E   8D 00 A4   STA &A400
 End macro ZD_SET_DATADIR_OUTPUT
-     CD3D   60         RTS
+     CD41   60         RTS
 .zd_rcv_data
-     CD3E   20 1C CF   JSR &CF1C
-     CD41   AD 0A 04   LDA &040A
-     CD44   D0 39      BNE &CD7F
+     CD42   20 1D CF   JSR &CF1D
+     CD45   A5 55      LDA &55
+     CD47   D0 38      BNE &CD81
 .zd_rcv_data_loop
-     CD46   20 5E CF   JSR &CF5E
-     CD49   AD 0A 04   LDA &040A
-     CD4C   D0 2B      BNE &CD79
-     CD4E   AD 01 A4   LDA &A401
-     CD51   92 5C      STA (&5C)
-     CD53   E6 5C      INC &5C
-     CD55   D0 02      BNE &CD59
-     CD57   E6 5D      INC &5D
+     CD49   20 5B CF   JSR &CF5B
+     CD4C   A5 55      LDA &55
+     CD4E   D0 2B      BNE &CD7B
+     CD50   AD 01 A4   LDA &A401
+     CD53   92 5E      STA (&5E)
+     CD55   E6 5E      INC &5E
+     CD57   D0 02      BNE &CD5B
+     CD59   E6 5F      INC &5F
 .zd_rcv_data_loop_cont
-     CD59   20 7F CF   JSR &CF7F
+     CD5B   20 7A CF   JSR &CF7A
 Macro ZD_SET_CR_ON:
-     CD5C   AD 00 A4   LDA &A400
-     CD5F   29 FD      AND #&FD
-     CD61   8D 00 A4   STA &A400
+     CD5E   AD 00 A4   LDA &A400
+     CD61   29 FD      AND #&FD
+     CD63   8D 00 A4   STA &A400
 End macro ZD_SET_CR_ON
-     CD64   20 80 CE   JSR &CE80
+     CD66   20 85 CE   JSR &CE85
 Macro ZD_SET_CR_OFF:
-     CD67   AD 00 A4   LDA &A400
-     CD6A   09 02      ORA #&02
-     CD6C   8D 00 A4   STA &A400
+     CD69   AD 00 A4   LDA &A400
+     CD6C   09 02      ORA #&02
+     CD6E   8D 00 A4   STA &A400
 End macro ZD_SET_CR_OFF
-     CD6F   AD 00 A4   LDA &A400
-     CD72   29 20      AND #&20
-     CD74   D0 09      BNE &CD7F
-     CD76   4C 46 CD   JMP &CD46
+     CD71   AD 00 A4   LDA &A400
+     CD74   29 20      AND #&20
+     CD76   D0 09      BNE &CD81
+     CD78   4C 49 CD   JMP &CD49
 .zd_rcv_data_chkSA
-     CD79   20 80 CE   JSR &CE80
-     CD7C   20 3D CF   JSR &CF3D
+     CD7B   20 85 CE   JSR &CE85
+     CD7E   20 3C CF   JSR &CF3C
 .zd_rcv_data_end
-     CD7F   60         RTS
+     CD81   60         RTS
 .zd_save_data
-     CD80   9C 0A 04   STZ &040A
-     CD83   20 A4 CC   JSR &CCA4
-     CD86   AD 0A 04   LDA &040A
-     CD89   D0 2B      BNE &CDB6
-     CD8B   20 1D CE   JSR &CE1D
-     CD8E   AD 0A 04   LDA &040A
-     CD91   D0 23      BNE &CDB6
+     CD82   64 55      STZ &55
+     CD84   20 AE CC   JSR &CCAE
+     CD87   A5 55      LDA &55
+     CD89   D0 28      BNE &CDB3
+     CD8B   20 16 CE   JSR &CE16
+     CD8E   A5 55      LDA &55
+     CD90   D0 21      BNE &CDB3
 Macro ZD_SET_DATADIR_INPUT:
-     CD93   A9 00      LDA #&00
-     CD95   8D 03 A4   STA &A403
-     CD98   AD 00 A4   LDA &A400
-     CD9B   29 F7      AND #&F7
-     CD9D   8D 00 A4   STA &A400
+     CD92   A9 00      LDA #&00
+     CD94   8D 03 A4   STA &A403
+     CD97   AD 00 A4   LDA &A400
+     CD9A   29 F7      AND #&F7
+     CD9C   8D 00 A4   STA &A400
 End macro ZD_SET_DATADIR_INPUT
-     CDA0   20 9E CE   JSR &CE9E
-     CDA3   AD 0A 04   LDA &040A
-     CDA6   D0 0E      BNE &CDB6
-     CDA8   20 3D CF   JSR &CF3D
-     CDAB   AD 0A 04   LDA &040A
-     CDAE   D0 06      BNE &CDB6
-     CDB0   20 80 CE   JSR &CE80
-     CDB3   20 B7 CD   JSR &CDB7
+     CD9F   20 A3 CE   JSR &CEA3
+     CDA2   A5 55      LDA &55
+     CDA4   D0 0D      BNE &CDB3
+     CDA6   20 3C CF   JSR &CF3C
+     CDA9   A5 55      LDA &55
+     CDAB   D0 06      BNE &CDB3
+     CDAD   20 85 CE   JSR &CE85
+     CDB0   20 B4 CD   JSR &CDB4
 .zd_save_data_end
-     CDB6   60         RTS
+     CDB3   60         RTS
 .zd_send_data
 Macro ZD_SET_CR_OFF:
-     CDB7   AD 00 A4   LDA &A400
-     CDBA   09 02      ORA #&02
-     CDBC   8D 00 A4   STA &A400
+     CDB4   AD 00 A4   LDA &A400
+     CDB7   09 02      ORA #&02
+     CDB9   8D 00 A4   STA &A400
 End macro ZD_SET_CR_OFF
 Macro ZD_SET_DATADIR_OUTPUT:
-     CDBF   A9 FF      LDA #&FF
-     CDC1   8D 03 A4   STA &A403
-     CDC4   AD 00 A4   LDA &A400
-     CDC7   09 08      ORA #&08
-     CDC9   8D 00 A4   STA &A400
+     CDBC   A9 FF      LDA #&FF
+     CDBE   8D 03 A4   STA &A403
+     CDC1   AD 00 A4   LDA &A400
+     CDC4   09 08      ORA #&08
+     CDC6   8D 00 A4   STA &A400
 End macro ZD_SET_DATADIR_OUTPUT
 Macro ZD_SET_CA_ON:
-     CDCC   AD 00 A4   LDA &A400
-     CDCF   29 FE      AND #&FE
-     CDD1   8D 00 A4   STA &A400
+     CDC9   AD 00 A4   LDA &A400
+     CDCC   29 FE      AND #&FE
+     CDCE   8D 00 A4   STA &A400
 End macro ZD_SET_CA_ON
-     CDD4   20 7F CF   JSR &CF7F
-     CDD7   AD 0A 04   LDA &040A
-     CDDA   D0 38      BNE &CE14
+     CDD1   20 7A CF   JSR &CF7A
+     CDD4   A5 55      LDA &55
+     CDD6   D0 35      BNE &CE0D
 .zd_send_data_loop
-     CDDC   B2 56      LDA (&56)
-     CDDE   8D 01 A4   STA &A401
+     CDD8   B2 58      LDA (&58)
+     CDDA   8D 01 A4   STA &A401
 Macro ZD_SET_CR_ON:
-     CDE1   AD 00 A4   LDA &A400
-     CDE4   29 FD      AND #&FD
-     CDE6   8D 00 A4   STA &A400
+     CDDD   AD 00 A4   LDA &A400
+     CDE0   29 FD      AND #&FD
+     CDE2   8D 00 A4   STA &A400
 End macro ZD_SET_CR_ON
-     CDE9   20 80 CE   JSR &CE80
+     CDE5   20 85 CE   JSR &CE85
 Macro ZD_SET_CR_OFF:
-     CDEC   AD 00 A4   LDA &A400
-     CDEF   09 02      ORA #&02
-     CDF1   8D 00 A4   STA &A400
+     CDE8   AD 00 A4   LDA &A400
+     CDEB   09 02      ORA #&02
+     CDED   8D 00 A4   STA &A400
 End macro ZD_SET_CR_OFF
-     CDF4   20 5E CF   JSR &CF5E
-     CDF7   AD 0A 04   LDA &040A
-     CDFA   D0 18      BNE &CE14
-     CDFC   20 7F CF   JSR &CF7F
-     CDFF   AD 0A 04   LDA &040A
-     CE02   D0 10      BNE &CE14
-     CE04   E6 56      INC &56
-     CE06   D0 02      BNE &CE0A
-     CE08   E6 57      INC &57
+     CDF0   20 5B CF   JSR &CF5B
+     CDF3   A5 55      LDA &55
+     CDF5   D0 16      BNE &CE0D
+     CDF7   20 7A CF   JSR &CF7A
+     CDFA   A5 55      LDA &55
+     CDFC   D0 0F      BNE &CE0D
+     CDFE   E6 58      INC &58
+     CE00   D0 02      BNE &CE04
+     CE02   E6 59      INC &59
 .zd_send_data_chk
-     CE0A   20 52 D6   JSR &D652
-     CE0D   AD 09 04   LDA &0409
-     CE10   C9 02      CMP #&02
-     CE12   D0 C8      BNE &CDDC
+     CE04   20 50 D6   JSR &D650
+     CE07   A5 54      LDA &54
+     CE09   C9 02      CMP #&02
+     CE0B   D0 CB      BNE &CDD8
 .zd_send_data_end
 Macro ZD_SET_CA_OFF:
-     CE14   AD 00 A4   LDA &A400
-     CE17   09 01      ORA #&01
-     CE19   8D 00 A4   STA &A400
+     CE0D   AD 00 A4   LDA &A400
+     CE10   09 01      ORA #&01
+     CE12   8D 00 A4   STA &A400
 End macro ZD_SET_CA_OFF
-     CE1C   60         RTS
+     CE15   60         RTS
 .zd_send_strbuf
-     CE1D   A2 00      LDX #&00
+     CE16   A2 00      LDX #&00
 Macro ZD_SET_CA_ON:
-     CE1F   AD 00 A4   LDA &A400
-     CE22   29 FE      AND #&FE
-     CE24   8D 00 A4   STA &A400
+     CE18   AD 00 A4   LDA &A400
+     CE1B   29 FE      AND #&FE
+     CE1D   8D 00 A4   STA &A400
 End macro ZD_SET_CA_ON
-     CE27   9C 0A 04   STZ &040A
+     CE20   64 55      STZ &55
 .zd_sendstrbuf_next_chr
-     CE2A   20 7F CF   JSR &CF7F
-     CE2D   AD 0A 04   LDA &040A
-     CE30   D0 27      BNE &CE59
-     CE32   BD 0D 04   LDA &040D,X
-     CE35   F0 22      BEQ &CE59
-     CE37   E8         INX
-     CE38   8D 01 A4   STA &A401
+     CE22   20 7A CF   JSR &CF7A
+     CE25   A5 55      LDA &55
+     CE27   D0 26      BNE &CE4F
+     CE29   BD 0B 04   LDA &040B,X
+     CE2C   F0 21      BEQ &CE4F
+     CE2E   E8         INX
+     CE2F   8D 01 A4   STA &A401
 Macro ZD_SET_CR_ON:
-     CE3B   AD 00 A4   LDA &A400
-     CE3E   29 FD      AND #&FD
-     CE40   8D 00 A4   STA &A400
+     CE32   AD 00 A4   LDA &A400
+     CE35   29 FD      AND #&FD
+     CE37   8D 00 A4   STA &A400
 End macro ZD_SET_CR_ON
-     CE43   20 62 CE   JSR &CE62
-     CE46   20 5E CF   JSR &CF5E
-     CE49   AD 0A 04   LDA &040A
-     CE4C   D0 0B      BNE &CE59
+     CE3A   20 58 CE   JSR &CE58
+     CE3D   20 5B CF   JSR &CF5B
+     CE40   A5 55      LDA &55
+     CE42   D0 0B      BNE &CE4F
 Macro ZD_SET_CR_OFF:
-     CE4E   AD 00 A4   LDA &A400
-     CE51   09 02      ORA #&02
-     CE53   8D 00 A4   STA &A400
+     CE44   AD 00 A4   LDA &A400
+     CE47   09 02      ORA #&02
+     CE49   8D 00 A4   STA &A400
 End macro ZD_SET_CR_OFF
-     CE56   4C 2A CE   JMP &CE2A
+     CE4C   4C 22 CE   JMP &CE22
 .zd_sendstrbuf_end
 Macro ZD_SET_CA_OFF:
-     CE59   AD 00 A4   LDA &A400
-     CE5C   09 01      ORA #&01
-     CE5E   8D 00 A4   STA &A400
+     CE4F   AD 00 A4   LDA &A400
+     CE52   09 01      ORA #&01
+     CE54   8D 00 A4   STA &A400
 End macro ZD_SET_CA_OFF
-     CE61   60         RTS
+     CE57   60         RTS
 .zd_signalDelay
-     CE62   A9 C0      LDA #&C0
-     CE64   8D 0E A4   STA &A40E
-     CE67   A9 00      LDA #&00
-     CE69   8D 0B A4   STA &A40B
-     CE6C   A9 70      LDA #&70
-     CE6E   8D 04 A4   STA &A404
-     CE71   A9 02      LDA #&02
-     CE73   8D 05 A4   STA &A405
+     CE58   A9 C0      LDA #&C0
+     CE5A   8D 0E A4   STA &A40E
+     CE5D   A9 00      LDA #&00
+     CE5F   8D 0B A4   STA &A40B
+     CE62   A9 70      LDA #&70
+     CE64   8D 04 A4   STA &A404
+     CE67   A9 02      LDA #&02
+     CE69   8D 05 A4   STA &A405
 .zd_signalDelay_loop
-     CE76   EA         NOP
-     CE77   2C 0D A4   BIT &A40D
-     CE7A   50 FA      BVC &CE76
-     CE7C   AD 04 A4   LDA &A404
-     CE7F   60         RTS
+     CE6C   EA         NOP
+     CE6D   2C 0D A4   BIT &A40D
+     CE70   50 FA      BVC &CE6C
+     CE72   AD 04 A4   LDA &A404
+     CE75   60         RTS
+.zd_streamin
+     CE76   A9 0A      LDA #&0A
+     CE78   20 F0 CC   JSR &CCF0
+     CE7B   A5 55      LDA &55
+     CE7D   D0 05      BNE &CE84
+.zd_streamin_close
+     CE7F   A9 0B      LDA #&0B
+     CE81   20 AE CC   JSR &CCAE
+.zd_streamin_end
+     CE84   60         RTS
 .zd_strobeDelay
-     CE80   A9 C0      LDA #&C0
-     CE82   8D 0E A4   STA &A40E
-     CE85   A9 00      LDA #&00
-     CE87   8D 0B A4   STA &A40B
-     CE8A   A9 20      LDA #&20
-     CE8C   8D 04 A4   STA &A404
-     CE8F   A9 02      LDA #&02
-     CE91   8D 05 A4   STA &A405
+     CE85   A9 C0      LDA #&C0
+     CE87   8D 0E A4   STA &A40E
+     CE8A   A9 00      LDA #&00
+     CE8C   8D 0B A4   STA &A40B
+     CE8F   A9 20      LDA #&20
+     CE91   8D 04 A4   STA &A404
+     CE94   A9 02      LDA #&02
+     CE96   8D 05 A4   STA &A405
 .zd_strobeDelay_loop
-     CE94   EA         NOP
-     CE95   2C 0D A4   BIT &A40D
-     CE98   50 FA      BVC &CE94
-     CE9A   AD 04 A4   LDA &A404
-     CE9D   60         RTS
+     CE99   EA         NOP
+     CE9A   2C 0D A4   BIT &A40D
+     CE9D   50 FA      BVC &CE99
+     CE9F   AD 04 A4   LDA &A404
+     CEA2   60         RTS
 .zd_svr_resp
-     CE9E   A2 80      LDX #&80
+     CEA3   A2 80      LDX #&80
 .zd_svr_resp_SA_waitloop
-     CEA0   20 1C CF   JSR &CF1C
-     CEA3   AD 0A 04   LDA &040A
-     CEA6   F0 06      BEQ &CEAE
-     CEA8   CA         DEX
-     CEA9   D0 F5      BNE &CEA0
-     CEAB   4C D1 CE   JMP &CED1
+     CEA5   20 1D CF   JSR &CF1D
+     CEA8   A5 55      LDA &55
+     CEAA   F0 06      BEQ &CEB2
+     CEAC   CA         DEX
+     CEAD   D0 F6      BNE &CEA5
+     CEAF   4C D3 CE   JMP &CED3
 .zd_svr_resp_nextwait
 Macro ZD_SET_CR_ON:
-     CEAE   AD 00 A4   LDA &A400
-     CEB1   29 FD      AND #&FD
-     CEB3   8D 00 A4   STA &A400
+     CEB2   AD 00 A4   LDA &A400
+     CEB5   29 FD      AND #&FD
+     CEB7   8D 00 A4   STA &A400
 End macro ZD_SET_CR_ON
-     CEB6   20 5E CF   JSR &CF5E
-     CEB9   AD 0A 04   LDA &040A
-     CEBC   D0 13      BNE &CED1
-     CEBE   AD 01 A4   LDA &A401
-     CEC1   D0 0B      BNE &CECE
+     CEBA   20 5B CF   JSR &CF5B
+     CEBD   A5 55      LDA &55
+     CEBF   D0 12      BNE &CED3
+     CEC1   AD 01 A4   LDA &A401
+     CEC4   D0 0B      BNE &CED1
 Macro ZD_SET_CR_OFF:
-     CEC3   AD 00 A4   LDA &A400
-     CEC6   09 02      ORA #&02
-     CEC8   8D 00 A4   STA &A400
+     CEC6   AD 00 A4   LDA &A400
+     CEC9   09 02      ORA #&02
+     CECB   8D 00 A4   STA &A400
 End macro ZD_SET_CR_OFF
-     CECB   4C D1 CE   JMP &CED1
+     CECE   4C D3 CE   JMP &CED3
 .zd_svr_resp_resp_err
-     CECE   8D 0A 04   STA &040A
+     CED1   85 55      STA &55
 .zd_svr_resp_svr_end
-     CED1   60         RTS
+     CED3   60         RTS
 .zd_chk_timer
-     CED2   78         SEI
-     CED3   48         PHA
-     CED4   AD 01 06   LDA &0601
-     CED7   C9 00      CMP #&00
-     CED9   90 10      BCC &CEEB
-     CEDB   D0 13      BNE &CEF0
-     CEDD   AD 00 06   LDA &0600
-     CEE0   C9 4F      CMP #&4F
-     CEE2   90 07      BCC &CEEB
-     CEE4   D0 0A      BNE &CEF0
-     CEE6   A9 01      LDA #&01
-     CEE8   4C F2 CE   JMP &CEF2
+     CED4   78         SEI
+     CED5   48         PHA
+     CED6   AD 01 06   LDA &0601
+     CED9   C9 00      CMP #&00
+     CEDB   90 10      BCC &CEED
+     CEDD   D0 13      BNE &CEF2
+     CEDF   AD 00 06   LDA &0600
+     CEE2   C9 4F      CMP #&4F
+     CEE4   90 07      BCC &CEED
+     CEE6   D0 0A      BNE &CEF2
+     CEE8   A9 01      LDA #&01
+     CEEA   4C F4 CE   JMP &CEF4
 .zd_chk_timer_less_than
-     CEEB   A9 00      LDA #&00
-     CEED   4C F2 CE   JMP &CEF2
+     CEED   A9 00      LDA #&00
+     CEEF   4C F4 CE   JMP &CEF4
 .zd_chk_timer_more_than
-     CEF0   A9 02      LDA #&02
+     CEF2   A9 02      LDA #&02
 .zd_chk_timer_end
-     CEF2   8D 09 04   STA &0409
-     CEF5   68         PLA
-     CEF6   58         CLI
-     CEF7   60         RTS
+     CEF4   85 54      STA &54
+     CEF6   68         PLA
+     CEF7   58         CLI
+     CEF8   60         RTS
 .zd_timer1_stop
-     CEF8   AD 0E A4   LDA &A40E
-     CEFB   29 BF      AND #&BF
-     CEFD   8D 0E A4   STA &A40E
-     CF00   60         RTS
+     CEF9   AD 0E A4   LDA &A40E
+     CEFC   29 BF      AND #&BF
+     CEFE   8D 0E A4   STA &A40E
+     CF01   60         RTS
 .zd_timeout_timer_start
-     CF01   9C 00 06   STZ &0600
-     CF04   9C 01 06   STZ &0601
-     CF07   A9 C0      LDA #&C0
-     CF09   8D 0E A4   STA &A40E
-     CF0C   A9 40      LDA #&40
-     CF0E   8D 0B A4   STA &A40B
-     CF11   A9 27      LDA #&27
-     CF13   8D 04 A4   STA &A404
-     CF16   A9 0E      LDA #&0E
-     CF18   8D 05 A4   STA &A405
-     CF1B   60         RTS
+     CF02   9C 00 06   STZ &0600
+     CF05   9C 01 06   STZ &0601
+     CF08   A9 C0      LDA #&C0
+     CF0A   8D 0E A4   STA &A40E
+     CF0D   A9 40      LDA #&40
+     CF0F   8D 0B A4   STA &A40B
+     CF12   A9 27      LDA #&27
+     CF14   8D 04 A4   STA &A404
+     CF17   A9 0E      LDA #&0E
+     CF19   8D 05 A4   STA &A405
+     CF1C   60         RTS
 .zd_waitForSA
-     CF1C   48         PHA
-     CF1D   DA         PHX
-     CF1E   20 01 CF   JSR &CF01
-     CF21   A2 00      LDX #&00
+     CF1D   48         PHA
+     CF1E   DA         PHX
+     CF1F   20 02 CF   JSR &CF02
+     CF22   A2 00      LDX #&00
 .zd_waitForSA_loop
-     CF23   AD 00 A4   LDA &A400
-     CF26   29 20      AND #&20
-     CF28   F0 0A      BEQ &CF34
-     CF2A   20 D2 CE   JSR &CED2
-     CF2D   AD 09 04   LDA &0409
-     CF30   F0 F1      BEQ &CF23
+     CF24   AD 00 A4   LDA &A400
+     CF27   29 20      AND #&20
+     CF29   F0 09      BEQ &CF34
+     CF2B   20 D4 CE   JSR &CED4
+     CF2E   A5 54      LDA &54
+     CF30   F0 F2      BEQ &CF24
      CF32   A2 08      LDX #&08
 .zd_waitForSA_end
-     CF34   8E 0A 04   STX &040A
-     CF37   20 F8 CE   JSR &CEF8
-     CF3A   FA         PLX
-     CF3B   68         PLA
-     CF3C   60         RTS
+     CF34   86 55      STX &55
+     CF36   20 F9 CE   JSR &CEF9
+     CF39   FA         PLX
+     CF3A   68         PLA
+     CF3B   60         RTS
 .zd_waitForSAoff
-     CF3D   48         PHA
-     CF3E   DA         PHX
-     CF3F   20 01 CF   JSR &CF01
-     CF42   A2 00      LDX #&00
+     CF3C   48         PHA
+     CF3D   DA         PHX
+     CF3E   20 02 CF   JSR &CF02
+     CF41   A2 00      LDX #&00
 .zd_waitForSAoff_loop
-     CF44   AD 00 A4   LDA &A400
-     CF47   29 20      AND #&20
-     CF49   D0 0A      BNE &CF55
-     CF4B   20 D2 CE   JSR &CED2
-     CF4E   AD 09 04   LDA &0409
-     CF51   F0 F1      BEQ &CF44
-     CF53   A2 0A      LDX #&0A
+     CF43   AD 00 A4   LDA &A400
+     CF46   29 20      AND #&20
+     CF48   D0 09      BNE &CF53
+     CF4A   20 D4 CE   JSR &CED4
+     CF4D   A5 54      LDA &54
+     CF4F   F0 F2      BEQ &CF43
+     CF51   A2 0A      LDX #&0A
 .zd_waitForSAoff_end
-     CF55   8E 0A 04   STX &040A
-     CF58   20 F8 CE   JSR &CEF8
-     CF5B   FA         PLX
-     CF5C   68         PLA
-     CF5D   60         RTS
+     CF53   86 55      STX &55
+     CF55   20 F9 CE   JSR &CEF9
+     CF58   FA         PLX
+     CF59   68         PLA
+     CF5A   60         RTS
 .zd_waitForSR
-     CF5E   48         PHA
-     CF5F   DA         PHX
-     CF60   20 01 CF   JSR &CF01
-     CF63   A2 00      LDX #&00
+     CF5B   48         PHA
+     CF5C   DA         PHX
+     CF5D   20 02 CF   JSR &CF02
+     CF60   A2 00      LDX #&00
 .zd_waitForSR_loop
-     CF65   AD 00 A4   LDA &A400
-     CF68   29 10      AND #&10
-     CF6A   F0 0A      BEQ &CF76
-     CF6C   20 D2 CE   JSR &CED2
-     CF6F   AD 09 04   LDA &0409
-     CF72   F0 F1      BEQ &CF65
-     CF74   A2 07      LDX #&07
+     CF62   AD 00 A4   LDA &A400
+     CF65   29 10      AND #&10
+     CF67   F0 09      BEQ &CF72
+     CF69   20 D4 CE   JSR &CED4
+     CF6C   A5 54      LDA &54
+     CF6E   F0 F2      BEQ &CF62
+     CF70   A2 07      LDX #&07
 .zd_waitForSR_end
-     CF76   8E 0A 04   STX &040A
-     CF79   20 F8 CE   JSR &CEF8
-     CF7C   FA         PLX
-     CF7D   68         PLA
-     CF7E   60         RTS
+     CF72   86 55      STX &55
+     CF74   20 F9 CE   JSR &CEF9
+     CF77   FA         PLX
+     CF78   68         PLA
+     CF79   60         RTS
 .zd_waitForSRoff
-     CF7F   48         PHA
-     CF80   DA         PHX
-     CF81   20 01 CF   JSR &CF01
-     CF84   A2 00      LDX #&00
+     CF7A   48         PHA
+     CF7B   DA         PHX
+     CF7C   20 02 CF   JSR &CF02
+     CF7F   A2 00      LDX #&00
 .zd_waitForSRoff_loop
-     CF86   AD 00 A4   LDA &A400
-     CF89   29 10      AND #&10
-     CF8B   D0 E9      BNE &CF76
-     CF8D   20 D2 CE   JSR &CED2
-     CF90   AD 09 04   LDA &0409
-     CF93   F0 F1      BEQ &CF86
-     CF95   A2 09      LDX #&09
+     CF81   AD 00 A4   LDA &A400
+     CF84   29 10      AND #&10
+     CF86   D0 EA      BNE &CF72
+     CF88   20 D4 CE   JSR &CED4
+     CF8B   A5 54      LDA &54
+     CF8D   F0 F2      BEQ &CF81
+     CF8F   A2 09      LDX #&09
 .zd_waitForSRoff_end
-     CF97   8E 0A 04   STX &040A
-     CF9A   20 F8 CE   JSR &CEF8
-     CF9D   FA         PLX
-     CF9E   68         PLA
-     CF9F   60         RTS
+     CF91   86 55      STX &55
+     CF93   20 F9 CE   JSR &CEF9
+     CF96   FA         PLX
+     CF97   68         PLA
+     CF98   60         RTS
 .deleting_msg
-     CFA0   44 65 6C ...
-     CFAD   00
+     CF99   44 65 6C ...
+     CFA6   00
 .loading_msg
-     CFAE   4C 6F 61 ...
-     CFBA   00
+     CFA7   4C 6F 61 ...
+     CFB3   00
 .saving_msg
-     CFBB   53 61 76 ...
-     CFC6   00
+     CFB4   53 61 76 ...
+     CFBF   00
 .file_act_complete_msg
-     CFC7   4F 4B 
-     CFC9   00
+     CFC0   4F 4B 
+     CFC2   00
 .byte_to_bin
-     CFCA   DA         PHX
-     CFCB   5A         PHY
-     CFCC   8D 02 04   STA &0402
-     CFCF   A2 00      LDX #&00
-     CFD1   A9 80      LDA #&80
-     CFD3   8D 01 04   STA &0401
+     CFC3   DA         PHX
+     CFC4   5A         PHY
+     CFC5   8D 02 04   STA &0402
+     CFC8   A2 00      LDX #&00
+     CFCA   A9 80      LDA #&80
+     CFCC   8D 01 04   STA &0401
 .byte_to_bin_loop
-     CFD6   AD 02 04   LDA &0402
-     CFD9   2D 01 04   AND &0401
-     CFDC   F0 05      BEQ &CFE3
-     CFDE   A9 31      LDA #&31
-     CFE0   4C E5 CF   JMP &CFE5
+     CFCF   AD 02 04   LDA &0402
+     CFD2   2D 01 04   AND &0401
+     CFD5   F0 05      BEQ &CFDC
+     CFD7   A9 31      LDA #&31
+     CFD9   4C DE CF   JMP &CFDE
 .byte_to_bin_set_zero
-     CFE3   A9 30      LDA #&30
+     CFDC   A9 30      LDA #&30
 .byte_to_bin_next
-     CFE5   9D 0D 04   STA &040D,X
-     CFE8   4E 01 04   LSR &0401
-     CFEB   E8         INX
-     CFEC   E0 08      CPX #&08
-     CFEE   D0 E6      BNE &CFD6
-     CFF0   9E 0D 04   STZ &040D,X
-     CFF3   7A         PLY
-     CFF4   FA         PLX
-     CFF5   60         RTS
+     CFDE   9D 0B 04   STA &040B,X
+     CFE1   4E 01 04   LSR &0401
+     CFE4   E8         INX
+     CFE5   E0 08      CPX #&08
+     CFE7   D0 E6      BNE &CFCF
+     CFE9   9E 0B 04   STZ &040B,X
+     CFEC   7A         PLY
+     CFED   FA         PLX
+     CFEE   60         RTS
 .byte_to_hex_str
-     CFF6   DA         PHX
-     CFF7   5A         PHY
-     CFF8   AA         TAX
-     CFF9   4A         LSR A
-     CFFA   4A         LSR A
-     CFFB   4A         LSR A
-     CFFC   4A         LSR A
-     CFFD   A8         TAY
-     CFFE   B9 14 DD   LDA &DD14,Y
-     D001   8D 0D 04   STA &040D
-     D004   8A         TXA
-     D005   29 0F      AND #&0F
-     D007   A8         TAY
-     D008   B9 14 DD   LDA &DD14,Y
-     D00B   8D 0E 04   STA &040E
-     D00E   9C 0F 04   STZ &040F
-     D011   8A         TXA
-     D012   7A         PLY
-     D013   FA         PLX
-     D014   60         RTS
+     CFEF   DA         PHX
+     CFF0   5A         PHY
+     CFF1   AA         TAX
+     CFF2   4A         LSR A
+     CFF3   4A         LSR A
+     CFF4   4A         LSR A
+     CFF5   4A         LSR A
+     CFF6   A8         TAY
+     CFF7   B9 66 DD   LDA &DD66,Y
+     CFFA   8D 0B 04   STA &040B
+     CFFD   8A         TXA
+     CFFE   29 0F      AND #&0F
+     D000   A8         TAY
+     D001   B9 66 DD   LDA &DD66,Y
+     D004   8D 0C 04   STA &040C
+     D007   9C 0D 04   STZ &040D
+     D00A   8A         TXA
+     D00B   7A         PLY
+     D00C   FA         PLX
+     D00D   60         RTS
 .byte_to_int_str
-     D015   DA         PHX
-     D016   5A         PHY
-     D017   9C 03 04   STZ &0403
-     D01A   9C 0D 04   STZ &040D
+     D00E   DA         PHX
+     D00F   5A         PHY
+     D010   9C 03 04   STZ &0403
+     D013   9C 0B 04   STZ &040B
 .byte_to_int_str_next_digit
-     D01D   A2 0A      LDX #&0A
-     D01F   20 0C D6   JSR &D60C
-     D022   8A         TXA
-     D023   48         PHA
-     D024   AC 03 04   LDY &0403
+     D016   A2 0A      LDX #&0A
+     D018   20 0B D6   JSR &D60B
+     D01B   8A         TXA
+     D01C   48         PHA
+     D01D   AC 03 04   LDY &0403
 .byte_to_int_str_add_loop
-     D027   B9 0D 04   LDA &040D,Y
-     D02A   C8         INY
-     D02B   99 0D 04   STA &040D,Y
-     D02E   88         DEY
-     D02F   F0 04      BEQ &D035
-     D031   88         DEY
-     D032   4C 27 D0   JMP &D027
+     D020   B9 0B 04   LDA &040B,Y
+     D023   C8         INY
+     D024   99 0B 04   STA &040B,Y
+     D027   88         DEY
+     D028   F0 04      BEQ &D02E
+     D02A   88         DEY
+     D02B   4C 20 D0   JMP &D020
 .byte_to_int_str_add_loop_done
-     D035   EE 03 04   INC &0403
-     D038   AD 09 04   LDA &0409
-     D03B   18         CLC
-     D03C   69 30      ADC #&30
-     D03E   8D 0D 04   STA &040D
-     D041   68         PLA
-     D042   E0 00      CPX #&00
-     D044   F0 03      BEQ &D049
-     D046   4C 1D D0   JMP &D01D
+     D02E   EE 03 04   INC &0403
+     D031   A5 54      LDA &54
+     D033   18         CLC
+     D034   69 30      ADC #&30
+     D036   8D 0B 04   STA &040B
+     D039   68         PLA
+     D03A   E0 00      CPX #&00
+     D03C   F0 03      BEQ &D041
+     D03E   4C 16 D0   JMP &D016
 .byte_to_int_str_done
-     D049   7A         PLY
-     D04A   FA         PLX
-     D04B   60         RTS
+     D041   7A         PLY
+     D042   FA         PLX
+     D043   60         RTS
 .hex_str_to_byte
-     D04C   48         PHA
-     D04D   DA         PHX
-     D04E   9C 0A 04   STZ &040A
-     D051   9C 09 04   STZ &0409
-     D054   AD 0C 04   LDA &040C
-     D057   20 80 D0   JSR &D080
-     D05A   AE 0A 04   LDX &040A
-     D05D   D0 1B      BNE &D07A
-     D05F   0A         ASL A
-     D060   0A         ASL A
-     D061   0A         ASL A
-     D062   0A         ASL A
-     D063   8D 09 04   STA &0409
-     D066   AD 0B 04   LDA &040B
-     D069   20 80 D0   JSR &D080
-     D06C   AE 0A 04   LDX &040A
-     D06F   D0 09      BNE &D07A
-     D071   0D 09 04   ORA &0409
-     D074   8D 09 04   STA &0409
-     D077   4C 7D D0   JMP &D07D
+     D044   48         PHA
+     D045   DA         PHX
+     D046   64 55      STZ &55
+     D048   64 54      STZ &54
+     D04A   AD 0A 04   LDA &040A
+     D04D   20 70 D0   JSR &D070
+     D050   A6 55      LDX &55
+     D052   D0 17      BNE &D06B
+     D054   0A         ASL A
+     D055   0A         ASL A
+     D056   0A         ASL A
+     D057   0A         ASL A
+     D058   85 54      STA &54
+     D05A   AD 09 04   LDA &0409
+     D05D   20 70 D0   JSR &D070
+     D060   A6 55      LDX &55
+     D062   D0 07      BNE &D06B
+     D064   05 54      ORA &54
+     D066   85 54      STA &54
+     D068   4C 6D D0   JMP &D06D
 .hex_str_to_byte_err
-     D07A   9C 09 04   STZ &0409
+     D06B   64 54      STZ &54
 .hex_str_to_byte_end
-     D07D   FA         PLX
-     D07E   68         PLA
-     D07F   60         RTS
+     D06D   FA         PLX
+     D06E   68         PLA
+     D06F   60         RTS
 .asc_hex_to_dec
-     D080   DA         PHX
-     D081   9C 0A 04   STZ &040A
-     D084   38         SEC
-     D085   E9 30      SBC #&30
-     D087   C9 0A      CMP #&0A
-     D089   90 0B      BCC &D096
-     D08B   E9 07      SBC #&07
-     D08D   C9 10      CMP #&10
-     D08F   90 05      BCC &D096
+     D070   DA         PHX
+     D071   64 55      STZ &55
+     D073   38         SEC
+     D074   E9 30      SBC #&30
+     D076   C9 0A      CMP #&0A
+     D078   90 0A      BCC &D084
+     D07A   E9 07      SBC #&07
+     D07C   C9 10      CMP #&10
+     D07E   90 04      BCC &D084
 .asc_hex_to_dec_err
-     D091   A2 02      LDX #&02
-     D093   8E 0A 04   STX &040A
+     D080   A2 02      LDX #&02
+     D082   86 55      STX &55
 .asc_hex_to_dec_end
-     D096   FA         PLX
-     D097   60         RTS
+     D084   FA         PLX
+     D085   60         RTS
 .uint16_to_hex_str
-     D098   48         PHA
-     D099   A5 56      LDA &56
-     D09B   20 F6 CF   JSR &CFF6
-     D09E   AD 0D 04   LDA &040D
-     D0A1   8D 05 04   STA &0405
-     D0A4   AD 0E 04   LDA &040E
-     D0A7   8D 06 04   STA &0406
-     D0AA   A5 57      LDA &57
-     D0AC   20 F6 CF   JSR &CFF6
-     D0AF   AD 05 04   LDA &0405
-     D0B2   8D 0F 04   STA &040F
-     D0B5   AD 06 04   LDA &0406
-     D0B8   8D 10 04   STA &0410
-     D0BB   9C 11 04   STZ &0411
-     D0BE   68         PLA
-     D0BF   60         RTS
+     D086   48         PHA
+     D087   A5 58      LDA &58
+     D089   20 EF CF   JSR &CFEF
+     D08C   AD 0B 04   LDA &040B
+     D08F   8D 05 04   STA &0405
+     D092   AD 0C 04   LDA &040C
+     D095   8D 06 04   STA &0406
+     D098   A5 59      LDA &59
+     D09A   20 EF CF   JSR &CFEF
+     D09D   AD 05 04   LDA &0405
+     D0A0   8D 0D 04   STA &040D
+     D0A3   AD 06 04   LDA &0406
+     D0A6   8D 0E 04   STA &040E
+     D0A9   9C 0F 04   STZ &040F
+     D0AC   68         PLA
+     D0AD   60         RTS
 .uint16_to_int_str
-     D0C0   48         PHA
-     D0C1   9C 0D 04   STZ &040D
-     D0C4   9C 03 04   STZ &0403
-     D0C7   68         PLA
-     D0C8   60         RTS
+     D0AE   48         PHA
+     D0AF   9C 0B 04   STZ &040B
+     D0B2   9C 03 04   STZ &0403
+     D0B5   68         PLA
+     D0B6   60         RTS
 .parse_input
-     D0C9   A9 01      LDA #&01
-     D0CB   8D 09 04   STA &0409
-     D0CE   A2 00      LDX #&00
-     D0D0   AD 00 03   LDA &0300
-     D0D3   F0 13      BEQ &D0E8
-     D0D5   8D 01 04   STA &0401
+     D0B7   A9 01      LDA #&01
+     D0B9   85 54      STA &54
+     D0BB   A2 00      LDX #&00
+     D0BD   AD 00 03   LDA &0300
+     D0C0   F0 13      BEQ &D0D5
+     D0C2   8D 01 04   STA &0401
 .parse_next_test
-     D0D8   BD 32 DA   LDA &DA32,X
-     D0DB   C9 FF      CMP #&FF
-     D0DD   F0 11      BEQ &D0F0
-     D0DF   CD 01 04   CMP &0401
-     D0E2   F0 0F      BEQ &D0F3
-     D0E4   E8         INX
-     D0E5   4C D8 D0   JMP &D0D8
+     D0C5   BD 32 DA   LDA &DA32,X
+     D0C8   C9 FF      CMP #&FF
+     D0CA   F0 10      BEQ &D0DC
+     D0CC   CD 01 04   CMP &0401
+     D0CF   F0 0E      BEQ &D0DF
+     D0D1   E8         INX
+     D0D2   4C C5 D0   JMP &D0C5
 .parse_cmd_nul
-     D0E8   A9 00      LDA #&00
-     D0EA   8D 09 04   STA &0409
-     D0ED   4C 48 D1   JMP &D148
+     D0D5   A9 00      LDA #&00
+     D0D7   85 54      STA &54
+     D0D9   4C 32 D1   JMP &D132
 .parse_1st_char_fail
-     D0F0   4C 43 D1   JMP &D143
+     D0DC   4C 2E D1   JMP &D12E
 .parse_1st_char_match
-     D0F3   8A         TXA
-     D0F4   0A         ASL A
-     D0F5   AA         TAX
-     D0F6   BD 41 DA   LDA &DA41,X
-     D0F9   85 54      STA &54
-     D0FB   BD 42 DA   LDA &DA42,X
-     D0FE   85 55      STA &55
-     D100   A0 00      LDY #&00
-     D102   A2 01      LDX #&01
+     D0DF   8A         TXA
+     D0E0   0A         ASL A
+     D0E1   AA         TAX
+     D0E2   BD 41 DA   LDA &DA41,X
+     D0E5   85 56      STA &56
+     D0E7   BD 42 DA   LDA &DA42,X
+     D0EA   85 57      STA &57
+     D0EC   A0 00      LDY #&00
+     D0EE   A2 01      LDX #&01
 .parse_next_chr
-     D104   BD 00 03   LDA &0300,X
-     D107   8D 01 04   STA &0401
-     D10A   B1 54      LDA (&54),Y
-     D10C   30 0E      BMI &D11C
-     D10E   C9 00      CMP #&00
-     D110   F0 31      BEQ &D143
-     D112   CD 01 04   CMP &0401
-     D115   D0 1C      BNE &D133
-     D117   E8         INX
-     D118   C8         INY
-     D119   4C 04 D1   JMP &D104
+     D0F0   BD 00 03   LDA &0300,X
+     D0F3   8D 01 04   STA &0401
+     D0F6   B1 56      LDA (&56),Y
+     D0F8   30 0E      BMI &D108
+     D0FA   C9 00      CMP #&00
+     D0FC   F0 30      BEQ &D12E
+     D0FE   CD 01 04   CMP &0401
+     D101   D0 1B      BNE &D11E
+     D103   E8         INX
+     D104   C8         INY
+     D105   4C F0 D0   JMP &D0F0
 .parse_token_found
-     D11C   48         PHA
-     D11D   BD 00 03   LDA &0300,X
-     D120   A8         TAY
-     D121   68         PLA
-     D122   C0 20      CPY #&20
-     D124   F0 07      BEQ &D12D
-     D126   C0 00      CPY #&00
-     D128   F0 03      BEQ &D12D
-     D12A   4C 43 D1   JMP &D143
+     D108   48         PHA
+     D109   BD 00 03   LDA &0300,X
+     D10C   A8         TAY
+     D10D   68         PLA
+     D10E   C0 20      CPY #&20
+     D110   F0 07      BEQ &D119
+     D112   C0 00      CPY #&00
+     D114   F0 03      BEQ &D119
+     D116   4C 2E D1   JMP &D12E
 .parse_token_ok
-     D12D   8D 09 04   STA &0409
-     D130   4C 48 D1   JMP &D148
+     D119   85 54      STA &54
+     D11B   4C 32 D1   JMP &D132
 .parse_next_cmd
-     D133   A2 01      LDX #&01
+     D11E   A2 01      LDX #&01
 .parse_fast_forward
-     D135   C8         INY
-     D136   B1 54      LDA (&54),Y
-     D138   C9 80      CMP #&80
-     D13A   B0 03      BCS &D13F
-     D13C   4C 35 D1   JMP &D135
+     D120   C8         INY
+     D121   B1 56      LDA (&56),Y
+     D123   C9 80      CMP #&80
+     D125   B0 03      BCS &D12A
+     D127   4C 20 D1   JMP &D120
 .parse_next_cmd_jmp
-     D13F   C8         INY
-     D140   4C 04 D1   JMP &D104
+     D12A   C8         INY
+     D12B   4C F0 D0   JMP &D0F0
 .parse_fail
-     D143   A9 03      LDA #&03
-     D145   8D 09 04   STA &0409
+     D12E   A9 03      LDA #&03
+     D130   85 54      STA &54
 .parse_end
-     D148   8E 7F 03   STX &037F
-     D14B   60         RTS
+     D132   8E 7F 03   STX &037F
+     D135   60         RTS
 .display_memory
 Macro LOAD_MSG:
-     D14C   A9 24      LDA #&24
-     D14E   85 50      STA &50
-     D150   A9 DD      LDA #&DD
-     D152   85 51      STA &51
+     D136   A9 76      LDA #&76
+     D138   85 50      STA &50
+     D13A   A9 DD      LDA #&DD
+     D13C   85 51      STA &51
 End macro LOAD_MSG
-     D154   20 1E FF   JSR &FF1E
-     D157   9C 04 04   STZ &0404
+     D13E   20 1E FF   JSR &FF1E
+     D141   9C 04 04   STZ &0404
 .display_mem_next_line
-     D15A   20 B7 D1   JSR &D1B7
-     D15D   20 98 D0   JSR &D098
-     D160   A9 20      LDA #&20
-     D162   8D 11 04   STA &0411
-     D165   9C 12 04   STZ &0412
-     D168   20 21 FF   JSR &FF21
+     D144   20 A1 D1   JSR &D1A1
+     D147   20 86 D0   JSR &D086
+     D14A   A9 20      LDA #&20
+     D14C   8D 0F 04   STA &040F
+     D14F   9C 10 04   STZ &0410
+     D152   20 21 FF   JSR &FF21
 .display_mem_next_addr
-     D16B   A2 00      LDX #&00
-     D16D   B2 56      LDA (&56)
-     D16F   20 F6 CF   JSR &CFF6
-     D172   20 21 FF   JSR &FF21
-     D175   A9 20      LDA #&20
-     D177   20 18 FF   JSR &FF18
-     D17A   EE 04 04   INC &0404
-     D17D   AD 04 04   LDA &0404
-     D180   C9 10      CMP #&10
-     D182   F0 03      BEQ &D187
-     D184   4C 92 D1   JMP &D192
+     D155   A2 00      LDX #&00
+     D157   B2 58      LDA (&58)
+     D159   20 EF CF   JSR &CFEF
+     D15C   20 21 FF   JSR &FF21
+     D15F   A9 20      LDA #&20
+     D161   20 18 FF   JSR &FF18
+     D164   EE 04 04   INC &0404
+     D167   AD 04 04   LDA &0404
+     D16A   C9 10      CMP #&10
+     D16C   F0 03      BEQ &D171
+     D16E   4C 7C D1   JMP &D17C
 .display_mem_endline
-     D187   20 C0 D1   JSR &D1C0
-     D18A   A9 0A      LDA #&0A
-     D18C   20 18 FF   JSR &FF18
-     D18F   9C 04 04   STZ &0404
+     D171   20 AA D1   JSR &D1AA
+     D174   A9 0A      LDA #&0A
+     D176   20 18 FF   JSR &FF18
+     D179   9C 04 04   STZ &0404
 .display_mem_chk_MSB
-     D192   A5 57      LDA &57
-     D194   C5 59      CMP &59
-     D196   F0 03      BEQ &D19B
-     D198   4C A1 D1   JMP &D1A1
+     D17C   A5 59      LDA &59
+     D17E   C5 5B      CMP &5B
+     D180   F0 03      BEQ &D185
+     D182   4C 8B D1   JMP &D18B
 .display_mem_chk_LSB
-     D19B   A5 56      LDA &56
-     D19D   C5 58      CMP &58
-     D19F   F0 10      BEQ &D1B1
+     D185   A5 58      LDA &58
+     D187   C5 5A      CMP &5A
+     D189   F0 10      BEQ &D19B
 .display_mem_inc_LSB
-     D1A1   E6 56      INC &56
-     D1A3   A5 56      LDA &56
-     D1A5   D0 02      BNE &D1A9
-     D1A7   E6 57      INC &57
+     D18B   E6 58      INC &58
+     D18D   A5 58      LDA &58
+     D18F   D0 02      BNE &D193
+     D191   E6 59      INC &59
 .display_mem_loopback
-     D1A9   AD 04 04   LDA &0404
-     D1AC   F0 AC      BEQ &D15A
-     D1AE   4C 6B D1   JMP &D16B
+     D193   AD 04 04   LDA &0404
+     D196   F0 AC      BEQ &D144
+     D198   4C 55 D1   JMP &D155
 .display_mem_output_end
-     D1B1   A9 0A      LDA #&0A
-     D1B3   20 18 FF   JSR &FF18
-     D1B6   60         RTS
+     D19B   A9 0A      LDA #&0A
+     D19D   20 18 FF   JSR &FF18
+     D1A0   60         RTS
 .display_mem_copy_addr
-     D1B7   A5 56      LDA &56
-     D1B9   85 5A      STA &5A
-     D1BB   A5 57      LDA &57
-     D1BD   85 5B      STA &5B
-     D1BF   60         RTS
+     D1A1   A5 58      LDA &58
+     D1A3   85 5C      STA &5C
+     D1A5   A5 59      LDA &59
+     D1A7   85 5D      STA &5D
+     D1A9   60         RTS
 .display_mem_ascii
-     D1C0   AD 04 04   LDA &0404
-     D1C3   D0 08      BNE &D1CD
-     D1C5   A9 10      LDA #&10
-     D1C7   8D 04 04   STA &0404
-     D1CA   4C DF D1   JMP &D1DF
+     D1AA   AD 04 04   LDA &0404
+     D1AD   D0 08      BNE &D1B7
+     D1AF   A9 10      LDA #&10
+     D1B1   8D 04 04   STA &0404
+     D1B4   4C C9 D1   JMP &D1C9
 .display_mem_ascii_len
-     D1CD   C9 10      CMP #&10
-     D1CF   90 03      BCC &D1D4
-     D1D1   4C DF D1   JMP &D1DF
+     D1B7   C9 10      CMP #&10
+     D1B9   90 03      BCC &D1BE
+     D1BB   4C C9 D1   JMP &D1C9
 .display_mem_ascii_pad
-     D1D4   AC 04 04   LDY &0404
+     D1BE   AC 04 04   LDY &0404
 .display_mem_ascii_pad_loop
-     D1D7   20 FD D1   JSR &D1FD
-     D1DA   C8         INY
-     D1DB   C0 10      CPY #&10
-     D1DD   D0 F8      BNE &D1D7
+     D1C1   20 E7 D1   JSR &D1E7
+     D1C4   C8         INY
+     D1C5   C0 10      CPY #&10
+     D1C7   D0 F8      BNE &D1C1
 .display_mem_ascii_display
-     D1DF   20 FD D1   JSR &D1FD
-     D1E2   A0 00      LDY #&00
+     D1C9   20 E7 D1   JSR &D1E7
+     D1CC   A0 00      LDY #&00
 .display_mem_ascii_loop
-     D1E4   B1 5A      LDA (&5A),Y
-     D1E6   C9 20      CMP #&20
-     D1E8   90 07      BCC &D1F1
-     D1EA   C9 7E      CMP #&7E
-     D1EC   B0 03      BCS &D1F1
-     D1EE   4C F3 D1   JMP &D1F3
+     D1CE   B1 5C      LDA (&5C),Y
+     D1D0   C9 20      CMP #&20
+     D1D2   90 07      BCC &D1DB
+     D1D4   C9 7E      CMP #&7E
+     D1D6   B0 03      BCS &D1DB
+     D1D8   4C DD D1   JMP &D1DD
 .display_mem_ascii_use_dot
-     D1F1   A9 2E      LDA #&2E
+     D1DB   A9 2E      LDA #&2E
 .display_mem_ascii_prt
-     D1F3   20 18 FF   JSR &FF18
-     D1F6   C8         INY
-     D1F7   CC 04 04   CPY &0404
-     D1FA   D0 E8      BNE &D1E4
-     D1FC   60         RTS
+     D1DD   20 18 FF   JSR &FF18
+     D1E0   C8         INY
+     D1E1   CC 04 04   CPY &0404
+     D1E4   D0 E8      BNE &D1CE
+     D1E6   60         RTS
 .display_mem_pad
-     D1FD   A9 20      LDA #&20
-     D1FF   20 18 FF   JSR &FF18
-     D202   20 18 FF   JSR &FF18
-     D205   60         RTS
+     D1E7   A9 20      LDA #&20
+     D1E9   20 18 FF   JSR &FF18
+     D1EC   20 18 FF   JSR &FF18
+     D1EF   60         RTS
 .read_ascii
-     D206   20 1A D2   JSR &D21A
-     D209   AD 0A 04   LDA &040A
-     D20C   D0 0B      BNE &D219
-     D20E   AD 09 04   LDA &0409
-     D211   C9 20      CMP #&20
-     D213   90 F1      BCC &D206
-     D215   C9 7E      CMP #&7E
-     D217   B0 ED      BCS &D206
+     D1F0   20 02 D2   JSR &D202
+     D1F3   A5 55      LDA &55
+     D1F5   D0 0A      BNE &D201
+     D1F7   A5 54      LDA &54
+     D1F9   C9 20      CMP #&20
+     D1FB   90 F3      BCC &D1F0
+     D1FD   C9 7E      CMP #&7E
+     D1FF   B0 EF      BCS &D1F0
 .read_ascii_end
-     D219   60         RTS
+     D201   60         RTS
 .read_byte
-     D21A   9C 09 04   STZ &0409
-     D21D   9C 0A 04   STZ &040A
-     D220   AE 7F 03   LDX &037F
+     D202   64 54      STZ &54
+     D204   64 55      STZ &55
+     D206   AE 7F 03   LDX &037F
 .read_byte_next
-     D223   BD 00 03   LDA &0300,X
-     D226   F0 0A      BEQ &D232
-     D228   8D 09 04   STA &0409
-     D22B   E8         INX
-     D22C   8E 7F 03   STX &037F
-     D22F   4C 43 D2   JMP &D243
+     D209   BD 00 03   LDA &0300,X
+     D20C   F0 09      BEQ &D217
+     D20E   85 54      STA &54
+     D210   E8         INX
+     D211   8E 7F 03   STX &037F
+     D214   4C 27 D2   JMP &D227
 .read_byte_EOB
-     D232   A9 0F      LDA #&0F
-     D234   8D 0A 04   STA &040A
-     D237   A5 60      LDA &60
-     D239   29 F0      AND #&F0
-     D23B   85 60      STA &60
-     D23D   9C 7F 03   STZ &037F
-     D240   9C 00 03   STZ &0300
+     D217   A9 0F      LDA #&0F
+     D219   85 55      STA &55
+     D21B   A5 62      LDA &62
+     D21D   29 F0      AND #&F0
+     D21F   85 62      STA &62
+     D221   9C 7F 03   STZ &037F
+     D224   9C 00 03   STZ &0300
 .read_byte_end
-     D243   60         RTS
+     D227   60         RTS
 .read_char
-     D244   20 1A D2   JSR &D21A
-     D247   AD 0A 04   LDA &040A
-     D24A   D0 0B      BNE &D257
-     D24C   AD 09 04   LDA &0409
-     D24F   C9 21      CMP #&21
-     D251   90 F1      BCC &D244
-     D253   C9 7E      CMP #&7E
-     D255   B0 ED      BCS &D244
+     D228   20 02 D2   JSR &D202
+     D22B   A5 55      LDA &55
+     D22D   D0 0A      BNE &D239
+     D22F   A5 54      LDA &54
+     D231   C9 21      CMP #&21
+     D233   90 F3      BCC &D228
+     D235   C9 7E      CMP #&7E
+     D237   B0 EF      BCS &D228
 .read_char_end
-     D257   60         RTS
+     D239   60         RTS
 .read_int16
-     D258   48         PHA
-     D259   DA         PHX
-     D25A   5A         PHY
-     D25B   9C 0A 04   STZ &040A
-     D25E   64 52      STZ &52
-     D260   64 53      STZ &53
-     D262   9C 2E 04   STZ &042E
-     D265   9C 2F 04   STZ &042F
-     D268   9C 02 04   STZ &0402
-     D26B   AE 7F 03   LDX &037F
+     D23A   48         PHA
+     D23B   DA         PHX
+     D23C   5A         PHY
+     D23D   64 55      STZ &55
+     D23F   64 52      STZ &52
+     D241   64 53      STZ &53
+     D243   9C 2C 04   STZ &042C
+     D246   9C 2D 04   STZ &042D
+     D249   9C 02 04   STZ &0402
+     D24C   AE 7F 03   LDX &037F
 .read_int_char
-     D26E   8A         TXA
-     D26F   A8         TAY
-     D270   C8         INY
-     D271   BD 00 03   LDA &0300,X
-     D274   F0 4D      BEQ &D2C3
-     D276   C9 0A      CMP #&0A
-     D278   F0 49      BEQ &D2C3
-     D27A   C9 20      CMP #&20
-     D27C   F0 17      BEQ &D295
-     D27E   C9 30      CMP #&30
-     D280   90 39      BCC &D2BB
-     D282   C9 3A      CMP #&3A
-     D284   B0 35      BCS &D2BB
-     D286   38         SEC
-     D287   E9 30      SBC #&30
-     D289   18         CLC
-     D28A   6D 2E 04   ADC &042E
-     D28D   8D 2E 04   STA &042E
-     D290   B0 0B      BCS &D29D
-     D292   4C A0 D2   JMP &D2A0
+     D24F   8A         TXA
+     D250   A8         TAY
+     D251   C8         INY
+     D252   BD 00 03   LDA &0300,X
+     D255   F0 4C      BEQ &D2A3
+     D257   C9 0A      CMP #&0A
+     D259   F0 48      BEQ &D2A3
+     D25B   C9 20      CMP #&20
+     D25D   F0 17      BEQ &D276
+     D25F   C9 30      CMP #&30
+     D261   90 39      BCC &D29C
+     D263   C9 3A      CMP #&3A
+     D265   B0 35      BCS &D29C
+     D267   38         SEC
+     D268   E9 30      SBC #&30
+     D26A   18         CLC
+     D26B   6D 2C 04   ADC &042C
+     D26E   8D 2C 04   STA &042C
+     D271   B0 0B      BCS &D27E
+     D273   4C 81 D2   JMP &D281
 .read_int_chkspc
-     D295   AD 02 04   LDA &0402
-     D298   F0 1D      BEQ &D2B7
-     D29A   4C C3 D2   JMP &D2C3
+     D276   AD 02 04   LDA &0402
+     D279   F0 1D      BEQ &D298
+     D27B   4C A3 D2   JMP &D2A3
 .read_int_carry
-     D29D   EE 2F 04   INC &042F
+     D27E   EE 2D 04   INC &042D
 .read_int_mult
-     D2A0   EE 02 04   INC &0402
-     D2A3   B9 00 03   LDA &0300,Y
-     D2A6   F0 1B      BEQ &D2C3
-     D2A8   C9 20      CMP #&20
-     D2AA   F0 17      BEQ &D2C3
-     D2AC   C9 30      CMP #&30
-     D2AE   90 0B      BCC &D2BB
-     D2B0   C9 3A      CMP #&3A
-     D2B2   B0 07      BCS &D2BB
-     D2B4   20 1F D6   JSR &D61F
+     D281   EE 02 04   INC &0402
+     D284   B9 00 03   LDA &0300,Y
+     D287   F0 1A      BEQ &D2A3
+     D289   C9 20      CMP #&20
+     D28B   F0 16      BEQ &D2A3
+     D28D   C9 30      CMP #&30
+     D28F   90 0B      BCC &D29C
+     D291   C9 3A      CMP #&3A
+     D293   B0 07      BCS &D29C
+     D295   20 1D D6   JSR &D61D
 .read_int_next
-     D2B7   E8         INX
-     D2B8   4C 6E D2   JMP &D26E
+     D298   E8         INX
+     D299   4C 4F D2   JMP &D24F
 .read_int_error
-     D2BB   A9 10      LDA #&10
-     D2BD   8D 0A 04   STA &040A
-     D2C0   4C CD D2   JMP &D2CD
+     D29C   A9 10      LDA #&10
+     D29E   85 55      STA &55
+     D2A0   4C AD D2   JMP &D2AD
 .read_int_done
-     D2C3   AD 2E 04   LDA &042E
-     D2C6   85 52      STA &52
-     D2C8   AD 2F 04   LDA &042F
-     D2CB   85 53      STA &53
+     D2A3   AD 2C 04   LDA &042C
+     D2A6   85 52      STA &52
+     D2A8   AD 2D 04   LDA &042D
+     D2AB   85 53      STA &53
 .read_int_end
-     D2CD   E8         INX
-     D2CE   8E 7F 03   STX &037F
-     D2D1   7A         PLY
-     D2D2   FA         PLX
-     D2D3   68         PLA
-     D2D4   60         RTS
+     D2AD   E8         INX
+     D2AE   8E 7F 03   STX &037F
+     D2B1   7A         PLY
+     D2B2   FA         PLX
+     D2B3   68         PLA
+     D2B4   60         RTS
 .read_filename
-     D2D5   48         PHA
-     D2D6   DA         PHX
-     D2D7   5A         PHY
-     D2D8   9C 0A 04   STZ &040A
-     D2DB   A0 00      LDY #&00
-     D2DD   AE 7F 03   LDX &037F
+     D2B5   48         PHA
+     D2B6   DA         PHX
+     D2B7   5A         PHY
+     D2B8   64 55      STZ &55
+     D2BA   A0 00      LDY #&00
+     D2BC   AE 7F 03   LDX &037F
 .read_filename_next_char
-     D2E0   BD 00 03   LDA &0300,X
-     D2E3   F0 3C      BEQ &D321
-     D2E5   C9 0A      CMP #&0A
-     D2E7   F0 38      BEQ &D321
-     D2E9   C9 20      CMP #&20
-     D2EB   F0 25      BEQ &D312
-     D2ED   C0 03      CPY #&03
-     D2EF   90 0F      BCC &D300
-     D2F1   C9 2E      CMP #&2E
-     D2F3   F0 15      BEQ &D30A
-     D2F5   C9 30      CMP #&30
-     D2F7   90 20      BCC &D319
-     D2F9   C9 3A      CMP #&3A
-     D2FB   B0 03      BCS &D300
-     D2FD   4C 0A D3   JMP &D30A
+     D2BF   BD 00 03   LDA &0300,X
+     D2C2   F0 3B      BEQ &D2FF
+     D2C4   C9 0A      CMP #&0A
+     D2C6   F0 37      BEQ &D2FF
+     D2C8   C9 20      CMP #&20
+     D2CA   F0 25      BEQ &D2F1
+     D2CC   C0 03      CPY #&03
+     D2CE   90 0F      BCC &D2DF
+     D2D0   C9 2E      CMP #&2E
+     D2D2   F0 15      BEQ &D2E9
+     D2D4   C9 30      CMP #&30
+     D2D6   90 20      BCC &D2F8
+     D2D8   C9 3A      CMP #&3A
+     D2DA   B0 03      BCS &D2DF
+     D2DC   4C E9 D2   JMP &D2E9
 .read_filename_chk_alpha
-     D300   29 DF      AND #&DF
-     D302   C9 41      CMP #&41
-     D304   90 13      BCC &D319
-     D306   C9 5B      CMP #&5B
-     D308   B0 0F      BCS &D319
+     D2DF   29 DF      AND #&DF
+     D2E1   C9 41      CMP #&41
+     D2E3   90 13      BCC &D2F8
+     D2E5   C9 5B      CMP #&5B
+     D2E7   B0 0F      BCS &D2F8
 .read_filename_store
-     D30A   99 0D 04   STA &040D,Y
-     D30D   C8         INY
+     D2E9   99 0B 04   STA &040B,Y
+     D2EC   C8         INY
 .read_filename_loop
-     D30E   E8         INX
-     D30F   4C E0 D2   JMP &D2E0
+     D2ED   E8         INX
+     D2EE   4C BF D2   JMP &D2BF
 .read_filename_chkspc
-     D312   C0 00      CPY #&00
-     D314   F0 F8      BEQ &D30E
-     D316   4C 21 D3   JMP &D321
+     D2F1   C0 00      CPY #&00
+     D2F3   F0 F8      BEQ &D2ED
+     D2F5   4C FF D2   JMP &D2FF
 .read_filename_fail
-     D319   A9 0D      LDA #&0D
-     D31B   8D 0A 04   STA &040A
-     D31E   4C 33 D3   JMP &D333
+     D2F8   A9 0D      LDA #&0D
+     D2FA   85 55      STA &55
+     D2FC   4C 10 D3   JMP &D310
 .read_filename_check
-     D321   A9 00      LDA #&00
-     D323   99 0D 04   STA &040D,Y
-     D326   C0 03      CPY #&03
-     D328   90 04      BCC &D32E
-     D32A   C0 0D      CPY #&0D
-     D32C   90 05      BCC &D333
+     D2FF   A9 00      LDA #&00
+     D301   99 0B 04   STA &040B,Y
+     D304   C0 03      CPY #&03
+     D306   90 04      BCC &D30C
+     D308   C0 0D      CPY #&0D
+     D30A   90 04      BCC &D310
 .read_filename_err
-     D32E   A9 0E      LDA #&0E
-     D330   8D 0A 04   STA &040A
+     D30C   A9 0E      LDA #&0E
+     D30E   85 55      STA &55
 .read_filename_end
-     D333   8E 7F 03   STX &037F
-     D336   7A         PLY
-     D337   FA         PLX
-     D338   68         PLA
-     D339   60         RTS
+     D310   8E 7F 03   STX &037F
+     D313   7A         PLY
+     D314   FA         PLX
+     D315   68         PLA
+     D316   60         RTS
 .read_string
-     D33A   48         PHA
-     D33B   DA         PHX
-     D33C   5A         PHY
-     D33D   9C 0A 04   STZ &040A
-     D340   A0 00      LDY #&00
-     D342   AE 7F 03   LDX &037F
-     D345   9C 02 04   STZ &0402
+     D317   48         PHA
+     D318   DA         PHX
+     D319   5A         PHY
+     D31A   64 55      STZ &55
+     D31C   A0 00      LDY #&00
+     D31E   AE 7F 03   LDX &037F
+     D321   9C 02 04   STZ &0402
 .read_string_next_char
-     D348   BD 00 03   LDA &0300,X
-     D34B   F0 3B      BEQ &D388
-     D34D   C9 20      CMP #&20
-     D34F   F0 27      BEQ &D378
-     D351   C9 0A      CMP #&0A
-     D353   F0 33      BEQ &D388
-     D355   C9 2D      CMP #&2D
-     D357   90 27      BCC &D380
-     D359   C9 3B      CMP #&3B
-     D35B   90 10      BCC &D36D
-     D35D   C9 40      CMP #&40
-     D35F   90 1F      BCC &D380
-     D361   C9 5B      CMP #&5B
-     D363   90 08      BCC &D36D
-     D365   C9 61      CMP #&61
-     D367   90 17      BCC &D380
-     D369   C9 7B      CMP #&7B
-     D36B   B0 13      BCS &D380
+     D324   BD 00 03   LDA &0300,X
+     D327   F0 3A      BEQ &D363
+     D329   C9 20      CMP #&20
+     D32B   F0 27      BEQ &D354
+     D32D   C9 0A      CMP #&0A
+     D32F   F0 32      BEQ &D363
+     D331   C9 2D      CMP #&2D
+     D333   90 27      BCC &D35C
+     D335   C9 3B      CMP #&3B
+     D337   90 10      BCC &D349
+     D339   C9 40      CMP #&40
+     D33B   90 1F      BCC &D35C
+     D33D   C9 5B      CMP #&5B
+     D33F   90 08      BCC &D349
+     D341   C9 61      CMP #&61
+     D343   90 17      BCC &D35C
+     D345   C9 7B      CMP #&7B
+     D347   B0 13      BCS &D35C
 .read_string_charOK
-     D36D   99 0D 04   STA &040D,Y
-     D370   C8         INY
-     D371   EE 02 04   INC &0402
+     D349   99 0B 04   STA &040B,Y
+     D34C   C8         INY
+     D34D   EE 02 04   INC &0402
 .read_string_loop
-     D374   E8         INX
-     D375   4C 48 D3   JMP &D348
+     D350   E8         INX
+     D351   4C 24 D3   JMP &D324
 .read_string_chkspc
-     D378   AD 02 04   LDA &0402
-     D37B   F0 F7      BEQ &D374
-     D37D   4C 88 D3   JMP &D388
+     D354   AD 02 04   LDA &0402
+     D357   F0 F7      BEQ &D350
+     D359   4C 63 D3   JMP &D363
 .read_string_fail
-     D380   A9 0D      LDA #&0D
-     D382   8D 0A 04   STA &040A
-     D385   4C 98 D3   JMP &D398
+     D35C   A9 0D      LDA #&0D
+     D35E   85 55      STA &55
+     D360   4C 72 D3   JMP &D372
 .read_string_check
-     D388   99 0D 04   STA &040D,Y
-     D38B   C0 03      CPY #&03
-     D38D   90 04      BCC &D393
-     D38F   C0 0D      CPY #&0D
-     D391   90 05      BCC &D398
+     D363   99 0B 04   STA &040B,Y
+     D366   C0 03      CPY #&03
+     D368   90 04      BCC &D36E
+     D36A   C0 0D      CPY #&0D
+     D36C   90 04      BCC &D372
 .read_string_err
-     D393   A9 0E      LDA #&0E
-     D395   8D 0A 04   STA &040A
+     D36E   A9 0E      LDA #&0E
+     D370   85 55      STA &55
 .read_string_end
-     D398   8E 7F 03   STX &037F
-     D39B   7A         PLY
-     D39C   FA         PLX
-     D39D   68         PLA
-     D39E   60         RTS
+     D372   8E 7F 03   STX &037F
+     D375   7A         PLY
+     D376   FA         PLX
+     D377   68         PLA
+     D378   60         RTS
 .read_hex_addr
-     D39F   48         PHA
-     D3A0   5A         PHY
-     D3A1   A0 01      LDY #&01
+     D379   48         PHA
+     D37A   5A         PHY
+     D37B   A0 01      LDY #&01
 .read_hex_addr_next_byte
-     D3A3   20 DA D3   JSR &D3DA
-     D3A6   AD 0A 04   LDA &040A
-     D3A9   D0 0E      BNE &D3B9
-     D3AB   AD 09 04   LDA &0409
-     D3AE   99 52 00   STA &0052,Y
-     D3B1   C0 00      CPY #&00
-     D3B3   F0 04      BEQ &D3B9
-     D3B5   88         DEY
-     D3B6   4C A3 D3   JMP &D3A3
+     D37D   20 B1 D3   JSR &D3B1
+     D380   A5 55      LDA &55
+     D382   D0 0D      BNE &D391
+     D384   A5 54      LDA &54
+     D386   99 52 00   STA &0052,Y
+     D389   C0 00      CPY #&00
+     D38B   F0 04      BEQ &D391
+     D38D   88         DEY
+     D38E   4C 7D D3   JMP &D37D
 .read_hex_addr_end
-     D3B9   7A         PLY
-     D3BA   68         PLA
-     D3BB   60         RTS
+     D391   7A         PLY
+     D392   68         PLA
+     D393   60         RTS
 .read_hex_addr_pair
-     D3BC   A0 00      LDY #&00
+     D394   A0 00      LDY #&00
 .read_hex_addr_pair_next
-     D3BE   20 9F D3   JSR &D39F
-     D3C1   AD 0A 04   LDA &040A
-     D3C4   D0 13      BNE &D3D9
-     D3C6   A5 52      LDA &52
-     D3C8   99 56 00   STA &0056,Y
-     D3CB   C8         INY
-     D3CC   A5 53      LDA &53
-     D3CE   99 56 00   STA &0056,Y
-     D3D1   C0 03      CPY #&03
-     D3D3   F0 04      BEQ &D3D9
-     D3D5   C8         INY
-     D3D6   4C BE D3   JMP &D3BE
+     D396   20 79 D3   JSR &D379
+     D399   A5 55      LDA &55
+     D39B   D0 13      BNE &D3B0
+     D39D   A5 52      LDA &52
+     D39F   99 58 00   STA &0058,Y
+     D3A2   C8         INY
+     D3A3   A5 53      LDA &53
+     D3A5   99 58 00   STA &0058,Y
+     D3A8   C0 03      CPY #&03
+     D3AA   F0 04      BEQ &D3B0
+     D3AC   C8         INY
+     D3AD   4C 96 D3   JMP &D396
 .read_hex_addr_pair_end
-     D3D9   60         RTS
+     D3B0   60         RTS
 .read_hex_byte
-     D3DA   48         PHA
-     D3DB   DA         PHX
-     D3DC   5A         PHY
-     D3DD   9C 0A 04   STZ &040A
-     D3E0   A0 01      LDY #&01
-     D3E2   AE 7F 03   LDX &037F
+     D3B1   48         PHA
+     D3B2   DA         PHX
+     D3B3   5A         PHY
+     D3B4   64 55      STZ &55
+     D3B6   A0 01      LDY #&01
+     D3B8   AE 7F 03   LDX &037F
 .read_hexbyte_next_char
-     D3E5   BD 00 03   LDA &0300,X
-     D3E8   F0 19      BEQ &D403
-     D3EA   E8         INX
-     D3EB   C9 20      CMP #&20
-     D3ED   F0 F6      BEQ &D3E5
-     D3EF   99 0B 04   STA &040B,Y
-     D3F2   88         DEY
-     D3F3   30 03      BMI &D3F8
-     D3F5   4C E5 D3   JMP &D3E5
+     D3BB   BD 00 03   LDA &0300,X
+     D3BE   F0 18      BEQ &D3D8
+     D3C0   E8         INX
+     D3C1   C9 20      CMP #&20
+     D3C3   F0 F6      BEQ &D3BB
+     D3C5   99 09 04   STA &0409,Y
+     D3C8   88         DEY
+     D3C9   30 03      BMI &D3CE
+     D3CB   4C BB D3   JMP &D3BB
 .read_hexbyte_conv
-     D3F8   20 4C D0   JSR &D04C
-     D3FB   AD 0A 04   LDA &040A
-     D3FE   D0 03      BNE &D403
-     D400   4C 08 D4   JMP &D408
+     D3CE   20 44 D0   JSR &D044
+     D3D1   A5 55      LDA &55
+     D3D3   D0 03      BNE &D3D8
+     D3D5   4C DC D3   JMP &D3DC
 .read_hexbyte_fail
-     D403   A9 04      LDA #&04
-     D405   8D 0A 04   STA &040A
+     D3D8   A9 04      LDA #&04
+     D3DA   85 55      STA &55
 .read_hexbyte_end
-     D408   8E 7F 03   STX &037F
-     D40B   7A         PLY
-     D40C   FA         PLX
-     D40D   68         PLA
-     D40E   60         RTS
+     D3DC   8E 7F 03   STX &037F
+     D3DF   7A         PLY
+     D3E0   FA         PLX
+     D3E1   68         PLA
+     D3E2   60         RTS
 .os_print_error
-     D40F   AD 0A 04   LDA &040A
-     D412   3A         DEC A
-     D413   0A         ASL A
-     D414   AA         TAX
-     D415   BD BD DA   LDA &DABD,X
-     D418   85 50      STA &50
-     D41A   BD BE DA   LDA &DABE,X
-     D41D   85 51      STA &51
-     D41F   20 1E FF   JSR &FF1E
-     D422   60         RTS
+     D3E3   A5 55      LDA &55
+     D3E5   3A         DEC A
+     D3E6   0A         ASL A
+     D3E7   AA         TAX
+     D3E8   BD BD DA   LDA &DABD,X
+     D3EB   85 50      STA &50
+     D3ED   BD BE DA   LDA &DABE,X
+     D3F0   85 51      STA &51
+     D3F2   20 1E FF   JSR &FF1E
+     D3F5   20 45 FF   JSR &FF45
+     D3F8   60         RTS
 .stdout_add_char
-     D423   DA         PHX
-     D424   9C 0A 04   STZ &040A
-     D427   AE FF 03   LDX &03FF
-     D42A   9D 80 03   STA &0380,X
-     D42D   E8         INX
-     D42E   8E FF 03   STX &03FF
-     D431   FA         PLX
-     D432   60         RTS
+     D3F9   DA         PHX
+     D3FA   64 55      STZ &55
+     D3FC   AE FF 03   LDX &03FF
+     D3FF   9D 80 03   STA &0380,X
+     D402   E8         INX
+     D403   8E FF 03   STX &03FF
+     D406   FA         PLX
+     D407   60         RTS
 .stdout_append
-     D433   DA         PHX
-     D434   5A         PHY
-     D435   9C 0A 04   STZ &040A
+     D408   DA         PHX
+     D409   5A         PHY
+     D40A   64 55      STZ &55
 .stdout_append_copy
-     D438   A0 00      LDY #&00
-     D43A   AE FF 03   LDX &03FF
+     D40C   A0 00      LDY #&00
+     D40E   AE FF 03   LDX &03FF
 .stdout_append_copy_loop
-     D43D   B1 50      LDA (&50),Y
-     D43F   F0 08      BEQ &D449
-     D441   9D 80 03   STA &0380,X
-     D444   E8         INX
-     D445   C8         INY
-     D446   4C 3D D4   JMP &D43D
+     D411   B1 50      LDA (&50),Y
+     D413   F0 08      BEQ &D41D
+     D415   9D 80 03   STA &0380,X
+     D418   E8         INX
+     D419   C8         INY
+     D41A   4C 11 D4   JMP &D411
 .stdout_append_copy_done
-     D449   A9 00      LDA #&00
-     D44B   9D 80 03   STA &0380,X
-     D44E   8E FF 03   STX &03FF
-     D451   7A         PLY
-     D452   FA         PLX
-     D453   60         RTS
+     D41D   A9 00      LDA #&00
+     D41F   9D 80 03   STA &0380,X
+     D422   8E FF 03   STX &03FF
+     D425   7A         PLY
+     D426   FA         PLX
+     D427   60         RTS
 .IRQ_handler
      D500   48         PHA
      D501   DA         PHX
@@ -2784,9 +2835,9 @@ End macro LOAD_MSG
      D516   2C 0D A0   BIT &A00D
      D519   50 0E      BVC &D529
      D51B   2C 04 A0   BIT &A004
-     D51E   EE 34 04   INC &0434
+     D51E   EE 32 04   INC &0432
      D521   D0 03      BNE &D526
-     D523   EE 35 04   INC &0435
+     D523   EE 33 04   INC &0433
 .isr_lcdvia_timer_end
      D526   4C 3D D5   JMP &D53D
 .isr_lcdvia_timer_next
@@ -2798,9 +2849,9 @@ End macro LOAD_MSG
      D530   AD 00 A4   LDA &A400
      D533   29 40      AND #&40
      D535   F0 06      BEQ &D53D
-     D537   A5 61      LDA &61
+     D537   A5 63      LDA &63
      D539   09 80      ORA #&80
-     D53B   85 61      STA &61
+     D53B   85 63      STA &63
 .isr_end_chks
      D53D   4C 83 D5   JMP &D583
 .isr_SC28L92
@@ -2815,17 +2866,17 @@ End macro LOAD_MSG
      D551   D0 1C      BNE &D56F
      D553   9E 00 03   STZ &0300,X
 .isr_SC28L92_set_null
-     D556   A5 60      LDA &60
+     D556   A5 62      LDA &62
      D558   09 01      ORA #&01
-     D55A   85 60      STA &60
+     D55A   85 62      STA &62
      D55C   4C 6F D5   JMP &D56F
 .isr_SC28L92_buf_full
      D55F   AD 01 B4   LDA &B401
      D562   29 01      AND #&01
      D564   D0 F9      BNE &D55F
-     D566   A5 60      LDA &60
+     D566   A5 62      LDA &62
      D568   09 04      ORA #&04
-     D56A   85 60      STA &60
+     D56A   85 62      STA &62
      D56C   4C 77 D5   JMP &D577
 .isr_SC28L92_cont
      D56F   E8         INX
@@ -2834,9 +2885,9 @@ End macro LOAD_MSG
      D575   D0 CC      BNE &D543
 .isr_SC28L92_end
      D577   8E 7F 03   STX &037F
-     D57A   A5 60      LDA &60
+     D57A   A5 62      LDA &62
      D57C   09 02      ORA #&02
-     D57E   85 60      STA &60
+     D57E   85 62      STA &62
      D580   4C 83 D5   JMP &D583
 .isr_exit
      D583   7A         PLY
@@ -2844,578 +2895,619 @@ End macro LOAD_MSG
      D585   68         PLA
      D586   40         RTI
 .extmem_ram_chk
-     D587   9C 0A 04   STZ &040A
-     D58A   AD 00 80   LDA &8000
-     D58D   8D 02 04   STA &0402
-     D590   A2 00      LDX #&00
+     D587   64 55      STZ &55
+     D589   AD 00 80   LDA &8000
+     D58C   8D 02 04   STA &0402
+     D58F   A2 00      LDX #&00
 .extmem_ram_chk_loop
-     D592   8A         TXA
-     D593   8D 00 80   STA &8000
-     D596   CD 00 80   CMP &8000
-     D599   D0 08      BNE &D5A3
-     D59B   E8         INX
-     D59C   E0 05      CPX #&05
-     D59E   F0 13      BEQ &D5B3
-     D5A0   4C 92 D5   JMP &D592
+     D591   8A         TXA
+     D592   8D 00 80   STA &8000
+     D595   CD 00 80   CMP &8000
+     D598   D0 08      BNE &D5A2
+     D59A   E8         INX
+     D59B   E0 05      CPX #&05
+     D59D   F0 12      BEQ &D5B1
+     D59F   4C 91 D5   JMP &D591
 .extmem_ram_chk_err
-     D5A3   A9 11      LDA #&11
-     D5A5   8D 0A 04   STA &040A
-     D5A8   A5 61      LDA &61
-     D5AA   49 FF      EOR #&FF
-     D5AC   29 FD      AND #&FD
-     D5AE   85 61      STA &61
-     D5B0   4C B9 D5   JMP &D5B9
+     D5A2   A9 11      LDA #&11
+     D5A4   85 55      STA &55
+     D5A6   A5 63      LDA &63
+     D5A8   49 FF      EOR #&FF
+     D5AA   29 FD      AND #&FD
+     D5AC   85 63      STA &63
+     D5AE   4C B7 D5   JMP &D5B7
 .extmem_ram_chk_ok
-     D5B3   A5 61      LDA &61
-     D5B5   09 02      ORA #&02
-     D5B7   85 61      STA &61
+     D5B1   A5 63      LDA &63
+     D5B3   09 02      ORA #&02
+     D5B5   85 63      STA &63
 .extmem_ram_chk_done
-     D5B9   AD 02 04   LDA &0402
-     D5BC   8D 00 80   STA &8000
-     D5BF   60         RTS
+     D5B7   AD 02 04   LDA &0402
+     D5BA   8D 00 80   STA &8000
+     D5BD   60         RTS
 .extmem_stat
-     D5C0   18         CLC
-     D5C1   A5 61      LDA &61
-     D5C3   29 02      AND #&02
-     D5C5   D0 01      BNE &D5C8
-     D5C7   38         SEC
+     D5BE   18         CLC
+     D5BF   A5 63      LDA &63
+     D5C1   29 02      AND #&02
+     D5C3   D0 01      BNE &D5C6
+     D5C5   38         SEC
 .extmem_stat_end
-     D5C8   60         RTS
+     D5C6   60         RTS
 .extmem_readset_bank
-     D5C9   9C 0A 04   STZ &040A
-     D5CC   20 0F FF   JSR &FF0F
-     D5CF   AD 0A 04   LDA &040A
-     D5D2   D0 14      BNE &D5E8
-     D5D4   A5 52      LDA &52
-     D5D6   C9 10      CMP #&10
-     D5D8   B0 09      BCS &D5E3
-     D5DA   8D 00 04   STA &0400
-     D5DD   8D E0 BF   STA &BFE0
-     D5E0   4C E8 D5   JMP &D5E8
+     D5C7   64 55      STZ &55
+     D5C9   20 0F FF   JSR &FF0F
+     D5CC   A5 55      LDA &55
+     D5CE   D0 13      BNE &D5E3
+     D5D0   A5 52      LDA &52
+     D5D2   C9 10      CMP #&10
+     D5D4   B0 09      BCS &D5DF
+     D5D6   8D 00 04   STA &0400
+     D5D9   8D E0 BF   STA &BFE0
+     D5DC   4C E3 D5   JMP &D5E3
 .extmem_readset_bank_num_err
-     D5E3   A9 12      LDA #&12
-     D5E5   8D 0A 04   STA &040A
+     D5DF   A9 12      LDA #&12
+     D5E1   85 55      STA &55
 .extmem_readset_bank_end
-     D5E8   60         RTS
+     D5E3   60         RTS
 .exmem_fitted_msg
-     D5E9   45 78 74 ...
-     D5F8   00
+     D5E4   2B 20 45 ...
+     D5F5   00
 .exmem_absent_msg
-     D5F9   4E 6F 20 ...
-     D60B   00
+     D5F6   2D 20 4E ...
+     D60A   00
 .uint8_mod8
-     D60C   8E 02 04   STX &0402
-     D60F   A2 00      LDX #&00
+     D60B   8E 02 04   STX &0402
+     D60E   A2 00      LDX #&00
 .uint8_mod8_loop
-     D611   8D 09 04   STA &0409
-     D614   38         SEC
-     D615   ED 02 04   SBC &0402
-     D618   90 04      BCC &D61E
-     D61A   E8         INX
-     D61B   4C 11 D6   JMP &D611
+     D610   85 54      STA &54
+     D612   38         SEC
+     D613   ED 02 04   SBC &0402
+     D616   90 04      BCC &D61C
+     D618   E8         INX
+     D619   4C 10 D6   JMP &D610
 .uint8_mod8_result
-     D61E   60         RTS
+     D61C   60         RTS
 .uint16_times10
-     D61F   DA         PHX
-     D620   A2 01      LDX #&01
+     D61D   DA         PHX
+     D61E   A2 01      LDX #&01
 .uint16_times10_outer
-     D622   A0 00      LDY #&00
-     D624   BD 2E 04   LDA &042E,X
-     D627   9D 12 05   STA &0512,X
-     D62A   8D 02 04   STA &0402
+     D620   A0 00      LDY #&00
+     D622   BD 2C 04   LDA &042C,X
+     D625   9D 12 05   STA &0512,X
+     D628   8D 02 04   STA &0402
 .uint16_times10_loop
-     D62D   18         CLC
-     D62E   6D 02 04   ADC &0402
-     D631   B0 03      BCS &D636
-     D633   4C 3D D6   JMP &D63D
+     D62B   18         CLC
+     D62C   6D 02 04   ADC &0402
+     D62F   B0 03      BCS &D634
+     D631   4C 3B D6   JMP &D63B
 .uint16_times10_carry
-     D636   E0 00      CPX #&00
-     D638   D0 03      BNE &D63D
-     D63A   EE 2F 04   INC &042F
+     D634   E0 00      CPX #&00
+     D636   D0 03      BNE &D63B
+     D638   EE 2D 04   INC &042D
 .uint16_times10_next_inc
-     D63D   C8         INY
-     D63E   C0 09      CPY #&09
-     D640   F0 03      BEQ &D645
-     D642   4C 2D D6   JMP &D62D
+     D63B   C8         INY
+     D63C   C0 09      CPY #&09
+     D63E   F0 03      BEQ &D643
+     D640   4C 2B D6   JMP &D62B
 .uint16_times10_next_byte
-     D645   9D 2E 04   STA &042E,X
-     D648   E0 00      CPX #&00
-     D64A   F0 04      BEQ &D650
-     D64C   CA         DEX
-     D64D   4C 22 D6   JMP &D622
+     D643   9D 2C 04   STA &042C,X
+     D646   E0 00      CPX #&00
+     D648   F0 04      BEQ &D64E
+     D64A   CA         DEX
+     D64B   4C 20 D6   JMP &D620
 .uint16_times10_done
-     D650   FA         PLX
-     D651   60         RTS
+     D64E   FA         PLX
+     D64F   60         RTS
 .compare_tmp_addr
-     D652   A5 57      LDA &57
-     D654   C5 59      CMP &59
-     D656   90 0F      BCC &D667
-     D658   D0 12      BNE &D66C
-     D65A   A5 56      LDA &56
-     D65C   C5 58      CMP &58
-     D65E   90 07      BCC &D667
-     D660   D0 0A      BNE &D66C
-     D662   A9 01      LDA #&01
-     D664   4C 6E D6   JMP &D66E
+     D650   A5 59      LDA &59
+     D652   C5 5B      CMP &5B
+     D654   90 0F      BCC &D665
+     D656   D0 12      BNE &D66A
+     D658   A5 58      LDA &58
+     D65A   C5 5A      CMP &5A
+     D65C   90 07      BCC &D665
+     D65E   D0 0A      BNE &D66A
+     D660   A9 01      LDA #&01
+     D662   4C 6C D6   JMP &D66C
 .compare_tmp_addr_less
-     D667   A9 00      LDA #&00
-     D669   4C 6E D6   JMP &D66E
+     D665   A9 00      LDA #&00
+     D667   4C 6C D6   JMP &D66C
 .compare_tmp_addr_more
-     D66C   A9 02      LDA #&02
+     D66A   A9 02      LDA #&02
 .compare_tmp_addr_end
-     D66E   8D 09 04   STA &0409
-     D671   60         RTS
+     D66C   85 54      STA &54
+     D66E   60         RTS
 .delay
-     D672   48         PHA
-     D673   9C 34 04   STZ &0434
-     D676   9C 35 04   STZ &0435
-     D679   AD 0E A0   LDA &A00E
-     D67C   09 C0      ORA #&C0
-     D67E   8D 0E A0   STA &A00E
-     D681   A9 40      LDA #&40
-     D683   8D 0B A0   STA &A00B
-     D686   A9 E6      LDA #&E6
-     D688   8D 04 A0   STA &A004
-     D68B   A9 03      LDA #&03
-     D68D   8D 05 A0   STA &A005
+     D66F   48         PHA
+     D670   9C 32 04   STZ &0432
+     D673   9C 33 04   STZ &0433
+     D676   AD 0E A0   LDA &A00E
+     D679   09 C0      ORA #&C0
+     D67B   8D 0E A0   STA &A00E
+     D67E   A9 40      LDA #&40
+     D680   8D 0B A0   STA &A00B
+     D683   A9 E6      LDA #&E6
+     D685   8D 04 A0   STA &A004
+     D688   A9 03      LDA #&03
+     D68A   8D 05 A0   STA &A005
 .delay_loop
-     D690   A9 64      LDA #&64
+     D68D   A9 64      LDA #&64
 .nop_loop
-     D692   EA         NOP
-     D693   3A         DEC A
-     D694   D0 FC      BNE &D692
-     D696   20 AD D6   JSR &D6AD
-     D699   AD 09 04   LDA &0409
-     D69C   C9 00      CMP #&00
-     D69E   F0 F0      BEQ &D690
-     D6A0   AD 0E A0   LDA &A00E
-     D6A3   29 7F      AND #&7F
-     D6A5   8D 0E A0   STA &A00E
-     D6A8   68         PLA
-     D6A9   9C 09 04   STZ &0409
-     D6AC   60         RTS
+     D68F   EA         NOP
+     D690   3A         DEC A
+     D691   D0 FC      BNE &D68F
+     D693   20 A8 D6   JSR &D6A8
+     D696   A5 54      LDA &54
+     D698   C9 00      CMP #&00
+     D69A   F0 F1      BEQ &D68D
+     D69C   AD 0E A0   LDA &A00E
+     D69F   29 7F      AND #&7F
+     D6A1   8D 0E A0   STA &A00E
+     D6A4   68         PLA
+     D6A5   64 54      STZ &54
+     D6A7   60         RTS
 .delay_timer_chk
-     D6AD   78         SEI
-     D6AE   AD 35 04   LDA &0435
-     D6B1   CD 37 04   CMP &0437
-     D6B4   90 11      BCC &D6C7
-     D6B6   D0 14      BNE &D6CC
-     D6B8   AD 34 04   LDA &0434
-     D6BB   CD 36 04   CMP &0436
-     D6BE   90 07      BCC &D6C7
-     D6C0   D0 0A      BNE &D6CC
-     D6C2   A9 01      LDA #&01
-     D6C4   4C CE D6   JMP &D6CE
+     D6A8   78         SEI
+     D6A9   AD 33 04   LDA &0433
+     D6AC   CD 35 04   CMP &0435
+     D6AF   90 11      BCC &D6C2
+     D6B1   D0 14      BNE &D6C7
+     D6B3   AD 32 04   LDA &0432
+     D6B6   CD 34 04   CMP &0434
+     D6B9   90 07      BCC &D6C2
+     D6BB   D0 0A      BNE &D6C7
+     D6BD   A9 01      LDA #&01
+     D6BF   4C C9 D6   JMP &D6C9
 .delay_timer_chk_less_than
-     D6C7   A9 00      LDA #&00
-     D6C9   4C CE D6   JMP &D6CE
+     D6C2   A9 00      LDA #&00
+     D6C4   4C C9 D6   JMP &D6C9
 .delay_timer_chk_more_than
-     D6CC   A9 02      LDA #&02
+     D6C7   A9 02      LDA #&02
 .delay_timer_chk_end
-     D6CE   8D 09 04   STA &0409
-     D6D1   58         CLI
-     D6D2   60         RTS
+     D6C9   85 54      STA &54
+     D6CB   58         CLI
+     D6CC   60         RTS
 .lcd_clear_buf
-     D6D3   A0 00      LDY #&00
-     D6D5   A9 20      LDA #&20
+     D6CD   A0 00      LDY #&00
+     D6CF   A9 20      LDA #&20
 .lcd_clear_buf_next
-     D6D7   99 80 04   STA &0480,Y
-     D6DA   C8         INY
-     D6DB   C0 54      CPY #&54
-     D6DD   D0 F8      BNE &D6D7
-     D6DF   60         RTS
+     D6D1   99 80 04   STA &0480,Y
+     D6D4   C8         INY
+     D6D5   C0 54      CPY #&54
+     D6D7   D0 F8      BNE &D6D1
+     D6D9   60         RTS
 .lcd_clear_sig
-     D6E0   48         PHA
-     D6E1   AD 01 A0   LDA &A001
-     D6E4   29 1F      AND #&1F
-     D6E6   8D 01 A0   STA &A001
-     D6E9   68         PLA
-     D6EA   60         RTS
+     D6DA   48         PHA
+     D6DB   AD 01 A0   LDA &A001
+     D6DE   29 1F      AND #&1F
+     D6E0   8D 01 A0   STA &A001
+     D6E3   68         PLA
+     D6E4   60         RTS
 .lcd_cmd
-     D6EB   20 2F D7   JSR &D72F
-     D6EE   8D 00 A0   STA &A000
-     D6F1   20 E0 D6   JSR &D6E0
+     D6E5   20 29 D7   JSR &D729
+     D6E8   8D 00 A0   STA &A000
+     D6EB   20 DA D6   JSR &D6DA
 Macro LCD_SET_CTL:
-     D6F4   AD 01 A0   LDA &A001
-     D6F7   29 1F      AND #&1F
-     D6F9   09 80      ORA #&80
-     D6FB   8D 01 A0   STA &A001
+     D6EE   AD 01 A0   LDA &A001
+     D6F1   29 1F      AND #&1F
+     D6F3   09 80      ORA #&80
+     D6F5   8D 01 A0   STA &A001
 End macro LCD_SET_CTL
-     D6FE   20 E0 D6   JSR &D6E0
-     D701   60         RTS
+     D6F8   20 DA D6   JSR &D6DA
+     D6FB   60         RTS
 .lcd_prt_linebuf
-     D702   48         PHA
-     D703   DA         PHX
-     D704   5A         PHY
-     D705   A2 00      LDX #&00
-     D707   20 13 D8   JSR &D813
-     D70A   A9 00      LDA #&00
+     D6FC   48         PHA
+     D6FD   DA         PHX
+     D6FE   5A         PHY
+     D6FF   A2 00      LDX #&00
+     D701   20 2C D8   JSR &D82C
+     D704   A9 00      LDA #&00
 .lcd_prt_linebuf_set_offset
-     D70C   C0 00      CPY #&00
-     D70E   F0 07      BEQ &D717
-     D710   18         CLC
-     D711   69 15      ADC #&15
-     D713   88         DEY
-     D714   4C 0C D7   JMP &D70C
+     D706   C0 00      CPY #&00
+     D708   F0 07      BEQ &D711
+     D70A   18         CLC
+     D70B   69 15      ADC #&15
+     D70D   88         DEY
+     D70E   4C 06 D7   JMP &D706
 .lcd_prt_linebuf_prt
-     D717   A8         TAY
-     D718   A2 00      LDX #&00
+     D711   A8         TAY
+     D712   A2 00      LDX #&00
 .lcd_prt_linebuf_prtchr
-     D71A   B9 80 04   LDA &0480,Y
-     D71D   F0 0C      BEQ &D72B
-     D71F   20 D8 D7   JSR &D7D8
-     D722   C8         INY
-     D723   E8         INX
-     D724   E0 15      CPX #&15
-     D726   F0 03      BEQ &D72B
-     D728   4C 1A D7   JMP &D71A
+     D714   B9 80 04   LDA &0480,Y
+     D717   F0 0C      BEQ &D725
+     D719   20 F2 D7   JSR &D7F2
+     D71C   C8         INY
+     D71D   E8         INX
+     D71E   E0 15      CPX #&15
+     D720   F0 03      BEQ &D725
+     D722   4C 14 D7   JMP &D714
 .lcd_prt_linebuf_end
-     D72B   7A         PLY
-     D72C   FA         PLX
-     D72D   68         PLA
-     D72E   60         RTS
+     D725   7A         PLY
+     D726   FA         PLX
+     D727   68         PLA
+     D728   60         RTS
 .lcd_wait
-     D72F   48         PHA
-     D730   A9 00      LDA #&00
-     D732   8D 02 A0   STA &A002
+     D729   48         PHA
+     D72A   A9 00      LDA #&00
+     D72C   8D 02 A0   STA &A002
 .lcd_busy
 Macro LCD_SET_CTL:
-     D735   AD 01 A0   LDA &A001
-     D738   29 1F      AND #&1F
-     D73A   09 40      ORA #&40
-     D73C   8D 01 A0   STA &A001
+     D72F   AD 01 A0   LDA &A001
+     D732   29 1F      AND #&1F
+     D734   09 40      ORA #&40
+     D736   8D 01 A0   STA &A001
 End macro LCD_SET_CTL
-     D73F   09 C0      ORA #&C0
-     D741   8D 01 A0   STA &A001
-     D744   AD 00 A0   LDA &A000
-     D747   29 80      AND #&80
-     D749   D0 EA      BNE &D735
+     D739   09 C0      ORA #&C0
+     D73B   8D 01 A0   STA &A001
+     D73E   AD 00 A0   LDA &A000
+     D741   29 80      AND #&80
+     D743   D0 EA      BNE &D72F
 Macro LCD_SET_CTL:
-     D74B   AD 01 A0   LDA &A001
-     D74E   29 1F      AND #&1F
-     D750   09 40      ORA #&40
-     D752   8D 01 A0   STA &A001
+     D745   AD 01 A0   LDA &A001
+     D748   29 1F      AND #&1F
+     D74A   09 40      ORA #&40
+     D74C   8D 01 A0   STA &A001
 End macro LCD_SET_CTL
-     D755   A9 FF      LDA #&FF
-     D757   8D 02 A0   STA &A002
-     D75A   68         PLA
-     D75B   60         RTS
+     D74F   A9 FF      LDA #&FF
+     D751   8D 02 A0   STA &A002
+     D754   68         PLA
+     D755   60         RTS
 .lcd_cls
-     D75C   20 D3 D6   JSR &D6D3
-     D75F   A9 01      LDA #&01
-     D761   20 EB D6   JSR &D6EB
-     D764   60         RTS
+     D756   20 CD D6   JSR &D6CD
+     D759   A9 01      LDA #&01
+     D75B   20 E5 D6   JSR &D6E5
+     D75E   60         RTS
 .lcd_print_byte
-     D765   20 F6 CF   JSR &CFF6
-     D768   AD 0D 04   LDA &040D
-     D76B   20 D8 D7   JSR &D7D8
-     D76E   AD 0E 04   LDA &040E
-     D771   20 D8 D7   JSR &D7D8
-     D774   60         RTS
+     D75F   20 EF CF   JSR &CFEF
+     D762   AD 0B 04   LDA &040B
+     D765   20 F2 D7   JSR &D7F2
+     D768   AD 0C 04   LDA &040C
+     D76B   20 F2 D7   JSR &D7F2
+     D76E   60         RTS
 .lcd_prt_buf
-     D775   48         PHA
-     D776   A9 80      LDA #&80
-     D778   85 50      STA &50
-     D77A   A9 03      LDA #&03
-     D77C   85 51      STA &51
-     D77E   20 91 D7   JSR &D791
-     D781   68         PLA
-     D782   60         RTS
+     D76F   48         PHA
+     D770   A9 80      LDA #&80
+     D772   85 50      STA &50
+     D774   A9 03      LDA #&03
+     D776   85 51      STA &51
+     D778   20 8B D7   JSR &D78B
+     D77B   68         PLA
+     D77C   60         RTS
 .lcd_prt_sbuf
-     D783   48         PHA
-     D784   A9 0D      LDA #&0D
-     D786   85 50      STA &50
-     D788   A9 04      LDA #&04
-     D78A   85 51      STA &51
-     D78C   20 91 D7   JSR &D791
-     D78F   68         PLA
-     D790   60         RTS
+     D77D   48         PHA
+     D77E   A9 0B      LDA #&0B
+     D780   85 50      STA &50
+     D782   A9 04      LDA #&04
+     D784   85 51      STA &51
+     D786   20 8B D7   JSR &D78B
+     D789   68         PLA
+     D78A   60         RTS
 .lcd_println
-     D791   48         PHA
-     D792   DA         PHX
-     D793   5A         PHY
-     D794   A2 15      LDX #&15
-     D796   A0 00      LDY #&00
-.lcd_println_shift_buf
-     D798   BD 80 04   LDA &0480,X
-     D79B   99 80 04   STA &0480,Y
-     D79E   E8         INX
-     D79F   C8         INY
-     D7A0   E0 54      CPX #&54
-     D7A2   D0 F4      BNE &D798
+     D78B   48         PHA
+     D78C   DA         PHX
+     D78D   5A         PHY
+     D78E   20 E1 D7   JSR &D7E1
 .lcd_println_newline
-     D7A4   98         TYA
-     D7A5   AA         TAX
-     D7A6   A0 00      LDY #&00
+     D791   98         TYA
+     D792   AA         TAX
+     D793   A0 00      LDY #&00
 .lcd_println_new_txt
-     D7A8   B1 50      LDA (&50),Y
-     D7AA   F0 0C      BEQ &D7B8
-     D7AC   9D 80 04   STA &0480,X
-     D7AF   C8         INY
-     D7B0   E8         INX
-     D7B1   C0 15      CPY #&15
-     D7B3   F0 11      BEQ &D7C6
-     D7B5   4C A8 D7   JMP &D7A8
-.lcd_println_pad
-     D7B8   A9 20      LDA #&20
-.lcd_println_pad_next
-     D7BA   C0 15      CPY #&15
-     D7BC   F0 08      BEQ &D7C6
-     D7BE   9D 80 04   STA &0480,X
-     D7C1   C8         INY
-     D7C2   E8         INX
-     D7C3   4C BA D7   JMP &D7BA
+     D795   B1 50      LDA (&50),Y
+     D797   F0 1E      BEQ &D7B7
+     D799   C9 0A      CMP #&0A
+     D79B   F0 0C      BEQ &D7A9
+     D79D   9D 80 04   STA &0480,X
+     D7A0   C8         INY
+     D7A1   E8         INX
+     D7A2   E0 54      CPX #&54
+     D7A4   F0 17      BEQ &D7BD
+     D7A6   4C 95 D7   JMP &D795
+.lcd_println_addline
+     D7A9   C8         INY
+     D7AA   5A         PHY
+     D7AB   20 CF D7   JSR &D7CF
+     D7AE   20 E1 D7   JSR &D7E1
+     D7B1   98         TYA
+     D7B2   AA         TAX
+     D7B3   7A         PLY
+     D7B4   4C 95 D7   JMP &D795
+.lcd_println_linedone
+     D7B7   20 CF D7   JSR &D7CF
+     D7BA   4C C1 D7   JMP &D7C1
 .lcd_println_terminate
-     D7C6   CA         DEX
-     D7C7   9E 80 04   STZ &0480,X
-     D7CA   A0 00      LDY #&00
+     D7BD   CA         DEX
+     D7BE   9E 80 04   STZ &0480,X
 .lcd_println_refresh
-     D7CC   20 02 D7   JSR &D702
-     D7CF   C8         INY
-     D7D0   C0 04      CPY #&04
-     D7D2   D0 F8      BNE &D7CC
-     D7D4   7A         PLY
-     D7D5   FA         PLX
-     D7D6   68         PLA
-     D7D7   60         RTS
+     D7C1   A0 00      LDY #&00
+.lcd_println_refresh_loop
+     D7C3   20 FC D6   JSR &D6FC
+     D7C6   C8         INY
+     D7C7   C0 04      CPY #&04
+     D7C9   D0 F8      BNE &D7C3
+     D7CB   7A         PLY
+     D7CC   FA         PLX
+     D7CD   68         PLA
+     D7CE   60         RTS
+.lcd_println_padline
+     D7CF   A9 20      LDA #&20
+.lcd_println_padline_next
+     D7D1   E0 54      CPX #&54
+     D7D3   F0 07      BEQ &D7DC
+     D7D5   9D 80 04   STA &0480,X
+     D7D8   E8         INX
+     D7D9   4C D1 D7   JMP &D7D1
+.lcd_println_padline_done
+     D7DC   CA         DEX
+     D7DD   9E 80 04   STZ &0480,X
+     D7E0   60         RTS
+.lcd_println_shiftbuf
+     D7E1   A2 15      LDX #&15
+     D7E3   A0 00      LDY #&00
+.lcd_println_shiftbuf_loop
+     D7E5   BD 80 04   LDA &0480,X
+     D7E8   99 80 04   STA &0480,Y
+     D7EB   E8         INX
+     D7EC   C8         INY
+     D7ED   E0 54      CPX #&54
+     D7EF   D0 F4      BNE &D7E5
+     D7F1   60         RTS
 .lcd_prt_chr
-     D7D8   48         PHA
-     D7D9   20 2F D7   JSR &D72F
-     D7DC   8D 00 A0   STA &A000
+     D7F2   48         PHA
+     D7F3   20 29 D7   JSR &D729
+     D7F6   8D 00 A0   STA &A000
 Macro LCD_SET_CTL:
-     D7DF   AD 01 A0   LDA &A001
-     D7E2   29 1F      AND #&1F
-     D7E4   09 20      ORA #&20
-     D7E6   8D 01 A0   STA &A001
+     D7F9   AD 01 A0   LDA &A001
+     D7FC   29 1F      AND #&1F
+     D7FE   09 20      ORA #&20
+     D800   8D 01 A0   STA &A001
 End macro LCD_SET_CTL
 Macro LCD_SET_CTL:
-     D7E9   AD 01 A0   LDA &A001
-     D7EC   29 1F      AND #&1F
-     D7EE   09 A0      ORA #&A0
-     D7F0   8D 01 A0   STA &A001
+     D803   AD 01 A0   LDA &A001
+     D806   29 1F      AND #&1F
+     D808   09 A0      ORA #&A0
+     D80A   8D 01 A0   STA &A001
 End macro LCD_SET_CTL
 Macro LCD_SET_CTL:
-     D7F3   AD 01 A0   LDA &A001
-     D7F6   29 1F      AND #&1F
-     D7F8   09 20      ORA #&20
-     D7FA   8D 01 A0   STA &A001
+     D80D   AD 01 A0   LDA &A001
+     D810   29 1F      AND #&1F
+     D812   09 20      ORA #&20
+     D814   8D 01 A0   STA &A001
 End macro LCD_SET_CTL
-     D7FD   68         PLA
-     D7FE   60         RTS
+     D817   68         PLA
+     D818   60         RTS
 .lcd_prt_err
-     D7FF   AD 0A 04   LDA &040A
-     D802   3A         DEC A
-     D803   0A         ASL A
-     D804   AA         TAX
-     D805   BD BD DA   LDA &DABD,X
-     D808   85 50      STA &50
-     D80A   BD BE DA   LDA &DABE,X
-     D80D   85 51      STA &51
-     D80F   20 91 D7   JSR &D791
-     D812   60         RTS
+     D819   A5 55      LDA &55
+     D81B   3A         DEC A
+     D81C   0A         ASL A
+     D81D   AA         TAX
+     D81E   BD BD DA   LDA &DABD,X
+     D821   85 50      STA &50
+     D823   BD BE DA   LDA &DABE,X
+     D826   85 51      STA &51
+     D828   20 8B D7   JSR &D78B
+     D82B   60         RTS
 .lcd_set_cursor
-     D813   8E 02 04   STX &0402
-     D816   B9 23 D8   LDA &D823,Y
-     D819   18         CLC
-     D81A   6D 02 04   ADC &0402
-     D81D   09 80      ORA #&80
-     D81F   20 EB D6   JSR &D6EB
-     D822   60         RTS
+     D82C   8E 02 04   STX &0402
+     D82F   B9 3C D8   LDA &D83C,Y
+     D832   18         CLC
+     D833   6D 02 04   ADC &0402
+     D836   09 80      ORA #&80
+     D838   20 E5 D6   JSR &D6E5
+     D83B   60         RTS
 .lcd_ln_base_addr
-     D823   00
-     D824   40
-     D825   14
-     D826   54
-.prt_init
-     D827   A9 D0      LDA #&D0
-     D829   8D 02 AC   STA &AC02
-     D82C   A9 FF      LDA #&FF
-     D82E   8D 03 AC   STA &AC03
-     D831   9C 01 AC   STZ &AC01
-     D834   AD 00 AC   LDA &AC00
-     D837   09 40      ORA #&40
-     D839   09 80      ORA #&80
-     D83B   29 EF      AND #&EF
-     D83D   8D 00 AC   STA &AC00
-     D840   48         PHA
-Macro PRT_PULSE_DELAY:
-     D841   A9 10      LDA #&10
-     D843   8D 36 04   STA &0436
-     D846   9C 37 04   STZ &0437
-     D849   20 6F FF   JSR &FF6F
-End macro PRT_PULSE_DELAY
-     D84C   68         PLA
-     D84D   09 10      ORA #&10
-     D84F   8D 00 AC   STA &AC00
-     D852   60         RTS
+     D83C   00
+     D83D   40
+     D83E   14
+     D83F   54
 .prt_char
 Macro LED_ON:
-     D853   48         PHA
-     D854   AD 01 A0   LDA &A001
-     D857   09 02      ORA #&02
-     D859   8D 01 A0   STA &A001
-     D85C   68         PLA
+     D840   48         PHA
+     D841   AD 01 A0   LDA &A001
+     D844   09 02      ORA #&02
+     D846   8D 01 A0   STA &A001
+     D849   68         PLA
 End macro LED_ON
-     D85D   48         PHA
+     D84A   48         PHA
 .prt_char_chk_busy
-     D85E   AD 00 AC   LDA &AC00
-     D861   29 04      AND #&04
-     D863   D0 F9      BNE &D85E
-     D865   68         PLA
-     D866   8D 01 AC   STA &AC01
-     D869   20 0E D9   JSR &D90E
+     D84B   AD 00 AC   LDA &AC00
+     D84E   29 04      AND #&04
+     D850   D0 F9      BNE &D84B
+     D852   68         PLA
+     D853   8D 01 AC   STA &AC01
+     D856   20 4F D9   JSR &D94F
 Macro LED_OFF:
-     D86C   48         PHA
-     D86D   A9 FF      LDA #&FF
-     D86F   49 02      EOR #&02
-     D871   2D 01 A0   AND &A001
-     D874   8D 01 A0   STA &A001
-     D877   68         PLA
+     D859   48         PHA
+     D85A   A9 FF      LDA #&FF
+     D85C   49 02      EOR #&02
+     D85E   2D 01 A0   AND &A001
+     D861   8D 01 A0   STA &A001
+     D864   68         PLA
 End macro LED_OFF
-     D878   60         RTS
-.prt_check_busy
-     D879   18         CLC
-     D87A   AD 00 AC   LDA &AC00
-     D87D   29 04      AND #&04
-     D87F   F0 01      BEQ &D882
-     D881   38         SEC
-.prt_check_busy_end
-     D882   60         RTS
-.prt_msg
-     D883   A0 80      LDY #&80
-.prt_msg_chk
-     D885   20 B9 D8   JSR &D8B9
-     D888   AD 09 04   LDA &0409
-     D88B   F0 11      BEQ &D89E
-     D88D   88         DEY
-     D88E   F0 28      BEQ &D8B8
-Macro PRT_PULSE_DELAY:
-     D890   A9 10      LDA #&10
-     D892   8D 36 04   STA &0436
-     D895   9C 37 04   STZ &0437
-     D898   20 6F FF   JSR &FF6F
-End macro PRT_PULSE_DELAY
-     D89B   4C 85 D8   JMP &D885
-.prt_msg_cont
-     D89E   A0 00      LDY #&00
-.prt_msg_loop
-     D8A0   20 B9 D8   JSR &D8B9
-     D8A3   AD 09 04   LDA &0409
-     D8A6   D0 10      BNE &D8B8
-     D8A8   B1 50      LDA (&50),Y
-     D8AA   F0 09      BEQ &D8B5
-     D8AC   20 53 D8   JSR &D853
-     D8AF   C8         INY
-     D8B0   F0 06      BEQ &D8B8
-     D8B2   4C A0 D8   JMP &D8A0
-.prt_msg_ok
-     D8B5   9C 09 04   STZ &0409
-.prt_msg_end
-     D8B8   60         RTS
+     D865   60         RTS
+.prt_check_present
+     D866   48         PHA
+     D867   DA         PHX
+     D868   5A         PHY
+     D869   64 55      STZ &55
+     D86B   AD 03 AC   LDA &AC03
+     D86E   8D 02 04   STA &0402
+     D871   A2 00      LDX #&00
+.prt_check_present_loop
+     D873   BD 9F D8   LDA &D89F,X
+     D876   F0 1D      BEQ &D895
+     D878   8D 01 04   STA &0401
+     D87B   8D 03 AC   STA &AC03
+     D87E   AD 03 AC   LDA &AC03
+     D881   CD 01 04   CMP &0401
+     D884   D0 04      BNE &D88A
+     D886   E8         INX
+     D887   4C 73 D8   JMP &D873
+.prt_check_present_fail
+     D88A   A9 1E      LDA #&1E
+     D88C   85 55      STA &55
+     D88E   A5 63      LDA &63
+     D890   29 FB      AND #&FB
+     D892   4C 99 D8   JMP &D899
+.prt_check_present_loop_done
+     D895   A5 63      LDA &63
+     D897   09 04      ORA #&04
+.prt_check_present_done
+     D899   85 63      STA &63
+     D89B   7A         PLY
+     D89C   FA         PLX
+     D89D   68         PLA
+     D89E   60         RTS
+.prt_test_vals
+     D89F   55
+     D8A0   AA
+     D8A1   FF
+     D8A2   F0
+     D8A3   0F
+     D8A4   00
 .prt_check_state
-     D8B9   5A         PHY
-     D8BA   9C 09 04   STZ &0409
-     D8BD   AD 00 AC   LDA &AC00
-     D8C0   A8         TAY
-     D8C1   29 01      AND #&01
-     D8C3   F0 12      BEQ &D8D7
-     D8C5   98         TYA
-     D8C6   29 02      AND #&02
-     D8C8   D0 15      BNE &D8DF
-     D8CA   98         TYA
-     D8CB   29 20      AND #&20
-     D8CD   D0 15      BNE &D8E4
-     D8CF   A9 03      LDA #&03
-     D8D1   8D 09 04   STA &0409
-     D8D4   4C E4 D8   JMP &D8E4
+     D8A5   5A         PHY
+     D8A6   64 55      STZ &55
+     D8A8   AD 00 AC   LDA &AC00
+     D8AB   A8         TAY
+     D8AC   29 01      AND #&01
+     D8AE   F0 11      BEQ &D8C1
+     D8B0   98         TYA
+     D8B1   29 02      AND #&02
+     D8B3   D0 13      BNE &D8C8
+     D8B5   98         TYA
+     D8B6   29 20      AND #&20
+     D8B8   D0 12      BNE &D8CC
+     D8BA   A9 1D      LDA #&1D
+     D8BC   85 55      STA &55
+     D8BE   4C CC D8   JMP &D8CC
 .prt_chk_state_offline
-     D8D7   A9 01      LDA #&01
-     D8D9   8D 09 04   STA &0409
-     D8DC   4C E4 D8   JMP &D8E4
+     D8C1   A9 1B      LDA #&1B
+     D8C3   85 55      STA &55
+     D8C5   4C CC D8   JMP &D8CC
 .prt_chk_state_paperout
-     D8DF   A9 02      LDA #&02
-     D8E1   8D 09 04   STA &0409
+     D8C8   A9 1C      LDA #&1C
+     D8CA   85 55      STA &55
 .prt_chk_state_end
-     D8E4   7A         PLY
-     D8E5   60         RTS
-.prt_load_state_msg
-     D8E6   AD 09 04   LDA &0409
-     D8E9   0A         ASL A
-     D8EA   AA         TAX
-     D8EB   BD 2A D9   LDA &D92A,X
-     D8EE   85 50      STA &50
-     D8F0   BD 2B D9   LDA &D92B,X
-     D8F3   85 51      STA &51
-     D8F5   60         RTS
+     D8CC   7A         PLY
+     D8CD   60         RTS
+.prt_init
+     D8CE   A9 D0      LDA #&D0
+     D8D0   8D 02 AC   STA &AC02
+     D8D3   A9 FF      LDA #&FF
+     D8D5   8D 03 AC   STA &AC03
+     D8D8   9C 01 AC   STZ &AC01
+     D8DB   AD 00 AC   LDA &AC00
+     D8DE   09 40      ORA #&40
+     D8E0   09 80      ORA #&80
+     D8E2   29 EF      AND #&EF
+     D8E4   8D 00 AC   STA &AC00
+     D8E7   48         PHA
+Macro PRT_PULSE_DELAY:
+     D8E8   A9 10      LDA #&10
+     D8EA   8D 34 04   STA &0434
+     D8ED   9C 35 04   STZ &0435
+     D8F0   20 6F FF   JSR &FF6F
+End macro PRT_PULSE_DELAY
+     D8F3   68         PLA
+     D8F4   09 10      ORA #&10
+     D8F6   8D 00 AC   STA &AC00
+     D8F9   60         RTS
+.prt_msg
+     D8FA   A0 80      LDY #&80
+.prt_msg_chk
+     D8FC   20 A5 D8   JSR &D8A5
+     D8FF   A5 54      LDA &54
+     D901   F0 11      BEQ &D914
+     D903   88         DEY
+     D904   F0 26      BEQ &D92C
+Macro PRT_PULSE_DELAY:
+     D906   A9 10      LDA #&10
+     D908   8D 34 04   STA &0434
+     D90B   9C 35 04   STZ &0435
+     D90E   20 6F FF   JSR &FF6F
+End macro PRT_PULSE_DELAY
+     D911   4C FC D8   JMP &D8FC
+.prt_msg_cont
+     D914   A0 00      LDY #&00
+.prt_msg_loop
+     D916   20 A5 D8   JSR &D8A5
+     D919   A5 54      LDA &54
+     D91B   D0 0F      BNE &D92C
+     D91D   B1 50      LDA (&50),Y
+     D91F   F0 09      BEQ &D92A
+     D921   20 40 D8   JSR &D840
+     D924   C8         INY
+     D925   F0 05      BEQ &D92C
+     D927   4C 16 D9   JMP &D916
+.prt_msg_ok
+     D92A   64 54      STZ &54
+.prt_msg_end
+     D92C   60         RTS
 .prt_stdout_buf
-     D8F6   A9 80      LDA #&80
-     D8F8   85 50      STA &50
-     D8FA   A9 03      LDA #&03
-     D8FC   85 51      STA &51
-     D8FE   20 83 D8   JSR &D883
-     D901   60         RTS
+     D92D   A9 80      LDA #&80
+     D92F   85 50      STA &50
+     D931   A9 03      LDA #&03
+     D933   85 51      STA &51
+     D935   20 FA D8   JSR &D8FA
+     D938   60         RTS
 .prt_str_buf
-     D902   A9 0D      LDA #&0D
-     D904   85 50      STA &50
-     D906   A9 04      LDA #&04
-     D908   85 51      STA &51
-     D90A   20 83 D8   JSR &D883
-     D90D   60         RTS
+     D939   A9 0B      LDA #&0B
+     D93B   85 50      STA &50
+     D93D   A9 04      LDA #&04
+     D93F   85 51      STA &51
+     D941   20 FA D8   JSR &D8FA
+     D944   60         RTS
+.prt_check_busy
+     D945   18         CLC
+     D946   AD 00 AC   LDA &AC00
+     D949   29 04      AND #&04
+     D94B   F0 01      BEQ &D94E
+     D94D   38         SEC
+.prt_check_busy_end
+     D94E   60         RTS
 .prt_strobe
-     D90E   AD 00 AC   LDA &AC00
-     D911   29 7F      AND #&7F
-     D913   8D 00 AC   STA &AC00
-     D916   A9 10      LDA #&10
-     D918   8D 36 04   STA &0436
-     D91B   9C 37 04   STZ &0437
-     D91E   20 6F FF   JSR &FF6F
-     D921   AD 00 AC   LDA &AC00
-     D924   09 80      ORA #&80
-     D926   8D 00 AC   STA &AC00
-     D929   60         RTS
-.prt_state_msg_ptrs
-     D92A   32 D9
-     D92C   35 D9
-     D92E   3D D9
-     D930   47 D9
-.prt_state_msg_ok
-     D932   4F 4B 
-     D934   00
-.prt_state_msg_offline
-     D935   4F 46 46 ...
-     D93C   00
-.prt_state_msg_pe
-     D93D   50 41 50 ...
-     D946   00
-.prt_state_msg_err
-     D947   45 52 52 ...
-     D94C   00
+     D94F   AD 00 AC   LDA &AC00
+     D952   29 7F      AND #&7F
+     D954   8D 00 AC   STA &AC00
+     D957   A9 10      LDA #&10
+     D959   8D 34 04   STA &0434
+     D95C   9C 35 04   STZ &0435
+     D95F   20 6F FF   JSR &FF6F
+     D962   AD 00 AC   LDA &AC00
+     D965   09 80      ORA #&80
+     D967   8D 00 AC   STA &AC00
+     D96A   60         RTS
+.parallel_if_fitted
+     D96B   2B 20 50 ...
+     D97F   00
+.parallel_if_not_fitted
+     D980   2D 20 4E ...
+     D994   00
 .cmdprcptrs
-     DA00   92 C3
-     DA02   1A C7
-     DA04   40 C7
-     DA06   95 C3
-     DA08   B2 C3
-     DA0A   E2 C3
-     DA0C   33 C4
-     DA0E   C5 C4
-     DA10   10 C5
-     DA12   84 C5
-     DA14   B8 C5
-     DA16   27 C6
-     DA18   54 C6
-     DA1A   1A C7
-     DA1C   40 C7
-     DA1E   6B C7
-     DA20   6E C7
-     DA22   9F C7
-     DA24   19 C8
-     DA26   D6 C9
-     DA28   95 CA
-     DA2A   E7 C9
-     DA2C   A5 CA
-     DA2E   20 CB
-     DA30   47 CB
+     DA00   B9 C3
+     DA02   20 C7
+     DA04   41 C7
+     DA06   BC C3
+     DA08   D9 C3
+     DA0A   09 C4
+     DA0C   52 C4
+     DA0E   DE C4
+     DA10   29 C5
+     DA12   9C C5
+     DA14   CB C5
+     DA16   32 C6
+     DA18   5C C6
+     DA1A   20 C7
+     DA1C   41 C7
+     DA1E   65 C7
+     DA20   8B C7
+     DA22   B9 C7
+     DA24   2E C8
+     DA26   E9 C9
+     DA28   A8 CA
+     DA2A   FA C9
+     DA2C   B7 CA
+     DA2E   2C CB
+     DA30   52 CB
 .cmd_ch1_tbl
      DA32   2A 3F 21 ...
      DA40   FF
@@ -3510,184 +3602,202 @@ End macro PRT_PULSE_DELAY
      DABB   98
      DABC   00
 .err_ptrs
-     DABD   F1 DA
-     DABF   10 DB
-     DAC1   1F DB
-     DAC3   2B DB
-     DAC5   41 DB
-     DAC7   47 DB
-     DAC9   57 DB
-     DACB   62 DB
-     DACD   6D DB
-     DACF   7C DB
-     DAD1   8B DB
-     DAD3   9F DB
-     DAD5   B3 DB
-     DAD7   C0 DB
-     DAD9   D4 DB
-     DADB   E2 DB
-     DADD   EF DB
-     DADF   04 DC
-     DAE1   17 DC
-     DAE3   2E DC
-     DAE5   3C DC
-     DAE7   4F DC
-     DAE9   62 DC
-     DAEB   75 DC
-     DAED   84 DC
-     DAEF   97 DC
+     DABD   F9 DA
+     DABF   18 DB
+     DAC1   27 DB
+     DAC3   33 DB
+     DAC5   49 DB
+     DAC7   4F DB
+     DAC9   5F DB
+     DACB   6A DB
+     DACD   75 DB
+     DACF   84 DB
+     DAD1   93 DB
+     DAD3   A7 DB
+     DAD5   BB DB
+     DAD7   C8 DB
+     DAD9   DC DB
+     DADB   EA DB
+     DADD   F7 DB
+     DADF   0C DC
+     DAE1   1F DC
+     DAE3   36 DC
+     DAE5   44 DC
+     DAE7   57 DC
+     DAE9   6A DC
+     DAEB   7D DC
+     DAED   8C DC
+     DAEF   9F DC
+     DAF1   B1 DC
+     DAF3   C1 DC
+     DAF5   D4 DC
+     DAF7   E2 DC
 .err_msg_cmd
-     DAF1   42 61 64 ...
-     DB0F   00
+     DAF9   42 61 64 ...
+     DB17   00
 .err_msg_hex_bin_conv
-     DB10   48 65 78 ...
-     DB1E   00
+     DB18   48 65 78 ...
+     DB26   00
 .err_msg_parse
-     DB1F   50 61 72 ...
-     DB2A   00
+     DB27   50 61 72 ...
+     DB32   00
 .err_msg_read_hexbyte
-     DB2B   45 72 72 ...
-     DB40   00
+     DB33   45 72 72 ...
+     DB48   00
 .err_msg_syntax
-     DB41   57 68 61 ...
-     DB46   00
+     DB49   57 68 61 ...
+     DB4E   00
 .err_file_read
-     DB47   46 69 6C ...
-     DB56   00
+     DB4F   46 69 6C ...
+     DB5E   00
 .err_timeout_SR
-     DB57   53 52 20 ...
-     DB61   00
+     DB5F   53 52 20 ...
+     DB69   00
 .err_timeout_SA
-     DB62   53 41 20 ...
-     DB6C   00
+     DB6A   53 41 20 ...
+     DB74   00
 .err_timeout_SRO
-     DB6D   53 52 20 ...
-     DB7B   00
+     DB75   53 52 20 ...
+     DB83   00
 .err_timeout_SAO
-     DB7C   53 41 20 ...
-     DB8A   00
+     DB84   53 41 20 ...
+     DB92   00
 .err_filesvropen
-     DB8B   53 65 72 ...
-     DB9E   00
+     DB93   53 65 72 ...
+     DBA6   00
 .err_filesvrls
-     DB9F   53 65 72 ...
-     DBB2   00
+     DBA7   53 65 72 ...
+     DBBA   00
 .err_filename_badchar
-     DBB3   42 61 64 ...
-     DBBF   00
+     DBBB   42 61 64 ...
+     DBC7   00
 .err_filename_badlen
-     DBC0   42 61 64 ...
-     DBD3   00
+     DBC8   42 61 64 ...
+     DBDB   00
 .err_end_of_buffer
-     DBD4   45 6E 64 ...
-     DBE1   00
+     DBDC   45 6E 64 ...
+     DBE9   00
 .err_not_a_number
-     DBE2   4E 6F 74 ...
-     DBEE   00
+     DBEA   4E 6F 74 ...
+     DBF6   00
 .err_extmem_write
-     DBEF   45 78 74 ...
-     DC03   00
+     DBF7   45 78 74 ...
+     DC0B   00
 .err_extmem_bank
-     DC04   45 78 74 ...
-     DC16   00
+     DC0C   45 78 74 ...
+     DC1E   00
 .err_extmem_exec
-     DC17   45 78 74 ...
-     DC2D   00
+     DC1F   45 78 74 ...
+     DC35   00
 .err_addr
-     DC2E   41 64 64 ...
-     DC3B   00
+     DC36   41 64 64 ...
+     DC43   00
 .err_file_exists
-     DC3C   45 72 72 ...
-     DC4E   00
+     DC44   45 72 72 ...
+     DC56   00
 .err_file_open
-     DC4F   45 72 72 ...
-     DC61   00
+     DC57   45 72 72 ...
+     DC69   00
 .err_delfile_fail
-     DC62   44 65 6C ...
-     DC74   00
+     DC6A   44 65 6C ...
+     DC7C   00
 .err_filenotfound
-     DC75   46 69 6C ...
-     DC83   00
+     DC7D   46 69 6C ...
+     DC8B   00
 .err_stdin_buf_empty
-     DC84   49 6E 70 ...
-     DC96   00
+     DC8C   49 6E 70 ...
+     DC9E   00
 .err_no_executable
-     DC97   4E 6F 20 ...
-     DCA8   00
-.ext_data_types
-     DCA9   44 45 4F ...
-     DCAD   00
-.help_table
-     DCAE   3F 
-     DCAF   00
-     DCB0   21 
-     DCB1   00
-     DCB2   42 52 4B 
-     DCB5   00
-     DCB6   43 4C 45 ...
-     DCBB   00
-     DCBC   44 45 4C 
-     DCBF   00
-     DCC0   44 55 4D ...
-     DCC4   00
-     DCC5   48 45 4C ...
-     DCC9   00
-     DCCA   4A 4D 50 
-     DCCD   00
-     DCCE   4C 4D 
-     DCD0   00
-     DCD1   4C 53 
+     DC9F   4E 6F 20 ...
+     DCB0   00
+.err_printer_state_ol
+     DCB1   50 72 69 ...
+     DCC0   00
+.err_printer_state_pe
+     DCC1   50 72 69 ...
      DCD3   00
-     DCD4   4C 4F 41 ...
-     DCD8   00
-     DCD9   4C 50 
-     DCDB   00
-     DCDC   50 45 45 ...
-     DCE0   00
-     DCE1   50 4F 4B ...
-     DCE5   00
-     DCE6   52 55 4E 
-     DCE9   00
-     DCEA   53 41 56 ...
-     DCEE   00
-     DCEF   53 54 41 ...
-     DCF3   00
-     DCF4   56 45 52 ...
-     DCF8   00
-     DCF9   58 4C 4F ...
-     DCFE   00
-     DCFF   58 4C 53 
-     DD02   00
-     DD03   58 4F 50 ...
-     DD08   00
-     DD09   58 52 55 ...
+.err_printer_state_err
+     DCD4   50 72 69 ...
+     DCE1   00
+.err_printer_not_present
+     DCE2   4E 6F 20 ...
+     DCF6   00
+.ext_data_types
+     DCF7   44 45 4F ...
+     DCFB   00
+.help_table
+     DCFC   3F 
+     DCFD   00
+     DCFE   21 
+     DCFF   00
+     DD00   42 52 4B 
+     DD03   00
+     DD04   43 4C 45 ...
+     DD09   00
+     DD0A   44 45 4C 
      DD0D   00
-     DD0E   58 53 45 ...
+     DD0E   44 55 4D ...
      DD12   00
-     DD13   FF
+     DD13   48 45 4C ...
+     DD17   00
+     DD18   4A 4D 50 
+     DD1B   00
+     DD1C   4C 4D 
+     DD1E   00
+     DD1F   4C 53 
+     DD21   00
+     DD22   4C 4F 41 ...
+     DD26   00
+     DD27   4C 50 
+     DD29   00
+     DD2A   50 45 45 ...
+     DD2E   00
+     DD2F   50 4F 4B ...
+     DD33   00
+     DD34   50 52 54 
+     DD37   00
+     DD38   52 55 4E 
+     DD3B   00
+     DD3C   53 41 56 ...
+     DD40   00
+     DD41   53 54 41 ...
+     DD45   00
+     DD46   56 45 52 ...
+     DD4A   00
+     DD4B   58 4C 4F ...
+     DD50   00
+     DD51   58 4C 53 
+     DD54   00
+     DD55   58 4F 50 ...
+     DD5A   00
+     DD5B   58 52 55 ...
+     DD5F   00
+     DD60   58 53 45 ...
+     DD64   00
+     DD65   FF
 .hex_chr_tbl
-     DD14   30 31 32 ...
+     DD66   30 31 32 ...
 .memory_header
-     DD24   2D 2D 2D ...
-     DD5B   30 31 32 ...
-     DD6B   0A
-     DD6C   00
+     DD76   2D 2D 2D ...
+     DDAD   30 31 32 ...
+     DDBD   0A
+     DDBE   00
 .test_msg
-     DD6D   48 65 6C ...
-     DD79   00
+     DDBF   48 65 6C ...
+     DDCB   00
 .test_msg2
-     DD7A   54 65 73 ...
-     DD86   00
+     DDCC   54 65 73 ...
+     DDD8   00
 .prompt_msg
-     DD87   0A
-     DD88   5A 3E 
-     DD8A   00
+     DDD9   0A
+     DDDA   5A 3E 
+     DDDC   00
 .start_msg
-     DD8B   5A 6F 6C ...
-     DD96   00
+     DDDD   5A 6F 6C ...
+     DDE8   00
 .ready_msg
-     DD97   52 65 61 ...
-     DD9C   00
+     DDE9   52 65 61 ...
+     DDEE   00
 .NMI_handler
 .exit_nmi
      DE00   40         RTI
@@ -3732,11 +3842,11 @@ End macro PRT_PULSE_DELAY
      FF6F   6C 4A 02   JMP (&024A)
      FF72   6C 4C 02   JMP (&024C)
 .reset
-     FFF4   4C D7 C2   JMP &C2D7
-     FFF7   4C DC C1   JMP &C1DC
+     FFF4   4C C4 C2   JMP &C2C4
+     FFF7   4C DF C1   JMP &C1DF
 .boot
      FFFA   00 DE
-     FFFC   0E C0
+     FFFC   10 C0
      FFFE   00 D5
 .endrom
 Saving file 'bin/z64-ROM-4.1.bin'

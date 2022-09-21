@@ -5,8 +5,8 @@
      0805   08
      0806   17
      0807   08
-     0808   B9
-     0809   08
+     0808   59
+     0809   09
      080A   00
      080B   00
      080C   00
@@ -23,68 +23,136 @@
      0819   A2 FF      LDX #&FF
      081B   9A         TXS
      081C   A9 00      LDA #&00
-     081E   8D 32 04   STA &0432
+     081E   8D 30 04   STA &0430
      0821   58         CLI
      0822   20 3F FF   JSR &FF3F
 .main
-     0825   A9 41      LDA #&41
-     0827   20 3C FF   JSR &FF3C
-     082A   20 18 FF   JSR &FF18
-     082D   A9 42      LDA #&42
-     082F   20 3C FF   JSR &FF3C
-     0832   20 18 FF   JSR &FF18
-     0835   A9 43      LDA #&43
-     0837   20 3C FF   JSR &FF3C
-     083A   20 18 FF   JSR &FF18
-     083D   A9 20      LDA #&20
-     083F   20 18 FF   JSR &FF18
-     0842   20 21 FF   JSR &FF21
-     0845   A9 0A      LDA #&0A
-     0847   20 18 FF   JSR &FF18
+     0825   20 3F FF   JSR &FF3F
 Macro LOAD_MSG:
-     084A   A9 90      LDA #&90
-     084C   85 50      STA &50
-     084E   A9 08      LDA #&08
-     0850   85 51      STA &51
+     0828   A9 DA      LDA #&DA
+     082A   85 50      STA &50
+     082C   A9 08      LDA #&08
+     082E   85 51      STA &51
 End macro LOAD_MSG
-     0852   20 1E FF   JSR &FF1E
-     0855   A9 0A      LDA #&0A
-     0857   20 18 FF   JSR &FF18
-     085A   20 45 FF   JSR &FF45
+     0830   20 1E FF   JSR &FF1E
+     0833   20 45 FF   JSR &FF45
+     0836   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
-     085D   A9 97      LDA #&97
-     085F   85 50      STA &50
-     0861   A9 08      LDA #&08
-     0863   85 51      STA &51
+     0839   A9 EE      LDA #&EE
+     083B   85 50      STA &50
+     083D   A9 08      LDA #&08
+     083F   85 51      STA &51
 End macro LOAD_MSG
-     0865   20 1E FF   JSR &FF1E
-     0868   20 45 FF   JSR &FF45
-     086B   9C 7F 03   STZ &037F
-     086E   8E 00 03   STX &0300
-.get_char
-     0871   AD 7F 03   LDA &037F
-     0874   F0 FB      BEQ &0871
-     0876   AD 00 03   LDA &0300
-     0879   20 18 FF   JSR &FF18
+     0841   20 24 FF   JSR &FF24
+     0844   AD 03 AC   LDA &AC03
+     0847   8D 02 04   STA &0402
+     084A   20 C3 08   JSR &08C3
+     084D   A2 00      LDX #&00
+.test_loop
+     084F   DA         PHX
+     0850   9C FF 03   STZ &03FF
+Macro LOAD_MSG:
+     0853   A9 03      LDA #&03
+     0855   85 50      STA &50
+     0857   A9 09      LDA #&09
+     0859   85 51      STA &51
+End macro LOAD_MSG
+     085B   20 24 FF   JSR &FF24
+     085E   BD 4F 09   LDA &094F,X
+     0861   F0 3A      BEQ &089D
+     0863   8D 01 04   STA &0401
+     0866   8D 03 AC   STA &AC03
+     0869   20 C3 08   JSR &08C3
+     086C   9C FF 03   STZ &03FF
+Macro LOAD_MSG:
+     086F   A9 18      LDA #&18
+     0871   85 50      STA &50
+     0873   A9 09      LDA #&09
+     0875   85 51      STA &51
+End macro LOAD_MSG
+     0877   20 24 FF   JSR &FF24
+     087A   AD 03 AC   LDA &AC03
+     087D   CD 01 04   CMP &0401
+     0880   D0 08      BNE &088A
+     0882   20 C3 08   JSR &08C3
+     0885   FA         PLX
+     0886   E8         INX
+     0887   4C 4F 08   JMP &084F
+.match_failed
+Macro LOAD_MSG:
+     088A   A9 42      LDA #&42
+     088C   85 50      STA &50
+     088E   A9 09      LDA #&09
+     0890   85 51      STA &51
+End macro LOAD_MSG
+     0892   20 1E FF   JSR &FF1E
 Macro NEWLINE:
-     087C   A9 0A      LDA #&0A
-     087E   20 18 FF   JSR &FF18
+     0895   A9 0A      LDA #&0A
+     0897   20 18 FF   JSR &FF18
 End macro NEWLINE
+     089A   4C B4 08   JMP &08B4
+.loop_done
+     089D   9C FF 03   STZ &03FF
+Macro LOAD_MSG:
+     08A0   A9 2D      LDA #&2D
+     08A2   85 50      STA &50
+     08A4   A9 09      LDA #&09
+     08A6   85 51      STA &51
+End macro LOAD_MSG
+     08A8   20 24 FF   JSR &FF24
+     08AB   AD 02 04   LDA &0402
+     08AE   8D 03 AC   STA &AC03
+     08B1   20 C3 08   JSR &08C3
 .prog_end
-     0881   9C 7F 03   STZ &037F
-     0884   8E 00 03   STX &0300
-     0887   A5 60      LDA &60
-     0889   29 F0      AND #&F0
-     088B   85 60      STA &60
-     088D   4C F4 FF   JMP &FFF4
+     08B4   9C 7F 03   STZ &037F
+     08B7   8E 00 03   STX &0300
+     08BA   A5 62      LDA &62
+     08BC   29 F0      AND #&F0
+     08BE   85 62      STA &62
+     08C0   4C F4 FF   JMP &FFF4
+.print_byte
+     08C3   20 2D FF   JSR &FF2D
+Macro STR_BUF_TO_MSG_VEC:
+     08C6   A9 0B      LDA #&0B
+     08C8   85 50      STA &50
+     08CA   A9 04      LDA #&04
+     08CC   85 51      STA &51
+End macro STR_BUF_TO_MSG_VEC
+     08CE   20 24 FF   JSR &FF24
+     08D1   20 15 FF   JSR &FF15
+Macro NEWLINE:
+     08D4   A9 0A      LDA #&0A
+     08D6   20 18 FF   JSR &FF18
+End macro NEWLINE
+     08D9   60         RTS
 .start_msg
-     0890   54 45 53 ...
-     0896   00
-.second_msg
-     0897   54 65 73 ...
-     08B4   00
+     08DA   50 61 72 ...
+     08EC   0A
+     08ED   00
+.load_initial_msg
+     08EE   49 6E 69 ...
+     0902   00
+.write_msg
+     0903   57 72 69 ...
+     0917   00
+.read_msg
+     0918   52 65 61 ...
+     092C   00
+.restore_msg
+     092D   52 65 73 ...
+     0941   00
+.match_fail_msg
+     0942   4D 61 74 ...
+     094E   00
+.test_vals
+     094F   55
+     0950   AA
+     0951   FF
+     0952   F0
+     0953   0F
+     0954   00
 .endtag
-     08B5   45 4F 46 
-     08B8   00
+     0955   45 4F 46 
+     0958   00
 .endcode
-Saving file '../bin/TESTA.BIN'
+Saving file '../bin/TESTA.EXE'

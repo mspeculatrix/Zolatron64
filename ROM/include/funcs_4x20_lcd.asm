@@ -277,51 +277,89 @@
 \ Y - P
 .lcd_println
   pha : phx : phy
-  ; Start index, to start copying FROM is start of line 1
-  ldx #LCD_LN_BUF_SZ
-  ; Start index, for where we want to copy lines TO, is 0
-  ldy #0
-.lcd_println_shift_buf
-  lda LCD_BUF,X                 ; X = FROM
-  sta LCD_BUF,Y                 ; Y = TO
-  inx
-  iny
-  cpx #LCD_BUF_SZ               ; At end of buffer?
-  bne lcd_println_shift_buf     ; If not, loop
+  ; We start by moving all the text in the buffer up one line, effectively
+  ; losing the first line. This makes the last line free to accept the new
+  ; text.
+  jsr lcd_println_shiftbuf
+  ; At the end of the buffer shift, Y points to the location in the buffer
+  ; for the start of the last line
+  ; Now print new line
 .lcd_println_newline
   tya                           ; Y contains LCD_BUF index
   tax                           ; Transfer this to X
   ldy #0                        ; Index for new text pointed to by MSG_VEC
 .lcd_println_new_txt            ; Add new message to last line of buffer
   lda (MSG_VEC),Y               ; Get next char from new text
-  beq lcd_println_pad           ; If this char is a null, go to padding
+  beq lcd_println_linedone      ; If this char is a null, go to padding & done
+  cmp #CHR_LINEEND              ; Is this a line end character?
+  beq lcd_println_addline       ; If so, deal with it.
   sta LCD_BUF,X                 ; Otherwise store it in the LCD buffer
   iny                           ; Increment indexes
   inx
-  cpy #LCD_LN_BUF_SZ            ; Have we done a line's worth?
+  cpx #LCD_BUF_SZ               ; Have we reached the end of the buffer?
   beq lcd_println_terminate     ; If yes, make sure we include a terminator
   jmp lcd_println_new_txt       ; Otherwise loop
-.lcd_println_pad                ; Pad line with spaces
-  lda #CHR_SPACE
-.lcd_println_pad_next
-  cpy #LCD_LN_BUF_SZ            ; Have we already got a line's worth?
-  beq lcd_println_terminate     ; If so, ensure we have a terminator
-  sta LCD_BUF,X                 ; Otherwise add the space to the buffer
-  iny                           ; Increment indexes
-  inx
-  jmp lcd_println_pad_next      ; Loop
+.lcd_println_addline
+  ; When we arrive here, Y contains the pointer to the current read position in
+  ; the new text, X contains the pointer to the next position in LCD_BUF
+  iny                           ; Increment index for source text
+  phy                           ; And preserve
+  jsr lcd_println_padline       ; Pad the current line
+  jsr lcd_println_shiftbuf      ; After: Y = idx 1st char last line, x = nothing
+  tya                           ; Need the target buffer index in X
+  tax
+  ply                           ; Get source text index back
+  jmp lcd_println_new_txt
+.lcd_println_linedone           ; We've finished the last line
+  jsr lcd_println_padline       ; Pad the current line
+  jmp lcd_println_refresh       ; And refresh the displau
 .lcd_println_terminate          ; Ensure last char in line buffer is a 0
   dex                           ; X is currently one MORE than index for EOL
   stz LCD_BUF,X
-;.lcd_println_refresh            ; Rewrite all lines of display
-  ldy #0                        ; Index of lines
 .lcd_println_refresh
+  ldy #0                        ; Index of lines
+.lcd_println_refresh_loop
   jsr lcd_prt_linebuf
   iny
   cpy #LCD_LINES                ; Have we done all lines yet?
-  bne lcd_println_refresh       ; If not, loop
+  bne lcd_println_refresh_loop  ; If not, loop
   ply : plx : pla
   rts
+
+\ --- HELPER FUNCTIONS ---
+.lcd_println_padline
+  lda #CHR_SPACE
+.lcd_println_padline_next
+  cpx #LCD_BUF_SZ            ; Have we already got a buffer's worth?
+  beq lcd_println_padline_done  ; If so, ensure we have a terminator
+  sta LCD_BUF,X                 ; Otherwise add the space to the buffer
+  ;iny                           ; Increment indexes
+  inx
+  jmp lcd_println_padline_next  ; Loop
+.lcd_println_padline_done
+  dex                           ; X is currently one MORE than index for EOL
+  stz LCD_BUF,X
+  rts
+
+.lcd_println_shiftbuf
+  ; At the end of this process:
+  ;  X = nothing meaningful
+  ;  Y = Index of first character in last line
+  ; Start index, to start copying FROM is start of line 1
+  ldx #LCD_LN_BUF_SZ
+  ; Start index, for where we want to copy lines TO, is 0
+  ldy #0
+.lcd_println_shiftbuf_loop
+  lda LCD_BUF,X                 ; X = FROM
+  sta LCD_BUF,Y                 ; Y = TO
+  inx
+  iny
+  cpx #LCD_BUF_SZ               ; At end of buffer?
+  bne lcd_println_shiftbuf_loop ; If not, loop
+  rts
+
+
+
 
 \ ------------------------------------------------------------------------------
 \ ---  LCD_PRT_CHR

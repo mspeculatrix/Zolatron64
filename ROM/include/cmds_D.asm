@@ -23,8 +23,6 @@
   jsr OSLCDMSG
   jmp cmdprcDEL_end
 .cmdprcDEL_err
-  jsr os_print_error              ; There should be an error code in FUNC_ERR
-  jsr OSLCDERR
   jmp cmdprc_fail
 .cmdprcDEL_end
   LED_OFF LED_FILE_ACT
@@ -55,7 +53,7 @@
   ldx STDIN_IDX
   lda STDIN_BUF,X                 ; Check there's nothing left in the RX buffer
   bne cmdprcDUMP_synerr           ; Should be null. Anything else is a mistake
-  lda #ZD_OPCODE_SAVE_CRT             ; Set save type - in this case, CREATE
+  lda #ZD_OPCODE_DUMP_CRT             ; Set save type - in this case, CREATE
   jsr zd_save_data                    ; Now save the memory contents
   lda FUNC_ERR
   bne cmdprcDUMP_err

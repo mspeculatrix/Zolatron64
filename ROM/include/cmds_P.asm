@@ -17,13 +17,11 @@
   lda (FUNC_RES_L)
   jsr byte_to_hex_str       ; Resulting string is in STR_BUF
   jsr duart_snd_strbuf
-  jmp cmdprcPEEK_end
+  jmp cmdprc_success
 .cmdprcPEEK_fail
   lda #SYNTAX_ERR_CODE
   sta FUNC_ERR
   jmp cmdprc_fail
-.cmdprcPEEK_end
-  jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: POKE  :  SET BYTE IN MEMORY
@@ -44,16 +42,40 @@
   bne cmdprcPOKE_fail       ; Should be null. Anything else is a mistake
   lda FUNC_RESULT           ; Store the byte in the given address
   sta (FUNC_RES_L)
-  jmp cmdprcPOKE_end
+  jmp cmdprc_success
 .cmdprcPOKE_fail
   lda #SYNTAX_ERR_CODE
   sta FUNC_ERR
   jmp cmdprc_fail
-.cmdprcPOKE_end
-  jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------
-\ --- CMD: PRT  :  PRINT A FILE ... or something ... one day ... maybe ...
+\ --- CMD: PRT  :  PRINT A TEXT FILE
 \ ------------------------------------------------------------------------------
+\ Usage: PRT <filename>
 .cmdprcPRT
+  jsr OSPRTCHK                ; Check the printer state
+  lda FUNC_ERR
+  bne cmdprcPRT_fail          ; 0 = OK, all else is an error state
+  jsr read_filename           ; Puts filename in STR_BUF
+  lda FUNC_ERR
+  bne cmdprcPRT_fail
+
+  lda #ZD_OPCODE_OPENR        ; Open file for readiing
+  jsr zd_open_file
+
+
+  jmp cmdprcPRT_success
+
+
+.cmdprcPRT_fail
+  jmp cmdprc_fail
+
+.cmdprcPRT_success
+  LOAD_MSG prt_success_msg
+  jsr OSWRMSG
   jmp cmdprc_success
+
+\ TEMPORARY DEBUG STUFF
+
+.prt_success_msg
+  equs "OK",10,0

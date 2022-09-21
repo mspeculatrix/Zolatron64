@@ -1,30 +1,8 @@
 \ funcs_prt.asm
 
-\ ------------------------------------------------------------------------------
-\ ---  PRT_INIT
-\ ---  Implements: OSPRTINIT
-\ ------------------------------------------------------------------------------
-\ Set up the VIA and initialise the printer by sending an /INIT pulse.
-\ A - O
-\ X - n/a
-\ Y - n/a
-.prt_init
-  lda #PRT_CTRL_PT_DIR              ; Set pin directions for control port
-  sta PRT_CTRL_DDR
-  lda #$FF                          ; Set data port to output
-  sta PRT_DATA_DDR
-  stz PRT_DATA_PORT                 ; Set all data pins to 0, because...
-  lda PRT_CTRL_PORT                 ; Set outputs high (OFF) to start
-  ora #PRT_AF_OFF
-  ora #PRT_STRB_OFF
-  and #PRT_INIT_ON                  ; Now send /INIT signal
-  sta PRT_CTRL_PORT
-  pha
-  PRT_PULSE_DELAY
-  pla
-  ora #PRT_INIT_OFF
-  sta PRT_CTRL_PORT
-  rts
+\ ******************************************************************************
+\ ***  OS FUNCTIONS
+\ ******************************************************************************
 
 \ ------------------------------------------------------------------------------
 \ ---  PRT_CHAR
@@ -49,20 +27,113 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ ---  PRT_CHECK_BUSY
+\ ---  PRT_CHECK_PRESENT
 \ ------------------------------------------------------------------------------
-\ ON EXIT : - Carry clear if printer not busy
-\           - Carry set if busy
+\ Checks to see if a parallel port card is fitted by attempting to write to one
+\ of the VIA's registers (the Port A data direction register) and read back the
+\ values.
+\ Should be run once during boot by the OS.
+\ To test for the presence of the interface in user programs, do something like:
+\      lda SYS_REG
+\      and #SYS_PARALLEL_YES
+\      beq parallel_board_not_fitted
+\ ON EXIT : - FUNC_ERR contains error code - 0 = no error
+\           - Sets bit 2 in SYS_REG (SYS_PARALLEL_YES)
+\ A - P
+\ X - P
+\ Y - P
+.prt_check_present
+  pha : phx : phy
+  stz FUNC_ERR
+  lda PRLL_DATA_DDR                         ; Load initial value of DDR
+  sta TMP_VAL                               ; and save for later
+  ldx #0
+.prt_check_present_loop
+  lda prt_test_vals,X                           ; Load a test value
+  beq prt_check_present_loop_done           ; If 0, we're finished
+  sta TEST_VAL                              ; Store for later
+  sta PRLL_DATA_DDR                         ; Store it in the register
+  lda PRLL_DATA_DDR                         ; Read back the register
+  cmp TEST_VAL                              ; Compare with the value we wrote
+  bne prt_check_present_fail
+  inx
+  jmp prt_check_present_loop
+.prt_check_present_fail
+  lda #ERR_PRT_NOT_PRESENT
+  sta FUNC_ERR
+  lda SYS_REG
+  and #SYS_PARALLEL_NO
+  jmp prt_check_present_done
+.prt_check_present_loop_done
+  lda SYS_REG
+  ora #SYS_PARALLEL_YES
+.prt_check_present_done
+  sta SYS_REG
+  ply : plx : pla
+  rts
+
+.prt_test_vals
+  equs %01010101, %10101010, $FF, %11110000, %00001111, 0
+
+\ ------------------------------------------------------------------------------
+\ ---  PRT_CHECK_STATE
+\ ---  Implemenents: OSPRTCHK
+\ ------------------------------------------------------------------------------
+\ ON EXIT : - FUNC_ERR contains error code - 0 = no error
+\ A - O
+\ X - n/a
+\ Y - P
+.prt_check_state
+  phy
+  stz FUNC_ERR
+  lda PRT_CTRL_PORT               ; Get the state of the control port
+  tay                             ; Keep a copy in Y
+  and #PRT_SEL                    ; SELECT - High=online, Low=offline
+  beq prt_chk_state_offline       ; If 0, we're offline.
+  tya                             ; Get our original control port setting back
+  and #PRT_PE                     ; Check for paper out
+  bne prt_chk_state_paperout      ; Active high
+  tya                             ; Get our original control port setting back
+  and #PRT_ERR                    ; Check for error signal
+  bne prt_chk_state_end           ; Active low
+  lda #ERR_PRT_STATE_ERR
+  sta FUNC_ERR
+  jmp prt_chk_state_end
+.prt_chk_state_offline
+  lda #ERR_PRT_STATE_OL
+  sta FUNC_ERR
+  jmp prt_chk_state_end
+.prt_chk_state_paperout
+  lda #ERR_PRT_STATE_PE
+  sta FUNC_ERR
+.prt_chk_state_end
+  ply
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  PRT_INIT
+\ ---  Implements: OSPRTINIT
+\ ------------------------------------------------------------------------------
+\ Set up the VIA and initialise the printer by sending an /INIT pulse.
 \ A - O
 \ X - n/a
 \ Y - n/a
-.prt_check_busy
-  clc
-  lda PRT_CTRL_PORT
-  and #PRT_BUSY
-  beq prt_check_busy_end
-  sec
-.prt_check_busy_end
+.prt_init
+  lda #PRT_CTRL_PT_DIR              ; Set pin directions for control port
+  sta PRT_CTRL_DDR
+  lda #$FF                          ; Set data port to output
+  sta PRT_DATA_DDR
+  stz PRT_DATA_PORT                 ; Set all data pins to 0, because...
+  lda PRT_CTRL_PORT                 ; Set outputs high (OFF) to start
+  ora #PRT_AF_OFF
+  ora #PRT_STRB_OFF
+  and #PRT_INIT_ON                  ; Now send /INIT signal
+  sta PRT_CTRL_PORT
+  pha
+  PRT_PULSE_DELAY
+  pla
+  ora #PRT_INIT_OFF
+  sta PRT_CTRL_PORT
   rts
 
 \ ------------------------------------------------------------------------------
@@ -103,60 +174,6 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ ---  PRT_CHECK_STATE
-\ ------------------------------------------------------------------------------
-\ ON EXIT : - FUNC_RESULT contains error code - 0 = no error
-\ A - O
-\ X - n/a
-\ Y - P
-.prt_check_state
-  phy
-  stz FUNC_RESULT
-  lda PRT_CTRL_PORT               ; Get the state of the control port
-  tay                             ; Keep a copy in Y
-  and #PRT_SEL                    ; SELECT - High=online, Low=offline
-  beq prt_chk_state_offline       ; If 0, we're offline.
-  tya                             ; Get our original control port setting back
-  and #PRT_PE                     ; Check for paper out
-  bne prt_chk_state_paperout      ; Active high
-  tya                             ; Get our original control port setting back
-  and #PRT_ERR                    ; Check for error signal
-  bne prt_chk_state_end           ; Active low
-  lda #PRT_STATE_ERR
-  sta FUNC_RESULT
-  jmp prt_chk_state_end
-.prt_chk_state_offline
-  lda #PRT_STATE_OFFLINE
-  sta FUNC_RESULT
-  jmp prt_chk_state_end
-.prt_chk_state_paperout
-  lda #PRT_STATE_PE
-  sta FUNC_RESULT
-.prt_chk_state_end
-  ply
-  rts
-
-\ ------------------------------------------------------------------------------
-\ ---  PRT_LOAD_STATE_MSG
-\ ---  Implements: OSPRTSTMSG
-\ ------------------------------------------------------------------------------
-\ Puts a vector to a message into MSG_VEC/+1.
-\ ON ENTRY: Assumes an error/result code in FUNC_RESULT.
-\ ON EXIT : - MSG_VEC/+1 contains vector to appropriate message.
-\ A - O
-\ X - O
-\ Y - n/a
-.prt_load_state_msg
-  lda FUNC_RESULT
-  asl A                           ; Multiply by 2 to get offset for table
-  tax
-  lda prt_state_msg_ptrs,X        ; Get LSB of relevant address from the table
-  sta MSG_VEC                     ; and put in MSG_VEC
-  lda prt_state_msg_ptrs+1,X      ; Get MSB
-  sta MSG_VEC+1                   ; and put in MSG_VEC high byte
-  rts
-
-\ ------------------------------------------------------------------------------
 \ ---  PRT_STDOUT_BUF
 \ ---  Implements: OSPRTBUF
 \ ------------------------------------------------------------------------------
@@ -176,6 +193,7 @@
 \ --- PRT_STR_BUF
 \ --- Implements: OSPRTSBUF
 \ ------------------------------------------------------------------------------
+\ Prints STR_BUF.  Wrapper to OSPRTMSG
 \ A - O
 \ X - n/a
 \ Y - n/a
@@ -185,6 +203,30 @@
   lda #>STR_BUF                              ; MSB of message
   sta MSG_VEC+1
   jsr prt_msg
+  rts
+
+
+
+\ ******************************************************************************
+\ ***  INTERNAL FUNCTIONS
+\ ******************************************************************************
+
+
+\ ------------------------------------------------------------------------------
+\ ---  PRT_CHECK_BUSY
+\ ------------------------------------------------------------------------------
+\ ON EXIT : - Carry clear if printer not busy
+\           - Carry set if busy
+\ A - O
+\ X - n/a
+\ Y - n/a
+.prt_check_busy
+  clc
+  lda PRT_CTRL_PORT
+  and #PRT_BUSY
+  beq prt_check_busy_end
+  sec
+.prt_check_busy_end
   rts
 
 \ ------------------------------------------------------------------------------
@@ -221,17 +263,8 @@
 \ ------------------------------------------------------------------------------
 \ ---  DATA
 \ ------------------------------------------------------------------------------
-.prt_state_msg_ptrs
-  equw prt_state_msg_ok
-  equw prt_state_msg_offline
-  equw prt_state_msg_pe
-  equw prt_state_msg_err
-
-.prt_state_msg_ok
-  equs "OK",0
-.prt_state_msg_offline
-  equs "OFFLINE",0
-.prt_state_msg_pe
-  equs "PAPER OUT",0
-.prt_state_msg_err
-  equs "ERROR",0
+.parallel_if_fitted
+  equs "+ Parallel interface",0
+.parallel_if_not_fitted
+  ;     01234567890123456789
+  equs "- No parallel i/face",0

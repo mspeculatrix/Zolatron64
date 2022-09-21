@@ -38,7 +38,7 @@ ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v4.1", 0
+  equs "ZolOS v4.1.2", 0
 .startcode
   sei                 ; Don't interrupt me yet
   cld                 ; We don' need no steenkin' BCD
@@ -91,6 +91,9 @@ INCLUDE "include/os_call_vectors.asm"
 ; SETUP SERIAL PORTS
   jsr duart_init
 
+; CHECK FOR PARALLEL PORT
+  jsr prt_check_present
+
 \ ------------------------------------------------------------------------------
 \ ----     MAIN PROGRAM                                                     ----
 \ ------------------------------------------------------------------------------
@@ -101,8 +104,10 @@ INCLUDE "include/os_call_vectors.asm"
   LED_ON LED_FILE_ACT
   LED_ON LED_DEBUG
 
+  stz PRG_EXIT_CODE
+
 ; Print initial message & prompt via serial
-  lda #CHR_LINEEND                  ; Start with a couple of line feeds
+  lda #CHR_LINEEND                      ; Start with a couple of line feeds
   jsr OSWRCH
   jsr OSWRCH
   PRT_MSG start_msg, duart_println
@@ -112,14 +117,14 @@ INCLUDE "include/os_call_vectors.asm"
 
   jsr OSLCDCLS
   PRT_MSG start_msg, lcd_println
-  PRT_MSG version_str, lcd_println  ; Print initial messages on LCD
+  PRT_MSG version_str, lcd_println      ; Print initial messages on LCD
 
 ; CHECK FOR EXTENDED ROM/RAM BOARD
-  lda #4                            ; Use bank 4. This is never a ROM
-  sta EXTMEM_SLOT_SEL               ; Select it
-  jsr extmem_ram_chk                ; Run a check. Also sets the bit in SYS_REG
+  lda #4                                ; Use bank 4. This is never a ROM
+  sta EXTMEM_SLOT_SEL                   ; Select it
+  jsr extmem_ram_chk                    ; Run a check. Sets the bit in SYS_REG
   lda FUNC_ERR
-  bne boot_exmem_err                ; If error 0, no problem
+  bne boot_exmem_err                    ; If error 0, no problem
   LOAD_MSG exmem_fitted_msg
   jmp boot_exmem_def
 .boot_exmem_err
@@ -129,31 +134,44 @@ INCLUDE "include/os_call_vectors.asm"
   jsr OSWRCH
   jsr OSWRMSG
   jsr OSLCDMSG
-  lda #0                            ; Now revert to 0 as default
-  sta EXTMEM_SLOT_SEL               ; Select it
-  sta EXTMEM_BANK                   ; Store it for some reason
+  lda #0                                  ; Now revert to 0 as default
+  sta EXTMEM_SLOT_SEL                     ; Select it
+  sta EXTMEM_BANK                         ; Store it for some reason
   NEWLINE
 
 ; SET UP DELAY TIMER
-  lda #<500                         ; Interval for delay function - in ms
+  lda #<500                               ; Interval for delay function - in ms
   sta LCDV_TIMER_INTVL
   lda #>500
   sta LCDV_TIMER_INTVL+1
 
+; PARALLEL INTERFACE MESSAGE
+  lda SYS_REG
+  ora #SYS_PARALLEL_YES                   ; Check if bit is set
+  bne parallel_ok                         ; If result non-zero, then it is
+  LOAD_MSG parallel_if_not_fitted
+  jmp parallel_msg
+.parallel_ok
+  LOAD_MSG parallel_if_fitted
+.parallel_msg
+  jsr OSWRMSG
+  NEWLINE
+  jsr OSLCDMSG
+
+.ready
 ; READY MESSAGE
   LOAD_MSG ready_msg
   jsr OSWRMSG
   jsr OSLCDMSG
 
-  LED_OFF LED_ERR                   ; Turn off the LEDs
+  cli                     	              ; Enable interrupts
+
+.soft_reset
+  LED_OFF LED_ERR                         ; Turn off the LEDs
   LED_OFF LED_BUSY
   LED_OFF LED_OK
   LED_OFF LED_FILE_ACT
   LED_OFF LED_DEBUG
-
-  cli                     	        ; Enable interrupts
-
-.soft_reset
   lda PRG_EXIT_CODE
   beq soft_start
   LED_ON LED_ERR
@@ -281,6 +299,7 @@ ORG $FF00
   jmp (OSRDHADDR_VEC)
   jmp (OSRDINT16_VEC)
   jmp (OSRDFNAME_VEC)
+  jmp (OSRDSTR_VEC)
 
   jmp (OSWRBUF_VEC)
   jmp (OSWRCH_VEC)
@@ -308,10 +327,11 @@ ORG $FF00
 
   jmp (OSPRTBUF_VEC)
   jmp (OSPRTCH_VEC)
+  jmp (OSPRTCHK_VEC)
   jmp (OSPRTINIT_VEC)
   jmp (OSPRTMSG_VEC)
   jmp (OSPRTSBUF_VEC)
-  jmp (OSPRTSTMSG_VEC)
+  \jmp (OSPRTSTMSG_VEC)
 
   jmp (OSZDDEL_VEC)
   jmp (OSZDLOAD_VEC)
