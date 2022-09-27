@@ -21,12 +21,19 @@ INCLUDE "../../LIB/cfg_page_4.asm"
 INCLUDE "../../LIB/cfg_2x16_lcd.asm"
 INCLUDE "../../LIB/cfg_prt.asm"
 
-ORG USR_PAGE
+ORG USR_START
 .header                     ; HEADER INFO
-  INCLUDE "../../LIB/header_std.asm"
-  equb "E"
-  equs 0,0,0              ; -- Reserved for future use --
-  equs "PRT",0            ; @ $080D Short name, max 15 chars - nul terminated
+  jmp startprog             ;
+  equb "E"                  ; Designate executable file
+  equb <header              ; @ $0802 Entry address
+  equb >header
+  equb <reset               ; @ $0804 Reset address
+  equb >reset
+  equb <endcode             ; @ $0806 Addr of first byte after end of program
+  equb >endcode
+  equs 0,0,0                ; -- Reserved for future use --
+.prog_name
+  equs "PRTFILE",0          ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
   equs "0.1",0              ; Version string - nul terminated
 
@@ -57,4 +64,4 @@ ORG USR_PAGE
   equs "EOF",0
 .endcode
 
-SAVE "../bin/PRTFILE.BIN", header, endcode
+SAVE "../bin/PRTFILE.EXE", header, endcode

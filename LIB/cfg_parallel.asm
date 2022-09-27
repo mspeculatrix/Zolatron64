@@ -16,6 +16,6 @@ PRLL_T1CL  = PRLL_BASE_ADDR + $04         ; Timer 1 counter low
 PRLL_T1CH  = PRLL_BASE_ADDR + $05	        ; Timer 1 counter high
 PRLL_T2CL  = PRLL_BASE_ADDR + $08         ; Timer 2 counter low
 PRLL_T2CH  = PRLL_BASE_ADDR + $09	        ; Timer 2 counter high
-PRLL_ACL   = PRLL_BASE_ADDR + $0B		      ; Auxiliary Control register
+PRLL_ACR   = PRLL_BASE_ADDR + $0B		      ; Auxiliary Control register
 PRLL_IER   = PRLL_BASE_ADDR + $0E 	      ; Interrupt Enable Register
 PRLL_IFR   = PRLL_BASE_ADDR + $0D		      ; Interrupt Flag Register

@@ -37,6 +37,11 @@ ERR_FILE_OPEN         = ERR_FILE_EXISTS + 1         ; 22 16 Error opening file
 ERR_DELFILE_FAIL      = ERR_FILE_OPEN + 1           ; 23 17 Failed delete file
 ERR_FILENOTFOUND      = ERR_DELFILE_FAIL + 1        ; 24 18 File not found
 STDIN_BUF_EMPTY       = ERR_FILENOTFOUND + 1        ; 25 19 Input buffer empty
+ERR_NO_EXECUTABLE     = STDIN_BUF_EMPTY + 1         ; 26 1A No exec prog loaded
+ERR_PRT_STATE_OL      = ERR_NO_EXECUTABLE + 1       ; 27 1B Printer offline
+ERR_PRT_STATE_PE      = ERR_PRT_STATE_OL + 1
+ERR_PRT_STATE_ERR     = ERR_PRT_STATE_PE + 1
+ERR_PRT_NOT_PRESENT   = ERR_PRT_STATE_ERR + 1       ; Printer board not present
 
 \-------------------------------------------------------------------------------
 \ OS CALLS  - OS Function Address Table
@@ -53,8 +58,9 @@ OSRDHBYTE  = OSRDCH + 3
 OSRDHADDR  = OSRDHBYTE + 3
 OSRDINT16  = OSRDHADDR + 3
 OSRDFNAME  = OSRDINT16 + 3
+OSRDSTR    = OSRDFNAME + 3
 ; WRITE
-OSWRBUF    = OSRDFNAME + 3
+OSWRBUF    = OSRDSTR + 3
 OSWRCH     = OSWRBUF + 3
 OSWRERR    = OSWRCH + 3
 OSWRMSG    = OSWRERR + 3
@@ -80,12 +86,13 @@ OSLCDWRBUF = OSLCDSC + 3
 ; PRINTER
 OSPRTBUF   = OSLCDWRBUF + 3
 OSPRTCH    = OSPRTBUF + 3
-OSPRTINIT  = OSPRTCH + 3
+OSPRTCHK   = OSPRTCH + 3
+OSPRTINIT  = OSPRTCHK + 3
 OSPRTMSG   = OSPRTINIT + 3
 OSPRTSBUF  = OSPRTMSG + 3
-OSPRTSTMSG = OSPRTSBUF + 3
+\OSPRTSTMSG = OSPRTSBUF + 3
 ; ZOLADOS
-OSZDDEL    = OSPRTSTMSG + 3
+OSZDDEL    = OSPRTSBUF + 3
 OSZDLOAD   = OSZDDEL + 3
 OSZDSAVE   = OSZDLOAD + 3
 ; MISC
@@ -95,30 +102,31 @@ OSUSRINT   = OSDELAY + 3
 OSSFTRST   = $FFF4         ; Use direct JMP with these (not indirected/vectored)
 OSHRDRST   = $FFF7
 
-USR_PAGE = $0800          ; Address where user programs load
-ROMSTART = $C000
-EXTMEM_SLOT_SEL  = $BFE0  ; Write to this address to select memory slot (0-15)
-EXTMEM_LOC = $8000        ; This is where extended memory lives
-EXTMEM_END = $9FFF        ; Last writable byte in extended memory bank
-
-DATA_TYPE_EXE = 1
-DATA_TYPE_OVR = 2
-DATA_TYPE_DAT = 3
-DATA_TYPE_OSX = 4
-MAX_DATA_TYPE = 4
+USR_START = $0800          ; Address where user programs load
+ROM_START = $C000
+EXTMEM_SLOT_SEL = $BFE0    ; Write to this address to select memory slot (0-15)
+EXTMEM_START    = $8000    ; This is where extended memory lives
+EXTMEM_END      = $9FFF    ; Last writable byte in extended memory bank
 
 LCD_TYPE_16x2 = 0
 LCD_TYPE_20x4 = 1
 
 ; Code headers. These are offsets from the start of user code (which is at
-; USR_PAGE for RAM-based code and EXTEM_LOC for ROM-based code)
-CODEHDR_RST  = $05
-CODEHDR_END  = $07
-CODEHDR_TYPE = $09
-CODEHDR_NAME = $0D
+; USR_START for RAM-based code and EXTEM_LOC for ROM-based code)
+CODEHDR_TYPE  = $03
+CODEHDR_ENTRY = $04
+CODEHDR_RST   = $06
+CODEHDR_END   = $08
+CODEHDR_NAME  = $0D
 
-EOCMD_SECTION = 0                   ; End of section marker for command table
-EOTBL_MKR     = 255                 ; End of table marker
+TYPECODE_BOOT = 'B'                   ; Boot ROM
+TYPECODE_DATA = 'D'                   ; Data file
+TYPECODE_EXEC = 'E'                   ; Executable code
+TYPECODE_OSEX = 'X'                   ; OS extension
+TYPECODE_OVLY = 'O'                   ; Program overlay
+
+EOCMD_SECTION = 0                     ; End of section marker for command table
+EOTBL_MKR     = 255                   ; End of table marker
 
 CHR_LINEEND   = 10        ; ASCII code for line end - here we're using line feed
 CHR_SPACE     = 32

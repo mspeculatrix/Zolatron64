@@ -1,8 +1,9 @@
-\ VIA_B - ZolaDOS
+\ cfg_ZolaDOS.asm
+
 \ Configuration for ZolaDOS mass storage system.
-\ Uses 65C22 VIA B at address $A400
-\ PORT A is used for 8-bit parallel data - bidirectional.
-\ PORT B is used for control signals
+\ Uses 65C22 VIA B at address $A400.
+\   - PORT A is used for 8-bit parallel data - bidirectional.
+\   - PORT B is used for control signals - unidirectional.
 \ These connect to a Raspberry Pi running the program zolados.
 \ The VIA's timers are also reserved for use by ZolaDOS.
 
@@ -18,28 +19,50 @@ ZD_T1CL  = ZD_BASE_ADDR + $04         ; Timer 1 counter low
 ZD_T1CH  = ZD_BASE_ADDR + $05	        ; Timer 1 counter high
 ZD_T2CL  = ZD_BASE_ADDR + $08         ; Timer 2 counter low
 ZD_T2CH  = ZD_BASE_ADDR + $09	        ; Timer 2 counter high
-ZD_ACL   = ZD_BASE_ADDR + $0B		      ; Auxiliary Control register
+ZD_ACR   = ZD_BASE_ADDR + $0B		      ; Auxiliary Control register
 ZD_IER   = ZD_BASE_ADDR + $0E 	      ; Interrupt Enable Register
 ZD_IFR   = ZD_BASE_ADDR + $0D		      ; Interrupt Flag Register
 
 ZD_TIMER_COUNT = $0600                ; Using page 6 as workspace memory
-ZD_WKSPC       = $0600 + 2            ; for ZolaDOS
+ZD_FSTATE      = ZD_TIMER_COUNT + 2   ; for ZolaDOS
+ZD_WKSPC       = ZD_FSTATE + 1        ; General workspace
 
-ZD_OPCODE_LOAD  = 2                   ; Opcode for loading executable .BIN files
-ZD_OPCODE_DLOAD = 3                   ; Opcode for loading data files
-ZD_OPCODE_LS    = 8
-ZD_OPCODE_OPEN  = 10
-ZD_OPCODE_CLOSE = 11
+ZD_FSTATE_CLOSED    = 0               ; No file open
+ZD_FSTATE_OPENR     = 1               ; File has been opened for reading
+ZD_FSTATE_OPENW     = 2               ; File has been opened for writing
+
+ZD_OPCODE_LOAD      = 2               ; Load executable .EXE files
+ZD_OPCODE_DLOAD     = 3               ; Load data files
+ZD_OPCODE_XLOAD     = 4
+ZD_OPCODE_LS        = 8
+ZD_OPCODE_OPENR     = 10              ; Open file for reading
+ZD_OPCODE_OPENW     = 11              ; Open file for writing
+ZD_OPCODE_CLOSE     = 12
+
+ZD_OPCODE_RBLK      = 30              ; Read block
+ZD_OPCODE_RBYTE     = 31              ; Read byte
+ZD_OPCODE_RSTR      = 32              ; Read nul-terminated string
+ZD_OPCODE_WBLK      = 40              ; Write block
+ZD_OPCODE_WBYTE     = 41              ; Write byte
+ZD_OPCODE_WSTR      = 42              ; Write nul-terminated string
+
+ZD_OPCODE_DEL       = 72              ; Delete file
+ZD_OPCODE_MV        = 96              ; Move (rename) file
+
 ; Following save modes will case ZolaDOS to append '.BIN' to the filename.
-ZD_OPCODE_SAVE_CRT = 16               ; Save command - create file, no overwrite
-ZD_OPCODE_SAVE_OVR = 17               ; Save - overwrite okay
-ZD_OPCODE_SAVE_APP = 18               ; Save - append
-; Following save modes will case ZolaDOS to append '.TXT' to the filename.
-ZD_OPCODE_SAVE_TXC = 19               ; Save - create file, no overwrite
-ZD_OPCODE_SAVE_TXO = 20               ; Save - overwite okay
-ZD_OPCODE_SAVE_TXA = 21               ; Save - append
+ZD_OPCODE_DUMP_CRT  = 128             ; Save - create file, no overwrite
+ZD_OPCODE_DUMP_OVR  = 129             ; Save - overwrite okay
+ZD_OPCODE_DUMP_APP  = 130             ; Save - append
 ; No extension appended - command must use full filename
-ZD_OPCODE_DEL  = 32                   ; Delete file
+ZD_OPCODE_SAVE_DATC = 135             ; Save - create file, no overwrite
+ZD_OPCODE_SAVE_DATO = 136             ; Save - overwite okay
+ZD_OPCODE_SAVE_DATA = 137             ; Save - append
+; Following save modes will case ZolaDOS to append '.EXE' to the filename.
+ZD_OPCODE_SAVE_CRT  = 140             ; Save command - create file, no overwrite
+ZD_OPCODE_SAVE_OVR  = 141             ; Save - overwrite okay
+ZD_OPCODE_SAVE_APP  = 142             ; Save - append
+
+ZD_STREAM_SZ        = 256             ; How many bytes per chunk when streaming
 
 ZD_MIN_FN_LEN = 3         ; Minimum filename length
 ZD_MAX_FN_LEN = 12        ; Maximum filename length, not including extension
@@ -53,7 +76,7 @@ ZD_CO_ON        = %00000100           ; PB2 - OR with PB to set /CO bit low
 ZD_CO_OFF       = %11111011           ; PB2 - AND with PB to set /CO bit high
 ZD_CR_ON        = %11111101           ; PB1 - AND with PB to set /CR bit low
 ZD_CR_OFF       = %00000010           ; PB1 - OR with PB to set /CR bit high
-; For use with 74LVC4245A
+; For use with 74LVC4245A - sets direction of level translation
 ZD_DDIR_INPUT   = %11110111        ; PB3 - AND with PB to set DATA port to input
 ZD_DDIR_OUTPUT  = %00001000        ; PB3 - OR with PB to set DATA port to output
 
@@ -71,15 +94,17 @@ ZD_DATA_SET_IN  = %00000000
 ZD_CTRL_PINDIR  = %00001111
 
 ; These values work
-;ZD_STROBETIME    = $07D0             ;
-;ZD_SIGNALDELAY   = $07D0             ; 03E8=1ms, 07D0=2ms, 1388=5ms approx
+;ZD_STROBETIME    = $02EE             ;
+;ZD_SIGNALDELAY   = $0280             ; 03E8=1ms
 ;ZD_TIMEOUT_INTVL = $270E             ; Timer cycles between each interrupt
-;ZD_TIMEOUT_LIMIT = $000F             ; Times interrupt fires before we timeout
+;ZD_TIMEOUT_LIMIT = $004F             ; Times interrupt fires before we timeout
 ; Versions for tweaking/experimenting
-ZD_STROBETIME    = $02EE         ; $02EE works
-ZD_SIGNALDELAY   = $0280         ; 03E8=1ms (works), 07D0=2ms, 1388=5ms approx
-ZD_TIMEOUT_INTVL = $270E         ; No. of timer cycles between interrupts
-ZD_TIMEOUT_LIMIT = $004F         ; Times interrupt fires before timeout - was 2F
+ZD_STROBETIME    = $0220
+; Tried & failed: 0177, 0210
+ZD_SIGNALDELAY   = $0270
+; Tried & failed: 0140, 0200, 0260
+ZD_TIMEOUT_INTVL = $270E              ; No. of timer cycles between interrupts
+ZD_TIMEOUT_LIMIT = $004F              ; Times interrupt fires before timeout
 
 MACRO ZD_SET_CA_ON
   lda ZD_CTRL_PORT

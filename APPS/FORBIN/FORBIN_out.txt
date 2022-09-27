@@ -1,0 +1,62 @@
+.header
+     0800   4C 18 08   JMP &0818
+     0803   45 
+     0804   00
+     0805   08
+     0806   18
+     0807   08
+     0808   73
+     0809   08
+     080A   00
+     080B   00
+     080C   00
+.prog_name
+     080D   46 4F 52 ...
+     0813   00
+.version_string
+     0814   31 2E 30 
+     0817   00
+.startprog
+.reset
+     0818   78         SEI
+     0819   D8         CLD
+     081A   A2 FF      LDX #&FF
+     081C   9A         TXS
+     081D   A9 00      LDA #&00
+     081F   8D 30 04   STA &0430
+     0822   58         CLI
+     0823   20 42 FF   JSR &FF42
+.main
+     0826   20 42 FF   JSR &FF42
+Macro LOAD_MSG:
+     0829   A9 4B      LDA #&4B
+     082B   85 50      STA &50
+     082D   A9 08      LDA #&08
+     082F   85 51      STA &51
+End macro LOAD_MSG
+     0831   20 21 FF   JSR &FF21
+Macro NEWLINE:
+     0834   A9 0A      LDA #&0A
+     0836   20 1B FF   JSR &FF1B
+End macro NEWLINE
+     0839   20 48 FF   JSR &FF48
+.prog_end
+     083C   9C 7F 03   STZ &037F
+     083F   8E 00 03   STX &0300
+     0842   A5 62      LDA &62
+     0844   29 F0      AND #&F0
+     0846   85 62      STA &62
+     0848   4C F4 FF   JMP &FFF4
+.colossus_msg
+     084B   2A 2A 20 ...
+     0855   0A
+     0856   54 48 45 ...
+     0866   0A
+     0867   53 59 53 ...
+     086D   0A
+     086E   00
+.endtag
+     086F   45 4F 46 
+     0872   00
+.endcode
+Saving file '../bin/FORBIN.EXE'

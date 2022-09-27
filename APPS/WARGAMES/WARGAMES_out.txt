@@ -1,0 +1,116 @@
+.header
+     0800   4C 1A 08   JMP &081A
+     0803   45 
+     0804   00
+     0805   08
+     0806   1A
+     0807   08
+     0808   0D
+     0809   09
+     080A   00
+     080B   00
+     080C   00
+.prog_name
+     080D   57 41 52 ...
+     0815   00
+.version_string
+     0816   31 2E 30 
+     0819   00
+.startprog
+.reset
+     081A   78         SEI
+     081B   D8         CLD
+     081C   A2 FF      LDX #&FF
+     081E   9A         TXS
+     081F   A9 00      LDA #&00
+     0821   8D 30 04   STA &0430
+     0824   58         CLI
+     0825   20 42 FF   JSR &FF42
+.main
+     0828   20 42 FF   JSR &FF42
+Macro LOAD_MSG:
+     082B   A9 7D      LDA #&7D
+     082D   85 50      STA &50
+     082F   A9 08      LDA #&08
+     0831   85 51      STA &51
+End macro LOAD_MSG
+     0833   20 21 FF   JSR &FF21
+Macro LOAD_MSG:
+     0836   A9 C3      LDA #&C3
+     0838   85 50      STA &50
+     083A   A9 08      LDA #&08
+     083C   85 51      STA &51
+End macro LOAD_MSG
+     083E   20 48 FF   JSR &FF48
+     0841   20 6E 08   JSR &086E
+Macro LOAD_MSG:
+     0844   A9 97      LDA #&97
+     0846   85 50      STA &50
+     0848   A9 08      LDA #&08
+     084A   85 51      STA &51
+End macro LOAD_MSG
+     084C   20 21 FF   JSR &FF21
+Macro NEWLINE:
+     084F   A9 0A      LDA #&0A
+     0851   20 1B FF   JSR &FF1B
+End macro NEWLINE
+Macro LOAD_MSG:
+     0854   A9 DD      LDA #&DD
+     0856   85 50      STA &50
+     0858   A9 08      LDA #&08
+     085A   85 51      STA &51
+End macro LOAD_MSG
+     085C   20 48 FF   JSR &FF48
+.prog_end
+     085F   9C 7F 03   STZ &037F
+     0862   8E 00 03   STX &0300
+     0865   A5 62      LDA &62
+     0867   29 F0      AND #&F0
+     0869   85 62      STA &62
+     086B   4C F4 FF   JMP &FFF4
+.press_key
+     086E   48         PHA
+.press_key_loop
+     086F   A5 62      LDA &62
+     0871   29 01      AND #&01
+     0873   F0 FA      BEQ &086F
+.press_key_done
+     0875   9C 7F 03   STZ &037F
+     0878   20 06 FF   JSR &FF06
+     087B   68         PLA
+     087C   60         RTS
+.cons_message1
+     087D   0A
+     087E   53 48 41 ...
+     0893   0A
+     0894   0A
+     0895   3E
+     0896   00
+.cons_message2
+     0897   0A
+     0898   57 4F 55 ...
+     08C1   0A
+     08C2   00
+.lcd_message1
+     08C3   0A
+     08C4   53 48 41 ...
+     08D1   0A
+     08D2   41 20 47 ...
+     08D9   0A
+     08DA   0A
+     08DB   3E
+     08DC   00
+.lcd_message2
+     08DD   0A
+     08DE   57 4F 55 ...
+     08F1   0A
+     08F2   41 20 47 ...
+     0900   0A
+     0901   43 48 45 ...
+     0907   0A
+     0908   00
+.endtag
+     0909   45 4F 46 
+     090C   00
+.endcode
+Saving file '../bin/WARGAMES.EXE'
