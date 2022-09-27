@@ -2,10 +2,27 @@
 
 \ Library for ZolaDOS using a 6522 VIA
 
+\ HOW STREAMING MIGHT WORK:
+\ * OSZDOPENR - check for error
+\ * For each block/byte:
+\   + Use ZD_INIT_PROCESS with the opcode ZD_OPCODE_RBYTE or ZD_OPCODE_RBLK.
+\   + Check return code: 0 = OK, 255 = no more data, anything else is an error.
+\     - If OK, run ZD_RCV_DATA
+\ OSZDCLOSE
+
+\ To implement:
+\ These all require a file to have been opened and an active file handle.
+\  OSZDRBLK                 ; Read block
+\  OSZDWBLK                 ; Write block
+\  OSZDRBYTE                ; Read byte
+\  OSZDWBYTE                ; Write byte
+\  OSZDRSTR                 ; Read nul-terminated string
+\  OSZDWSTR                 ; Write nul-terminated string
+
 \ ------------------------------------------------------------------------------
 \ ---  ZD_INIT
 \ ------------------------------------------------------------------------------
-\ Set up the VIA.
+\ Set up the VIA and other general initialisation.
 \ A - O
 \ X - n/a
 \ Y - n/a
@@ -26,6 +43,8 @@
   ; Initialise outputs
   ZD_SET_CA_OFF                     ; Takes line high
   ZD_SET_CR_OFF                     ; Takes line high
+  lda #ZD_FSTATE_CLOSED             ; Start with no file open
+  sta ZD_FSTATE
   rts
 
 \ ------------------------------------------------------------------------------
@@ -144,7 +163,17 @@
 \ ---  ZD_RCV_DATA
 \ ------------------------------------------------------------------------------
 \ This receives data from the server and stores it starting at the address
-\ specified by FILE_ADDR.
+\ specified by FILE_ADDR. The process is:
+\   * Wait for Server Active signal (low).
+\   * LOOP:
+\     + Wait for Server Ready signal active (low).
+\     + Load byte on bus.
+\     + Store byte in memory.
+\     + Wait for Server Ready signal inactive.
+\     + Send Client Ready strobe.
+\     + Check if Server Active is still set:
+\       - If so, LOOP
+\       - Otherwise done.
 \ ON ENTRY: FILE_ADDR/+1 must contain the 16-bit address
 \           for where to store the data.
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
@@ -319,16 +348,21 @@
 \           - STR_BUF must contain filename
 \ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
 .zd_streamin
-  lda #ZD_OPCODE_OPEN
+  lda #ZD_OPCODE_OPENR
   jsr zd_handshake            ; ----- INITIATE ---------------------------------
   lda FUNC_ERR
   bne zd_streamin_end         ; If this is anything but 0, that's an error
 
-
+  lda #ZD_FSTATE_OPENR
+  sta ZD_FSTATE
 
 .zd_streamin_close
   lda #ZD_OPCODE_CLOSE
   jsr zd_init_process
+  lda FUNC_ERR
+  ;  deal with error
+  lda #ZD_FSTATE_CLOSED
+  sta ZD_FSTATE
 .zd_streamin_end
   rts
 

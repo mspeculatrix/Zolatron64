@@ -38,7 +38,7 @@ ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v4.1.2", 0
+  equs "ZolOS v4.1.3", 0
 .startcode
   sei                 ; Don't interrupt me yet
   cld                 ; We don' need no steenkin' BCD
@@ -46,6 +46,7 @@ ORG ROM_START          ; This is where the actual code starts.
   txs                 ; the LSB, as MSB is assumed to be $01
 
 ; Initialise registers etc
+  stz SYS_REG
   stz EXTMEM_BANK           ; Default to extended memory bank 0
   stz EXTMEM_SLOT_SEL       ;    "     "    "       "     "   "
   stz FUNC_ERR              ; Zero out function return values
@@ -56,7 +57,7 @@ ORG ROM_START          ; This is where the actual code starts.
   stz STDOUT_IDX
   stz STDIN_STATUS_REG      ; Zero out the STDIN register
 
-  lda #<USR_START            ; Initialise LOMEM to start of user RAM
+  lda #<USR_START           ; Initialise LOMEM to start of user RAM
   sta LOMEM
   lda #>USR_START
   sta LOMEM + 1
@@ -68,21 +69,24 @@ INCLUDE "include/os_call_vectors.asm"
 ;  sta STREAM_SELECT_REG
 
 ; SETUP LCD display & LEDs
+  lda SYS_REG
+  ora #%00100000     ; Sets bit 5 showing we're using 20x4 display
+  sta SYS_REG
   lda #%11111111
-  sta LCDV_DDRB   ; Set all pins on port B to output - data for LCD
-  sta LCDV_DDRA   ; Set all pins on port A to output - signals for LCD & LEDs
-  lda #LCD_TYPE         ; Set 8-bit mode; 2-line display; 5x8 font
+  sta LCDV_DDRB     ; Set all pins on port B to output - data for LCD
+  sta LCDV_DDRA     ; Set all pins on port A to output - signals for LCD & LEDs
+  lda #LCD_TYPE     ; Set 8-bit mode; 2-line display; 5x8 font
   jsr lcd_cmd
-  lda #LCD_MODE         ; Display on; cursor off; blink off
+  lda #LCD_MODE                         ; Display on; cursor off; blink off
   jsr lcd_cmd
-  lda #LCD_CLS          ; Clear display, reset display memory
+  lda #LCD_CLS                          ; Clear display, reset display memory
   jsr lcd_cmd
 
 ; SETUP USER PORT
   lda #$FF
-  sta USRP_DDRA         ; Set all lines on user ports as outputs
+  sta USRP_DDRA                         ; Set all lines on user ports as outputs
   sta USRP_DDRB
-  stz USRP_PORTA        ; And set all lines to low
+  stz USRP_PORTA                        ; And set all lines to low
   stz USRP_PORTB
 
 ; SETUP ZolaDOS RPi INTERFACE
@@ -92,7 +96,7 @@ INCLUDE "include/os_call_vectors.asm"
   jsr duart_init
 
 ; CHECK FOR PARALLEL PORT
-  jsr prt_check_present
+  jsr prt_check_present                 ; Sets SYS_PARALLEL_YES bit in SYS_REG
 
 \ ------------------------------------------------------------------------------
 \ ----     MAIN PROGRAM                                                     ----
@@ -147,7 +151,7 @@ INCLUDE "include/os_call_vectors.asm"
 
 ; PARALLEL INTERFACE MESSAGE
   lda SYS_REG
-  ora #SYS_PARALLEL_YES                   ; Check if bit is set
+  and #SYS_PARALLEL_YES                   ; Check if bit is set
   bne parallel_ok                         ; If result non-zero, then it is
   LOAD_MSG parallel_if_not_fitted
   jmp parallel_msg
@@ -158,26 +162,31 @@ INCLUDE "include/os_call_vectors.asm"
   NEWLINE
   jsr OSLCDMSG
 
-.ready
-; READY MESSAGE
-  LOAD_MSG ready_msg
-  jsr OSWRMSG
-  jsr OSLCDMSG
-
   cli                     	              ; Enable interrupts
 
 .soft_reset
   LED_OFF LED_ERR                         ; Turn off the LEDs
   LED_OFF LED_BUSY
-  LED_OFF LED_OK
   LED_OFF LED_FILE_ACT
   LED_OFF LED_DEBUG
-  lda PRG_EXIT_CODE
-  beq soft_start
-  LED_ON LED_ERR
-  jmp mainloop
-.soft_start
   LED_ON LED_OK
+
+; BOOT ROM
+; Check to see if there is boot ROM code in bank 0 of extended memory.
+; If so, run it.
+  lda SYS_REG                           ; Check to see if extended memory fitted
+  and #SYS_EXMEM_YES
+  beq ready                             ; If not, skip to ready prompt
+  lda EXTMEM_START + CODEHDR_TYPE       ; Load code type identifier
+  cmp #TYPECODE_BOOT                    ; Is it a boot ROM?
+  bne ready                             ; If not, skip to ready prompt
+  jmp EXTMEM_START                      ; Otherwise, jump to ROM code
+
+.ready
+; READY MESSAGE
+  LOAD_MSG ready_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
   SERIAL_PROMPT
 
 \ ------------------------------------------------------------------------------
@@ -247,6 +256,7 @@ INCLUDE "include/cmds_D.asm"
 INCLUDE "include/cmds_H.asm"
 INCLUDE "include/cmds_J.asm"
 INCLUDE "include/cmds_L.asm"
+INCLUDE "include/cmds_M.asm"
 INCLUDE "include/cmds_P.asm"
 INCLUDE "include/cmds_R.asm"
 INCLUDE "include/cmds_S.asm"
@@ -277,10 +287,14 @@ INCLUDE "include/funcs_4x20_lcd.asm"
 INCLUDE "include/funcs_prt.asm"
 INCLUDE "include/data_tables.asm"
 
+\-------------------------------------------------------------------------------
+\ ---  NMI HANDLER
+\-------------------------------------------------------------------------------
 ALIGN &100                                        ; Start on new page
 .NMI_handler                                      ; For future development
 .exit_nmi
   rti
+
 \-------------------------------------------------------------------------------
 \ OS CALLS  - OS Call Jump Table
 \ Jump table for OS calls. Requires corresponding entries in:
@@ -335,6 +349,12 @@ ORG $FF00
 
   jmp (OSZDDEL_VEC)
   jmp (OSZDLOAD_VEC)
+\  jmp (OSZDRBLK_VEC)                 ; Read block
+\  jmp (OSZDWBLK_VEC)                 ; Write block
+\  jmp (OSZDRBYTE_VEC)                ; Read byte
+\  jmp (OSZDWBYTE_VEC)                ; Write byte
+\  jmp (OSZDRSTR_VEC)                 ; Read string
+\  jmp (OSZDWSTR_VEC)                 ; Write string
   jmp (OSZDSAVE_VEC)
 
   jmp (OSDELAY_VEC)

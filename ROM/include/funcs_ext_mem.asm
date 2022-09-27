@@ -28,7 +28,6 @@
   lda #ERR_EXTMEM_WR
   sta FUNC_ERR
   lda SYS_REG
-  eor #$FF                ; Flip all the bits
   and #SYS_EXMEM_NO
   sta SYS_REG
   jmp extmem_ram_chk_done

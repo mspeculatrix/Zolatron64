@@ -1,6 +1,43 @@
 \ cmds_X.asm
 
 \ ------------------------------------------------------------------------------
+\ --- CMD: XCLR  :  CLEAR EXTENDED RAM BANK
+\ ------------------------------------------------------------------------------
+\ Usage: XCLR <memory_bank>
+\ 'Clears' and extended RAM bank simply by overwriting the header section with
+\ zeroes.
+.cmdprcXCLR
+  lda EXTMEM_BANK                       ; Read current bank setting
+  pha                                   ; Store for later
+  jsr extmem_readset_bank               ; Set and select the bank
+  lda FUNC_ERR
+  bne cmdprcXCLR_fail                   ; Error occurred
+  ldx #0
+.cmdprcXCLR_loop
+  stz EXTMEM_START,X
+  inx
+  cpx #32
+  beq cmdprcXCLR_done
+  jmp cmdprcXCLR_loop
+.cmdprcXCLR_done
+  stz STDOUT_IDX                        ; Zero-out STDOUT buffer
+  stz STDOUT_BUF
+  LOAD_MSG bank_cleared_msg              ; Let's announce which bank is selected
+  jsr OSSOAPP
+  lda EXTMEM_BANK
+  jsr OSB2ISTR
+  STR_BUF_TO_MSG_VEC
+  jsr OSSOAPP
+  jsr OSWRBUF
+  jsr OSLCDWRBUF
+  pla                                   ; Retrieve previous bank setting
+  sta EXTMEM_SLOT_SEL                   ; And reset it
+  sta EXTMEM_BANK
+  jmp cmdprc_success
+.cmdprcXCLR_fail
+  jmp cmdprc_fail
+
+\ ------------------------------------------------------------------------------
 \ --- CMD: XLS  :  LIST PROGRAMS IN EXTENDED MEMORY
 \ ------------------------------------------------------------------------------
 \ Usage: XLS
@@ -90,11 +127,11 @@
 \ Usage: XLOAD <filename> <memory_bank>
 \ Wrapper to xload_file.
 \ This is for loading program code into extended memory. The given filename
-\ should not have an extension (.BIN will be added by ZolaDOS).
+\ should not have an extension (.ROM will be added by ZolaDOS).
 \ The memory_bank must be in the range 0-15. The code will check that the
 \ selected bank is writeable (ie, that it has not been switched to ROM).
 .cmdprcXLOAD
-  lda #ZD_OPCODE_LOAD
+  lda #ZD_OPCODE_XLOAD
   jsr xload_file
   lda FUNC_ERR
   beq cmdprcXLOAD_success
@@ -200,6 +237,8 @@
   jmp cmdprc_success
 
 \ --- DATA ----------------
+.bank_cleared_msg
+  equs "Bank cleared: ",0
 .bank_select_msg
   equs "Bank selected: ",0
 .xls_data_label

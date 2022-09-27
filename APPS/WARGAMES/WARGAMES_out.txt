@@ -25,23 +25,23 @@
      081F   A9 00      LDA #&00
      0821   8D 30 04   STA &0430
      0824   58         CLI
-     0825   20 3F FF   JSR &FF3F
+     0825   20 42 FF   JSR &FF42
 .main
-     0828   20 3F FF   JSR &FF3F
+     0828   20 42 FF   JSR &FF42
 Macro LOAD_MSG:
      082B   A9 7D      LDA #&7D
      082D   85 50      STA &50
      082F   A9 08      LDA #&08
      0831   85 51      STA &51
 End macro LOAD_MSG
-     0833   20 1E FF   JSR &FF1E
+     0833   20 21 FF   JSR &FF21
 Macro LOAD_MSG:
      0836   A9 C3      LDA #&C3
      0838   85 50      STA &50
      083A   A9 08      LDA #&08
      083C   85 51      STA &51
 End macro LOAD_MSG
-     083E   20 45 FF   JSR &FF45
+     083E   20 48 FF   JSR &FF48
      0841   20 6E 08   JSR &086E
 Macro LOAD_MSG:
      0844   A9 97      LDA #&97
@@ -49,10 +49,10 @@ Macro LOAD_MSG:
      0848   A9 08      LDA #&08
      084A   85 51      STA &51
 End macro LOAD_MSG
-     084C   20 1E FF   JSR &FF1E
+     084C   20 21 FF   JSR &FF21
 Macro NEWLINE:
      084F   A9 0A      LDA #&0A
-     0851   20 18 FF   JSR &FF18
+     0851   20 1B FF   JSR &FF1B
 End macro NEWLINE
 Macro LOAD_MSG:
      0854   A9 DD      LDA #&DD
@@ -60,7 +60,7 @@ Macro LOAD_MSG:
      0858   A9 08      LDA #&08
      085A   85 51      STA &51
 End macro LOAD_MSG
-     085C   20 45 FF   JSR &FF45
+     085C   20 48 FF   JSR &FF48
 .prog_end
      085F   9C 7F 03   STZ &037F
      0862   8E 00 03   STX &0300

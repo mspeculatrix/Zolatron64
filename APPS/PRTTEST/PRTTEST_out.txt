@@ -25,24 +25,24 @@
      081E   9C 30 04   STZ &0430
      0821   58         CLI
 .main
-     0822   20 5D FF   JSR &FF5D
+     0822   20 60 FF   JSR &FF60
 Macro LOAD_MSG:
      0825   A9 C5      LDA #&C5
      0827   85 50      STA &50
      0829   A9 08      LDA #&08
      082B   85 51      STA &51
 End macro LOAD_MSG
-     082D   20 1E FF   JSR &FF1E
-     0830   20 45 FF   JSR &FF45
+     082D   20 21 FF   JSR &FF21
+     0830   20 48 FF   JSR &FF48
      0833   A9 0A      LDA #&0A
-     0835   20 18 FF   JSR &FF18
+     0835   20 1B FF   JSR &FF1B
 Macro LOAD_MSG:
      0838   A9 65      LDA #&65
      083A   85 50      STA &50
      083C   A9 08      LDA #&08
      083E   85 51      STA &51
 End macro LOAD_MSG
-     0840   20 60 FF   JSR &FF60
+     0840   20 63 FF   JSR &FF63
      0843   A5 54      LDA &54
      0845   D0 15      BNE &085C
 Macro LOAD_MSG:
@@ -51,14 +51,14 @@ Macro LOAD_MSG:
      084B   A9 08      LDA #&08
      084D   85 51      STA &51
 End macro LOAD_MSG
-     084F   20 60 FF   JSR &FF60
+     084F   20 63 FF   JSR &FF63
      0852   A9 0A      LDA #&0A
-     0854   20 57 FF   JSR &FF57
+     0854   20 5A FF   JSR &FF5A
      0857   A9 0A      LDA #&0A
-     0859   20 57 FF   JSR &FF57
+     0859   20 5A FF   JSR &FF5A
 .done
-     085C   20 1E FF   JSR &FF1E
-     085F   20 45 FF   JSR &FF45
+     085C   20 21 FF   JSR &FF21
+     085F   20 48 FF   JSR &FF48
 .prog_end
      0862   4C F4 FF   JMP &FFF4
 .test_msg
@@ -76,4 +76,4 @@ End macro LOAD_MSG
      08D1   45 4F 46 
      08D4   00
 .endcode
-Saving file '../bin/PRTTEST.BIN'
+Saving file '../bin/PRTTEST.EXE'

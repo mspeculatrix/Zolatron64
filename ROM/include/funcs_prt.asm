@@ -49,7 +49,7 @@
   sta TMP_VAL                               ; and save for later
   ldx #0
 .prt_check_present_loop
-  lda prt_test_vals,X                           ; Load a test value
+  lda prt_test_vals,X                       ; Load a test value
   beq prt_check_present_loop_done           ; If 0, we're finished
   sta TEST_VAL                              ; Store for later
   sta PRLL_DATA_DDR                         ; Store it in the register

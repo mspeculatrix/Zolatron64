@@ -56,7 +56,7 @@
      8062   8D 06 70   STA &7006
 Macro NEWLINE:
      8065   A9 0A      LDA #&0A
-     8067   20 18 FF   JSR &FF18
+     8067   20 1B FF   JSR &FF1B
 End macro NEWLINE
 Macro LOAD_MSG:
      806A   A9 40      LDA #&40
@@ -64,7 +64,7 @@ Macro LOAD_MSG:
      806E   A9 87      LDA #&87
      8070   85 51      STA &51
 End macro LOAD_MSG
-     8072   20 1E FF   JSR &FF1E
+     8072   20 21 FF   JSR &FF21
      8075   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
      8078   A9 97      LDA #&97
@@ -72,32 +72,32 @@ Macro LOAD_MSG:
      807C   A9 87      LDA #&87
      807E   85 51      STA &51
 End macro LOAD_MSG
-     8080   20 24 FF   JSR &FF24
+     8080   20 27 FF   JSR &FF27
 Macro LOAD_MSG:
      8083   A9 14      LDA #&14
      8085   85 50      STA &50
      8087   A9 80      LDA #&80
      8089   85 51      STA &51
 End macro LOAD_MSG
-     808B   20 24 FF   JSR &FF24
-     808E   20 15 FF   JSR &FF15
+     808B   20 27 FF   JSR &FF27
+     808E   20 18 FF   JSR &FF18
 Macro NEWLINE:
      8091   A9 0A      LDA #&0A
-     8093   20 18 FF   JSR &FF18
+     8093   20 1B FF   JSR &FF1B
 End macro NEWLINE
 Macro NEWLINE:
      8096   A9 0A      LDA #&0A
-     8098   20 18 FF   JSR &FF18
+     8098   20 1B FF   JSR &FF1B
 End macro NEWLINE
      809B   20 5E 85   JSR &855E
 Macro NEWLINE:
      809E   A9 0A      LDA #&0A
-     80A0   20 18 FF   JSR &FF18
+     80A0   20 1B FF   JSR &FF1B
 End macro NEWLINE
      80A3   20 C8 85   JSR &85C8
 Macro NEWLINE:
      80A6   A9 0A      LDA #&0A
-     80A8   20 18 FF   JSR &FF18
+     80A8   20 1B FF   JSR &FF1B
 End macro NEWLINE
 .instruction_prompt
 Macro LOAD_MSG:
@@ -106,7 +106,7 @@ Macro LOAD_MSG:
      80AF   A9 8E      LDA #&8E
      80B1   85 51      STA &51
 End macro LOAD_MSG
-     80B3   20 1E FF   JSR &FF1E
+     80B3   20 21 FF   JSR &FF21
      80B6   20 B8 86   JSR &86B8
      80B9   A5 54      LDA &54
      80BB   C9 02      CMP #&02
@@ -117,10 +117,10 @@ Macro LOAD_MSG:
      80C3   A9 8A      LDA #&8A
      80C5   85 51      STA &51
 End macro LOAD_MSG
-     80C7   20 1E FF   JSR &FF1E
+     80C7   20 21 FF   JSR &FF21
 Macro NEWLINE:
      80CA   A9 0A      LDA #&0A
-     80CC   20 18 FF   JSR &FF18
+     80CC   20 1B FF   JSR &FF1B
 End macro NEWLINE
 Macro LOAD_MSG:
      80CF   A9 A0      LDA #&A0
@@ -128,10 +128,10 @@ Macro LOAD_MSG:
      80D3   A9 87      LDA #&87
      80D5   85 51      STA &51
 End macro LOAD_MSG
-     80D7   20 1E FF   JSR &FF1E
+     80D7   20 21 FF   JSR &FF21
 Macro NEWLINE:
      80DA   A9 0A      LDA #&0A
-     80DC   20 18 FF   JSR &FF18
+     80DC   20 1B FF   JSR &FF1B
 End macro NEWLINE
 .init
 Macro LOAD_MSG:
@@ -140,10 +140,10 @@ Macro LOAD_MSG:
      80E3   A9 8D      LDA #&8D
      80E5   85 51      STA &51
 End macro LOAD_MSG
-     80E7   20 1E FF   JSR &FF1E
+     80E7   20 21 FF   JSR &FF21
 Macro NEWLINE:
      80EA   A9 0A      LDA #&0A
-     80EC   20 18 FF   JSR &FF18
+     80EC   20 1B FF   JSR &FF1B
 End macro NEWLINE
      80EF   9C 15 05   STZ &0515
      80F2   9C 13 05   STZ &0513
@@ -163,7 +163,7 @@ Macro LOAD_MSG:
      810B   A9 8E      LDA #&8E
      810D   85 51      STA &51
 End macro LOAD_MSG
-     810F   20 1E FF   JSR &FF1E
+     810F   20 21 FF   JSR &FF21
 .init_loop_wait
      8112   A5 62      LDA &62
      8114   29 01      AND #&01
@@ -187,11 +187,11 @@ End macro LOAD_MSG
      8137   4C 07 81   JMP &8107
 .init_done
      813A   A9 0A      LDA #&0A
-     813C   20 18 FF   JSR &FF18
+     813C   20 1B FF   JSR &FF1B
 .start_play
 Macro NEWLINE:
      813F   A9 0A      LDA #&0A
-     8141   20 18 FF   JSR &FF18
+     8141   20 1B FF   JSR &FF1B
 End macro NEWLINE
      8144   20 0B 85   JSR &850B
      8147   20 F6 84   JSR &84F6
@@ -201,7 +201,7 @@ Macro LOAD_MSG:
      814E   A9 8E      LDA #&8E
      8150   85 51      STA &51
 End macro LOAD_MSG
-     8152   20 1E FF   JSR &FF1E
+     8152   20 21 FF   JSR &FF21
 .mainloop
      8155   A5 62      LDA &62
      8157   29 01      AND #&01
@@ -240,10 +240,10 @@ Macro LOAD_MSG:
      8198   A9 87      LDA #&87
      819A   85 51      STA &51
 End macro LOAD_MSG
-     819C   20 1E FF   JSR &FF1E
+     819C   20 21 FF   JSR &FF21
 Macro NEWLINE:
      819F   A9 0A      LDA #&0A
-     81A1   20 18 FF   JSR &FF18
+     81A1   20 1B FF   JSR &FF1B
 End macro NEWLINE
      81A4   4C CC 82   JMP &82CC
 .zum_cmd_move
@@ -267,10 +267,10 @@ Macro LOAD_MSG:
      81CA   A9 94      LDA #&94
      81CC   85 51      STA &51
 End macro LOAD_MSG
-     81CE   20 1E FF   JSR &FF1E
+     81CE   20 21 FF   JSR &FF21
 Macro NEWLINE:
      81D1   A9 0A      LDA #&0A
-     81D3   20 18 FF   JSR &FF18
+     81D3   20 1B FF   JSR &FF1B
 End macro NEWLINE
      81D6   4C DF 80   JMP &80DF
 .zum_cmd_shoot
@@ -288,7 +288,7 @@ Macro LOAD_MSG:
      81EE   A9 92      LDA #&92
      81F0   85 51      STA &51
 End macro LOAD_MSG
-     81F2   20 1E FF   JSR &FF1E
+     81F2   20 21 FF   JSR &FF21
      81F5   A9 01      LDA #&01
      81F7   8D 15 05   STA &0515
 .zum_cmd_shoot_parse
@@ -333,7 +333,7 @@ Macro LOAD_MSG:
      8247   A9 91      LDA #&91
      8249   85 51      STA &51
 End macro LOAD_MSG
-     824B   20 1E FF   JSR &FF1E
+     824B   20 21 FF   JSR &FF21
      824E   AD 15 05   LDA &0515
      8251   D0 10      BNE &8263
      8253   A9 01      LDA #&01
@@ -344,7 +344,7 @@ Macro LOAD_MSG:
      825C   A9 92      LDA #&92
      825E   85 51      STA &51
 End macro LOAD_MSG
-     8260   20 1E FF   JSR &FF1E
+     8260   20 21 FF   JSR &FF21
 .zum_cmd_shoot_nearhit
      8263   4C C6 82   JMP &82C6
 .zum_cmd_shoot_win
@@ -354,7 +354,7 @@ Macro LOAD_MSG:
      826A   A9 90      LDA #&90
      826C   85 51      STA &51
 End macro LOAD_MSG
-     826E   20 1E FF   JSR &FF1E
+     826E   20 21 FF   JSR &FF21
      8271   AD 05 70   LDA &7005
      8274   C9 FF      CMP #&FF
      8276   F0 04      BEQ &827C
@@ -373,7 +373,7 @@ Macro LOAD_MSG:
      828C   A9 91      LDA #&91
      828E   85 51      STA &51
 End macro LOAD_MSG
-     8290   20 1E FF   JSR &FF1E
+     8290   20 21 FF   JSR &FF21
      8293   4C C6 82   JMP &82C6
 .zum_cmd_shoot_selfhit
 Macro LOAD_MSG:
@@ -382,7 +382,7 @@ Macro LOAD_MSG:
      829A   A9 91      LDA #&91
      829C   85 51      STA &51
 End macro LOAD_MSG
-     829E   20 1E FF   JSR &FF1E
+     829E   20 21 FF   JSR &FF21
      82A1   4C 97 83   JMP &8397
 .zum_cmd_shoot_missed
      82A4   AD 15 05   LDA &0515
@@ -393,7 +393,7 @@ Macro LOAD_MSG:
      82AD   A9 90      LDA #&90
      82AF   85 51      STA &51
 End macro LOAD_MSG
-     82B1   20 1E FF   JSR &FF1E
+     82B1   20 21 FF   JSR &FF21
      82B4   4C C6 82   JMP &82C6
 .zum_cmd_shoot_range_err
      82B7   A9 04      LDA #&04
@@ -433,7 +433,7 @@ Macro LOAD_MSG:
      82F2   A9 8F      LDA #&8F
      82F4   85 51      STA &51
 End macro LOAD_MSG
-     82F6   20 1E FF   JSR &FF1E
+     82F6   20 21 FF   JSR &FF21
 .zum_input_random_room
      82F9   A2 14      LDX #&14
      82FB   20 67 84   JSR &8467
@@ -463,7 +463,7 @@ Macro LOAD_MSG:
      8331   A9 93      LDA #&93
      8333   85 51      STA &51
 End macro LOAD_MSG
-     8335   20 1E FF   JSR &FF1E
+     8335   20 21 FF   JSR &FF21
      8338   AD 01 05   LDA &0501
      833B   8D 12 05   STA &0512
 .zum_input_go_zmove
@@ -479,7 +479,7 @@ Macro LOAD_MSG:
      8350   A9 87      LDA #&87
      8352   85 51      STA &51
 End macro LOAD_MSG
-     8354   20 1E FF   JSR &FF1E
+     8354   20 21 FF   JSR &FF21
      8357   20 F6 84   JSR &84F6
 Macro LOAD_MSG:
      835A   A9 6F      LDA #&6F
@@ -487,7 +487,7 @@ Macro LOAD_MSG:
      835E   A9 8E      LDA #&8E
      8360   85 51      STA &51
 End macro LOAD_MSG
-     8362   20 1E FF   JSR &FF1E
+     8362   20 21 FF   JSR &FF21
      8365   9C 00 03   STZ &0300
      8368   9C 7F 03   STZ &037F
      836B   64 55      STZ &55
@@ -499,7 +499,7 @@ Macro LOAD_MSG:
      8374   A9 8E      LDA #&8E
      8376   85 51      STA &51
 End macro LOAD_MSG
-     8378   20 1E FF   JSR &FF1E
+     8378   20 21 FF   JSR &FF21
      837B   4C 97 83   JMP &8397
 .falling_down_the_pit
 Macro LOAD_MSG:
@@ -508,7 +508,7 @@ Macro LOAD_MSG:
      8382   A9 8F      LDA #&8F
      8384   85 51      STA &51
 End macro LOAD_MSG
-     8386   20 1E FF   JSR &FF1E
+     8386   20 21 FF   JSR &FF21
      8389   4C 97 83   JMP &8397
 .zum_input_ammo_out
 Macro LOAD_MSG:
@@ -517,7 +517,7 @@ Macro LOAD_MSG:
      8390   A9 90      LDA #&90
      8392   85 51      STA &51
 End macro LOAD_MSG
-     8394   20 1E FF   JSR &FF1E
+     8394   20 21 FF   JSR &FF21
 .game_end
      8397   9C 7F 03   STZ &037F
      839A   9C 00 03   STZ &0300
@@ -527,7 +527,7 @@ Macro LOAD_MSG:
      83A1   A9 8E      LDA #&8E
      83A3   85 51      STA &51
 End macro LOAD_MSG
-     83A5   20 1E FF   JSR &FF1E
+     83A5   20 21 FF   JSR &FF21
 .game_end_yesno
      83A8   20 B8 86   JSR &86B8
      83AB   A5 54      LDA &54
@@ -542,7 +542,7 @@ End macro LOAD_MSG
      83BB   20 93 85   JSR &8593
 Macro NEWLINE:
      83BE   A9 0A      LDA #&0A
-     83C0   20 18 FF   JSR &FF18
+     83C0   20 1B FF   JSR &FF1B
 End macro NEWLINE
      83C3   20 C8 85   JSR &85C8
      83C6   9C 7F 03   STZ &037F
@@ -626,8 +626,8 @@ End macro NEWLINE
      8443   60         RTS
 .print_room_num
      8444   1A         INC A
-     8445   20 30 FF   JSR &FF30
-     8448   20 21 FF   JSR &FF21
+     8445   20 33 FF   JSR &FF33
+     8448   20 24 FF   JSR &FF24
      844B   60         RTS
 .random_room
      844C   A9 0D      LDA #&0D
@@ -666,7 +666,7 @@ Macro LOAD_MSG:
      848A   A9 8E      LDA #&8E
      848C   85 51      STA &51
 End macro LOAD_MSG
-     848E   20 1E FF   JSR &FF1E
+     848E   20 21 FF   JSR &FF21
      8491   A2 00      LDX #&00
 .show_connecting_rooms_next
      8493   BD 07 05   LDA &0507,X
@@ -674,7 +674,7 @@ End macro LOAD_MSG
      8497   20 44 84   JSR &8444
      849A   FA         PLX
      849B   A9 20      LDA #&20
-     849D   20 18 FF   JSR &FF18
+     849D   20 1B FF   JSR &FF1B
      84A0   E8         INX
      84A1   E0 03      CPX #&03
      84A3   F0 03      BEQ &84A8
@@ -682,7 +682,7 @@ End macro LOAD_MSG
 .show_connecting_rooms_done
 Macro NEWLINE:
      84A8   A9 0A      LDA #&0A
-     84AA   20 18 FF   JSR &FF18
+     84AA   20 1B FF   JSR &FF1B
 End macro NEWLINE
      84AD   60         RTS
 .show_current_room
@@ -692,12 +692,12 @@ Macro LOAD_MSG:
      84B2   A9 8E      LDA #&8E
      84B4   85 51      STA &51
 End macro LOAD_MSG
-     84B6   20 1E FF   JSR &FF1E
+     84B6   20 21 FF   JSR &FF21
      84B9   AD 00 05   LDA &0500
      84BC   20 44 84   JSR &8444
 Macro NEWLINE:
      84BF   A9 0A      LDA #&0A
-     84C1   20 18 FF   JSR &FF18
+     84C1   20 1B FF   JSR &FF1B
 End macro NEWLINE
      84C4   60         RTS
 .show_error_msg
@@ -709,7 +709,7 @@ End macro NEWLINE
      84CD   85 50      STA &50
      84CF   BD 49 94   LDA &9449,X
      84D2   85 51      STA &51
-     84D4   20 1E FF   JSR &FF1E
+     84D4   20 21 FF   JSR &FF21
      84D7   64 55      STZ &55
      84D9   60         RTS
 .staple_count
@@ -721,12 +721,12 @@ Macro LOAD_MSG:
      84E2   A9 8E      LDA #&8E
      84E4   85 51      STA &51
 End macro LOAD_MSG
-     84E6   20 1E FF   JSR &FF1E
+     84E6   20 21 FF   JSR &FF21
      84E9   68         PLA
      84EA   AE 06 05   LDX &0506
 .staple_loop
      84ED   A9 5B      LDA #&5B
-     84EF   20 18 FF   JSR &FF18
+     84EF   20 1B FF   JSR &FF1B
      84F2   CA         DEX
      84F3   D0 F8      BNE &84ED
      84F5   60         RTS
@@ -737,7 +737,7 @@ End macro LOAD_MSG
      84FF   20 DA 84   JSR &84DA
 Macro NEWLINE:
      8502   A9 0A      LDA #&0A
-     8504   20 18 FF   JSR &FF18
+     8504   20 1B FF   JSR &FF1B
 End macro NEWLINE
      8507   20 3F 86   JSR &863F
      850A   60         RTS
@@ -791,13 +791,13 @@ End macro NEWLINE
      8566   85 5F      STA &5F
      8568   20 50 85   JSR &8550
      856B   A9 03      LDA #&03
-     856D   20 69 FF   JSR &FF69
+     856D   20 6C FF   JSR &FF6C
      8570   A5 55      LDA &55
      8572   F0 13      BEQ &8587
-     8574   20 1B FF   JSR &FF1B
+     8574   20 1E FF   JSR &FF1E
 Macro NEWLINE:
      8577   A9 0A      LDA #&0A
-     8579   20 18 FF   JSR &FF18
+     8579   20 1B FF   JSR &FF1B
 End macro NEWLINE
 Macro LOAD_MSG:
      857C   A9 E1      LDA #&E1
@@ -814,7 +814,7 @@ Macro LOAD_MSG:
      858D   85 51      STA &51
 End macro LOAD_MSG
 .read_gamedata_end
-     858F   20 1E FF   JSR &FF1E
+     858F   20 21 FF   JSR &FF21
      8592   60         RTS
 .write_gamedata
      8593   64 55      STZ &55
@@ -828,7 +828,7 @@ End macro LOAD_MSG
      85A3   85 5B      STA &5B
      85A5   20 50 85   JSR &8550
      85A8   A9 14      LDA #&14
-     85AA   20 6C FF   JSR &FF6C
+     85AA   20 6F FF   JSR &FF6F
      85AD   A5 55      LDA &55
      85AF   F0 0B      BEQ &85BC
 Macro LOAD_MSG:
@@ -846,7 +846,7 @@ Macro LOAD_MSG:
      85C2   85 51      STA &51
 End macro LOAD_MSG
 .write_gamedata_end
-     85C4   20 1E FF   JSR &FF1E
+     85C4   20 21 FF   JSR &FF21
      85C7   60         RTS
 .show_stats
      85C8   9C FF 03   STZ &03FF
@@ -856,13 +856,13 @@ Macro LOAD_MSG:
      85CF   A9 93      LDA #&93
      85D1   85 51      STA &51
 End macro LOAD_MSG
-     85D3   20 24 FF   JSR &FF24
+     85D3   20 27 FF   JSR &FF27
      85D6   A9 20      LDA #&20
-     85D8   20 27 FF   JSR &FF27
+     85D8   20 2A FF   JSR &FF2A
      85DB   AD 04 70   LDA &7004
      85DE   C9 FF      CMP #&FF
      85E0   F0 0E      BEQ &85F0
-     85E2   20 30 FF   JSR &FF30
+     85E2   20 33 FF   JSR &FF33
 Macro STR_BUF_TO_MSG_VEC:
      85E5   A9 0B      LDA #&0B
      85E7   85 50      STA &50
@@ -878,11 +878,11 @@ Macro LOAD_MSG:
      85F6   85 51      STA &51
 End macro LOAD_MSG
 .show_stats_games
-     85F8   20 24 FF   JSR &FF24
-     85FB   20 15 FF   JSR &FF15
+     85F8   20 27 FF   JSR &FF27
+     85FB   20 18 FF   JSR &FF18
 Macro NEWLINE:
      85FE   A9 0A      LDA #&0A
-     8600   20 18 FF   JSR &FF18
+     8600   20 1B FF   JSR &FF1B
 End macro NEWLINE
      8603   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
@@ -891,13 +891,13 @@ Macro LOAD_MSG:
      860A   A9 93      LDA #&93
      860C   85 51      STA &51
 End macro LOAD_MSG
-     860E   20 24 FF   JSR &FF24
+     860E   20 27 FF   JSR &FF27
      8611   A9 20      LDA #&20
-     8613   20 27 FF   JSR &FF27
+     8613   20 2A FF   JSR &FF2A
      8616   AD 05 70   LDA &7005
      8619   C9 FF      CMP #&FF
      861B   F0 0E      BEQ &862B
-     861D   20 30 FF   JSR &FF30
+     861D   20 33 FF   JSR &FF33
 Macro STR_BUF_TO_MSG_VEC:
      8620   A9 0B      LDA #&0B
      8622   85 50      STA &50
@@ -913,11 +913,11 @@ Macro LOAD_MSG:
      8631   85 51      STA &51
 End macro LOAD_MSG
 .show_stats_won
-     8633   20 24 FF   JSR &FF24
-     8636   20 15 FF   JSR &FF15
+     8633   20 27 FF   JSR &FF27
+     8636   20 18 FF   JSR &FF18
 Macro NEWLINE:
      8639   A9 0A      LDA #&0A
-     863B   20 18 FF   JSR &FF18
+     863B   20 1B FF   JSR &FF1B
 End macro NEWLINE
      863E   60         RTS
 .warnings
@@ -946,7 +946,7 @@ Macro LOAD_MSG:
      866E   A9 92      LDA #&92
      8670   85 51      STA &51
 End macro LOAD_MSG
-     8672   20 1E FF   JSR &FF1E
+     8672   20 21 FF   JSR &FF21
      8675   4C AF 86   JMP &86AF
 .warning_bat
      8678   AD 10 05   LDA &0510
@@ -961,7 +961,7 @@ Macro LOAD_MSG:
      868B   A9 92      LDA #&92
      868D   85 51      STA &51
 End macro LOAD_MSG
-     868F   20 1E FF   JSR &FF1E
+     868F   20 21 FF   JSR &FF21
      8692   4C AF 86   JMP &86AF
 .warning_pit
      8695   AD 10 05   LDA &0510
@@ -976,7 +976,7 @@ Macro LOAD_MSG:
      86A8   A9 92      LDA #&92
      86AA   85 51      STA &51
 End macro LOAD_MSG
-     86AC   20 1E FF   JSR &FF1E
+     86AC   20 21 FF   JSR &FF21
 .warning_next
      86AF   E8         INX
      86B0   E0 03      CPX #&03
@@ -1415,4 +1415,4 @@ End macro LOAD_MSG
      9551   00
      9FFF   00
 .endcode
-Saving file '../bin/ZUMPUSR.EXE'
+Saving file '../bin/ZUMPUS.ROM'

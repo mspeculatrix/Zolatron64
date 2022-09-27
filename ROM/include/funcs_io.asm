@@ -521,7 +521,8 @@
   sta FUNC_ERR
   jmp read_string_end
 .read_string_check
-  stz STR_BUF,Y             ; Make sure we have a null terminator
+  lda #0
+  sta STR_BUF,Y             ; Make sure we have a null terminator
   jmp read_string_end
 .read_string_err
   lda #FN_LEN_ERR_CODE

@@ -25,17 +25,17 @@
      081C   A9 00      LDA #&00
      081E   8D 30 04   STA &0430
      0821   58         CLI
-     0822   20 3F FF   JSR &FF3F
+     0822   20 42 FF   JSR &FF42
 .main
-     0825   20 3F FF   JSR &FF3F
+     0825   20 42 FF   JSR &FF42
 Macro LOAD_MSG:
      0828   A9 DA      LDA #&DA
      082A   85 50      STA &50
      082C   A9 08      LDA #&08
      082E   85 51      STA &51
 End macro LOAD_MSG
-     0830   20 1E FF   JSR &FF1E
-     0833   20 45 FF   JSR &FF45
+     0830   20 21 FF   JSR &FF21
+     0833   20 48 FF   JSR &FF48
      0836   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
      0839   A9 EE      LDA #&EE
@@ -43,7 +43,7 @@ Macro LOAD_MSG:
      083D   A9 08      LDA #&08
      083F   85 51      STA &51
 End macro LOAD_MSG
-     0841   20 24 FF   JSR &FF24
+     0841   20 27 FF   JSR &FF27
      0844   AD 03 AC   LDA &AC03
      0847   8D 02 04   STA &0402
      084A   20 C3 08   JSR &08C3
@@ -57,7 +57,7 @@ Macro LOAD_MSG:
      0857   A9 09      LDA #&09
      0859   85 51      STA &51
 End macro LOAD_MSG
-     085B   20 24 FF   JSR &FF24
+     085B   20 27 FF   JSR &FF27
      085E   BD 4F 09   LDA &094F,X
      0861   F0 3A      BEQ &089D
      0863   8D 01 04   STA &0401
@@ -70,7 +70,7 @@ Macro LOAD_MSG:
      0873   A9 09      LDA #&09
      0875   85 51      STA &51
 End macro LOAD_MSG
-     0877   20 24 FF   JSR &FF24
+     0877   20 27 FF   JSR &FF27
      087A   AD 03 AC   LDA &AC03
      087D   CD 01 04   CMP &0401
      0880   D0 08      BNE &088A
@@ -85,10 +85,10 @@ Macro LOAD_MSG:
      088E   A9 09      LDA #&09
      0890   85 51      STA &51
 End macro LOAD_MSG
-     0892   20 1E FF   JSR &FF1E
+     0892   20 21 FF   JSR &FF21
 Macro NEWLINE:
      0895   A9 0A      LDA #&0A
-     0897   20 18 FF   JSR &FF18
+     0897   20 1B FF   JSR &FF1B
 End macro NEWLINE
      089A   4C B4 08   JMP &08B4
 .loop_done
@@ -99,7 +99,7 @@ Macro LOAD_MSG:
      08A4   A9 09      LDA #&09
      08A6   85 51      STA &51
 End macro LOAD_MSG
-     08A8   20 24 FF   JSR &FF24
+     08A8   20 27 FF   JSR &FF27
      08AB   AD 02 04   LDA &0402
      08AE   8D 03 AC   STA &AC03
      08B1   20 C3 08   JSR &08C3
@@ -111,18 +111,18 @@ End macro LOAD_MSG
      08BE   85 62      STA &62
      08C0   4C F4 FF   JMP &FFF4
 .print_byte
-     08C3   20 2D FF   JSR &FF2D
+     08C3   20 30 FF   JSR &FF30
 Macro STR_BUF_TO_MSG_VEC:
      08C6   A9 0B      LDA #&0B
      08C8   85 50      STA &50
      08CA   A9 04      LDA #&04
      08CC   85 51      STA &51
 End macro STR_BUF_TO_MSG_VEC
-     08CE   20 24 FF   JSR &FF24
-     08D1   20 15 FF   JSR &FF15
+     08CE   20 27 FF   JSR &FF27
+     08D1   20 18 FF   JSR &FF18
 Macro NEWLINE:
      08D4   A9 0A      LDA #&0A
-     08D6   20 18 FF   JSR &FF18
+     08D6   20 1B FF   JSR &FF1B
 End macro NEWLINE
      08D9   60         RTS
 .start_msg

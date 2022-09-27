@@ -25,6 +25,7 @@ ALIGN &100                  ; Start on new page
   equw cmdprcLOAD           ; LOAD - load file
   equw cmdprcLP             ; LP - list page
   equw cmdprcLS             ; LS - list storage
+  equw cmdprcMV             ; MV - move (rename) file
   equw cmdprcPEEK           ; PEEK
   equw cmdprcPOKE           ; POKE
   equw cmdprcPRT            ; PRT
@@ -32,6 +33,7 @@ ALIGN &100                  ; Start on new page
   equw cmdprcSAVE           ; SAVE - save file
   equw cmdprcSTAT           ; STAT
   equw cmdprcVERS           ; VERS - version
+  equw cmdprcXCLR           ; XCLR
   equw cmdprcXLOAD          ; XLOAD
   equw cmdprcXLS            ; XLS
   equw cmdprcXOPEN          ; XOPEN
@@ -44,7 +46,7 @@ ALIGN &100                  ; Start on new page
 \ understand where to go next by looking it up in the Command Pointers table
 \ below.
 .cmd_ch1_tbl
-  equs "*?!BCDHJLPRSVX"
+  equs "*?!BCDHJLMPRSVX"
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -64,6 +66,7 @@ ALIGN &100                  ; Start on new page
   equw cmd_tbl_ASCH         ; Commands starting 'H'
   equw cmd_tbl_ASCJ         ; Commands starting 'J'
   equw cmd_tbl_ASCL         ; Commands starting 'L'
+  equw cmd_tbl_ASCM         ; Commands starting 'M'
   equw cmd_tbl_ASCP         ; Commands starting 'P'
   equw cmd_tbl_ASCR         ; Commands starting 'R'
   equw cmd_tbl_ASCS         ; Commands starting 'S'
@@ -92,7 +95,7 @@ ALIGN &100                  ; Start on new page
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCC                  ; Commands starting 'C'
-  equs "LEAR", CMD_TKN_CLEAR       ; CLEAR
+  equs "LEAR", CMD_TKN_CLEAR   ; CLEAR
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCD                  ; Commands starting 'D'
@@ -115,6 +118,10 @@ ALIGN &100                  ; Start on new page
   equs "S", CMD_TKN_LS         ; LS
   equb EOCMD_SECTION
 
+.cmd_tbl_ASCM                  ; Commands starting 'M'
+  equs "V", CMD_TKN_MV         ; MV
+  equb EOCMD_SECTION
+
 .cmd_tbl_ASCP                  ; Commands starting 'P'
   equs "EEK", CMD_TKN_PEEK     ; PEEK
   equs "OKE", CMD_TKN_POKE     ; POKE
@@ -135,6 +142,7 @@ ALIGN &100                  ; Start on new page
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCX                  ; Commands starting 'X'
+  equs "CLR", CMD_TKN_XCLR     ; XCLR
   equs "LOAD", CMD_TKN_XLOAD   ; XLOAD
   equs "LS", CMD_TKN_XLS       ; XLS
   equs "OPEN", CMD_TKN_XOPEN   ; XOPEN
@@ -254,7 +262,7 @@ ALIGN &100                  ; Start on new page
 \ ===== MISC TABLES & STRINGS ==================================================
 
 .ext_data_types               ; Valid data type characters for extended memory
-  equs "DEOX",0
+  equs "BDEOX",0
 
 .help_table                   ; Text for 'HELP' output
   equs "?",0
@@ -269,13 +277,15 @@ ALIGN &100                  ; Start on new page
   equs "LS",0
   equs "LOAD",0
   equs "LP",0
+  equs "(MV)",0
   equs "PEEK",0
   equs "POKE",0
-  equs "PRT",0
+  equs "(PRT)",0
   equs "RUN",0
   equs "SAVE",0
   equs "STAT",0
   equs "VERS",0
+  equs "XCLR",0
   equs "XLOAD",0
   equs "XLS",0
   equs "XOPEN",0

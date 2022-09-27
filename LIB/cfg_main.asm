@@ -104,9 +104,9 @@ OSHRDRST   = $FFF7
 
 USR_START = $0800          ; Address where user programs load
 ROM_START = $C000
-EXTMEM_SLOT_SEL  = $BFE0   ; Write to this address to select memory slot (0-15)
-EXTMEM_START = $8000       ; This is where extended memory lives
-EXTMEM_END = $9FFF         ; Last writable byte in extended memory bank
+EXTMEM_SLOT_SEL = $BFE0    ; Write to this address to select memory slot (0-15)
+EXTMEM_START    = $8000    ; This is where extended memory lives
+EXTMEM_END      = $9FFF    ; Last writable byte in extended memory bank
 
 LCD_TYPE_16x2 = 0
 LCD_TYPE_20x4 = 1
@@ -119,13 +119,14 @@ CODEHDR_RST   = $06
 CODEHDR_END   = $08
 CODEHDR_NAME  = $0D
 
-TYPECODE_DATA = 'D'
-TYPECODE_EXEC = 'E'
-TYPECODE_OSEX = 'X'
-TYPECODE_OVLY = 'O'
+TYPECODE_BOOT = 'B'                   ; Boot ROM
+TYPECODE_DATA = 'D'                   ; Data file
+TYPECODE_EXEC = 'E'                   ; Executable code
+TYPECODE_OSEX = 'X'                   ; OS extension
+TYPECODE_OVLY = 'O'                   ; Program overlay
 
-EOCMD_SECTION = 0                   ; End of section marker for command table
-EOTBL_MKR     = 255                 ; End of table marker
+EOCMD_SECTION = 0                     ; End of section marker for command table
+EOTBL_MKR     = 255                   ; End of table marker
 
 CHR_LINEEND   = 10        ; ASCII code for line end - here we're using line feed
 CHR_SPACE     = 32
