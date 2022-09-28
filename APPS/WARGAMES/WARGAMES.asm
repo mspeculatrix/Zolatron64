@@ -66,6 +66,9 @@ ORG USR_START
   LOAD_MSG lcd_message2
   jsr OSLCDMSG
 
+  jsr press_key
+
+  jsr OSLCDCLS
 
 .prog_end
   stz STDIN_IDX                           ; Clear input buffer

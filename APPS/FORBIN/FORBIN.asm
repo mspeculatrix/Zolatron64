@@ -58,6 +58,8 @@ ORG USR_START
   NEWLINE
   jsr OSLCDMSG
 
+  jsr press_key
+
 .prog_end
   stz STDIN_IDX                           ; Clear input buffer
   stx STDIN_BUF
@@ -65,6 +67,18 @@ ORG USR_START
   and #STDIN_CLEAR_FLAGS                  ; Clear the received flags
   sta STDIN_STATUS_REG                    ; and re-save the register
   jmp OSSFTRST
+
+.press_key                                ; Returns key in FUNC_RESULT
+  pha
+.press_key_loop
+  lda STDIN_STATUS_REG
+  and #STDIN_NUL_RCVD_FL                  ; Is the 'null received' bit set?
+  beq press_key_loop                      ; If no, loop until it is
+.press_key_done
+  stz STDIN_IDX                           ; Want to get first char
+  jsr OSRDCH                              ; Read character from STDIN_BUF
+  pla
+  rts
 
 .colossus_msg
   ;     12345678901234567890

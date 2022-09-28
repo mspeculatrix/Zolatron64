@@ -593,7 +593,7 @@ End macro LOAD_MSG
      C483   AE 7F 03   LDX &037F
      C486   BD 00 03   LDA &0300,X
      C489   D0 0C      BNE &C497
-     C48B   A9 10      LDA #&10
+     C48B   A9 80      LDA #&80
      C48D   20 04 CE   JSR &CE04
      C490   A5 55      LDA &55
      C492   D0 0E      BNE &C4A2
@@ -1075,7 +1075,7 @@ End macro LOAD_MSG
      C80A   85 5A      STA &5A
      C80C   A5 61      LDA &61
      C80E   85 5B      STA &5B
-     C810   A9 16      LDA #&16
+     C810   A9 8C      LDA #&8C
      C812   20 04 CE   JSR &CE04
 Macro LED_OFF:
      C815   48         PHA
@@ -1813,7 +1813,7 @@ End macro ZD_SET_CA_OFF
 .zd_svr_resp_init_end
      CD63   60         RTS
 .zd_delfile
-     CD64   A9 20      LDA #&20
+     CD64   A9 48      LDA #&48
      CD66   20 6A CD   JSR &CD6A
      CD69   60         RTS
 .zd_handshake

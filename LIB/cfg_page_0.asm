@@ -3,7 +3,7 @@
 MSG_VEC       = $50    	 		        ; $50 Message to print
 FUNC_RES_L    = MSG_VEC + 2         ; $52 For 16-bit subroutine results. Must be
 FUNC_RES_H    = FUNC_RES_L + 1      ; $53 in zero page.
-FUNC_RESULT   = FUNC_RES_H + 1      ; $54 To hold the 8-bit result of a subroutine
+FUNC_RESULT   = FUNC_RES_H + 1      ; $54 To hold the 8-bit result of a function
 FUNC_ERR      = FUNC_RESULT + 1	    ; $55 Store an error code for functions
 
 TBL_VEC_L     = FUNC_ERR + 1        ; $56 Table vector - for searching tables
@@ -32,8 +32,8 @@ SYS_REG = STDIN_STATUS_REG + 1      ; $63 System Register
 ;  4
 ;  5      LCD_SIZE             0 = 2x16, 1 = 4x20
 ;  6
-;  7
-SYS_EXMEM_YES = %00000010 ; ORA with reg to set or test flag
-SYS_EXMEM_NO = %11111101  ; AND with reg to unset flag
-SYS_PARALLEL_YES = %00000100 ; ORA with reg to set or test flag
+;  7      ZD_INT_FL			   Not sure about this yet
+SYS_EXMEM_YES    = %00000010  ; ORA with reg to set or AND to test flag
+SYS_EXMEM_NO     = %11111101  ; AND with reg to unset flag
+SYS_PARALLEL_YES = %00000100  ; ORA with reg to set or AND to test flag
 SYS_PARALLEL_NO  = %11111011  ; AND with reg to unset flag

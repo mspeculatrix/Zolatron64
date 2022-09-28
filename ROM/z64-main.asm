@@ -38,7 +38,7 @@ ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v4.1.3", 0
+  equs "ZolOS v4.1.4", 0
 .startcode
   sei                 ; Don't interrupt me yet
   cld                 ; We don' need no steenkin' BCD

@@ -12,7 +12,7 @@
 .prog_name
   equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
-  equs "1.3.1",0              ; Version string - nul terminated
+  equs "1.3.2",0              ; Version string - nul terminated
 
 .startprog
 .reset                      ; Sometimes this may be different from startprog
@@ -102,17 +102,18 @@
   stz P_CONDITION                 ; Set Player's condition to default
   lda #NUM_STAPLES                ; Set initial number of staples
   sta STAPLE_COUNT
-
   lda GAMES_PLAYED                ; Update count of games played
   inc A                           ; Otherwise, increment number
   bne init_contd                  ; Did not roll over
   lda #$FF                        ; If it did, reset to maximum value
-
 .init_contd
   sta GAMES_PLAYED                ; and store
 
 ; Randomise initial locations of player & threats
-  ldy #0                          ; Counter for number of locs we've set
+  ldx #NUM_ROOMS
+  jsr roll_dice                   ; Random number will be in A
+  sta RANDOM_LOCS,Y
+  ldy #1                          ; Counter for number of locs we've set
 .init_loop
   LOAD_MSG press_enter_msg
   jsr OSWRMSG

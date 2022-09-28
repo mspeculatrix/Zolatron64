@@ -5,7 +5,7 @@
      0805   08
      0806   18
      0807   08
-     0808   73
+     0808   85
      0809   08
      080A   00
      080B   00
@@ -29,7 +29,7 @@
 .main
      0826   20 42 FF   JSR &FF42
 Macro LOAD_MSG:
-     0829   A9 4B      LDA #&4B
+     0829   A9 5D      LDA #&5D
      082B   85 50      STA &50
      082D   A9 08      LDA #&08
      082F   85 51      STA &51
@@ -40,23 +40,35 @@ Macro NEWLINE:
      0836   20 1B FF   JSR &FF1B
 End macro NEWLINE
      0839   20 48 FF   JSR &FF48
+     083C   20 4E 08   JSR &084E
 .prog_end
-     083C   9C 7F 03   STZ &037F
-     083F   8E 00 03   STX &0300
-     0842   A5 62      LDA &62
-     0844   29 F0      AND #&F0
-     0846   85 62      STA &62
-     0848   4C F4 FF   JMP &FFF4
+     083F   9C 7F 03   STZ &037F
+     0842   8E 00 03   STX &0300
+     0845   A5 62      LDA &62
+     0847   29 F0      AND #&F0
+     0849   85 62      STA &62
+     084B   4C F4 FF   JMP &FFF4
+.press_key
+     084E   48         PHA
+.press_key_loop
+     084F   A5 62      LDA &62
+     0851   29 01      AND #&01
+     0853   F0 FA      BEQ &084F
+.press_key_done
+     0855   9C 7F 03   STZ &037F
+     0858   20 06 FF   JSR &FF06
+     085B   68         PLA
+     085C   60         RTS
 .colossus_msg
-     084B   2A 2A 20 ...
-     0855   0A
-     0856   54 48 45 ...
-     0866   0A
-     0867   53 59 53 ...
-     086D   0A
-     086E   00
+     085D   2A 2A 20 ...
+     0867   0A
+     0868   54 48 45 ...
+     0878   0A
+     0879   53 59 53 ...
+     087F   0A
+     0880   00
 .endtag
-     086F   45 4F 46 
-     0872   00
+     0881   45 4F 46 
+     0884   00
 .endcode
 Saving file '../bin/FORBIN.EXE'
