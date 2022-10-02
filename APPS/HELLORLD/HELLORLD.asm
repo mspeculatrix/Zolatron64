@@ -5,13 +5,9 @@
 ;
 ; Written for the Beebasm assembler
 ; Assemble with:
-; beebasm -v -i TESTA.asm
+; beebasm -v -i HELLORLD.asm
 
 CPU 1                               ; use 65C02 instruction set
-
-BARLED = $0230				      ; for the bar LED display
-BARLED_L = BARLED
-BARLED_H = BARLED + 1
 
 INCLUDE "../../LIB/cfg_main.asm"
 INCLUDE "../../LIB/cfg_page_0.asm"
@@ -53,12 +49,17 @@ ORG USR_START
 
   jsr OSLCDCLS
 
-  LOAD_MSG cons_message
+  lda #<cons_message                              ; LSB of message
+  sta MSG_VEC
+  lda #>cons_message                              ; MSB of message
+  sta MSG_VEC+1
   jsr OSWRMSG
-  LOAD_MSG lcd_message
+  lda #<lcd_message                              ; LSB of message
+  sta MSG_VEC
+  lda #>lcd_message                              ; MSB of message
+  sta MSG_VEC+1
   jsr OSLCDMSG
   jsr press_key
-
 
 .prog_end
   stz STDIN_IDX                           ; Clear input buffer
@@ -68,13 +69,12 @@ ORG USR_START
   sta STDIN_STATUS_REG                    ; and re-save the register
   jmp OSSFTRST
 
-
 .press_key                              ; Returns key in FUNC_RESULT
   pha
 .press_key_loop
   lda STDIN_STATUS_REG
   and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
-  beq press_key_loop                ; If no, loop until it is
+  beq press_key_loop                    ; If no, loop until it is
 .press_key_done
   stz STDIN_IDX                         ; Want to get first char
   jsr OSRDCH                            ; Read character from STDIN_BUF
