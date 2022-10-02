@@ -16,7 +16,7 @@
 .cmdprcXCLR_loop
   stz EXTMEM_START,X
   inx
-  cpx #32
+  cpx #CLEAR_BYTES
   beq cmdprcXCLR_done
   jmp cmdprcXCLR_loop
 .cmdprcXCLR_done

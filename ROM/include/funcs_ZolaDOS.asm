@@ -3,12 +3,13 @@
 \ Library for ZolaDOS using a 6522 VIA
 
 \ HOW STREAMING MIGHT WORK:
-\ * OSZDOPENR - check for error
+\ * OSZDOPENR - open file for reading
+\   - check for error
 \ * For each block/byte:
 \   + Use ZD_INIT_PROCESS with the opcode ZD_OPCODE_RBYTE or ZD_OPCODE_RBLK.
 \   + Check return code: 0 = OK, 255 = no more data, anything else is an error.
 \     - If OK, run ZD_RCV_DATA
-\ OSZDCLOSE
+\ * OSZDCLOSE
 
 \ To implement:
 \ These all require a file to have been opened and an active file handle.
@@ -18,6 +19,19 @@
 \  OSZDWBYTE                ; Write byte
 \  OSZDRSTR                 ; Read nul-terminated string
 \  OSZDWSTR                 ; Write nul-terminated string
+
+\ ON ENTRY: - FILE_ADDR/+1 must point to next position in memory into which we
+\             want to load the data.
+\ ON EXIT : - FUNC_ERR contains 0 for OK, 255 for 'end of file' and anything
+\             else is an error code.
+.zd_read_blk
+  lda #ZD_OPCODE_RBLK
+  jsr zd_init_process
+  lda FUNC_ERR
+  bne zd_read_blk_end       ; Non-0 - an error or end of file
+  jsr zd_recv_data          ; Get data
+.zd_read_blk_end
+  rts
 
 \ ------------------------------------------------------------------------------
 \ ---  ZD_INIT
@@ -126,7 +140,7 @@
 \ ---  Implements: OSZDLOAD
 \ ------------------------------------------------------------------------------
 \ Loads a file into memory.
-\ ON ENTRY: - A must contain ZD OPCODE - eg, #ZD_OPCODE_LOAD
+\ ON ENTRY: - A must contain ZD OPCODE - eg, #ZD_OPCODE_LOAD, #ZD_OPCODE_XLOAD
 \           - STR_BUF must contain filename
 \           - FILE_ADDR/+1 must contain address to which we wish to load file.
 \ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
@@ -150,9 +164,9 @@
 
 \ ---  ZD_OPEN_FILE
 .zd_open_file
-\ ON ENTRY: - A must contain ZD OPCODE - eg, #ZD_OPCODE_LOAD
+\ ON ENTRY: - A must contain ZD OPCODE - eg, #ZD_OPCODE_OPENR
 \           - STR_BUF must contain filename
-\           - ??? FILE_ADDR/+1 must contain address to which we wish to load file.
+\           - FILE_ADDR/+1 must contain address to which we wish to load file.
   jsr zd_handshake            ; ----- INITIATE ---------------------------------
   lda FUNC_ERR
   bne zd_openf_end            ; If this is anything but 0, that's an error
@@ -203,8 +217,8 @@
   bne zd_rcv_data_end         ; If not 0, then we're done, otherwise...
   jmp zd_rcv_data_loop        ; Go around for the next byte
 .zd_rcv_data_chkSA
-  jsr zd_strobeDelay          ; *** TRY REMOVING THIS??? ***
-  jsr zd_waitForSAoff
+  jsr zd_strobeDelay
+  jsr zd_waitForSAoff         ; Returns 0 if no error
 .zd_rcv_data_end
   rts
 
@@ -213,7 +227,7 @@
 \ ---  Implements: OSZDSAVE
 \ ------------------------------------------------------------------------------
 \ Saves a section of memory to a file.
-\ ON ENTRY: - A must contain the save type - eg, #ZD_OPCODE_SAVE_CRT
+\ ON ENTRY: - A must contain the save type opcode - eg, #ZD_OPCODE_SAVE_CRT
 \           - TMP_ADDR_A must contain 16-bit start address
 \           - TMP_ADDR_B must contain end address
 \           - STR_BUF must contain nul-terminated filename string
@@ -222,15 +236,7 @@
 \ X - n/a
 \ Y - n/a
 .zd_save_data
-  stz FUNC_ERR                ; Zero out the error code
-  jsr zd_init_process         ; Tell ZolaDOS device we want to perform a SAVE
-  lda FUNC_ERR
-  bne zd_save_data_end        ; If this is anything but 0, that's an error
-  jsr zd_send_strbuf          ; Send the filename over the ZolaDOS port
-  lda FUNC_ERR
-  bne zd_save_data_end
-  ZD_SET_DATADIR_INPUT        ; ----- GET SERVER RESPONSE ----------------------
-  jsr zd_svr_resp
+  jsr zd_handshake
   lda FUNC_ERR
   bne zd_save_data_end
   jsr zd_waitForSAoff

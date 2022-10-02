@@ -203,7 +203,7 @@ ALIGN &100                  ; Start on new page
 .err_msg_hex_bin_conv
   equs "Hex-byte error",0
 .err_msg_parse
-  equs "Parse error",0
+  equs "Don't understan",0
 .err_msg_read_hexbyte
   equs "Err reading hex input",0
 .err_msg_syntax
@@ -274,9 +274,9 @@ ALIGN &100                  ; Start on new page
   equs "HELP",0
   equs "JMP",0
   equs "LM",0
-  equs "LS",0
   equs "LOAD",0
   equs "LP",0
+  equs "LS",0
   equs "(MV)",0
   equs "PEEK",0
   equs "POKE",0

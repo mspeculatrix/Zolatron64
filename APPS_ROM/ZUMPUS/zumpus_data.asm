@@ -73,7 +73,7 @@
 
 .init_msg
   equs "We need to initialise the random locations for you and the",10
-  equs "threats. This means hitting the ENTER key at least six times",10
+  equs "threats. This means hitting the ENTER key at least five times",10
   equs "(probably more).",10,0
 .init_done_msg
   equs "Initialising completed. Well done!",10,0

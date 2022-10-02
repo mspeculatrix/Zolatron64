@@ -1,0 +1,126 @@
+.header
+     0800   4C 18 08   JMP &0818
+     0803   45 
+     0804   00
+     0805   08
+     0806   18
+     0807   08
+     0808   0B
+     0809   09
+     080A   00
+     080B   00
+     080C   00
+.prog_name
+     080D   54 45 53 ...
+     0813   00
+.version_string
+     0814   31 2E 30 
+     0817   00
+.startprog
+.reset
+     0818   78         SEI
+     0819   D8         CLD
+     081A   A2 FF      LDX #&FF
+     081C   9A         TXS
+     081D   A9 00      LDA #&00
+     081F   8D 30 04   STA &0430
+     0822   58         CLI
+.main
+Macro LOAD_MSG:
+     0823   A9 A9      LDA #&A9
+     0825   85 50      STA &50
+     0827   A9 08      LDA #&08
+     0829   85 51      STA &51
+End macro LOAD_MSG
+     082B   20 21 FF   JSR &FF21
+     082E   A9 0A      LDA #&0A
+     0830   20 1B FF   JSR &FF1B
+.enter_loop
+Macro LOAD_MSG:
+     0833   A9 CE      LDA #&CE
+     0835   85 50      STA &50
+     0837   A9 08      LDA #&08
+     0839   85 51      STA &51
+End macro LOAD_MSG
+     083B   20 21 FF   JSR &FF21
+     083E   20 87 08   JSR &0887
+     0841   A5 54      LDA &54
+     0843   20 30 FF   JSR &FF30
+     0846   20 24 FF   JSR &FF24
+Macro NEWLINE:
+     0849   48         PHA
+     084A   A9 0A      LDA #&0A
+     084C   20 1B FF   JSR &FF1B
+     084F   68         PLA
+End macro NEWLINE
+     0850   A5 54      LDA &54
+     0852   F0 1B      BEQ &086F
+     0854   20 1B FF   JSR &FF1B
+     0857   4C 7A 08   JMP &087A
+.enter_error
+Macro LOAD_MSG:
+     085A   A9 E3      LDA #&E3
+     085C   85 50      STA &50
+     085E   A9 08      LDA #&08
+     0860   85 51      STA &51
+End macro LOAD_MSG
+     0862   20 21 FF   JSR &FF21
+Macro NEWLINE:
+     0865   48         PHA
+     0866   A9 0A      LDA #&0A
+     0868   20 1B FF   JSR &FF1B
+     086B   68         PLA
+End macro NEWLINE
+     086C   4C 84 08   JMP &0884
+.enter_entered
+Macro LOAD_MSG:
+     086F   A9 FE      LDA #&FE
+     0871   85 50      STA &50
+     0873   A9 08      LDA #&08
+     0875   85 51      STA &51
+End macro LOAD_MSG
+     0877   20 21 FF   JSR &FF21
+.enter_loopback
+Macro NEWLINE:
+     087A   48         PHA
+     087B   A9 0A      LDA #&0A
+     087D   20 1B FF   JSR &FF1B
+     0880   68         PLA
+End macro NEWLINE
+     0881   4C 33 08   JMP &0833
+.prog_end
+     0884   4C F4 FF   JMP &FFF4
+.os_getkey
+     0887   64 55      STZ &55
+     0889   64 54      STZ &54
+     088B   9C 7F 03   STZ &037F
+     088E   9C 00 03   STZ &0300
+.os_getkey_loop
+     0891   A5 62      LDA &62
+     0893   29 01      AND #&01
+     0895   F0 FA      BEQ &0891
+     0897   AD 00 03   LDA &0300
+     089A   85 54      STA &54
+     089C   A5 62      LDA &62
+     089E   29 F0      AND #&F0
+     08A0   85 62      STA &62
+     08A2   9C 7F 03   STZ &037F
+     08A5   9C 00 03   STZ &0300
+     08A8   60         RTS
+.welcome_msg
+     08A9   54 45 53 ...
+     08CD   00
+.enter_msg
+     08CE   54 79 70 ...
+     08E2   00
+.error_msg
+     08E3   48 6D 6D ...
+     08FD   00
+.return_msg
+     08FE   3C 72 65 ...
+     0906   00
+.endtag
+     0907   45 4F 46 
+     090A   00
+.endcode
+Saving file '../bin/TESTIO.EXE'

@@ -1,0 +1,86 @@
+.header
+     0800   4C 1A 08   JMP &081A
+     0803   45 
+     0804   00
+     0805   08
+     0806   1A
+     0807   08
+     0808   AC
+     0809   08
+     080A   00
+     080B   00
+     080C   00
+.prog_name
+     080D   48 45 4C ...
+     0815   00
+.version_string
+     0816   31 2E 30 
+     0819   00
+.startprog
+.reset
+     081A   78         SEI
+     081B   D8         CLD
+     081C   A2 FF      LDX #&FF
+     081E   9A         TXS
+     081F   A9 00      LDA #&00
+     0821   8D 30 04   STA &0430
+     0824   58         CLI
+     0825   20 42 FF   JSR &FF42
+.main
+     0828   20 42 FF   JSR &FF42
+Macro LOAD_MSG:
+     082B   A9 62      LDA #&62
+     082D   85 50      STA &50
+     082F   A9 08      LDA #&08
+     0831   85 51      STA &51
+End macro LOAD_MSG
+     0833   20 21 FF   JSR &FF21
+Macro LOAD_MSG:
+     0836   A9 87      LDA #&87
+     0838   85 50      STA &50
+     083A   A9 08      LDA #&08
+     083C   85 51      STA &51
+End macro LOAD_MSG
+     083E   20 48 FF   JSR &FF48
+     0841   20 53 08   JSR &0853
+.prog_end
+     0844   9C 7F 03   STZ &037F
+     0847   8E 00 03   STX &0300
+     084A   A5 62      LDA &62
+     084C   29 F0      AND #&F0
+     084E   85 62      STA &62
+     0850   4C F4 FF   JMP &FFF4
+.press_key
+     0853   48         PHA
+.press_key_loop
+     0854   A5 62      LDA &62
+     0856   29 01      AND #&01
+     0858   F0 FA      BEQ &0854
+.press_key_done
+     085A   9C 7F 03   STZ &037F
+     085D   20 06 FF   JSR &FF06
+     0860   68         PLA
+     0861   60         RTS
+.cons_message
+     0862   0A
+     0863   48 45 4C ...
+     086C   0A
+     086D   0A
+     086E   53 48 41 ...
+     0883   0A
+     0884   0A
+     0885   3E
+     0886   00
+.lcd_message
+     0887   48 45 4C ...
+     0890   0A
+     0891   0A
+     0892   53 48 41 ...
+     08A1   0A
+     08A2   47 41 4D ...
+     08A7   00
+.endtag
+     08A8   45 4F 46 
+     08AB   00
+.endcode
+Saving file '../bin/HELLORLD.EXE'

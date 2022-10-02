@@ -180,8 +180,10 @@ MACRO PRT_MSG msg_addr, func_addr
 ENDMACRO
 
 MACRO NEWLINE
+  pha
   lda #CHR_LINEEND
   jsr OSWRCH
+  pla
 ENDMACRO
 
 MACRO CLEAR_INPUT_BUF

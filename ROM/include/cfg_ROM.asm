@@ -39,5 +39,5 @@ CMD_TKN_XSEL  = CMD_TKN_XRUN + 1       ; XSEL - select ext memory bank
 CMD_MAX_LEN = 8           ; Max number of chars in command names
 CMDS_PER_LINE = 6         ; Number of cmds we'll print per line when using HELP
 
-CLEAR_BYTES = 64          ; Number of bytes to clear at start of memory to
-                          ; clear a program with CLEAR command
+CLEAR_BYTES = 16          ; Number of bytes to clear at start of memory to
+                          ; clear a program with CLEAR or XCLR commands

@@ -345,7 +345,6 @@ ORG $FF00
   jmp (OSPRTINIT_VEC)
   jmp (OSPRTMSG_VEC)
   jmp (OSPRTSBUF_VEC)
-  \jmp (OSPRTSTMSG_VEC)
 
   jmp (OSZDDEL_VEC)
   jmp (OSZDLOAD_VEC)

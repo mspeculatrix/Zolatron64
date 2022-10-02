@@ -78,7 +78,7 @@
 \ X - P
 \ Y - P
 .byte_to_int_str
-  phx : phy
+  pha : phx : phy
   stz TMP_IDX             ; Keep track of digits in buffer
   stz STR_BUF             ; Set nul terminator at start of buffer
 .byte_to_int_str_next_digit
@@ -106,7 +106,7 @@
   beq byte_to_int_str_done
   jmp byte_to_int_str_next_digit
 .byte_to_int_str_done
-  ply : plx
+  ply : plx : pla
   rts
 
 \ ------------------------------------------------------------------------------
