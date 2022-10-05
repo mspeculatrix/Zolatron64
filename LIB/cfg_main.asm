@@ -51,7 +51,8 @@ ERR_PRT_NOT_PRESENT   = ERR_PRT_STATE_ERR + 1       ; Printer board not present
 \    - cfg_page_2.asm - OS Indirection Table
 \-------------------------------------------------------------------------------
 ; READ
-OSRDASC    = $FF00
+OSGETKEY   = $FF00
+OSRDASC    = OSGETKEY + 3
 OSRDBYTE   = OSRDASC + 3
 OSRDCH     = OSRDBYTE + 3
 OSRDHBYTE  = OSRDCH + 3

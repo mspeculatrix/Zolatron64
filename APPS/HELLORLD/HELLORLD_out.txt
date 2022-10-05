@@ -25,23 +25,19 @@
      081F   A9 00      LDA #&00
      0821   8D 30 04   STA &0430
      0824   58         CLI
-     0825   20 42 FF   JSR &FF42
+     0825   20 45 FF   JSR &FF45
 .main
-     0828   20 42 FF   JSR &FF42
-Macro LOAD_MSG:
+     0828   20 45 FF   JSR &FF45
      082B   A9 62      LDA #&62
      082D   85 50      STA &50
      082F   A9 08      LDA #&08
      0831   85 51      STA &51
-End macro LOAD_MSG
-     0833   20 21 FF   JSR &FF21
-Macro LOAD_MSG:
+     0833   20 24 FF   JSR &FF24
      0836   A9 87      LDA #&87
      0838   85 50      STA &50
      083A   A9 08      LDA #&08
      083C   85 51      STA &51
-End macro LOAD_MSG
-     083E   20 48 FF   JSR &FF48
+     083E   20 4B FF   JSR &FF4B
      0841   20 53 08   JSR &0853
 .prog_end
      0844   9C 7F 03   STZ &037F
@@ -58,7 +54,7 @@ End macro LOAD_MSG
      0858   F0 FA      BEQ &0854
 .press_key_done
      085A   9C 7F 03   STZ &037F
-     085D   20 06 FF   JSR &FF06
+     085D   20 09 FF   JSR &FF09
      0860   68         PLA
      0861   60         RTS
 .cons_message

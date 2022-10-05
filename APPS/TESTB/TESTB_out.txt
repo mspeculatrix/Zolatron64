@@ -5,7 +5,7 @@
      0805   08
      0806   17
      0807   08
-     0808   9D
+     0808   A3
      0809   08
      080A   00
      080B   00
@@ -25,70 +25,76 @@
      081C   A9 00      LDA #&00
      081E   8D 30 04   STA &0430
      0821   58         CLI
-     0822   20 42 FF   JSR &FF42
+     0822   20 45 FF   JSR &FF45
 .main
 Macro LOAD_MSG:
-     0825   A9 81      LDA #&81
+     0825   A9 87      LDA #&87
      0827   85 50      STA &50
      0829   A9 08      LDA #&08
      082B   85 51      STA &51
 End macro LOAD_MSG
-     082D   20 21 FF   JSR &FF21
+     082D   20 24 FF   JSR &FF24
      0830   A9 0A      LDA #&0A
-     0832   20 1B FF   JSR &FF1B
-     0835   20 48 FF   JSR &FF48
+     0832   20 1E FF   JSR &FF1E
+     0835   20 4B FF   JSR &FF4B
 Macro LOAD_MSG:
-     0838   A9 88      LDA #&88
+     0838   A9 8E      LDA #&8E
      083A   85 50      STA &50
      083C   A9 08      LDA #&08
      083E   85 51      STA &51
 End macro LOAD_MSG
-     0840   20 21 FF   JSR &FF21
-     0843   20 48 FF   JSR &FF48
+     0840   20 24 FF   JSR &FF24
+     0843   20 4B FF   JSR &FF4B
 Macro NEWLINE:
-     0846   A9 0A      LDA #&0A
-     0848   20 1B FF   JSR &FF1B
+     0846   48         PHA
+     0847   A9 0A      LDA #&0A
+     0849   20 1E FF   JSR &FF1E
+     084C   68         PLA
 End macro NEWLINE
-     084B   A9 F5      LDA #&F5
-     084D   20 33 FF   JSR &FF33
-     0850   20 24 FF   JSR &FF24
+     084D   A9 F5      LDA #&F5
+     084F   20 36 FF   JSR &FF36
+     0852   20 27 FF   JSR &FF27
 Macro NEWLINE:
-     0853   A9 0A      LDA #&0A
-     0855   20 1B FF   JSR &FF1B
+     0855   48         PHA
+     0856   A9 0A      LDA #&0A
+     0858   20 1E FF   JSR &FF1E
+     085B   68         PLA
 End macro NEWLINE
-     0858   A2 00      LDX #&00
+     085C   A2 00      LDX #&00
 .seed_loop
-     085A   20 71 08   JSR &0871
-     085D   AD 00 60   LDA &6000
-     0860   20 33 FF   JSR &FF33
-     0863   20 24 FF   JSR &FF24
+     085E   20 77 08   JSR &0877
+     0861   AD 00 60   LDA &6000
+     0864   20 36 FF   JSR &FF36
+     0867   20 27 FF   JSR &FF27
 Macro NEWLINE:
-     0866   A9 0A      LDA #&0A
-     0868   20 1B FF   JSR &FF1B
+     086A   48         PHA
+     086B   A9 0A      LDA #&0A
+     086D   20 1E FF   JSR &FF1E
+     0870   68         PLA
 End macro NEWLINE
-     086B   CA         DEX
-     086C   D0 EC      BNE &085A
+     0871   CA         DEX
+     0872   D0 EA      BNE &085E
 .prog_end
-     086E   4C F4 FF   JMP &FFF4
+     0874   4C F4 FF   JMP &FFF4
 .rand8_seed
-     0871   AD 00 60   LDA &6000
-     0874   F0 05      BEQ &087B
-     0876   0A         ASL A
-     0877   F0 04      BEQ &087D
-     0879   90 02      BCC &087D
+     0877   AD 00 60   LDA &6000
+     087A   F0 05      BEQ &0881
+     087C   0A         ASL A
+     087D   F0 04      BEQ &0883
+     087F   90 02      BCC &0883
 .rand8_seed_eor
-     087B   49 1D      EOR #&1D
+     0881   49 1D      EOR #&1D
 .rand8_seed_no_eor
-     087D   8D 00 60   STA &6000
-     0880   60         RTS
+     0883   8D 00 60   STA &6000
+     0886   60         RTS
 .welcome_msg
-     0881   54 45 53 ...
-     0887   00
+     0887   54 45 53 ...
+     088D   00
 .second_msg
-     0888   41 20 73 ...
-     0898   00
+     088E   41 20 73 ...
+     089E   00
 .endtag
-     0899   45 4F 46 
-     089C   00
+     089F   45 4F 46 
+     08A2   00
 .endcode
 Saving file '../bin/TESTB.EXE'

@@ -29,7 +29,7 @@
   jsr zd_init_process
   lda FUNC_ERR
   bne zd_read_blk_end       ; Non-0 - an error or end of file
-  jsr zd_recv_data          ; Get data
+  jsr zd_rcv_data          ; Get data
 .zd_read_blk_end
   rts
 

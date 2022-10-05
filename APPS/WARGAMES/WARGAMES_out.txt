@@ -5,7 +5,7 @@
      0805   08
      0806   1A
      0807   08
-     0808   13
+     0808   15
      0809   09
      080A   00
      080B   00
@@ -25,94 +25,96 @@
      081F   A9 00      LDA #&00
      0821   8D 30 04   STA &0430
      0824   58         CLI
-     0825   20 42 FF   JSR &FF42
+     0825   20 45 FF   JSR &FF45
 .main
-     0828   20 42 FF   JSR &FF42
+     0828   20 45 FF   JSR &FF45
 Macro LOAD_MSG:
-     082B   A9 83      LDA #&83
+     082B   A9 85      LDA #&85
      082D   85 50      STA &50
      082F   A9 08      LDA #&08
      0831   85 51      STA &51
 End macro LOAD_MSG
-     0833   20 21 FF   JSR &FF21
+     0833   20 24 FF   JSR &FF24
 Macro LOAD_MSG:
-     0836   A9 C9      LDA #&C9
+     0836   A9 CB      LDA #&CB
      0838   85 50      STA &50
      083A   A9 08      LDA #&08
      083C   85 51      STA &51
 End macro LOAD_MSG
-     083E   20 48 FF   JSR &FF48
-     0841   20 74 08   JSR &0874
+     083E   20 4B FF   JSR &FF4B
+     0841   20 76 08   JSR &0876
 Macro LOAD_MSG:
-     0844   A9 9D      LDA #&9D
+     0844   A9 9F      LDA #&9F
      0846   85 50      STA &50
      0848   A9 08      LDA #&08
      084A   85 51      STA &51
 End macro LOAD_MSG
-     084C   20 21 FF   JSR &FF21
+     084C   20 24 FF   JSR &FF24
 Macro NEWLINE:
-     084F   A9 0A      LDA #&0A
-     0851   20 1B FF   JSR &FF1B
+     084F   48         PHA
+     0850   A9 0A      LDA #&0A
+     0852   20 1E FF   JSR &FF1E
+     0855   68         PLA
 End macro NEWLINE
 Macro LOAD_MSG:
-     0854   A9 E3      LDA #&E3
-     0856   85 50      STA &50
-     0858   A9 08      LDA #&08
-     085A   85 51      STA &51
+     0856   A9 E5      LDA #&E5
+     0858   85 50      STA &50
+     085A   A9 08      LDA #&08
+     085C   85 51      STA &51
 End macro LOAD_MSG
-     085C   20 48 FF   JSR &FF48
-     085F   20 74 08   JSR &0874
-     0862   20 42 FF   JSR &FF42
+     085E   20 4B FF   JSR &FF4B
+     0861   20 76 08   JSR &0876
+     0864   20 45 FF   JSR &FF45
 .prog_end
-     0865   9C 7F 03   STZ &037F
-     0868   8E 00 03   STX &0300
-     086B   A5 62      LDA &62
-     086D   29 F0      AND #&F0
-     086F   85 62      STA &62
-     0871   4C F4 FF   JMP &FFF4
+     0867   9C 7F 03   STZ &037F
+     086A   8E 00 03   STX &0300
+     086D   A5 62      LDA &62
+     086F   29 F0      AND #&F0
+     0871   85 62      STA &62
+     0873   4C F4 FF   JMP &FFF4
 .press_key
-     0874   48         PHA
+     0876   48         PHA
 .press_key_loop
-     0875   A5 62      LDA &62
-     0877   29 01      AND #&01
-     0879   F0 FA      BEQ &0875
+     0877   A5 62      LDA &62
+     0879   29 01      AND #&01
+     087B   F0 FA      BEQ &0877
 .press_key_done
-     087B   9C 7F 03   STZ &037F
-     087E   20 06 FF   JSR &FF06
-     0881   68         PLA
-     0882   60         RTS
+     087D   9C 7F 03   STZ &037F
+     0880   20 09 FF   JSR &FF09
+     0883   68         PLA
+     0884   60         RTS
 .cons_message1
-     0883   0A
-     0884   53 48 41 ...
-     0899   0A
-     089A   0A
-     089B   3E
-     089C   00
+     0885   0A
+     0886   53 48 41 ...
+     089B   0A
+     089C   0A
+     089D   3E
+     089E   00
 .cons_message2
-     089D   0A
-     089E   57 4F 55 ...
-     08C7   0A
-     08C8   00
-.lcd_message1
+     089F   0A
+     08A0   57 4F 55 ...
      08C9   0A
-     08CA   53 48 41 ...
-     08D7   0A
-     08D8   41 20 47 ...
-     08DF   0A
-     08E0   0A
-     08E1   3E
-     08E2   00
+     08CA   00
+.lcd_message1
+     08CB   0A
+     08CC   53 48 41 ...
+     08D9   0A
+     08DA   41 20 47 ...
+     08E1   0A
+     08E2   0A
+     08E3   3E
+     08E4   00
 .lcd_message2
-     08E3   0A
-     08E4   57 4F 55 ...
-     08F7   0A
-     08F8   41 20 47 ...
-     0906   0A
-     0907   43 48 45 ...
-     090D   0A
-     090E   00
+     08E5   0A
+     08E6   57 4F 55 ...
+     08F9   0A
+     08FA   41 20 47 ...
+     0908   0A
+     0909   43 48 45 ...
+     090F   0A
+     0910   00
 .endtag
-     090F   45 4F 46 
-     0912   00
+     0911   45 4F 46 
+     0914   00
 .endcode
 Saving file '../bin/WARGAMES.EXE'

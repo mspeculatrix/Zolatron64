@@ -10,6 +10,10 @@
 \    - cfg_main.asm   - OS Function Address Table
 
 \ --- READ ---------------------------------------------------------------------
+  lda #<getkey                        ; OSRDASC
+  sta OSGETKEY_VEC
+  lda #>getkey
+  sta OSGETKEY_VEC + 1
   lda #<read_ascii                    ; OSRDASC
   sta OSRDASC_VEC
   lda #>read_ascii

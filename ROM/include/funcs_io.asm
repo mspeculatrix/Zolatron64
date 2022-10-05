@@ -217,6 +217,32 @@
   rts
 
 \ ------------------------------------------------------------------------------
+\ ---  GETKEY
+\ ---  Implements: OSGETKEY
+\ ------------------------------------------------------------------------------
+\ ON EXIT : - FUNC_RESULT contains key ASCII code - 0 means just return was
+\             pressed.
+\ A - O
+\ X - n/a
+\ Y - n/a
+.getkey
+  stz FUNC_RESULT
+  stz STDIN_IDX                         ; Zero-out buffer
+  stz STDIN_BUF
+.getkey_loop
+  lda STDIN_STATUS_REG
+  and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
+  beq getkey_loop                       ; If no, loop until it is
+  lda STDIN_BUF                         ; Read char from STDIN_BUF
+  sta FUNC_RESULT
+  lda STDIN_STATUS_REG                  ; Clear the STDIN flags in status reg
+  and #STDIN_CLEAR_FLAGS
+  sta STDIN_STATUS_REG
+  stz STDIN_IDX                         ; Zero-out buffer
+  stz STDIN_BUF
+  rts
+
+\ ------------------------------------------------------------------------------
 \ ---  READ_ASCII
 \ ---  Implements: OSRDASC
 \ ------------------------------------------------------------------------------

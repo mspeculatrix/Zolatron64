@@ -38,7 +38,7 @@ ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v4.1.4", 0
+  equs "ZolOS v4.2.0", 0
 .startcode
   sei                 ; Don't interrupt me yet
   cld                 ; We don' need no steenkin' BCD
@@ -183,7 +183,6 @@ INCLUDE "include/os_call_vectors.asm"
   jmp EXTMEM_START                      ; Otherwise, jump to ROM code
 
 .ready
-; READY MESSAGE
   LOAD_MSG ready_msg
   jsr OSWRMSG
   jsr OSLCDMSG
@@ -250,6 +249,7 @@ INCLUDE "include/os_call_vectors.asm"
 
 .cmdprcSTAR
   jmp cmdprc_end
+INCLUDE "include/cmds_punc.asm"
 INCLUDE "include/cmds_B.asm"
 INCLUDE "include/cmds_C.asm"
 INCLUDE "include/cmds_D.asm"
@@ -306,6 +306,7 @@ ALIGN &100                                        ; Start on new page
 \-------------------------------------------------------------------------------
 ORG $FF00
 .os_calls
+  jmp (OSGETKEY_VEC)
   jmp (OSRDASC_VEC)
   jmp (OSRDBYTE_VEC)
   jmp (OSRDCH_VEC)
@@ -370,4 +371,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-4.1.bin", startrom, endrom
+SAVE "bin/z64-ROM-4.2.bin", startrom, endrom

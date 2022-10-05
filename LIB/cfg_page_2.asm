@@ -10,8 +10,9 @@
 \    - cfg_main.asm        - OS Function Address Table
 \-------------------------------------------------------------------------------
 ; READ
-OSRDASC_VEC    = $0200
-OSRDBYTE_VEC   = OSRDASC_VEC +2
+OSGETKEY_VEC   = $0200
+OSRDASC_VEC    = OSGETKEY_VEC + 2
+OSRDBYTE_VEC   = OSRDASC_VEC + 2
 OSRDCH_VEC     = OSRDBYTE_VEC + 2
 OSRDHBYTE_VEC  = OSRDCH_VEC + 2
 OSRDHADDR_VEC  = OSRDHBYTE_VEC + 2

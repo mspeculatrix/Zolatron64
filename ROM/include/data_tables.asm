@@ -13,8 +13,8 @@ ALIGN &100                  ; Start on new page
 \ the command files that includes).
 .cmdprcptrs
   equw cmdprcSTAR           ; *
-  equw cmdprcPEEK           ; ? - synonym for PEEK
-  equw cmdprcPOKE           ; ! - synonym for POKE
+  equw cmdprcBANG           ; !
+  equw cmdprcQUERY          ; ?
   equw cmdprcBRK            ; BRK
   equw cmdprcCLEAR          ; CLEAR
   equw cmdprcDEL            ; DEL
@@ -46,7 +46,7 @@ ALIGN &100                  ; Start on new page
 \ understand where to go next by looking it up in the Command Pointers table
 \ below.
 .cmd_ch1_tbl
-  equs "*?!BCDHJLMPRSVX"
+  equs "*!?BCDHJLMPRSVX"
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -58,8 +58,8 @@ ALIGN &100                  ; Start on new page
 \ of the Command Table section.
 .cmd_ptrs                   ; Pointers to command table sections
   equw cmd_tbl_STAR         ; Commands starting '*'
-  equw cmd_tbl_QUERY        ; Commands starting '?'
   equw cmd_tbl_BANG         ; Commands starting '!'
+  equw cmd_tbl_QUERY        ; Commands starting '?'
   equw cmd_tbl_ASCB         ; Commands starting 'B'
   equw cmd_tbl_ASCC         ; Commands starting 'C'
   equw cmd_tbl_ASCD         ; Commands starting 'D'
@@ -82,12 +82,12 @@ ALIGN &100                  ; Start on new page
   equb CMD_TKN_STAR            ; Not sure what I'm using this for yet
   equb EOCMD_SECTION           ; Comes at end of each section
 
-.cmd_tbl_QUERY                 ; Commands starting '?'
-  equb CMD_TKN_PEEK            ; Synonym for PEEK
+.cmd_tbl_BANG                  ; Commands starting '!'
+  equb CMD_TKN_BANG            ;
   equb EOCMD_SECTION
 
-.cmd_tbl_BANG                  ; Commands starting '!'
-  equb CMD_TKN_POKE            ; Synonym for POKE
+.cmd_tbl_QUERY                 ; Commands starting '?'
+  equb CMD_TKN_QUERY           ;
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCB                  ; Commands starting 'B'
@@ -203,9 +203,9 @@ ALIGN &100                  ; Start on new page
 .err_msg_hex_bin_conv
   equs "Hex-byte error",0
 .err_msg_parse
-  equs "Don't understan",0
+  equs "Don't understand",0
 .err_msg_read_hexbyte
-  equs "Err reading hex input",0
+  equs "Err reading hex",0
 .err_msg_syntax
   equs "What?", 0
 .err_file_read
@@ -313,6 +313,8 @@ ALIGN &100                  ; Start on new page
 
 .start_msg
 	equs "Zolatron 64", 0
+.okay_msg
+  equs "OK",10,0
 .ready_msg
   equs "Ready",0
 
