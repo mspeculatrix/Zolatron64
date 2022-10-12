@@ -53,18 +53,7 @@
 \ automatically by ZolaDOS).
 .cmdprcLOAD
   LED_ON LED_FILE_ACT
-  LOAD_MSG loading_msg
-  jsr OSWRMSG
-  jsr OSLCDMSG
-  lda #<USR_START             ; This is where we're going to put the code
-  sta FILE_ADDR
-  lda #>USR_START
-  sta FILE_ADDR + 1
-  jsr read_filename           ; Puts filename in STR_BUF
-  lda FUNC_ERR
-  bne cmdprcLOAD_err
-  lda #ZD_OPCODE_LOAD         ; Use opcode for loading .BIN files
-  jsr zd_loadfile
+  jsr zd_getfile
   LED_OFF LED_FILE_ACT
   lda FUNC_ERR
   bne cmdprcLOAD_err
@@ -73,13 +62,7 @@
   LED_ON LED_ERR
   jmp cmdprc_fail
 .cmdprcLOAD_success
-  LOAD_MSG file_act_complete_msg
-  jsr OSWRMSG
-  jsr OSLCDMSG
-  lda USR_START+CODEHDR_END    ; Get info about first free byte after prog
-  sta LOMEM                    ; to put into our LOMEM variable
-  lda USR_START+CODEHDR_END+1
-  sta LOMEM + 1
+  jsr zd_fileload_ok
   jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------

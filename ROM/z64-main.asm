@@ -33,17 +33,17 @@ INCLUDE "../LIB/cfg_parallel.asm"
 INCLUDE "../LIB/cfg_prt.asm"
 
 \ ----- INITIALISATION ---------------------------------------------------------
-ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
-.startrom             ; This is where the ROM bytes start for the file, but...
+ORG $8000              ; Using only the top 16KB of a 32KB EEPROM.
+.startrom              ; This is where the ROM bytes start for the file, but...
 ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v4.2.0", 0
+  equs "ZolOS v4.2.1", 0
 .startcode
-  sei                 ; Don't interrupt me yet
-  cld                 ; We don' need no steenkin' BCD
-  ldx #$ff            ; Set stack pointer to $01FF - only need to set
-  txs                 ; the LSB, as MSB is assumed to be $01
+  sei                  ; Don't interrupt me yet
+  cld                  ; We don' need no steenkin' BCD
+  ldx #$ff             ; Set stack pointer to $01FF - only need to set
+  txs                  ; the LSB, as MSB is assumed to be $01
 
 ; Initialise registers etc
   stz SYS_REG
@@ -253,6 +253,7 @@ INCLUDE "include/cmds_punc.asm"
 INCLUDE "include/cmds_B.asm"
 INCLUDE "include/cmds_C.asm"
 INCLUDE "include/cmds_D.asm"
+INCLUDE "include/cmds_E.asm"
 INCLUDE "include/cmds_H.asm"
 INCLUDE "include/cmds_J.asm"
 INCLUDE "include/cmds_L.asm"

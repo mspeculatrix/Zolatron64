@@ -19,6 +19,7 @@ ALIGN &100                  ; Start on new page
   equw cmdprcCLEAR          ; CLEAR
   equw cmdprcDEL            ; DEL
   equw cmdprcDUMP           ; DUMP
+  equw cmdprcEX             ; EX - load & execute program
   equw cmdprcHELP           ; HELP
   equw cmdprcJMP            ; JMP
   equw cmdprcLM             ; LM - list memory
@@ -46,7 +47,7 @@ ALIGN &100                  ; Start on new page
 \ understand where to go next by looking it up in the Command Pointers table
 \ below.
 .cmd_ch1_tbl
-  equs "*!?BCDHJLMPRSVX"
+  equs "*!?BCDEHJLMPRSVX"
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -63,6 +64,7 @@ ALIGN &100                  ; Start on new page
   equw cmd_tbl_ASCB         ; Commands starting 'B'
   equw cmd_tbl_ASCC         ; Commands starting 'C'
   equw cmd_tbl_ASCD         ; Commands starting 'D'
+  equw cmd_tbl_ASCE         ; Commands starting 'E'
   equw cmd_tbl_ASCH         ; Commands starting 'H'
   equw cmd_tbl_ASCJ         ; Commands starting 'J'
   equw cmd_tbl_ASCL         ; Commands starting 'L'
@@ -82,11 +84,11 @@ ALIGN &100                  ; Start on new page
   equb CMD_TKN_STAR            ; Not sure what I'm using this for yet
   equb EOCMD_SECTION           ; Comes at end of each section
 
-.cmd_tbl_BANG                  ; Commands starting '!'
+.cmd_tbl_BANG                  ; Command '!'
   equb CMD_TKN_BANG            ;
   equb EOCMD_SECTION
 
-.cmd_tbl_QUERY                 ; Commands starting '?'
+.cmd_tbl_QUERY                 ; Command '?'
   equb CMD_TKN_QUERY           ;
   equb EOCMD_SECTION
 
@@ -101,6 +103,10 @@ ALIGN &100                  ; Start on new page
 .cmd_tbl_ASCD                  ; Commands starting 'D'
   equs "EL", CMD_TKN_DEL       ; DEL
   equs "UMP", CMD_TKN_DUMP     ; DUMP
+  equb EOCMD_SECTION
+
+.cmd_tbl_ASCE                  ; Commands starting 'E'
+  equs "X", CMD_TKN_EX         ; EX
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCH                  ; Commands starting 'H'
@@ -125,7 +131,6 @@ ALIGN &100                  ; Start on new page
 .cmd_tbl_ASCP                  ; Commands starting 'P'
   equs "EEK", CMD_TKN_PEEK     ; PEEK
   equs "OKE", CMD_TKN_POKE     ; POKE
-  equs "RT", CMD_TKN_PRT       ; PRT
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCR                  ; Commands starting 'R'
@@ -271,6 +276,7 @@ ALIGN &100                  ; Start on new page
   equs "CLEAR",0
   equs "DEL",0
   equs "DUMP",0
+  equs "EX",0
   equs "HELP",0
   equs "JMP",0
   equs "LM",0
@@ -280,7 +286,6 @@ ALIGN &100                  ; Start on new page
   equs "(MV)",0
   equs "PEEK",0
   equs "POKE",0
-  equs "(PRT)",0
   equs "RUN",0
   equs "SAVE",0
   equs "STAT",0

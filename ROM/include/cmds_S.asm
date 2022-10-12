@@ -26,6 +26,10 @@
   lda #>USR_START                     ;  "    "       "
   sta TMP_ADDR_A + 1                  ;  "    "       "
   lda LOMEM                           ;  "    "       "
+  bne cmdprcSAVE_cont                 ; Need to decrement LOMEM by one
+  dec LOMEM + 1                       ; Low byte was 0. So decrement high byte
+.cmdprcSAVE_cont
+  dec A
   sta TMP_ADDR_B                      ;  "    "       "
   lda LOMEM + 1                       ;  "    "       "
   sta TMP_ADDR_B + 1                  ;  "    "       "
@@ -49,6 +53,8 @@
   jsr OSWRMSG
   jsr OSLCDMSG
   jmp cmdprc_success
+
+
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: STAT  :  DISPLAY STATUS

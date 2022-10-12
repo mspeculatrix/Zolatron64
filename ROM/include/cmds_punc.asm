@@ -31,7 +31,7 @@
 .cmdprcBANG_success
   stz STDIN_IDX
   stz STDIN_BUF
-  LOAD_MSG okay_masg
+  LOAD_MSG okay_msg
   jsr OSWRMSG
   jmp cmdprc_success
 .cmdprcBANG_fail

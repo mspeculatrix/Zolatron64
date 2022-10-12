@@ -62,6 +62,47 @@
   rts
 
 \ ------------------------------------------------------------------------------
+\ ---  ZD_FILELOAD_OK
+\ ------------------------------------------------------------------------------
+\ Print the appropriate message if file load operation went okay. Also set
+\ appropriate value for LOMEM.
+\ ON EXIT : LOMEM is set to first free byte above top of program.
+.zd_fileload_ok
+  LOAD_MSG file_act_complete_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
+  lda USR_START+CODEHDR_END    ; Get info about first free byte after prog
+  sta LOMEM                    ; to put into our LOMEM variable
+  lda USR_START+CODEHDR_END+1
+  sta LOMEM + 1
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  ZD_GETFILE
+\ ------------------------------------------------------------------------------
+\ Get a filename from STDIN_BUF and load the file into memory at USR_START.
+\ ON ENTRY: The filename must be in STDIN_BUF
+\ ON EXIT : FUNC_ERR contains an error code - 0 for success.
+\ A - O
+\ X - n/a
+\ Y - n/a
+.zd_getfile ; move to funcs_ZolaDOS.asm
+  LOAD_MSG loading_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
+  lda #<USR_START             ; This is where we're going to put the code
+  sta FILE_ADDR
+  lda #>USR_START
+  sta FILE_ADDR + 1
+  jsr read_filename           ; Puts filename in STR_BUF
+  lda FUNC_ERR
+  bne zd_getfile_done
+  lda #ZD_OPCODE_LOAD         ; Use opcode for loading .EXE files
+  jsr zd_loadfile
+.zd_getfile_done
+  rts
+
+\ ------------------------------------------------------------------------------
 \ ---  ZD_INIT_PROCESS
 \ ------------------------------------------------------------------------------
 \ When intiating a specific process, this provides the first communication with
