@@ -22,12 +22,12 @@ Z_STATE_AWAKE    = 1
 
 ; ADDRESSES
 RANDOM_LOCS  = $0500                ; Start of block of 6 locations
-PLAYER_LOC   = RANDOM_LOCS          ; 0500
-ZUMPUS_LOC   = PLAYER_LOC + 1       ; 0501
-BAT1_LOC     = ZUMPUS_LOC + 1       ; 0502
-BAT2_LOC     = BAT1_LOC + 1         ; 0503
-PIT1_LOC     = BAT2_LOC + 1         ; 0504
-PIT2_LOC     = PIT1_LOC + 1         ; 0505
+PLAYER_LOC   = RANDOM_LOCS          ; 0500 Specific synonym for this location
+ZUMPUS_LOC   = PLAYER_LOC + 1       ; 0501    "        "     "    "     "
+BAT1_LOC     = ZUMPUS_LOC + 1       ; 0502    "        "     "    "     "
+BAT2_LOC     = BAT1_LOC + 1         ; 0503    "        "     "    "     "
+PIT1_LOC     = BAT2_LOC + 1         ; 0504    "        "     "    "     "
+PIT2_LOC     = PIT1_LOC + 1         ; 0505    "        "     "    "     "
 STAPLE_COUNT = PIT2_LOC + 1         ; 0506
 P_CONN_ROOMS = STAPLE_COUNT + 1     ; 0507-0590
 Z_CONN_ROOMS = P_CONN_ROOMS + 3     ; 050A-050C

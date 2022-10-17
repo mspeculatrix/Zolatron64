@@ -38,7 +38,7 @@ ORG $8000              ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v4.2.1", 0
+  equs "ZolOS v4.2.2", 0
 .startcode
   sei                  ; Don't interrupt me yet
   cld                  ; We don' need no steenkin' BCD
@@ -59,8 +59,10 @@ ORG ROM_START          ; This is where the actual code starts.
 
   lda #<USR_START           ; Initialise LOMEM to start of user RAM
   sta LOMEM
+  sta PROG_END
   lda #>USR_START
   sta LOMEM + 1
+  sta PROG_END + 1
 
 INCLUDE "include/os_call_vectors.asm"
 
@@ -258,6 +260,7 @@ INCLUDE "include/cmds_H.asm"
 INCLUDE "include/cmds_J.asm"
 INCLUDE "include/cmds_L.asm"
 INCLUDE "include/cmds_M.asm"
+INCLUDE "include/cmds_O.asm"
 INCLUDE "include/cmds_P.asm"
 INCLUDE "include/cmds_R.asm"
 INCLUDE "include/cmds_S.asm"
@@ -275,6 +278,8 @@ INCLUDE "include/cmds_X.asm"
   stz STDIN_IDX                                   ; Reset RX buffer index
   stz STDIN_BUF
   LED_OFF LED_BUSY
+  LED_OFF LED_FILE_ACT
+  LED_OFF LED_OK
   jmp mainloop                                    ; Go around again
 
 INCLUDE "include/funcs_uart_SC28L92.asm"

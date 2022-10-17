@@ -217,6 +217,43 @@
 \ ------------------------------------------------------------------------------
 \ --- CMD: XSAVE  :  SAVE CONTENTS OF MEMORY BANK TO BINARY FILE ------------------------------------------------------------------------------
 \ Usage: XSAVE <0-15> <filename>
+.cmdprcXSAVE
+  jsr extmem_readset_bank               ; Set and select the bank
+  lda FUNC_ERR
+  bne cmdprcXSAVE_fail
+  jsr read_filename                   ; Puts filename in STR_BUF
+  lda FUNC_ERR
+  bne cmdprcXSAVE_fail
+
+  ldx STDIN_IDX
+  lda STDIN_BUF,X                     ; Check nothing left in the RX buffer
+  bne cmdprcXSAVE_synerr               ; Anything but null is a mistake
+  LED_ON LED_FILE_ACT
+  LOAD_MSG saving_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
+  lda #<EXTMEM_START                     ; Set memory addresses
+  sta TMP_ADDR_A                      ;  "    "       "
+  lda #>EXTMEM_START                     ;  "    "       "
+  sta TMP_ADDR_A + 1                  ;  "    "       "
+  lda #<EXTMEM_END                    ;  "    "       "
+  sta TMP_ADDR_B                      ;  "    "       "
+  lda #>EXTMEM_END                    ;  "    "       "
+  sta TMP_ADDR_B + 1                  ;  "    "       "
+  lda #ZD_OPCODE_SAVE_DATC            ; Does not add file extension
+  jsr zd_save_data                    ; Now save the memory contents
+  LED_OFF LED_FILE_ACT
+  lda FUNC_ERR
+  bne cmdprcXSAVE_fail
+  LOAD_MSG file_act_complete_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
+  jmp cmdprc_success
+.cmdprcXSAVE_synerr
+  lda #SYNTAX_ERR_CODE
+  sta FUNC_ERR
+.cmdprcXSAVE_fail
+  jmp cmdprc_fail
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: XSEL  :  SELECT EXTENDED MEMORY BANK

@@ -112,7 +112,7 @@
 ; Randomise initial locations of player & threats
   ldx #NUM_ROOMS
   jsr roll_dice                   ; Random number will be in A
-  sta RANDOM_LOCS,Y
+  sta RANDOM_LOCS                 ; Store first random number
   ldy #1                          ; Counter for number of locs we've set
 .init_loop
   LOAD_MSG press_enter_msg
@@ -144,6 +144,7 @@
 
 .start_play
 ;  jsr list_locs                ; For debugging only
+;  jsr debug_locations
   NEWLINE
   jsr status_update
   jsr status_msg
@@ -182,6 +183,8 @@
   beq zum_cmd_shoot
   cmp #'Q'
   beq zum_cmd_leave
+  cmp #'D'
+  beq zum_cmd_debug
   lda #ERR_SYNTAX
   sta FUNC_ERR
   jsr show_error_msg
@@ -215,6 +218,11 @@
   jsr OSWRMSG
   NEWLINE
   jmp init
+; ---  DEBUG ----------------------------------------------------------------
+.zum_cmd_debug
+  jsr debug_locations
+  NEWLINE
+  jmp zum_chk_stat
 ; ---  SHOOTING ----------------------------------------------------------------
 .zum_cmd_shoot
   ; The input buf should contain the room number & range of shot.

@@ -114,26 +114,6 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ --- LIST_LOCS
-\ ------------------------------------------------------------------------------
-;.list_locs                ; FOR DEBUGGING ONLY
-;  ldx #0
-;.list_locs_loop
-;  lda RANDOM_LOCS,X
-;  jsr OSB2HEX
-;  jsr OSWRSBUF
-;  lda #' '
-;  jsr OSWRCH
-;  inx
-;  cpx #NUM_LOCS
-;  beq list_locs_done
-;  jmp list_locs_loop
-;.list_locs_done
-;  lda #CHR_LINEEND
-;  jsr OSWRCH
-;  rts
-
-\ ------------------------------------------------------------------------------
 \ ---  PRINT_ROOM_NUM
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: Room number in A
@@ -286,65 +266,6 @@
   jsr warnings
 ;  jsr debug_locations
   rts
-
-\ ------------------------------------------------------------------------------
-\ ---  DEBUG_LOCATIONS - for debugging only
-\ ------------------------------------------------------------------------------
-;.debug_locations
-;  lda #'Z'
-;  jsr OSWRCH
-;  lda #':'
-;  jsr OSWRCH
-;  lda ZUMPUS_LOC
-;  jsr print_room_num
-;  lda #' '
-;  jsr OSWRCH
-
-;  lda #'S'
-;  jsr OSWRCH
-;  lda #':'
-;  jsr OSWRCH
-;  lda Z_STATE
-;  jsr OSB2ISTR
-;  jsr OSWRSBUF
-;  lda #' '
-;  jsr OSWRCH
-
-;  lda #'B'
-;  jsr OSWRCH
-;  lda #':'
-;  jsr OSWRCH
-;  lda BAT1_LOC
-;  jsr print_room_num
-;   lda #' '
-;  jsr OSWRCH
-
-;  lda #'B'
-;  jsr OSWRCH
-;  lda #':'
-;  jsr OSWRCH
-;  lda BAT2_LOC
-;  jsr print_room_num
-;  lda #' '
-;  jsr OSWRCH
-
-;  lda #'P'
-;  jsr OSWRCH
-;  lda #':'
-;  jsr OSWRCH
-;  lda PIT1_LOC
-;  jsr print_room_num
-;  lda #' '
-;  jsr OSWRCH
-
-;  lda #'P'
-;  jsr OSWRCH
-;  lda #':'
-;  jsr OSWRCH
-;  lda PIT2_LOC
-;  jsr print_room_num
-;  NEWLINE
-;  rts
 
 \ ------------------------------------------------------------------------------
 \ ---  STATUS_UPDATE
@@ -580,4 +501,92 @@
   lda STDIN_STATUS_REG                    ; Get our info register
   and #STDIN_CLEAR_FLAGS                  ; Clear the received flags
   sta STDIN_STATUS_REG                    ; and re-save the register
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  *** FOR DEBUGGING ONLY ***
+\ ------------------------------------------------------------------------------
+
+\ ------------------------------------------------------------------------------
+\ --- LIST_LOCS
+\ ------------------------------------------------------------------------------
+.list_locs                ; FOR DEBUGGING ONLY
+  ldx #0
+.list_locs_loop
+  lda RANDOM_LOCS,X
+  jsr OSB2HEX
+  jsr OSWRSBUF
+  lda #' '
+  jsr OSWRCH
+  inx
+  cpx #NUM_LOCS
+  beq list_locs_done
+  jmp list_locs_loop
+.list_locs_done
+  lda #CHR_LINEEND
+  jsr OSWRCH
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  DEBUG_LOCATIONS - for debugging only
+\ ------------------------------------------------------------------------------
+.debug_locations
+
+  lda #'Y'
+  jsr OSWRCH
+  lda #':'
+  jsr OSWRCH
+  lda PLAYER_LOC
+  jsr print_room_num
+  lda #' '
+  jsr OSWRCH
+
+  lda #'Z'
+  jsr OSWRCH
+  lda #':'
+  jsr OSWRCH
+  lda ZUMPUS_LOC
+  jsr print_room_num
+  lda #'/'
+  jsr OSWRCH
+  lda Z_STATE
+  jsr OSB2ISTR
+  jsr OSWRSBUF
+  lda #' '
+  jsr OSWRCH
+
+  lda #'B'
+  jsr OSWRCH
+  lda #':'
+  jsr OSWRCH
+  lda BAT1_LOC
+  jsr print_room_num
+   lda #' '
+  jsr OSWRCH
+
+  lda #'B'
+  jsr OSWRCH
+  lda #':'
+  jsr OSWRCH
+  lda BAT2_LOC
+  jsr print_room_num
+  lda #' '
+  jsr OSWRCH
+
+  lda #'P'
+  jsr OSWRCH
+  lda #':'
+  jsr OSWRCH
+  lda PIT1_LOC
+  jsr print_room_num
+  lda #' '
+  jsr OSWRCH
+
+  lda #'P'
+  jsr OSWRCH
+  lda #':'
+  jsr OSWRCH
+  lda PIT2_LOC
+  jsr print_room_num
+  NEWLINE
   rts

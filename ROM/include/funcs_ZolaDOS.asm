@@ -4,6 +4,24 @@
 
 \ HOW STREAMING MIGHT WORK:
 \ * OSZDOPENR - open file for reading
+
+\ Load A with ZD_OPCODE_OPENR or ZD_OPCODE_OPENW
+.zd_fopen
+  pha
+  \ check for 'file is open' flag. If set, error
+  pla
+  jsr zd_handshake
+  \ check for error. If none, set 'file is open flag'
+  rts
+
+.zd_fclose
+  \ check for 'file is open' flag
+  lda #ZD_OPCODE_CLOSE
+  jsr zd_handshake
+  \ check for error. If none, unset 'file is open flag'
+  rts
+
+
 \   - check for error
 \ * For each block/byte:
 \   + Use ZD_INIT_PROCESS with the opcode ZD_OPCODE_RBYTE or ZD_OPCODE_RBLK.
@@ -67,6 +85,9 @@
 \ Print the appropriate message if file load operation went okay. Also set
 \ appropriate value for LOMEM.
 \ ON EXIT : LOMEM is set to first free byte above top of program.
+\ A - O
+\ X - n/a
+\ Y - n/a
 .zd_fileload_ok
   LOAD_MSG file_act_complete_msg
   jsr OSWRMSG
@@ -75,6 +96,14 @@
   sta LOMEM                    ; to put into our LOMEM variable
   lda USR_START+CODEHDR_END+1
   sta LOMEM + 1
+  ; Now we'll set the PROG_END variable
+  sta PROG_END + 1             ; Start by assuming high byte same as LOMEM
+  lda LOMEM
+  bne zd_fileload_ok_cont      ; If low byte wasn't 0
+  dec PROG_END + 1             ; If low byte was 0, dec high byte
+.zd_fileload_ok_cont
+  dec A                        ; Decrement low byte
+  sta PROG_END
   rts
 
 \ ------------------------------------------------------------------------------
@@ -314,14 +343,20 @@
   jsr zd_waitForSRoff         ; Wait for server response to end
   lda FUNC_ERR
   bne zd_send_data_end
-  inc TMP_ADDR_A_L            ; Increment address low byte
-  bne zd_send_data_chk        ; If it didn't roll over, got to next step
-  inc TMP_ADDR_A_H            ; Otherwise increment high byte
-.zd_send_data_chk
   jsr compare_tmp_addr        ; Check if we've reached the end
   lda FUNC_RESULT
+  cmp #EQUAL
+  beq zd_send_data_end        ; If equal, we're done
   cmp #MORE_THAN
-  bne zd_send_data_loop
+  beq zd_send_data_bounds_err
+  inc TMP_ADDR_A_L            ; Otherwise, increment address low byte
+  bne zd_send_data_next       ; If it didn't roll over, got to next step
+  inc TMP_ADDR_A_H            ; Otherwise increment high byte
+.zd_send_data_next
+  jmp zd_send_data_loop
+.zd_send_data_bounds_err
+  lda #ERR_FILE_BOUNDS
+  sta FUNC_ERR
 .zd_send_data_end
   ZD_SET_CA_OFF
   rts

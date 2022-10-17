@@ -19,10 +19,11 @@ TMP_ADDR_C_L  = TMP_ADDR_C	        ; $5C - Alias -
 TMP_ADDR_C_H  = TMP_ADDR_C_L + 1	  ; $5D
 
 FILE_ADDR     = TMP_ADDR_C_H + 1    ; $5E
-LOMEM         = FILE_ADDR + 2       ; $60 First available byte after user prog
+PROG_END      = FILE_ADDR + 2       ; $60 Last byte of user program
+LOMEM         = PROG_END + 2        ; $62 First available byte after user prog
 
-STDIN_STATUS_REG = LOMEM + 2	      ; $62 Used to store various flags
-SYS_REG = STDIN_STATUS_REG + 1      ; $63 System Register
+STDIN_STATUS_REG = LOMEM + 2	    ; $64 Used to store various flags
+SYS_REG = STDIN_STATUS_REG + 1      ; $65 System Register
 ; SYSTEM REGISTER
 ; Bit     Flag name          Function
 ;  0

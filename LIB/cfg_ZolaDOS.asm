@@ -32,8 +32,8 @@ ZD_FSTATE_OPENR     = 1               ; File has been opened for reading
 ZD_FSTATE_OPENW     = 2               ; File has been opened for writing
 
 ZD_OPCODE_LOAD      = 2               ; Load executable .EXE files
-ZD_OPCODE_DLOAD     = 3               ; Load data files
-ZD_OPCODE_XLOAD     = 4
+ZD_OPCODE_DLOAD     = 3               ; Load data files - no ext added
+ZD_OPCODE_XLOAD     = 4               ; Load executable .ROM files
 ZD_OPCODE_LS        = 8
 ZD_OPCODE_OPENR     = 10              ; Open file for reading
 ZD_OPCODE_OPENW     = 11              ; Open file for writing
@@ -104,7 +104,7 @@ ZD_STROBETIME    = $0220
 ZD_SIGNALDELAY   = $0270
 ; Tried & failed: 0140, 0200, 0260
 ZD_TIMEOUT_INTVL = $270E              ; No. of timer cycles between interrupts
-ZD_TIMEOUT_LIMIT = $004F              ; Times interrupt fires before timeout
+ZD_TIMEOUT_LIMIT = $010F              ; was 004F Times interrupt fires before timeout
 
 MACRO ZD_SET_CA_ON
   lda ZD_CTRL_PORT
