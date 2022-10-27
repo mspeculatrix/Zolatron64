@@ -83,7 +83,7 @@
   stz STR_BUF             ; Set nul terminator at start of buffer
 .byte_to_int_str_next_digit
   ldx #10                 ; Divisor for MOD function
-  jsr uint8_mod8          ; FUNC_RESULT contains remainder, X contains quotient
+  jsr uint8_div           ; FUNC_RESULT contains remainder, X contains quotient
   txa                     ; Transfer quotient to A as dividend for next round
   pha                     ; Protect it for now
   ldy TMP_IDX             ; Use the index as an offset
@@ -206,52 +206,46 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ ---  UINT16_TO_INT_STR
-\ ---  Will implement: OSU16ISTR - NOT FINISHED!!!!!
+\ ---  UINT16_INTSTR
+\ ---  Implements: OSU16ISTR
 \ ------------------------------------------------------------------------------
-\ Takes the 16-bit value in TMP_ADDR_A/+1 and converts it to a string
+\ Takes the 16-bit value in MATH_TMP_A/+1 and converts it to a string
 \ representation of the decimal integer value.
-\ ON ENTRY: 16-bit value expected in TMP_ADDR_A/+1
-\ ON EXIT : String in STR_BUF
+\ ON ENTRY: - 16-bit value expected in MATH_TMP_A/+1
+\ ON EXIT : - String in STR_BUF
 \ A - P
-\ X - ?
-\ Y - ?
-.uint16_to_int_str
-  pha
-  stz STR_BUF
-  stz TMP_IDX             ; Keep track of digits in buffer
-  ; ??????
-  pla
+\ X - P
+\ Y - P
+.uint16_intstr
+  pha : phx : phy
+  stz TMP_IDX               ; Keep track of digits in buffer
+  stz STR_BUF               ; Set nul terminator at start of buffer
+.uint16_intstr_loop
+  jsr uint16_div            ; Remainder in FUNC_RES_L/H; quotient in MATH_TMP_A
+.uint16_intstr_next
+  lda FUNC_RES_L
+  clc
+  adc #$30                  ; Add 30 to get ASCII
+  pha                       ; Keep it to one side for now
+  ldy TMP_IDX               ; Use the index as an offset
+.uint16_intstr_strloop
+  lda STR_BUF,Y             ; Load whatever is currently at the index position
+  iny
+  sta STR_BUF,Y             ; Move it to the next position
+  dey
+  beq uint16_intstr_strloop_done   ; If index=0, finished with moving digits
+  dey                       ; Otherwise, decrement offset and go around again
+  jmp uint16_intstr_strloop
+.uint16_intstr_strloop_done
+  inc TMP_IDX               ; Increment our digit index
+  pla                       ; Bring back our character
+  sta STR_BUF               ; and store it in the first byte of the buffer
+.uint16_intstr_check
+  lda MATH_TMP_A            ; Check quotient. If 0, we're done
+  bne uint16_intstr_loop
+  lda MATH_TMP_A+1
+  beq uint16_intstr_done    ; If both bytes were 0, division failed
+  jmp uint16_intstr_loop
+.uint16_intstr_done
+  ply : plx : pla
   rts
-
-;.byte_to_int_str
-;  phx : phy
-;  stz TMP_IDX             ; Keep track of digits in buffer
-;  stz STR_BUF             ; Set nul terminator at start of buffer
-;.byte_to_int_str_next_digit
-;  ldx #10                 ; Divisor for MOD function
-;  jsr uint8_mod8          ; FUNC_RESULT contains remainder, X contains quotient
-;  txa                     ; Transfer quotient to A as dividend for next round
-;  pha                     ; Protect it for now
-;  ldy TMP_IDX             ; Use the index as an offset
-;.byte_to_int_str_add_loop
-;  lda STR_BUF,Y           ; Load whatever is currently at the index position
-;  iny
-;  sta STR_BUF,Y           ; Move it to the next position
-;  dey
-;  beq byte_to_int_str_add_loop_done   ; If index=0, finished with moving digits
-;  dey                     ; Otherwise, decrement the offset and go around again
-;  jmp byte_to_int_str_add_loop
-;.byte_to_int_str_add_loop_done
-;  inc TMP_IDX             ; Increment our digit index
-;  lda FUNC_RESULT         ; Get the remainder from the MOD operation
-;  clc
-;  adc #$30                ; Add $30 to get the ASCII code
-;  sta STR_BUF             ; And store it in the first byte of the buffer
-;  pla                     ; Bring back that quotient, as dividend for next loop
-;  cpx #0                  ; If it's 0, we're done...
-;  beq byte_to_int_str_done
-;  jmp byte_to_int_str_next_digit
-;.byte_to_int_str_done
-;  ply : plx
-;  rts

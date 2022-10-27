@@ -1,0 +1,714 @@
+.header
+     0800   4C 17 08   JMP &0817
+     0803   45 
+     0804   00
+     0805   08
+     0806   17
+     0807   08
+     0808   26
+     0809   0D
+     080A   00
+     080B   00
+     080C   00
+.prog_name
+     080D   54 45 53 ...
+     0812   00
+.version_string
+     0813   31 2E 30 
+     0816   00
+.startprog
+.reset
+     0817   78         SEI
+     0818   D8         CLD
+     0819   A2 FF      LDX #&FF
+     081B   9A         TXS
+     081C   A9 00      LDA #&00
+     081E   8D 32 04   STA &0432
+     0821   58         CLI
+     0822   20 45 FF   JSR &FF45
+.main
+Macro NEWLINE:
+     0825   48         PHA
+     0826   A9 0A      LDA #&0A
+     0828   20 1E FF   JSR &FF1E
+     082B   68         PLA
+End macro NEWLINE
+     082C   9C 00 60   STZ &6000
+     082F   CE 00 60   DEC &6000
+     0832   30 03      BMI &0837
+     0834   4C 42 08   JMP &0842
+.test1
+Macro LOAD_MSG:
+     0837   A9 BE      LDA #&BE
+     0839   85 50      STA &50
+     083B   A9 0C      LDA #&0C
+     083D   85 51      STA &51
+End macro LOAD_MSG
+     083F   20 24 FF   JSR &FF24
+.mainprog
+Macro TESTING:
+Macro LOAD_MSG:
+     0842   A9 D1      LDA #&D1
+     0844   85 50      STA &50
+     0846   A9 0C      LDA #&0C
+     0848   85 51      STA &51
+End macro LOAD_MSG
+     084A   20 24 FF   JSR &FF24
+Macro LOAD_MSG:
+     084D   A9 DD      LDA #&DD
+     084F   85 50      STA &50
+     0851   A9 0C      LDA #&0C
+     0853   85 51      STA &51
+End macro LOAD_MSG
+     0855   20 24 FF   JSR &FF24
+Macro LOAD_MSG:
+     0858   A9 E7      LDA #&E7
+     085A   85 50      STA &50
+     085C   A9 0C      LDA #&0C
+     085E   85 51      STA &51
+End macro LOAD_MSG
+     0860   20 24 FF   JSR &FF24
+Macro NEWLINE:
+     0863   48         PHA
+     0864   A9 0A      LDA #&0A
+     0866   20 1E FF   JSR &FF1E
+     0869   68         PLA
+End macro NEWLINE
+End macro TESTING
+Macro LOAD_MSG:
+     086A   A9 2F      LDA #&2F
+     086C   85 50      STA &50
+     086E   A9 0C      LDA #&0C
+     0870   85 51      STA &51
+End macro LOAD_MSG
+     0872   20 24 FF   JSR &FF24
+     0875   A9 FF      LDA #&FF
+     0877   20 33 FF   JSR &FF33
+     087A   20 27 FF   JSR &FF27
+Macro NEWLINE:
+     087D   48         PHA
+     087E   A9 0A      LDA #&0A
+     0880   20 1E FF   JSR &FF1E
+     0883   68         PLA
+End macro NEWLINE
+Macro LOAD_MSG:
+     0884   A9 3F      LDA #&3F
+     0886   85 50      STA &50
+     0888   A9 0C      LDA #&0C
+     088A   85 51      STA &51
+End macro LOAD_MSG
+     088C   20 24 FF   JSR &FF24
+     088F   A9 FF      LDA #&FF
+     0891   20 33 FF   JSR &FF33
+     0894   20 27 FF   JSR &FF27
+Macro NEWLINE:
+     0897   48         PHA
+     0898   A9 0A      LDA #&0A
+     089A   20 1E FF   JSR &FF1E
+     089D   68         PLA
+End macro NEWLINE
+     089E   A9 FF      LDA #&FF
+     08A0   A2 FF      LDX #&FF
+     08A2   20 5A 0B   JSR &0B5A
+Macro LOAD_MSG:
+     08A5   A9 4F      LDA #&4F
+     08A7   85 50      STA &50
+     08A9   A9 0C      LDA #&0C
+     08AB   85 51      STA &51
+End macro LOAD_MSG
+     08AD   20 24 FF   JSR &FF24
+Macro PRT_ADDR:
+     08B0   A5 52      LDA &52
+     08B2   85 58      STA &58
+     08B4   A5 53      LDA &53
+     08B6   85 59      STA &59
+     08B8   20 3C FF   JSR &FF3C
+     08BB   20 27 FF   JSR &FF27
+End macro PRT_ADDR
+Macro NEWLINE:
+     08BE   48         PHA
+     08BF   A9 0A      LDA #&0A
+     08C1   20 1E FF   JSR &FF1E
+     08C4   68         PLA
+End macro NEWLINE
+Macro TESTING:
+Macro LOAD_MSG:
+     08C5   A9 D1      LDA #&D1
+     08C7   85 50      STA &50
+     08C9   A9 0C      LDA #&0C
+     08CB   85 51      STA &51
+End macro LOAD_MSG
+     08CD   20 24 FF   JSR &FF24
+Macro LOAD_MSG:
+     08D0   A9 DD      LDA #&DD
+     08D2   85 50      STA &50
+     08D4   A9 0C      LDA #&0C
+     08D6   85 51      STA &51
+End macro LOAD_MSG
+     08D8   20 24 FF   JSR &FF24
+Macro LOAD_MSG:
+     08DB   A9 FD      LDA #&FD
+     08DD   85 50      STA &50
+     08DF   A9 0C      LDA #&0C
+     08E1   85 51      STA &51
+End macro LOAD_MSG
+     08E3   20 24 FF   JSR &FF24
+Macro NEWLINE:
+     08E6   48         PHA
+     08E7   A9 0A      LDA #&0A
+     08E9   20 1E FF   JSR &FF1E
+     08EC   68         PLA
+End macro NEWLINE
+End macro TESTING
+Macro LOAD_MSG:
+     08ED   A9 2F      LDA #&2F
+     08EF   85 50      STA &50
+     08F1   A9 0C      LDA #&0C
+     08F3   85 51      STA &51
+End macro LOAD_MSG
+     08F5   20 24 FF   JSR &FF24
+     08F8   A9 37      LDA #&37
+     08FA   8D 2E 04   STA &042E
+     08FD   A9 37      LDA #&37
+     08FF   8D 2F 04   STA &042F
+Macro PRT_ADDR:
+     0902   AD 2E 04   LDA &042E
+     0905   85 58      STA &58
+     0907   AD 2F 04   LDA &042F
+     090A   85 59      STA &59
+     090C   20 3C FF   JSR &FF3C
+     090F   20 27 FF   JSR &FF27
+End macro PRT_ADDR
+Macro NEWLINE:
+     0912   48         PHA
+     0913   A9 0A      LDA #&0A
+     0915   20 1E FF   JSR &FF1E
+     0918   68         PLA
+End macro NEWLINE
+Macro LOAD_MSG:
+     0919   A9 3F      LDA #&3F
+     091B   85 50      STA &50
+     091D   A9 0C      LDA #&0C
+     091F   85 51      STA &51
+End macro LOAD_MSG
+     0921   20 24 FF   JSR &FF24
+     0924   A9 34      LDA #&34
+     0926   8D 30 04   STA &0430
+     0929   A9 12      LDA #&12
+     092B   8D 31 04   STA &0431
+Macro PRT_ADDR:
+     092E   AD 30 04   LDA &0430
+     0931   85 58      STA &58
+     0933   AD 31 04   LDA &0431
+     0936   85 59      STA &59
+     0938   20 3C FF   JSR &FF3C
+     093B   20 27 FF   JSR &FF27
+End macro PRT_ADDR
+Macro NEWLINE:
+     093E   48         PHA
+     093F   A9 0A      LDA #&0A
+     0941   20 1E FF   JSR &FF1E
+     0944   68         PLA
+End macro NEWLINE
+     0945   20 76 0B   JSR &0B76
+Macro LOAD_MSG:
+     0948   A9 4F      LDA #&4F
+     094A   85 50      STA &50
+     094C   A9 0C      LDA #&0C
+     094E   85 51      STA &51
+End macro LOAD_MSG
+     0950   20 24 FF   JSR &FF24
+Macro PRT_ADDR:
+     0953   A5 52      LDA &52
+     0955   85 58      STA &58
+     0957   A5 53      LDA &53
+     0959   85 59      STA &59
+     095B   20 3C FF   JSR &FF3C
+     095E   20 27 FF   JSR &FF27
+End macro PRT_ADDR
+Macro NEWLINE:
+     0961   48         PHA
+     0962   A9 0A      LDA #&0A
+     0964   20 1E FF   JSR &FF1E
+     0967   68         PLA
+End macro NEWLINE
+Macro TESTING:
+Macro LOAD_MSG:
+     0968   A9 D1      LDA #&D1
+     096A   85 50      STA &50
+     096C   A9 0C      LDA #&0C
+     096E   85 51      STA &51
+End macro LOAD_MSG
+     0970   20 24 FF   JSR &FF24
+Macro LOAD_MSG:
+     0973   A9 DD      LDA #&DD
+     0975   85 50      STA &50
+     0977   A9 0C      LDA #&0C
+     0979   85 51      STA &51
+End macro LOAD_MSG
+     097B   20 24 FF   JSR &FF24
+Macro LOAD_MSG:
+     097E   A9 08      LDA #&08
+     0980   85 50      STA &50
+     0982   A9 0D      LDA #&0D
+     0984   85 51      STA &51
+End macro LOAD_MSG
+     0986   20 24 FF   JSR &FF24
+Macro NEWLINE:
+     0989   48         PHA
+     098A   A9 0A      LDA #&0A
+     098C   20 1E FF   JSR &FF1E
+     098F   68         PLA
+End macro NEWLINE
+End macro TESTING
+Macro LOAD_MSG:
+     0990   A9 2F      LDA #&2F
+     0992   85 50      STA &50
+     0994   A9 0C      LDA #&0C
+     0996   85 51      STA &51
+End macro LOAD_MSG
+     0998   20 24 FF   JSR &FF24
+     099B   A9 37      LDA #&37
+     099D   8D 2E 04   STA &042E
+     09A0   A9 37      LDA #&37
+     09A2   8D 2F 04   STA &042F
+Macro PRT_ADDR:
+     09A5   AD 2E 04   LDA &042E
+     09A8   85 58      STA &58
+     09AA   AD 2F 04   LDA &042F
+     09AD   85 59      STA &59
+     09AF   20 3C FF   JSR &FF3C
+     09B2   20 27 FF   JSR &FF27
+End macro PRT_ADDR
+Macro NEWLINE:
+     09B5   48         PHA
+     09B6   A9 0A      LDA #&0A
+     09B8   20 1E FF   JSR &FF1E
+     09BB   68         PLA
+End macro NEWLINE
+Macro LOAD_MSG:
+     09BC   A9 3F      LDA #&3F
+     09BE   85 50      STA &50
+     09C0   A9 0C      LDA #&0C
+     09C2   85 51      STA &51
+End macro LOAD_MSG
+     09C4   20 24 FF   JSR &FF24
+     09C7   A9 34      LDA #&34
+     09C9   8D 30 04   STA &0430
+     09CC   A9 12      LDA #&12
+     09CE   8D 31 04   STA &0431
+Macro PRT_ADDR:
+     09D1   AD 30 04   LDA &0430
+     09D4   85 58      STA &58
+     09D6   AD 31 04   LDA &0431
+     09D9   85 59      STA &59
+     09DB   20 3C FF   JSR &FF3C
+     09DE   20 27 FF   JSR &FF27
+End macro PRT_ADDR
+Macro NEWLINE:
+     09E1   48         PHA
+     09E2   A9 0A      LDA #&0A
+     09E4   20 1E FF   JSR &FF1E
+     09E7   68         PLA
+End macro NEWLINE
+     09E8   20 E7 0B   JSR &0BE7
+Macro LOAD_MSG:
+     09EB   A9 4F      LDA #&4F
+     09ED   85 50      STA &50
+     09EF   A9 0C      LDA #&0C
+     09F1   85 51      STA &51
+End macro LOAD_MSG
+     09F3   20 24 FF   JSR &FF24
+Macro PRT_ADDR:
+     09F6   A5 52      LDA &52
+     09F8   85 58      STA &58
+     09FA   A5 53      LDA &53
+     09FC   85 59      STA &59
+     09FE   20 3C FF   JSR &FF3C
+     0A01   20 27 FF   JSR &FF27
+End macro PRT_ADDR
+Macro NEWLINE:
+     0A04   48         PHA
+     0A05   A9 0A      LDA #&0A
+     0A07   20 1E FF   JSR &FF1E
+     0A0A   68         PLA
+End macro NEWLINE
+Macro TESTING:
+Macro LOAD_MSG:
+     0A0B   A9 D1      LDA #&D1
+     0A0D   85 50      STA &50
+     0A0F   A9 0C      LDA #&0C
+     0A11   85 51      STA &51
+End macro LOAD_MSG
+     0A13   20 24 FF   JSR &FF24
+Macro LOAD_MSG:
+     0A16   A9 DD      LDA #&DD
+     0A18   85 50      STA &50
+     0A1A   A9 0C      LDA #&0C
+     0A1C   85 51      STA &51
+End macro LOAD_MSG
+     0A1E   20 24 FF   JSR &FF24
+Macro LOAD_MSG:
+     0A21   A9 F2      LDA #&F2
+     0A23   85 50      STA &50
+     0A25   A9 0C      LDA #&0C
+     0A27   85 51      STA &51
+End macro LOAD_MSG
+     0A29   20 24 FF   JSR &FF24
+Macro NEWLINE:
+     0A2C   48         PHA
+     0A2D   A9 0A      LDA #&0A
+     0A2F   20 1E FF   JSR &FF1E
+     0A32   68         PLA
+End macro NEWLINE
+End macro TESTING
+     0A33   A9 F0      LDA #&F0
+     0A35   8D 2E 04   STA &042E
+     0A38   A9 CE      LDA #&CE
+     0A3A   8D 2F 04   STA &042F
+Macro LOAD_MSG:
+     0A3D   A9 5F      LDA #&5F
+     0A3F   85 50      STA &50
+     0A41   A9 0C      LDA #&0C
+     0A43   85 51      STA &51
+End macro LOAD_MSG
+     0A45   20 24 FF   JSR &FF24
+Macro PRT_ADDR:
+     0A48   AD 2E 04   LDA &042E
+     0A4B   85 58      STA &58
+     0A4D   AD 2F 04   LDA &042F
+     0A50   85 59      STA &59
+     0A52   20 3C FF   JSR &FF3C
+     0A55   20 27 FF   JSR &FF27
+End macro PRT_ADDR
+Macro NEWLINE:
+     0A58   48         PHA
+     0A59   A9 0A      LDA #&0A
+     0A5B   20 1E FF   JSR &FF1E
+     0A5E   68         PLA
+End macro NEWLINE
+Macro LOAD_MSG:
+     0A5F   A9 72      LDA #&72
+     0A61   85 50      STA &50
+     0A63   A9 0C      LDA #&0C
+     0A65   85 51      STA &51
+End macro LOAD_MSG
+     0A67   20 24 FF   JSR &FF24
+     0A6A   A9 00      LDA #&00
+     0A6C   8D 31 04   STA &0431
+     0A6F   20 33 FF   JSR &FF33
+     0A72   20 27 FF   JSR &FF27
+     0A75   A9 13      LDA #&13
+     0A77   8D 30 04   STA &0430
+     0A7A   20 33 FF   JSR &FF33
+     0A7D   20 27 FF   JSR &FF27
+Macro NEWLINE:
+     0A80   48         PHA
+     0A81   A9 0A      LDA #&0A
+     0A83   20 1E FF   JSR &FF1E
+     0A86   68         PLA
+End macro NEWLINE
+     0A87   A9 13      LDA #&13
+     0A89   20 BE 0B   JSR &0BBE
+Macro LOAD_MSG:
+     0A8C   A9 85      LDA #&85
+     0A8E   85 50      STA &50
+     0A90   A9 0C      LDA #&0C
+     0A92   85 51      STA &51
+End macro LOAD_MSG
+     0A94   20 24 FF   JSR &FF24
+Macro PRT_ADDR:
+     0A97   AD 2E 04   LDA &042E
+     0A9A   85 58      STA &58
+     0A9C   AD 2F 04   LDA &042F
+     0A9F   85 59      STA &59
+     0AA1   20 3C FF   JSR &FF3C
+     0AA4   20 27 FF   JSR &FF27
+End macro PRT_ADDR
+Macro NEWLINE:
+     0AA7   48         PHA
+     0AA8   A9 0A      LDA #&0A
+     0AAA   20 1E FF   JSR &FF1E
+     0AAD   68         PLA
+End macro NEWLINE
+Macro LOAD_MSG:
+     0AAE   A9 AB      LDA #&AB
+     0AB0   85 50      STA &50
+     0AB2   A9 0C      LDA #&0C
+     0AB4   85 51      STA &51
+End macro LOAD_MSG
+     0AB6   20 24 FF   JSR &FF24
+Macro PRT_ADDR:
+     0AB9   A5 52      LDA &52
+     0ABB   85 58      STA &58
+     0ABD   A5 53      LDA &53
+     0ABF   85 59      STA &59
+     0AC1   20 3C FF   JSR &FF3C
+     0AC4   20 27 FF   JSR &FF27
+End macro PRT_ADDR
+Macro NEWLINE:
+     0AC7   48         PHA
+     0AC8   A9 0A      LDA #&0A
+     0ACA   20 1E FF   JSR &FF1E
+     0ACD   68         PLA
+End macro NEWLINE
+Macro TESTING:
+Macro LOAD_MSG:
+     0ACE   A9 D1      LDA #&D1
+     0AD0   85 50      STA &50
+     0AD2   A9 0C      LDA #&0C
+     0AD4   85 51      STA &51
+End macro LOAD_MSG
+     0AD6   20 24 FF   JSR &FF24
+Macro LOAD_MSG:
+     0AD9   A9 DD      LDA #&DD
+     0ADB   85 50      STA &50
+     0ADD   A9 0C      LDA #&0C
+     0ADF   85 51      STA &51
+End macro LOAD_MSG
+     0AE1   20 24 FF   JSR &FF24
+Macro LOAD_MSG:
+     0AE4   A9 13      LDA #&13
+     0AE6   85 50      STA &50
+     0AE8   A9 0D      LDA #&0D
+     0AEA   85 51      STA &51
+End macro LOAD_MSG
+     0AEC   20 24 FF   JSR &FF24
+Macro NEWLINE:
+     0AEF   48         PHA
+     0AF0   A9 0A      LDA #&0A
+     0AF2   20 1E FF   JSR &FF1E
+     0AF5   68         PLA
+End macro NEWLINE
+End macro TESTING
+Macro LOAD_MSG:
+     0AF6   A9 98      LDA #&98
+     0AF8   85 50      STA &50
+     0AFA   A9 0C      LDA #&0C
+     0AFC   85 51      STA &51
+End macro LOAD_MSG
+     0AFE   20 24 FF   JSR &FF24
+     0B01   A9 3A      LDA #&3A
+     0B03   8D 2E 04   STA &042E
+     0B06   A9 01      LDA #&01
+     0B08   8D 2F 04   STA &042F
+Macro PRT_ADDR:
+     0B0B   AD 2E 04   LDA &042E
+     0B0E   85 58      STA &58
+     0B10   AD 2F 04   LDA &042F
+     0B13   85 59      STA &59
+     0B15   20 3C FF   JSR &FF3C
+     0B18   20 27 FF   JSR &FF27
+End macro PRT_ADDR
+Macro NEWLINE:
+     0B1B   48         PHA
+     0B1C   A9 0A      LDA #&0A
+     0B1E   20 1E FF   JSR &FF1E
+     0B21   68         PLA
+End macro NEWLINE
+     0B22   20 FF 0B   JSR &0BFF
+Macro LOAD_MSG:
+     0B25   A9 85      LDA #&85
+     0B27   85 50      STA &50
+     0B29   A9 0C      LDA #&0C
+     0B2B   85 51      STA &51
+End macro LOAD_MSG
+     0B2D   20 24 FF   JSR &FF24
+Macro PRT_ADDR:
+     0B30   A5 52      LDA &52
+     0B32   85 58      STA &58
+     0B34   A5 53      LDA &53
+     0B36   85 59      STA &59
+     0B38   20 3C FF   JSR &FF3C
+     0B3B   20 27 FF   JSR &FF27
+End macro PRT_ADDR
+Macro NEWLINE:
+     0B3E   48         PHA
+     0B3F   A9 0A      LDA #&0A
+     0B41   20 1E FF   JSR &FF1E
+     0B44   68         PLA
+End macro NEWLINE
+.prog_end
+     0B45   4C F4 FF   JMP &FFF4
+.uint8_div
+     0B48   8E 02 04   STX &0402
+     0B4B   A2 00      LDX #&00
+.uint8_div_loop
+     0B4D   85 54      STA &54
+     0B4F   38         SEC
+     0B50   ED 02 04   SBC &0402
+     0B53   90 04      BCC &0B59
+     0B55   E8         INX
+     0B56   4C 4D 0B   JMP &0B4D
+.uint8_div_result
+     0B59   60         RTS
+.uint8_mult
+     0B5A   8D 2E 04   STA &042E
+     0B5D   8E 30 04   STX &0430
+     0B60   A9 00      LDA #&00
+     0B62   A2 08      LDX #&08
+.uint8_mult_L1
+     0B64   4E 30 04   LSR &0430
+     0B67   90 04      BCC &0B6D
+     0B69   18         CLC
+     0B6A   6D 2E 04   ADC &042E
+.uint8_mult_L2
+     0B6D   6A         ROR A
+     0B6E   66 52      ROR &52
+     0B70   CA         DEX
+     0B71   D0 F1      BNE &0B64
+     0B73   85 53      STA &53
+     0B75   60         RTS
+.uint16_add
+     0B76   9C 02 04   STZ &0402
+     0B79   64 52      STZ &52
+     0B7B   64 53      STZ &53
+     0B7D   18         CLC
+     0B7E   AD 2E 04   LDA &042E
+     0B81   6D 30 04   ADC &0430
+     0B84   85 52      STA &52
+     0B86   90 03      BCC &0B8B
+     0B88   EE 02 04   INC &0402
+.uint16_add_highbyte
+     0B8B   18         CLC
+     0B8C   AD 2F 04   LDA &042F
+     0B8F   6D 31 04   ADC &0431
+     0B92   6D 02 04   ADC &0402
+     0B95   85 53      STA &53
+     0B97   60         RTS
+.uint16_div_uint8
+     0B98   64 52      STZ &52
+     0B9A   64 53      STZ &53
+     0B9C   8D 30 04   STA &0430
+.uint16_div_uint8_loop
+     0B9F   AD 2E 04   LDA &042E
+     0BA2   AA         TAX
+     0BA3   38         SEC
+     0BA4   ED 30 04   SBC &0430
+     0BA7   8D 2E 04   STA &042E
+     0BAA   B0 08      BCS &0BB4
+     0BAC   AD 2F 04   LDA &042F
+     0BAF   F0 0C      BEQ &0BBD
+     0BB1   CE 2F 04   DEC &042F
+.uint16_div_uint8_count
+     0BB4   E6 52      INC &52
+     0BB6   D0 02      BNE &0BBA
+     0BB8   E6 53      INC &53
+.uint16_div_uint8_count_next
+     0BBA   4C 9F 0B   JMP &0B9F
+.uint16_div_uint8_done
+     0BBD   60         RTS
+.uint16_div
+     0BBE   64 52      STZ &52
+     0BC0   64 53      STZ &53
+     0BC2   A2 10      LDX #&10
+.uint16_div_loop
+     0BC4   0E 2E 04   ASL &042E
+     0BC7   2E 2F 04   ROL &042F
+     0BCA   26 52      ROL &52
+     0BCC   26 53      ROL &53
+     0BCE   A5 52      LDA &52
+     0BD0   38         SEC
+     0BD1   ED 30 04   SBC &0430
+     0BD4   A8         TAY
+     0BD5   A5 53      LDA &53
+     0BD7   ED 31 04   SBC &0431
+     0BDA   90 07      BCC &0BE3
+     0BDC   85 53      STA &53
+     0BDE   84 52      STY &52
+     0BE0   EE 2E 04   INC &042E
+.uint16_div_nosub
+     0BE3   CA         DEX
+     0BE4   D0 DE      BNE &0BC4
+     0BE6   60         RTS
+.uint16_sub
+     0BE7   38         SEC
+     0BE8   AD 2E 04   LDA &042E
+     0BEB   ED 30 04   SBC &0430
+     0BEE   85 52      STA &52
+     0BF0   B0 03      BCS &0BF5
+     0BF2   CE 31 04   DEC &0431
+.uint16_sub_hb
+     0BF5   38         SEC
+     0BF6   AD 2F 04   LDA &042F
+     0BF9   ED 31 04   SBC &0431
+     0BFC   85 53      STA &53
+     0BFE   60         RTS
+.uint16_times10
+     0BFF   AD 2E 04   LDA &042E
+     0C02   85 52      STA &52
+     0C04   AD 2F 04   LDA &042F
+     0C07   85 53      STA &53
+     0C09   06 52      ASL &52
+     0C0B   26 53      ROL &53
+     0C0D   06 52      ASL &52
+     0C0F   26 53      ROL &53
+     0C11   18         CLC
+     0C12   AD 2E 04   LDA &042E
+     0C15   65 52      ADC &52
+     0C17   85 52      STA &52
+     0C19   AD 2F 04   LDA &042F
+     0C1C   65 53      ADC &53
+     0C1E   85 53      STA &53
+     0C20   06 52      ASL &52
+     0C22   26 53      ROL &53
+     0C24   A5 52      LDA &52
+     0C26   8D 2E 04   STA &042E
+     0C29   A5 53      LDA &53
+     0C2B   8D 2F 04   STA &042F
+     0C2E   60         RTS
+.num1_msg
+     0C2F   46 69 72 ...
+     0C3E   00
+.num2_msg
+     0C3F   53 65 63 ...
+     0C4E   00
+.result_msg
+     0C4F   52 65 73 ...
+     0C5E   00
+.div_msg1
+     0C5F   4E 75 6D ...
+     0C71   00
+.div_msg2
+     0C72   44 69 76 ...
+     0C84   00
+.div_result_msg
+     0C85   52 65 73 ...
+     0C97   00
+.mult_msg
+     0C98   4E 75 6D ...
+     0CAA   00
+.remainder_msg
+     0CAB   52 65 6D ...
+     0CBD   00
+.minus_flag
+     0CBE   42 72 61 ...
+     0CCF   0A
+     0CD0   00
+.divider
+     0CD1   2D 2D 2D ...
+     0CDB   0A
+     0CDC   00
+.testing_msg
+     0CDD   54 65 73 ...
+     0CE6   00
+.uint8_mult_msg
+     0CE7   75 69 6E ...
+     0CF1   00
+.uint16_div_msg
+     0CF2   75 69 6E ...
+     0CFC   00
+.uint16_add_msg
+     0CFD   75 69 6E ...
+     0D07   00
+.uint16_sub_msg
+     0D08   75 69 6E ...
+     0D12   00
+.uint16_times10_msg
+     0D13   75 69 6E ...
+     0D21   00
+.endtag
+     0D22   45 4F 46 
+     0D25   00
+.endcode
+Saving file '../bin/MATHTEST.EXE'

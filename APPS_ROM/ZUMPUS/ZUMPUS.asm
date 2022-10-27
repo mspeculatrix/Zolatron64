@@ -18,13 +18,14 @@ INCLUDE "../../LIB/cfg_page_4.asm"
 INCLUDE "../../LIB/cfg_user_port.asm"
 ;INCLUDE "../../LIB/cfg_uart_SC28L92.asm"
 
-INCLUDE "zumpus_cfg.asm"
+INCLUDE "../../APPS/ZUMPUS/zumpus_cfg.asm"
 
 ORG EXTMEM_START
-INCLUDE "./zumpus_main.asm"
-INCLUDE "./zumpus_funcs.asm"
-INCLUDE "./zumpus_data.asm"
+INCLUDE "../../APPS/ZUMPUS/zumpus_main.asm"
+INCLUDE "../../APPS/ZUMPUS/zumpus_funcs.asm"
+INCLUDE "../../APPS/ZUMPUS/zumpus_data.asm"
 INCLUDE "../../LIB/funcs_math.asm"
+INCLUDE "../../LIB/funcs_prng.asm"
 INCLUDE "../../LIB/cfg_ZolaDOS.asm"
 
 .endtag

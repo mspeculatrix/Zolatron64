@@ -49,15 +49,23 @@
 \ Pressing <return> increments the address and shows the next byte.
 \ Entering <Q> <return> stops the routine.
 .cmdprcQUERY
-  jsr read_hex_addr         ; Get address - puts bytes in FUNC_RES_L, FUNC_RES_H
+  jsr read_hex_addr           ; Get address - bytes in FUNC_RES_L, FUNC_RES_H
   lda FUNC_ERR
   bne cmdprcQUERY_fail
 ;  ldx STDIN_IDX
 ;  lda STDIN_BUF,X            ; Check there's nothing left in the RX buffer
 ;  bne cmdprcQUERY_fail       ; Should be null. Anything else is a mistake
 .cmdprcQUERY_loop
-  lda (FUNC_RES_L)
-  jsr byte_to_hex_str       ; Resulting string is in STR_BUF
+  lda FUNC_RES_L
+  sta TMP_ADDR_A
+  lda FUNC_RES_L + 1
+  sta TMP_ADDR_A + 1
+  jsr OSU16HEX                ; Puts address string in STR_BUF
+  jsr OSWRSBUF
+  lda #' '
+  jsr OSWRCH
+  lda (FUNC_RES_L)            ; Get value of byte at address
+  jsr byte_to_hex_str         ; Resulting string is in STR_BUF
   jsr OSWRSBUF
   lda #' '
   jsr OSWRCH

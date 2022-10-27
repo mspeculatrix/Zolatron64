@@ -22,19 +22,23 @@ FILE_ADDR     = TMP_ADDR_C_H + 1    ; $5E
 PROG_END      = FILE_ADDR + 2       ; $60 Last byte of user program
 LOMEM         = PROG_END + 2        ; $62 First available byte after user prog
 
-STDIN_STATUS_REG = LOMEM + 2	    ; $64 Used to store various flags
+STDIN_STATUS_REG = LOMEM + 2	      ; $64 STDIN flags - see: cfg_main.asm
 SYS_REG = STDIN_STATUS_REG + 1      ; $65 System Register
 ; SYSTEM REGISTER
-; Bit     Flag name          Function
-;  0
-;  1      SYS_EXMEM_YES/NO     Extended memory fitted - 1=yes, 0=no
-;  2      SYS_PARALLEL_YES/NO  Parallel board fitted  - 1=yes, 0=no
+; The SYS_EXMEM and SYS_PARALELL must be in bits 0 and 1.
+; Bit     Flag name            Function
+;  0      SYS_EXMEM/_NO        Extended memory fitted - 1=yes, 0=no
+;  1      SYS_PARALLEL/_NO     Parallel board fitted  - 1=yes, 0=no
+;  2
 ;  3
 ;  4
 ;  5      LCD_SIZE             0 = 2x16, 1 = 4x20
 ;  6
 ;  7      ZD_INT_FL			   Not sure about this yet
-SYS_EXMEM_YES    = %00000010  ; ORA with reg to set or AND to test flag
-SYS_EXMEM_NO     = %11111101  ; AND with reg to unset flag
-SYS_PARALLEL_YES = %00000100  ; ORA with reg to set or AND to test flag
-SYS_PARALLEL_NO  = %11111011  ; AND with reg to unset flag
+SYS_EXMEM        = %00000001  ; ORA with reg to set or AND to test flag
+SYS_EXMEM_NO     = %11111110  ; AND with reg to unset flag
+SYS_PARALLEL     = %00000010  ; ORA with reg to set or AND to test flag
+SYS_PARALLEL_NO  = %11111101  ; AND with reg to unset flag
+
+SPI_INBUF  = SYS_REG + 1
+SPI_OUTBUF = SPI_INBUF + 1

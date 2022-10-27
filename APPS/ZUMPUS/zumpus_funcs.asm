@@ -162,7 +162,7 @@
   bne roll_dice_mod       ; If it doesn't, we're good to go
   jmp roll_dice           ; Otherwise, try again
 .roll_dice_mod
-  jsr uint8_mod8          ; A contains random number, X contains divisor
+  jsr uint8_div           ; A contains random number, X contains divisor
   lda FUNC_RESULT         ; Get the result of the MODding.
   rts
 
@@ -312,7 +312,6 @@
 \ ------------------------------------------------------------------------------
 \ --- FILE OPERATIONS
 \ ------------------------------------------------------------------------------
-
 
 .set_datafile
   ldx #0                              ; Set filename
@@ -467,27 +466,16 @@
 \ ---  YESNO
 \ ------------------------------------------------------------------------------
 \ Get a 'Y' or 'N' input.
-\ ON ENTRY: Should probably have zeroed-out STDIN_BUF and STDIN_IDX before
-\           coming here.
-\ ON EXIT : A contains result, YESNO_YES, YESNO_NO or YESNO_ERR
+\ ON EXIT : A & FUNC_RESULT contain result, YESNO_YES, YESNO_NO or YESNO_ERR
 .yesno
-  lda STDIN_STATUS_REG
-  and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
-  beq yesno                             ; If no, loop until it is
-  stz STDIN_IDX                         ; Want to get first char
-  jsr OSRDCH                            ; Read character from STDIN_BUF
-  ; --- DEBUGGING ------------------
-;  lda FUNC_RESULT
-;  jsr OSWRCH
-;  lda #' '
-;  jsr OSWRCH
-  ; --------------------------------
+  jsr OSGETKEY
   lda FUNC_RESULT                       ; Check the character we read
+  beq yesno_done                        ; If 0 (NUL), return this
   cmp #'Y'
   beq yesno_yes
   cmp #'N'
   beq yesno_no
-  lda #YESNO_ERR                        ; If no 'Y' or 'N', this is an error
+  lda #YESNO_ERR                        ; If not 'Y' or 'N', this is an error
   jmp yesno_done
 .yesno_yes
   lda #YESNO_YES
@@ -496,11 +484,6 @@
   lda #YESNO_NO
 .yesno_done
   sta FUNC_RESULT
-  stz STDIN_IDX                         ; Clear input buffer
-  stz STDIN_BUF                         ;  "
-  lda STDIN_STATUS_REG                    ; Get our info register
-  and #STDIN_CLEAR_FLAGS                  ; Clear the received flags
-  sta STDIN_STATUS_REG                    ; and re-save the register
   rts
 
 \ ------------------------------------------------------------------------------

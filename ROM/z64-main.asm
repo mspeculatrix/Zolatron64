@@ -98,7 +98,7 @@ INCLUDE "include/os_call_vectors.asm"
   jsr duart_init
 
 ; CHECK FOR PARALLEL PORT
-  jsr prt_check_present                 ; Sets SYS_PARALLEL_YES bit in SYS_REG
+  jsr prt_check_present                 ; Sets SYS_PARALLEL bit in SYS_REG
 
 \ ------------------------------------------------------------------------------
 \ ----     MAIN PROGRAM                                                     ----
@@ -153,7 +153,7 @@ INCLUDE "include/os_call_vectors.asm"
 
 ; PARALLEL INTERFACE MESSAGE
   lda SYS_REG
-  and #SYS_PARALLEL_YES                   ; Check if bit is set
+  and #SYS_PARALLEL                       ; Check if bit is set
   bne parallel_ok                         ; If result non-zero, then it is
   LOAD_MSG parallel_if_not_fitted
   jmp parallel_msg
@@ -176,9 +176,8 @@ INCLUDE "include/os_call_vectors.asm"
 ; BOOT ROM
 ; Check to see if there is boot ROM code in bank 0 of extended memory.
 ; If so, run it.
-  lda SYS_REG                           ; Check to see if extended memory fitted
-  and #SYS_EXMEM_YES
-  beq ready                             ; If not, skip to ready prompt
+  CHK_EXTMEM_PRESENT
+  bcc ready                             ; If not, skip to ready prompt
   lda EXTMEM_START + CODEHDR_TYPE       ; Load code type identifier
   cmp #TYPECODE_BOOT                    ; Is it a boot ROM?
   bne ready                             ; If not, skip to ready prompt
@@ -279,7 +278,6 @@ INCLUDE "include/cmds_X.asm"
   stz STDIN_BUF
   LED_OFF LED_BUSY
   LED_OFF LED_FILE_ACT
-  LED_OFF LED_OK
   jmp mainloop                                    ; Go around again
 
 INCLUDE "include/funcs_uart_SC28L92.asm"
@@ -288,9 +286,12 @@ INCLUDE "include/funcs_conv.asm"
 INCLUDE "include/funcs_io.asm"
 INCLUDE "include/funcs_isr.asm"
 INCLUDE "include/funcs_ext_mem.asm"
-INCLUDE "../LIB/funcs_math.asm"
 INCLUDE "include/funcs_4x20_lcd.asm"
 INCLUDE "include/funcs_prt.asm"
+INCLUDE "../LIB/funcs_addr.asm"
+INCLUDE "../LIB/math_uint8_div.asm"
+INCLUDE "../LIB/math_uint16_div.asm"
+INCLUDE "../LIB/math_uint16_times10.asm"
 INCLUDE "include/data_tables.asm"
 
 \-------------------------------------------------------------------------------
@@ -335,6 +336,7 @@ ORG $FF00
   jmp (OSB2ISTR_VEC)
   jmp (OSHEX2B_VEC)
   jmp (OSU16HEX_VEC)
+  jmp (OSU16ISTR_VEC)
   jmp (OSHEX2DEC_VEC)
 
   jmp (OSLCDCH_VEC)

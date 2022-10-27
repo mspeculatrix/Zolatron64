@@ -10,6 +10,7 @@
   lda FUNC_ERR
   bne cmdprcEX_err
   jsr zd_fileload_ok
+  NEWLINE
   jmp cmdprcRUN
 .cmdprcEX_err
   LED_ON LED_ERR

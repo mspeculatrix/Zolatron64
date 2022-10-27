@@ -71,15 +71,6 @@
   equs "And it stings enough to make Zumpus want to go home.",10
   equs "But be careful - you have only five staples.",10,0
 
-.init_msg
-  equs "We need to initialise the random locations for you and the",10
-  equs "threats. This means hitting the ENTER key at least five times",10
-  equs "(probably more).",10,0
-.init_done_msg
-  equs "Initialising completed. Well done!",10,0
-.press_enter_msg
-  equs "Hit the ENTER key to continue...",0
-
 .staple_count_msg
   equs "Staples left: ",0
 .connecting_rooms_msg

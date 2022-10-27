@@ -96,6 +96,10 @@
   sta OSU16HEX_VEC
   lda #>uint16_to_hex_str
   sta OSU16HEX_VEC + 1
+  lda #<uint16_intstr                 ; OSU16ISTR
+  sta OSU16ISTR_VEC
+  lda #>uint16_intstr
+  sta OSU16ISTR_VEC + 1
   lda #<asc_hex_to_dec                ; OSHEX2DEC
   sta OSHEX2DEC_VEC
   lda #>asc_hex_to_dec

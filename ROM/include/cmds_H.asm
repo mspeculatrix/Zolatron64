@@ -42,6 +42,6 @@
   jsr OSWRCH
   jmp cmdprcHELP_next_chr   ; Go get the next char from the table
 .cmdprcHELP_end
-  lda #CHR_LINEEND          ; Print a line feed
-  jsr OSWRCH
+  ;lda #CHR_LINEEND          ; Print a line feed
+  ;jsr OSWRCH
   jmp cmdprc_success

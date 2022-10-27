@@ -114,7 +114,7 @@ ORG USR_START
 
 .start_msg
   ;     12345678901234567890
-  equs "Parallel port test",10,0
+  equs 10,"Parallel port test",10,0
 .load_initial_msg
   equs "Initial value     : ",0
 .write_msg

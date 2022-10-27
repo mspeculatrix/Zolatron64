@@ -75,7 +75,8 @@ OSB2HEX    = OSB2BIN + 3
 OSB2ISTR   = OSB2HEX + 3
 OSHEX2B    = OSB2ISTR + 3
 OSU16HEX   = OSHEX2B + 3
-OSHEX2DEC  = OSU16HEX + 3
+OSU16ISTR  = OSU16HEX + 3
+OSHEX2DEC  = OSU16ISTR + 3
 ; LCD
 OSLCDCH    = OSHEX2DEC + 3
 OSLCDCLS   = OSLCDCH + 3
@@ -217,3 +218,8 @@ MACRO STR_BUF_TO_MSG_VEC
   lda #>STR_BUF
   sta MSG_VEC+1
 ENDMACRO
+
+MACRO CHK_EXTMEM_PRESENT                ; Check to see if extended memory fitted
+  lda SYS_REG
+  ror A                                 ; Shifts Bit 0 into carry
+ENDMACRO                                ; Carry set if extmem present

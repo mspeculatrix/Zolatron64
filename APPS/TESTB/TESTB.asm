@@ -7,10 +7,30 @@
 ; Assemble with:
 ; beebasm -v -i TESTB.asm
 
+MACRO PRT_ADDR addr
+  lda addr
+  sta TMP_ADDR_A_L
+  lda addr + 1
+  sta TMP_ADDR_A_H
+  jsr OSU16HEX
+  jsr OSWRSBUF
+ENDMACRO
+
+\ USRP_PORTA
+\ USRP_DDRA
+
+\ This is based on Ben Eater's code and works only if you use these specific
+\ bits for the signals.
+\ https://www.youtube.com/watch?v=MCi7dCBhVpQ
+SPI_CLK = %00000001
+SPI_SDO = %00000010                     ; MOSI
+SPI_SDI = %01000000                     ; MISO - Bit 6 so we can use BIT opcode
+SPI_CS  = %00000100
+
 CPU 1                               ; use 65C02 instruction set
 
-RAND_SEED = $6000
-SEED_VAL = 65
+NUM = $545E ; 21598
+;NUM = $0
 
 INCLUDE "../../LIB/cfg_main.asm"
 INCLUDE "../../LIB/cfg_page_0.asm"
@@ -18,6 +38,7 @@ INCLUDE "../../LIB/cfg_page_0.asm"
 INCLUDE "../../LIB/cfg_page_2.asm"
 ; PAGE 3 is used for STDIN & STDOUT buffers, plus indexes
 INCLUDE "../../LIB/cfg_page_4.asm"
+INCLUDE "../../LIB/cfg_user_port.asm"
 
 ORG USR_START
 .header                     ; HEADER INFO
@@ -45,63 +66,102 @@ ORG USR_START
   lda #0
   sta PRG_EXIT_CODE
 
-  ;lda #SEED_VAL
-  ;sta RAND_SEED
-
   cli
 
-  jsr OSLCDCLS
-
 .main
-  LOAD_MSG welcome_msg
+  LOAD_MSG start_msg
   jsr OSWRMSG
-  lda #CHR_LINEEND
-  jsr OSWRCH
-  jsr OSLCDMSG
 
-  LOAD_MSG second_msg
-  jsr OSWRMSG
-  jsr OSLCDMSG
+  jsr spi_init
 
-  NEWLINE
-  lda #245
-  jsr OSB2ISTR
-  jsr OSWRSBUF
-  NEWLINE
+  \ EXAMPLE: Writing to registers
+  stz USRP_PORTA          ; Takes all lines low, including CS, so starts session
+  lda #75                 ; Load register value
+  jsr spi_transceive
+  lda #%00000110          ; Load value to put in register
+  jsr spi_transceive      ; Send it
+  lda #SPI_CS             ; Load bit mask
+  sta USRP_PORTA          ; Sets CS high, ends session
 
-  ldx #0
-.seed_loop
-  jsr rand8_seed
-  lda RAND_SEED
-  jsr OSB2ISTR
-  jsr OSWRSBUF
-  NEWLINE
-  dex
-  bne seed_loop
+  \ EXAMPLE: Sending command & receiving response
+  stz USRP_PORTA          ; Takes all lines low, including CS, so starts session
+  lda #$FA                ; Load command
+  jsr spi_transceive      ; Send command
+  jsr spi_transceive      ; Receive response - byte in A
+  sta SOMEWHERE
+  lda #SPI_CS             ; Load bit mask
+  sta USRP_PORTA          ; Sets CS high, ends session
 
 .prog_end
   jmp OSSFTRST
 
-\ Changes RAND_SEED in an apparently random order, although the list is
-\ actually always the same. They're just consecutive incrementing or
-\ decrementing numbers.
-.rand8_seed
-  lda RAND_SEED
-  beq rand8_seed_eor
-  asl A
-  beq rand8_seed_no_eor
-  bcc rand8_seed_no_eor
-.rand8_seed_eor
-  eor #$1D
-.rand8_seed_no_eor
-  sta RAND_SEED
+\ ------------------------------------------------------------------------------
+\ -----  FUNCTIONS
+\ ------------------------------------------------------------------------------
+
+.spi_init
+  lda #SPI_CS
+  sta USRP_PORTA                      ; Set high by default
+  ; The above also has the effect of setting the clock bit to 0.
+  stz USRP_DDRA                       ; Reset to all inputs as default
+  lda #(SPI_CLK OR SPI_SDO OR SPI_CS) ; Set these as outputs
+  sta USRP_DDRA
   rts
 
-.welcome_msg
-  equs "TEST B", 0
+\ ------------------------------------------------------------------------------
+\ ---  SPI_TRANSCEIVE
+\ ------------------------------------------------------------------------------
+\ Going into this function, the SPI_CLK bit is assumed to be 0, so that
+\ incrementing USRP_PORTA has the effect of setting the clock line high
+\ and decrementing it sets the clock line low.
+\ WORKS FOR SPI MODES 0 & 3 - sampling on rising edge
+\ ON ENTRY: - Byte to be sent (if any) in A
+\ ON EXIT : - Received byte in A
+.spi_transceive
+  stz SPI_INBUF                       ; Clear input buffer
+  sta SPI_OUTBUF                      ; Store outgoing byte
+  ldy #8                              ; Counter for loop
+  lda #SPI_SDO                        ; Sets A to MOSI bit mask
+.spi_transceive_loop
+  asl SPI_OUTBUF                      ; Puts msb into Carry flag
+  bcs spi_transceive_send1            ; If it's a 1...
+  ; TRB (Test and Reset Bits)
+  ; Any bit set to 1 in A is set to 0 in memory.
+  ; Any bit set to 0 in A have no effect.
+  ; A is unaffected.
+  ; Also sets Z flag if a bitwise AND of A and memory location would result in
+  ; a 0. No other flags affected.
+  trb USRP_PORTA                      ; MOSI was high - set it low
+  jmp spi_transceive_input
+.spi_transceive_send1
+  ; TSB (Test and Set Bits) is like a bitwise OR with the accumulator. The
+  ; result is stored back in the memory address (USRP_PORTA in this case).
+  ; Any bit set to 1 in A is set to 1 in memory.
+  ; Any bit set to 0 in A have no effect.
+  ; A is unaffected.
+  ; Also sets Z flag if a bitwise AND of A and memory location would result in
+  ; a 0. No other flags affected.
+  tsb USRP_PORTA                  ; Effective OR - sets MOSI high
+.spi_transceive_input
+  inc USRP_PORTA                  ; Set SPI_CLK high
+  bit USRP_PORTA                  ; Put MISO into Overflow flag
+  clc                             ; Clear Carry
+  bvc spi_transceive_setinbit     ; Test the Overflow flag
+  sec                             ; Overflow was set, set Carry
+.spi_transceive_setinbit
+  rol SPI_INBUF                   ; Rotate Carry flag into receive buffer
+  dec USRP_PORTA                  ; Set SPI_CLK low
+  dey                             ; Decrement counter
+  bne spi_transceive_loop
+  lda SPI_INBUF                   ; Put the receive buffer into A
+  clc
+  rts
 
-.second_msg
-  equs "A second message", 0
+;INCLUDE "../../LIB/funcs_math.asm"
+;INCLUDE "../../LIB/math_uint16_div.asm"
+
+.start_msg
+  equs "SPI Test",0
 
 .endtag
   equs "EOF",0

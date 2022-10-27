@@ -20,7 +20,7 @@
   beq cmdprcXCLR_done
   jmp cmdprcXCLR_loop
 .cmdprcXCLR_done
-  stz STDOUT_IDX                        ; Zero-out STDOUT buffer
+  stz STDOUT_IDX                         ; Zero-out STDOUT buffer
   stz STDOUT_BUF
   LOAD_MSG bank_cleared_msg              ; Let's announce which bank is selected
   jsr OSSOAPP
@@ -30,8 +30,8 @@
   jsr OSSOAPP
   jsr OSWRBUF
   jsr OSLCDWRBUF
-  pla                                   ; Retrieve previous bank setting
-  sta EXTMEM_SLOT_SEL                   ; And reset it
+  pla                                    ; Retrieve previous bank setting
+  sta EXTMEM_SLOT_SEL                    ; And reset it
   sta EXTMEM_BANK
   jmp cmdprc_success
 .cmdprcXCLR_fail
@@ -45,20 +45,46 @@
 \ with the protocol of having a nul-terminated name string at $080D.
 .cmdprcXLS
   LED_ON LED_FILE_ACT
-  ldy #0                          ; Number of memory bank
+  ldy #0                           ; Number of memory bank
 .cmdprcXLS_loop
-  sty EXTMEM_SLOT_SEL             ; Select the ext memory slot
-  cpy #10                         ; See if we need a leading space
-  bcs cmdprcXLS_print_idx       ; If not, skip ahead
-  lda #' '                        ; Print a space
+  jsr cmdprcXLS_prt_item
+  phy
+  ldx #3
+.cmdprcXLS_loop_inner
+  tya
+  clc
+  adc #4
+  tay
+  jsr cmdprcXLS_prt_item
+  dex
+  bne cmdprcXLS_loop_inner
+  ply                             ; Done with first row, so get original Y back
+  iny                             ; Increment to next bank
+  lda #CHR_LINEEND                ; Print a linefeed at the end of this entry
+  jsr OSWRCH
+  cpy #4
+  beq cmdprcXLS_done
+  jmp cmdprcXLS_loop
+.cmdprcXLS_done
+  lda EXTMEM_BANK                 ; Restore the currently selected bank
+  sta EXTMEM_SLOT_SEL
+  LED_OFF LED_FILE_ACT
+  jmp cmdprc_success
+
+.cmdprcXLS_prt_item                ; Bank number is in Y
+  phx
+  sty EXTMEM_SLOT_SEL              ; Select the ext memory slot
+  cpy #10                          ; See if we need a leading space
+  bcs cmdprcXLS_print_idx          ; If not, skip ahead
+  lda #' '                         ; Print a space
   jsr OSWRCH
 .cmdprcXLS_print_idx
-  tya                             ; Put the bank number into A, convert it to
-  jsr OSB2ISTR                    ; an integer string and then print it.
+  tya                              ; Put the bank number into A, convert it to
+  jsr OSB2ISTR                     ; an integer string and then print it.
   jsr OSWRSBUF
-  lda #' '                        ; Followed by a space
+  lda #' '                         ; Followed by a space
   jsr OSWRCH
-  cpy EXTMEM_BANK                 ; Is this the currently selected bank?
+  cpy EXTMEM_BANK                  ; Is this the currently selected bank?
   beq cmdprcXLS_currbank_is
   lda #' '
   jmp cmdprcXLS_currbank_done
@@ -66,16 +92,12 @@
   lda #'*'
 .cmdprcXLS_currbank_done
   jsr OSWRCH
-;  lda EXTMEM_START                ; Load the first byte of the code and compare
-;  cmp #$4C                        ; to JMP instruction - if not this then no
-;  bne cmdprcXLS_name_loop_done    ; executable/named code loaded in this bank
   lda EXTMEM_START + CODEHDR_TYPE  ; Load the data type code
   sta TEST_VAL
-  beq cmdprcXLS_name_loop_done     ; If a zero, nothing more to do
   ldx #0                           ; Index for loop
 .cmdprcXLS_dtype_loop
   lda ext_data_types,X
-  beq cmdprcXLS_name_loop_done     ; If zero, run out of options. Not valid
+  beq cmdprcXLS_no_type            ; If zero, run out of options
   cmp TEST_VAL                     ; Same as our code?
   beq cmdprcXLS_dtype_prt          ; If so, print it
   inx                              ; Otherwise, try again
@@ -83,23 +105,47 @@
 .cmdprcXLS_dtype_prt
   lda TEST_VAL
   jsr OSWRCH
+  jmp cmdprcXLS_main
+.cmdprcXLS_no_type
+  stz TEST_VAL
   lda #' '                         ; Followed by a space
   jsr OSWRCH
+.cmdprcXLS_main
+  lda #' '
+  jsr OSWRCH
   lda TEST_VAL
+  beq cmdprcXLS_blank
   cmp #TYPECODE_DATA
   beq cmdprcXLS_data_label
   cmp #TYPECODE_OVLY
   beq cmdprcXLS_overlay_label
+  jmp cmdprcXLS_name
+.cmdprcXLS_blank
+  ldx #0
+.cmdprcXLS_blank_loop
+  lda #' '
+  jsr OSWRCH
+  cpx #ZD_MAX_FN_LEN
+  beq cmdprcXLS_name_loop_done
+  inx
+  jmp cmdprcXLS_blank_loop
 .cmdprcXLS_name
   ldx #0                          ; Offset for chars in name
 .cmdprcXLS_name_loop
   lda EXTMEM_START+CODEHDR_NAME,X ; Filename starts at $0D offset from start of
-  beq cmdprcXLS_name_loop_done  ; code. If char is 0, we're done
+  beq cmdprcXLS_name_pad    ; code. If char is 0, we're done
   jsr OSWRCH
   inx                             ; Increment for next char
-  cmp #ZD_MAX_FN_LEN              ; Have we already printed a filename's worth?
-  beq cmdprcXLS_name_loop_done  ; If so, we've gone too far
-  jmp cmdprcXLS_name_loop       ; Otherwise, get another char
+  cpx #ZD_MAX_FN_LEN              ; Have we already printed a filename's worth?
+  beq cmdprcXLS_name_loop_done    ; If so, we've gone far enough
+  jmp cmdprcXLS_name_loop         ; Otherwise, get another char
+.cmdprcXLS_name_pad
+  lda #' '
+  jsr OSWRCH
+  cpx #ZD_MAX_FN_LEN              ; Have we already printed a filename's worth?
+  beq cmdprcXLS_name_loop_done
+  inx
+  jmp cmdprcXLS_name_pad
 .cmdprcXLS_data_label
   LOAD_MSG xls_data_label
   jsr OSWRMSG
@@ -108,18 +154,10 @@
   LOAD_MSG xls_overlay_label
   jsr OSWRMSG
 .cmdprcXLS_name_loop_done
-  lda #CHR_LINEEND                ; Print a linefeed at the end of this entry
+  lda #' '
   jsr OSWRCH
-  iny                             ; Increment to next bank
-  cpy #16
-  beq cmdprcXLS_done
-  jmp cmdprcXLS_loop
-
-.cmdprcXLS_done
-  LED_OFF LED_FILE_ACT
-  lda EXTMEM_BANK                 ; Restore the currently selected bank
-  sta EXTMEM_SLOT_SEL
-  jmp cmdprc_success
+  plx
+  rts
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: XLOAD  :  LOAD EXECUTABLE CODE INTO EXTENDED RAM
@@ -218,7 +256,7 @@
 \ --- CMD: XSAVE  :  SAVE CONTENTS OF MEMORY BANK TO BINARY FILE ------------------------------------------------------------------------------
 \ Usage: XSAVE <0-15> <filename>
 .cmdprcXSAVE
-  jsr extmem_readset_bank               ; Set and select the bank
+  jsr extmem_readset_bank             ; Set and select the bank
   lda FUNC_ERR
   bne cmdprcXSAVE_fail
   jsr read_filename                   ; Puts filename in STR_BUF
@@ -227,14 +265,14 @@
 
   ldx STDIN_IDX
   lda STDIN_BUF,X                     ; Check nothing left in the RX buffer
-  bne cmdprcXSAVE_synerr               ; Anything but null is a mistake
+  bne cmdprcXSAVE_synerr              ; Anything but null is a mistake
   LED_ON LED_FILE_ACT
   LOAD_MSG saving_msg
   jsr OSWRMSG
   jsr OSLCDMSG
-  lda #<EXTMEM_START                     ; Set memory addresses
+  lda #<EXTMEM_START                  ; Set memory addresses
   sta TMP_ADDR_A                      ;  "    "       "
-  lda #>EXTMEM_START                     ;  "    "       "
+  lda #>EXTMEM_START                  ;  "    "       "
   sta TMP_ADDR_A + 1                  ;  "    "       "
   lda #<EXTMEM_END                    ;  "    "       "
   sta TMP_ADDR_B                      ;  "    "       "
@@ -283,6 +321,6 @@
 .bank_select_msg
   equs "Bank selected: ",0
 .xls_data_label
-  equs "-- data --",0
+  equs "-- data --   ",0
 .xls_overlay_label
   equs "-- overlay --",0

@@ -24,7 +24,9 @@ ORG USR_START
 INCLUDE "./zumpus_main.asm"
 INCLUDE "./zumpus_funcs.asm"
 INCLUDE "./zumpus_data.asm"
+
 INCLUDE "../../LIB/funcs_math.asm"
+INCLUDE "../../LIB/funcs_prng.asm"
 INCLUDE "../../LIB/cfg_ZolaDOS.asm"
 
 .endtag

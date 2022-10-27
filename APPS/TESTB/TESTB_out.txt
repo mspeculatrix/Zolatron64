@@ -5,7 +5,7 @@
      0805   08
      0806   17
      0807   08
-     0808   A3
+     0808   79
      0809   08
      080A   00
      080B   00
@@ -23,78 +23,57 @@
      0819   A2 FF      LDX #&FF
      081B   9A         TXS
      081C   A9 00      LDA #&00
-     081E   8D 30 04   STA &0430
+     081E   8D 32 04   STA &0432
      0821   58         CLI
-     0822   20 45 FF   JSR &FF45
 .main
 Macro LOAD_MSG:
-     0825   A9 87      LDA #&87
-     0827   85 50      STA &50
-     0829   A9 08      LDA #&08
-     082B   85 51      STA &51
+     0822   A9 6C      LDA #&6C
+     0824   85 50      STA &50
+     0826   A9 08      LDA #&08
+     0828   85 51      STA &51
 End macro LOAD_MSG
-     082D   20 24 FF   JSR &FF24
-     0830   A9 0A      LDA #&0A
-     0832   20 1E FF   JSR &FF1E
-     0835   20 4B FF   JSR &FF4B
-Macro LOAD_MSG:
-     0838   A9 8E      LDA #&8E
-     083A   85 50      STA &50
-     083C   A9 08      LDA #&08
-     083E   85 51      STA &51
-End macro LOAD_MSG
-     0840   20 24 FF   JSR &FF24
-     0843   20 4B FF   JSR &FF4B
-Macro NEWLINE:
-     0846   48         PHA
-     0847   A9 0A      LDA #&0A
-     0849   20 1E FF   JSR &FF1E
-     084C   68         PLA
-End macro NEWLINE
-     084D   A9 F5      LDA #&F5
-     084F   20 36 FF   JSR &FF36
-     0852   20 27 FF   JSR &FF27
-Macro NEWLINE:
-     0855   48         PHA
-     0856   A9 0A      LDA #&0A
-     0858   20 1E FF   JSR &FF1E
-     085B   68         PLA
-End macro NEWLINE
-     085C   A2 00      LDX #&00
-.seed_loop
-     085E   20 77 08   JSR &0877
-     0861   AD 00 60   LDA &6000
-     0864   20 36 FF   JSR &FF36
-     0867   20 27 FF   JSR &FF27
-Macro NEWLINE:
-     086A   48         PHA
-     086B   A9 0A      LDA #&0A
-     086D   20 1E FF   JSR &FF1E
-     0870   68         PLA
-End macro NEWLINE
-     0871   CA         DEX
-     0872   D0 EA      BNE &085E
+     082A   20 24 FF   JSR &FF24
+     082D   20 33 08   JSR &0833
 .prog_end
-     0874   4C F4 FF   JMP &FFF4
-.rand8_seed
-     0877   AD 00 60   LDA &6000
-     087A   F0 05      BEQ &0881
-     087C   0A         ASL A
-     087D   F0 04      BEQ &0883
-     087F   90 02      BCC &0883
-.rand8_seed_eor
-     0881   49 1D      EOR #&1D
-.rand8_seed_no_eor
-     0883   8D 00 60   STA &6000
-     0886   60         RTS
-.welcome_msg
-     0887   54 45 53 ...
-     088D   00
-.second_msg
-     088E   41 20 73 ...
-     089E   00
+     0830   4C F4 FF   JMP &FFF4
+.spi_init
+     0833   A9 04      LDA #&04
+     0835   8D 01 A8   STA &A801
+     0838   9C 03 A8   STZ &A803
+     083B   A9 07      LDA #&07
+     083D   8D 03 A8   STA &A803
+     0840   60         RTS
+.spi_transceive
+     0841   64 66      STZ &66
+     0843   85 67      STA &67
+     0845   A0 08      LDY #&08
+     0847   A9 02      LDA #&02
+.spi_transceive_loop
+     0849   06 67      ASL &67
+     084B   B0 06      BCS &0853
+     084D   1C 01 A8   TRB &A801
+     0850   4C 56 08   JMP &0856
+.spi_transceive_send1
+     0853   0C 01 A8   TSB &A801
+.spi_transceive_input
+     0856   EE 01 A8   INC &A801
+     0859   2C 01 A8   BIT &A801
+     085C   18         CLC
+     085D   50 01      BVC &0860
+     085F   38         SEC
+.spi_transceive_setinbit
+     0860   26 66      ROL &66
+     0862   CE 01 A8   DEC &A801
+     0865   88         DEY
+     0866   D0 E1      BNE &0849
+     0868   A5 66      LDA &66
+     086A   18         CLC
+     086B   60         RTS
+.start_msg
+     086C   53 50 49 ...
+     0874   00
 .endtag
-     089F   45 4F 46 
-     08A2   00
+     0875   45 4F 46 
+     0878   00
 .endcode
 Saving file '../bin/TESTB.EXE'
