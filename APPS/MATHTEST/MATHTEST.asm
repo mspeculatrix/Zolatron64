@@ -174,6 +174,50 @@ ORG USR_START
   PRT_ADDR FUNC_RES_L
   NEWLINE
 
+  \ ----- uint16_div_uint8 -----------------------------------------------------------
+  TESTING uint16_div_uint8_msg
+
+  lda #<NUM3
+  sta MATH_TMP_A
+  lda #>NUM3
+  sta MATH_TMP_A+1
+  jsr OSU16ISTR
+  jsr OSWRSBUF
+  NEWLINE
+
+  lda #<NUM3
+  sta MATH_TMP_A
+  lda #>NUM3
+  sta MATH_TMP_A+1
+  LOAD_MSG div_msg1
+  jsr OSWRMSG
+  PRT_ADDR MATH_TMP_A
+  NEWLINE
+
+  LOAD_MSG div_msg2
+  jsr OSWRMSG
+  lda #NUM4
+  sta MATH_TMP_B
+  jsr OSB2HEX
+  jsr OSWRSBUF
+  NEWLINE
+  lda #NUM4
+
+  jsr uint16_div_uint8
+
+  LOAD_MSG div_result_msg
+  jsr OSWRMSG
+  PRT_ADDR FUNC_RES_L
+  NEWLINE
+
+  LOAD_MSG remainder_msg
+  jsr OSWRMSG
+  txa
+  jsr OSB2HEX
+  jsr OSWRSBUF
+  NEWLINE
+
+
   \ ----- uint16_div -----------------------------------------------------------
   TESTING uint16_div_msg
 
@@ -282,6 +326,8 @@ INCLUDE "../../LIB/math_uint16_times10.asm"
   equs "uint16_sub",0
 .uint16_times10_msg
   equs "uint16_times10",0
+.uint16_div_uint8_msg
+  equs "uint16_div_uint8",0
 
 .endtag
   equs "EOF",0

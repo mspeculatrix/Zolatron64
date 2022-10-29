@@ -218,34 +218,34 @@
 \ Y - P
 .uint16_intstr
   pha : phx : phy
-  stz TMP_IDX               ; Keep track of digits in buffer
+  ; stz TMP_IDX             ; Keep track of digits in buffer
   stz STR_BUF               ; Set nul terminator at start of buffer
+  lda #10
+  sta MATH_TMP_B
+  stz MATH_TMP_B+1
 .uint16_intstr_loop
-  jsr uint16_div            ; Remainder in FUNC_RES_L/H; quotient in MATH_TMP_A
+  jsr uint16_div            ; Remainder in FUNC_RES_L; quotient in MATH_TMP_A/+1
 .uint16_intstr_next
   lda FUNC_RES_L
   clc
   adc #$30                  ; Add 30 to get ASCII
-  pha                       ; Keep it to one side for now
-  ldy TMP_IDX               ; Use the index as an offset
-.uint16_intstr_strloop
-  lda STR_BUF,Y             ; Load whatever is currently at the index position
+;  jsr uint16_intstr_addchar
+  pha                       ; Save it on stack for now
+  ldy #0
+.uint16_intstr_buf_loop
+  lda STR_BUF,Y             ; Get next char in current string
+  tax                       ; Temporarily save it
+  pla                       ; Bring back our new char
+  sta STR_BUF,Y             ; to replace what was there before
   iny
-  sta STR_BUF,Y             ; Move it to the next position
-  dey
-  beq uint16_intstr_strloop_done   ; If index=0, finished with moving digits
-  dey                       ; Otherwise, decrement offset and go around again
-  jmp uint16_intstr_strloop
-.uint16_intstr_strloop_done
-  inc TMP_IDX               ; Increment our digit index
-  pla                       ; Bring back our character
-  sta STR_BUF               ; and store it in the first byte of the buffer
-.uint16_intstr_check
+  txa                       ; Bring back previous char
+  pha                       ; An push onto stack for next iteration
+  bne uint16_intstr_buf_loop
+  pla                       ; This will be null char
+  sta STR_BUF,Y
   lda MATH_TMP_A            ; Check quotient. If 0, we're done
+  ora MATH_TMP_A+1
   bne uint16_intstr_loop
-  lda MATH_TMP_A+1
-  beq uint16_intstr_done    ; If both bytes were 0, division failed
-  jmp uint16_intstr_loop
 .uint16_intstr_done
   ply : plx : pla
   rts
