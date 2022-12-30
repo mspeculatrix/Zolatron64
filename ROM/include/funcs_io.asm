@@ -401,6 +401,7 @@
   bcs read_int_error          ; More than '9' - an error
   jsr uint16_times10          ; Otherwise, multiply the current sum by 10
   lda FUNC_RES_L              ; into MATH_TMP16
+  sta MATH_TMP16    ; **** RECENTLY ADDED THIS ****
   lda FUNC_RES_H
   sta MATH_TMP16+1
 .read_int_next                ; Get the next digit

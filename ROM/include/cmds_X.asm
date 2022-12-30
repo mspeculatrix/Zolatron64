@@ -12,13 +12,11 @@
   jsr extmem_readset_bank               ; Set and select the bank
   lda FUNC_ERR
   bne cmdprcXCLR_fail                   ; Error occurred
-  ldx #0
+  ldx #CLEAR_BYTES
 .cmdprcXCLR_loop
-  stz EXTMEM_START,X
-  inx
-  cpx #CLEAR_BYTES
-  beq cmdprcXCLR_done
-  jmp cmdprcXCLR_loop
+  stz EXTMEM_START-1,X
+  dex
+  bne cmdprcXCLR_loop
 .cmdprcXCLR_done
   stz STDOUT_IDX                         ; Zero-out STDOUT buffer
   stz STDOUT_BUF

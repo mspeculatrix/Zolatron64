@@ -343,7 +343,7 @@
   jsr zd_waitForSRoff         ; Wait for server response to end
   lda FUNC_ERR
   bne zd_send_data_end
-  jsr compare_tmp_addr        ; Check if we've reached the end
+  jsr compare_addr        ; Check if we've reached the end
   lda FUNC_RESULT
   cmp #EQUAL
   beq zd_send_data_end        ; If equal, we're done

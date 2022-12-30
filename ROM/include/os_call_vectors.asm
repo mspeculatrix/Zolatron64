@@ -63,6 +63,10 @@
   sta OSWRMSG_VEC
   lda #>duart_println
   sta OSWRMSG_VEC + 1
+  lda #<duart_writeOP                 ; OSWROP
+  sta OSWROP_VEC
+  lda #>duart_writeOP
+  sta OSWROP_VEC + 1
   lda #<duart_snd_strbuf              ; OSWRSBUF
   sta OSWRSBUF_VEC
   lda #>duart_snd_strbuf

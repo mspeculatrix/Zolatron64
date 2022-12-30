@@ -66,7 +66,8 @@ OSWRBUF    = OSRDSTR + 3
 OSWRCH     = OSWRBUF + 3
 OSWRERR    = OSWRCH + 3
 OSWRMSG    = OSWRERR + 3
-OSWRSBUF   = OSWRMSG + 3
+OSWROP     = OSWRMSG + 3
+OSWRSBUF   = OSWROP + 3
 OSSOAPP    = OSWRSBUF + 3
 OSSOCH     = OSSOAPP + 3
 ; CONVERSIONS
@@ -147,6 +148,20 @@ STDIN_CLEAR_FLAGS = %11110000    ; To be ANDed with reg to clear RX flags
 
 ; PROCESS FLAGS - for use with SYS_REG
 PROC_ZD_INT_FL    = %10000000    ; Interrupt signal received from ZolaDOS
+
+; GENERAL-PURPOSE CONSTANTS
+BIT0 = %00000001
+BIT1 = %00000010
+BIT2 = %00000100
+BIT3 = %00001000
+BIT4 = %00010000
+BIT5 = %00100000
+BIT6 = %01000000
+BIT7 = %10000000
+OFF  = 0
+ON   = 1
+LOW  = 0
+HIGH = 1
 
 ; Values for stream select. STREAM_SELECT_REG address is defined in
 ; cfg_page_5.asm.

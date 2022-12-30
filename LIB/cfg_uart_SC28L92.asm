@@ -3,6 +3,48 @@
 
 SC28L92_BASE_ADDR = $B400
 
+; OUTPUT PORT
+; -- Presented on serial ports
+; OP0 - RTSA
+; OP1 - RTSB
+; -- Presented on Output port - all can be used as general-purpose output ports,
+; -- but list below also shows special functions
+; OP2 - Channel A transmitter clock out (1x, 16x)
+; OP3 - Active low counter/timer output; Channel B clock transmitter
+; OP4 - RXA_INT
+; OP5 - RXB_INT
+; OP6 - TXA_INT
+; OP7 - TXB_INT
+; The output port (OP) is controlled by these registers:
+; OPCR       - Controls source of date for OP ports 2-7. A 0 sets a pin as
+;              general-purpose output while a 1 selects its special function.
+; OPR        - Port register: set using command 0xE, reset with 0xF.
+; MR/CR      - Sets source of data for OP0/OP1 (if OPR, then bits are inverted)
+; SOPR       - Writing to this register changes the bits in the OPR. Only the
+;              bits that are ones have an effect (writing ones to the same
+;              positions in the OPR). Bits that are 0 have no effect. In other
+;              words, a byte written here will be ORed with the contents of OPR.
+; ROPR       - Writing to this resets the contents of OPR. Like SOPR, only bits
+;              that are 1s will have an effect, settings the corresponding bits
+;              in OPR to be set to 0 - 0s have no effect.
+; NB: The actual output from the port is the *complement* of the OPR. So if a
+; bit in the OPR is HIGH, then the pin is set LOW, and vice versa.
+
+; Bit constants
+SC28L92_OP2 = %00000100
+SC28L92_OP3 = %00001000
+SC28L92_OP4 = %00010000
+SC28L92_OP5 = %00100000
+SC28L92_OP6 = %01000000
+SC28L92_OP7 = %10000000
+
+SC28L92_IP2 = %00000100
+SC28L92_IP3 = %00001000
+SC28L92_IP4 = %00010000
+SC28L92_IP5 = %00100000
+SC28L92_IP6 = %01000000
+
+
 ; Registers for GENERAL operations
 SC28L92_MRA       = SC28L92_BASE_ADDR           ; $00 Mode Register A
 SC28L92_MRB       = SC28L92_BASE_ADDR + %1000   ; $08 Mode Register B

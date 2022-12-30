@@ -15,12 +15,10 @@
   ldx #16                              ; There are 16 bits in NUM1
 .uint16_div_loop
   ; ASL - 0 is shifted into bit 0; original bit 7 is shifted into the Carry
-  asl MATH_TMP_A                ; Shift bit7 of dividend low byte into Carry
+  asl MATH_TMP_A
   ; ROL - Carry shifted into bit 0; original bit 7 shifted into Carry.
-  rol MATH_TMP_A+1              ; bit7 from low byte now low bit of high byte
-                                ; bit7 of high byte now in Carry
-  rol FUNC_RES_L                ; bit0 of Rem now bit7 from high byte
-                                ; bit7 of now in Carry
+  rol MATH_TMP_A+1
+  rol FUNC_RES_L
   rol FUNC_RES_H
   lda FUNC_RES_L
   sec                           ; Trial subtraction

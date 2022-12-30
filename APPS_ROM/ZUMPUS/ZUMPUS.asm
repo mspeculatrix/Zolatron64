@@ -24,7 +24,7 @@ ORG EXTMEM_START
 INCLUDE "../../APPS/ZUMPUS/zumpus_main.asm"
 INCLUDE "../../APPS/ZUMPUS/zumpus_funcs.asm"
 INCLUDE "../../APPS/ZUMPUS/zumpus_data.asm"
-INCLUDE "../../LIB/funcs_math.asm"
+INCLUDE "../../LIB/math_uint8_div.asm"
 INCLUDE "../../LIB/funcs_prng.asm"
 INCLUDE "../../LIB/cfg_ZolaDOS.asm"
 

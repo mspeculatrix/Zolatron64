@@ -44,7 +44,7 @@
   jsr read_hex_addr_pair              ; Get addresses from input
   lda FUNC_ERR
   bne cmdprcDUMP_err
-  jsr compare_tmp_addr                ; Check that address A is lower than B
+  jsr compare_addr                ; Check that address A is lower than B
   lda FUNC_RESULT                     ; Result should be 0 (LESS_THAN)
   bne cmdprcDUMP_addr_err
   jsr read_filename                   ; Puts filename in STR_BUF

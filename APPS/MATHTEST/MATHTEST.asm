@@ -8,11 +8,23 @@
 ; beebasm -v -i TESTB.asm
 
 MACRO PRT_ADDR addr
+  lda #'$'
+  jsr OSWRCH
   lda addr
   sta TMP_ADDR_A_L
   lda addr + 1
   sta TMP_ADDR_A_H
   jsr OSU16HEX
+  jsr OSWRSBUF
+  lda #' '
+  jsr OSWRCH
+  lda #' '
+  jsr OSWRCH
+  lda addr
+  sta MATH_TMP_A
+  lda addr + 1
+  sta MATH_TMP_A+1
+  jsr OSU16ISTR
   jsr OSWRSBUF
 ENDMACRO
 
@@ -26,6 +38,25 @@ MACRO TESTING msg
   NEWLINE
 ENDMACRO
 
+MACRO SHOW_BYTE value
+  lda #'$'
+  jsr OSWRCH
+  lda #value
+  jsr OSB2HEX
+  jsr OSWRSBUF
+  lda #' '
+  jsr OSWRCH
+  lda #' '
+  jsr OSWRCH
+  lda #' '
+  jsr OSWRCH
+  lda #' '
+  jsr OSWRCH
+  lda #value
+  jsr OSB2ISTR
+  jsr OSWRSBUF
+ENDMACRO
+
 CPU 1                               ; use 65C02 instruction set
 
 NUM1 = $FF
@@ -36,6 +67,8 @@ NUM4 = $13
 
 SUB1 = $3737
 SUB2 = $1234
+
+TIMES10_NUM = 13108
 
 TEMP = $6000
 
@@ -97,16 +130,12 @@ ORG USR_START
 
   LOAD_MSG num1_msg
   jsr OSWRMSG
-  lda #NUM1
-  jsr OSB2HEX
-  jsr OSWRSBUF
+  SHOW_BYTE NUM1
   NEWLINE
 
   LOAD_MSG num2_msg
   jsr OSWRMSG
-  lda #NUM2
-  jsr OSB2HEX
-  jsr OSWRSBUF
+  SHOW_BYTE NUM2
   NEWLINE
 
   lda #NUM1
@@ -139,6 +168,14 @@ ORG USR_START
   PRT_ADDR MATH_TMP_B
   NEWLINE
 
+  lda #<SUB1
+  sta MATH_TMP_A
+  lda #>SUB1
+  sta MATH_TMP_A+1
+  lda #<SUB2
+  sta MATH_TMP_B
+  lda #>SUB2
+  sta MATH_TMP_B+1
   jsr uint16_add
 
   LOAD_MSG result_msg
@@ -167,6 +204,14 @@ ORG USR_START
   PRT_ADDR MATH_TMP_B
   NEWLINE
 
+  lda #<SUB1
+  sta MATH_TMP_A
+  lda #>SUB1
+  sta MATH_TMP_A+1
+  lda #<SUB2
+  sta MATH_TMP_B
+  lda #>SUB2
+  sta MATH_TMP_B+1
   jsr uint16_sub
 
   LOAD_MSG result_msg
@@ -181,14 +226,6 @@ ORG USR_START
   sta MATH_TMP_A
   lda #>NUM3
   sta MATH_TMP_A+1
-  jsr OSU16ISTR
-  jsr OSWRSBUF
-  NEWLINE
-
-  lda #<NUM3
-  sta MATH_TMP_A
-  lda #>NUM3
-  sta MATH_TMP_A+1
   LOAD_MSG div_msg1
   jsr OSWRMSG
   PRT_ADDR MATH_TMP_A
@@ -196,13 +233,14 @@ ORG USR_START
 
   LOAD_MSG div_msg2
   jsr OSWRMSG
-  lda #NUM4
-  sta MATH_TMP_B
-  jsr OSB2HEX
-  jsr OSWRSBUF
+  SHOW_BYTE NUM4
   NEWLINE
-  lda #NUM4
 
+  lda #<NUM3
+  sta MATH_TMP_A
+  lda #>NUM3
+  sta MATH_TMP_A+1
+  lda #NUM4
   jsr uint16_div_uint8
 
   LOAD_MSG div_result_msg
@@ -234,17 +272,24 @@ ORG USR_START
   jsr OSWRMSG
   lda #0
   sta MATH_TMP_B+1
-  jsr OSB2HEX
-  jsr OSWRSBUF
   lda #NUM4
   sta MATH_TMP_B
-  jsr OSB2HEX
-  jsr OSWRSBUF
+  PRT_ADDR MATH_TMP_B
   NEWLINE
   lda #NUM4
 
+  lda #<NUM3
+  sta MATH_TMP_A
+  lda #>NUM3
+  sta MATH_TMP_A+1
+  lda #0
+  sta MATH_TMP_B+1
+  lda #NUM4
+  sta MATH_TMP_B
   jsr uint16_div
 
+  lda FUNC_RES_L
+  sta TMP_VAL
   ; FUNC_RES_L/H contains remainder
   ; MATH_TMP_A/+1 contains quotient
 
@@ -255,6 +300,8 @@ ORG USR_START
 
   LOAD_MSG remainder_msg
   jsr OSWRMSG
+  lda TMP_VAL
+  sta FUNC_RES_L
   PRT_ADDR FUNC_RES_L
   NEWLINE
 
@@ -263,15 +310,35 @@ ORG USR_START
 
   LOAD_MSG mult_msg
   jsr OSWRMSG
-  lda #<$013A
+  lda #<TIMES10_NUM
   sta MATH_TMP16
-  lda #>$013A
+  lda #>TIMES10_NUM
   sta MATH_TMP16+1
   PRT_ADDR MATH_TMP16
   NEWLINE
 
+  lda #<TIMES10_NUM
+  sta MATH_TMP16
+  lda #>TIMES10_NUM
+  sta MATH_TMP16+1
+
   jsr uint16_times10
 
+  bcs overflow
+  jmp result_ok
+
+.overflow
+  lda FUNC_ERR
+  beq carry_set               ; No error but carry set
+  LOAD_MSG out_of_range_msg
+  jsr OSWRMSG
+  NEWLINE
+  jmp prog_end
+.carry_set
+  LOAD_MSG carry_set_msg
+  jsr OSWRMSG
+  NEWLINE
+.result_ok
   LOAD_MSG div_result_msg
   jsr OSWRMSG
   PRT_ADDR FUNC_RES_L
@@ -328,6 +395,10 @@ INCLUDE "../../LIB/math_uint16_times10.asm"
   equs "uint16_times10",0
 .uint16_div_uint8_msg
   equs "uint16_div_uint8",0
+.out_of_range_msg
+  equs "Error: Out of range",0
+.carry_set_msg
+  equs "Carry set",0
 
 .endtag
   equs "EOF",0

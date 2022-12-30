@@ -15,6 +15,7 @@ INCLUDE "../../LIB/cfg_page_0.asm"
 INCLUDE "../../LIB/cfg_page_2.asm"
 ; PAGE 3 is used for STDIN & STDOUT buffers, plus indexes
 INCLUDE "../../LIB/cfg_page_4.asm"
+INCLUDE "../../LIB/cfg_uart_SC28L92.asm"
 
 ORG USR_START
 .header                     ; HEADER INFO
@@ -42,9 +43,6 @@ ORG USR_START
   lda #0
   sta PRG_EXIT_CODE
 
-  ;lda #SEED_VAL
-  ;sta RAND_SEED
-
   cli
 
 .main
@@ -53,70 +51,37 @@ ORG USR_START
   lda #CHR_LINEEND
   jsr OSWRCH
 
-
-.enter_loop
+  ldy #2                        ; Loop counter
+  ldx #SC28L92_OP2               ; Start with pin 2
+  lda #1                        ; Write a 1 to it
+  jsr OSWROP
+.loop
   LOAD_MSG enter_msg
   jsr OSWRMSG
-  jsr os_getkey
-  ;NEWLINE
-  lda FUNC_RESULT
-  jsr OSB2HEX
-  jsr OSWRSBUF
-  NEWLINE
-;  lda FUNC_ERR
-;  bne enter_error
-  lda FUNC_RESULT
-  beq enter_entered
-  jsr OSWRCH
-  jmp enter_loopback
-.enter_error
-  LOAD_MSG error_msg
-  jsr OSWRMSG
-  NEWLINE
-  jmp prog_end
-.enter_entered
-  LOAD_MSG return_msg
-  jsr OSWRMSG
-.enter_loopback
-  NEWLINE
-  jmp enter_loop
+  jsr OSGETKEY
+  lda #0                        ; Write a 0 to the current pin
+  jsr OSWROP
+  txa                           ; Increase the pin number
+  asl A
+  tax
+  lda #1
+  jsr OSWROP
+  iny
+  cpy #6
+  bne loop
+
 
 .prog_end
   jmp OSSFTRST
 
-\ --- FUNCTIONS ----------------------------------------------------------------
-; Test code for possible OS function OSGETKEY
-; Designed to return a single character
-.os_getkey
-  stz FUNC_ERR
-  stz FUNC_RESULT
-  stz STDIN_IDX                         ; Zero-out buffer
-  stz STDIN_BUF
-.os_getkey_loop
-  lda STDIN_STATUS_REG
-  and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
-  beq os_getkey_loop                    ; If no, loop until it is
-  lda STDIN_BUF                         ; Read char from STDIN_BUF
-  sta FUNC_RESULT
-  lda STDIN_STATUS_REG                  ; Clear the STDIN flags in status reg
-  and #STDIN_CLEAR_FLAGS
-  sta STDIN_STATUS_REG
-  stz STDIN_IDX                         ; Zero-out buffer
-  stz STDIN_BUF
-  rts
 
 \ --- DATA ---------------------------------------------------------------------
 .welcome_msg
   equs "TESTIO - experimenting with I/O code", 0
 
 .enter_msg
-  equs "Type a key + <ret>: ",0
+  equs "Type any key > ",0
 
-.error_msg
-  equs "Hmmm, what happened there?",0
-
-.return_msg
-  equs "<return>",0
 
 .endtag
   equs "EOF",0

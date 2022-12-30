@@ -5,7 +5,7 @@
      0805   08
      0806   1A
      0807   08
-     0808   58
+     0808   06
      0809   1D
      080A   00
      080B   00
@@ -25,7 +25,7 @@
      081F   A9 00      LDA #&00
      0821   8D 32 04   STA &0432
      0824   58         CLI
-     0825   20 3D 1D   JSR &1D3D
+     0825   20 EB 1C   JSR &1CEB
 .main
      0828   9C 00 03   STZ &0300
      082B   9C 7F 03   STZ &037F
@@ -67,14 +67,14 @@ Macro LOAD_MSG:
      086D   A9 10      LDA #&10
      086F   85 51      STA &51
 End macro LOAD_MSG
-     0871   20 2A FF   JSR &FF2A
+     0871   20 2D FF   JSR &FF2D
 Macro LOAD_MSG:
      0874   A9 14      LDA #&14
      0876   85 50      STA &50
      0878   A9 08      LDA #&08
      087A   85 51      STA &51
 End macro LOAD_MSG
-     087C   20 2A FF   JSR &FF2A
+     087C   20 2D FF   JSR &FF2D
      087F   20 1B FF   JSR &FF1B
 Macro NEWLINE:
      0882   48         PHA
@@ -151,11 +151,11 @@ End macro NEWLINE
      08ED   A9 FF      LDA #&FF
 .init_contd
      08EF   8D 04 70   STA &7004
-     08F2   20 2C 1D   JSR &1D2C
+     08F2   20 DA 1C   JSR &1CDA
      08F5   A2 14      LDX #&14
      08F7   A0 00      LDY #&00
 .init_loop
-     08F9   20 12 1D   JSR &1D12
+     08F9   20 C0 1C   JSR &1CC0
      08FC   20 AE 1C   JSR &1CAE
      08FF   A5 54      LDA &54
      0901   99 00 05   STA &0500,Y
@@ -624,8 +624,8 @@ End macro NEWLINE
      0C30   60         RTS
 .print_room_num
      0C31   1A         INC A
-     0C32   20 36 FF   JSR &FF36
-     0C35   20 27 FF   JSR &FF27
+     0C32   20 39 FF   JSR &FF39
+     0C35   20 2A FF   JSR &FF2A
      0C38   60         RTS
 .random_room
      0C39   A9 0D      LDA #&0D
@@ -795,7 +795,7 @@ End macro NEWLINE
      0D59   85 5F      STA &5F
      0D5B   20 43 0D   JSR &0D43
      0D5E   A9 03      LDA #&03
-     0D60   20 6F FF   JSR &FF6F
+     0D60   20 75 FF   JSR &FF75
      0D63   A5 55      LDA &55
      0D65   F0 15      BEQ &0D7C
      0D67   20 21 FF   JSR &FF21
@@ -834,7 +834,7 @@ End macro LOAD_MSG
      0D98   85 5B      STA &5B
      0D9A   20 43 0D   JSR &0D43
      0D9D   A9 88      LDA #&88
-     0D9F   20 72 FF   JSR &FF72
+     0D9F   20 78 FF   JSR &FF78
      0DA2   A5 55      LDA &55
      0DA4   F0 0B      BEQ &0DB1
 Macro LOAD_MSG:
@@ -862,13 +862,13 @@ Macro LOAD_MSG:
      0DC4   A9 1B      LDA #&1B
      0DC6   85 51      STA &51
 End macro LOAD_MSG
-     0DC8   20 2A FF   JSR &FF2A
+     0DC8   20 2D FF   JSR &FF2D
      0DCB   A9 20      LDA #&20
-     0DCD   20 2D FF   JSR &FF2D
+     0DCD   20 30 FF   JSR &FF30
      0DD0   AD 04 70   LDA &7004
      0DD3   C9 FF      CMP #&FF
      0DD5   F0 0E      BEQ &0DE5
-     0DD7   20 36 FF   JSR &FF36
+     0DD7   20 39 FF   JSR &FF39
 Macro STR_BUF_TO_MSG_VEC:
      0DDA   A9 0B      LDA #&0B
      0DDC   85 50      STA &50
@@ -884,7 +884,7 @@ Macro LOAD_MSG:
      0DEB   85 51      STA &51
 End macro LOAD_MSG
 .show_stats_games
-     0DED   20 2A FF   JSR &FF2A
+     0DED   20 2D FF   JSR &FF2D
      0DF0   20 1B FF   JSR &FF1B
 Macro NEWLINE:
      0DF3   48         PHA
@@ -899,13 +899,13 @@ Macro LOAD_MSG:
      0E01   A9 1B      LDA #&1B
      0E03   85 51      STA &51
 End macro LOAD_MSG
-     0E05   20 2A FF   JSR &FF2A
+     0E05   20 2D FF   JSR &FF2D
      0E08   A9 20      LDA #&20
-     0E0A   20 2D FF   JSR &FF2D
+     0E0A   20 30 FF   JSR &FF30
      0E0D   AD 05 70   LDA &7005
      0E10   C9 FF      CMP #&FF
      0E12   F0 0E      BEQ &0E22
-     0E14   20 36 FF   JSR &FF36
+     0E14   20 39 FF   JSR &FF39
 Macro STR_BUF_TO_MSG_VEC:
      0E17   A9 0B      LDA #&0B
      0E19   85 50      STA &50
@@ -921,7 +921,7 @@ Macro LOAD_MSG:
      0E28   85 51      STA &51
 End macro LOAD_MSG
 .show_stats_won
-     0E2A   20 2A FF   JSR &FF2A
+     0E2A   20 2D FF   JSR &FF2D
      0E2D   20 1B FF   JSR &FF1B
 Macro NEWLINE:
      0E30   48         PHA
@@ -1016,8 +1016,8 @@ End macro LOAD_MSG
      0ECF   A2 00      LDX #&00
 .list_locs_loop
      0ED1   BD 00 05   LDA &0500,X
-     0ED4   20 33 FF   JSR &FF33
-     0ED7   20 27 FF   JSR &FF27
+     0ED4   20 36 FF   JSR &FF36
+     0ED7   20 2A FF   JSR &FF2A
      0EDA   A9 20      LDA #&20
      0EDC   20 1E FF   JSR &FF1E
      0EDF   E8         INX
@@ -1046,8 +1046,8 @@ End macro LOAD_MSG
      0F12   A9 2F      LDA #&2F
      0F14   20 1E FF   JSR &FF1E
      0F17   AD 15 05   LDA &0515
-     0F1A   20 36 FF   JSR &FF36
-     0F1D   20 27 FF   JSR &FF27
+     0F1A   20 39 FF   JSR &FF39
+     0F1D   20 2A FF   JSR &FF2A
      0F20   A9 20      LDA #&20
      0F22   20 1E FF   JSR &FF1E
      0F25   A9 42      LDA #&42
@@ -1410,108 +1410,59 @@ End macro NEWLINE
      1C87   59 6F 75 ...
      1CAC   0A
      1CAD   00
-.uint8_mod8
+.uint8_div
      1CAE   8E 02 04   STX &0402
      1CB1   A2 00      LDX #&00
-.uint8_mod8_loop
+.uint8_div_loop
      1CB3   85 54      STA &54
      1CB5   38         SEC
      1CB6   ED 02 04   SBC &0402
      1CB9   90 04      BCC &1CBF
      1CBB   E8         INX
      1CBC   4C B3 1C   JMP &1CB3
-.uint8_mod8_result
+.uint8_div_result
      1CBF   60         RTS
-     1CC0   DA         PHX
-     1CC1   A2 01      LDX #&01
-.uint16_times10_outer
-     1CC3   A0 00      LDY #&00
-     1CC5   BD 2E 04   LDA &042E,X
-     1CC8   9D 12 05   STA &0512,X
-     1CCB   8D 02 04   STA &0402
-.uint16_times10_loop
-     1CCE   18         CLC
-     1CCF   6D 02 04   ADC &0402
-     1CD2   B0 03      BCS &1CD7
-     1CD4   4C DE 1C   JMP &1CDE
-.uint16_times10_carry
-     1CD7   E0 00      CPX #&00
-     1CD9   D0 03      BNE &1CDE
-     1CDB   EE 2F 04   INC &042F
-.uint16_times10_next_inc
-     1CDE   C8         INY
-     1CDF   C0 09      CPY #&09
-     1CE1   F0 03      BEQ &1CE6
-     1CE3   4C CE 1C   JMP &1CCE
-.uint16_times10_next_byte
-     1CE6   9D 2E 04   STA &042E,X
-     1CE9   E0 00      CPX #&00
-     1CEB   F0 04      BEQ &1CF1
-     1CED   CA         DEX
-     1CEE   4C C3 1C   JMP &1CC3
-.uint16_times10_done
-     1CF1   FA         PLX
-     1CF2   60         RTS
-.compare_tmp_addr
-     1CF3   A5 59      LDA &59
-     1CF5   C5 5B      CMP &5B
-     1CF7   90 0F      BCC &1D08
-     1CF9   D0 12      BNE &1D0D
-     1CFB   A5 58      LDA &58
-     1CFD   C5 5A      CMP &5A
-     1CFF   90 07      BCC &1D08
-     1D01   D0 0A      BNE &1D0D
-     1D03   A9 01      LDA #&01
-     1D05   4C 0F 1D   JMP &1D0F
-.compare_tmp_addr_less
-     1D08   A9 00      LDA #&00
-     1D0A   4C 0F 1D   JMP &1D0F
-.compare_tmp_addr_more
-     1D0D   A9 02      LDA #&02
-.compare_tmp_addr_end
-     1D0F   85 54      STA &54
-     1D11   60         RTS
 .prng_rand8
-     1D12   5A         PHY
-     1D13   A0 08      LDY #&08
+     1CC0   5A         PHY
+     1CC1   A0 08      LDY #&08
 .prng_rand8_loop
-     1D15   AD 2C 04   LDA &042C
-     1D18   F0 08      BEQ &1D22
-     1D1A   0A         ASL A
-     1D1B   F0 07      BEQ &1D24
-     1D1D   2E 2D 04   ROL &042D
-     1D20   90 02      BCC &1D24
+     1CC3   AD 2C 04   LDA &042C
+     1CC6   F0 08      BEQ &1CD0
+     1CC8   0A         ASL A
+     1CC9   F0 07      BEQ &1CD2
+     1CCB   2E 2D 04   ROL &042D
+     1CCE   90 02      BCC &1CD2
 .prng_rand8_eor
-     1D22   49 1D      EOR #&1D
+     1CD0   49 1D      EOR #&1D
 .prng_rand8_no_eor
-     1D24   88         DEY
-     1D25   D0 EE      BNE &1D15
-     1D27   8D 2C 04   STA &042C
-     1D2A   7A         PLY
-     1D2B   60         RTS
+     1CD2   88         DEY
+     1CD3   D0 EE      BNE &1CC3
+     1CD5   8D 2C 04   STA &042C
+     1CD8   7A         PLY
+     1CD9   60         RTS
 .prng_set_seed
-     1D2C   48         PHA
-     1D2D   AD 04 A8   LDA &A804
-     1D30   8D 2C 04   STA &042C
-     1D33   AD 05 A8   LDA &A805
-     1D36   49 1D      EOR #&1D
-     1D38   8D 2D 04   STA &042D
-     1D3B   68         PLA
-     1D3C   60         RTS
+     1CDA   48         PHA
+     1CDB   AD 04 A8   LDA &A804
+     1CDE   8D 2C 04   STA &042C
+     1CE1   AD 05 A8   LDA &A805
+     1CE4   49 1D      EOR #&1D
+     1CE6   8D 2D 04   STA &042D
+     1CE9   68         PLA
+     1CEA   60         RTS
 .prng_start_timer
-     1D3D   48         PHA
-     1D3E   A9 40      LDA #&40
-     1D40   8D 0E A8   STA &A80E
-     1D43   A9 40      LDA #&40
-     1D45   8D 0B A8   STA &A80B
-     1D48   A9 FF      LDA #&FF
-     1D4A   8D 04 A8   STA &A804
-     1D4D   A9 00      LDA #&00
-     1D4F   8D 05 A8   STA &A805
-     1D52   68         PLA
-     1D53   60         RTS
+     1CEB   48         PHA
+     1CEC   A9 40      LDA #&40
+     1CEE   8D 0E A8   STA &A80E
+     1CF1   A9 40      LDA #&40
+     1CF3   8D 0B A8   STA &A80B
+     1CF6   A9 FF      LDA #&FF
+     1CF8   8D 04 A8   STA &A804
+     1CFB   A9 00      LDA #&00
+     1CFD   8D 05 A8   STA &A805
+     1D00   68         PLA
+     1D01   60         RTS
 .endtag
-     1D54   45 4F 46 
-     1D57   00
+     1D02   45 4F 46 
+     1D05   00
 .endcode
 Saving file '../bin/ZUMPUS.EXE'

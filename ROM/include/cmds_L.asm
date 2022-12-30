@@ -25,7 +25,7 @@
 ; If it's equal, then the LSB of the start address must be less than that of
 ; the end address.
 .cmdprcLM_check
-  jsr compare_tmp_addr
+  jsr compare_addr
   lda FUNC_RESULT
   bne cmdprcLM_addr_fail
   jmp cmdprcLM_chk_nul

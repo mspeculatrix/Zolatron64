@@ -102,7 +102,7 @@
 .init_loop
   jsr prng_rand8                  ; Puts result in RAND_SEED and A
   ;ldx #NUM_ROOMS                  ; Divisor for MOD
-  jsr uint8_div8
+  jsr uint8_div
   lda FUNC_RESULT                 ; Get the result of the MODding
   sta RANDOM_LOCS,Y
   jsr init_check_unique           ; Check that this number not already used

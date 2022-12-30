@@ -327,6 +327,7 @@ ORG $FF00
   jmp (OSWRCH_VEC)
   jmp (OSWRERR_VEC)
   jmp (OSWRMSG_VEC)
+  jmp (OSWROP_VEC)
   jmp (OSWRSBUF_VEC)
   jmp (OSSOAPP_VEC)
   jmp (OSSOCH_VEC)
