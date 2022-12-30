@@ -5,7 +5,7 @@
      0805   08
      0806   18
      0807   08
-     0808   73
+     0808   87
      0809   08
      080A   00
      080B   00
@@ -25,38 +25,52 @@
      081D   A9 00      LDA #&00
      081F   8D 30 04   STA &0430
      0822   58         CLI
-     0823   20 42 FF   JSR &FF42
+     0823   20 45 FF   JSR &FF45
 .main
-     0826   20 42 FF   JSR &FF42
+     0826   20 45 FF   JSR &FF45
 Macro LOAD_MSG:
-     0829   A9 4B      LDA #&4B
+     0829   A9 5F      LDA #&5F
      082B   85 50      STA &50
      082D   A9 08      LDA #&08
      082F   85 51      STA &51
 End macro LOAD_MSG
-     0831   20 21 FF   JSR &FF21
+     0831   20 24 FF   JSR &FF24
 Macro NEWLINE:
-     0834   A9 0A      LDA #&0A
-     0836   20 1B FF   JSR &FF1B
+     0834   48         PHA
+     0835   A9 0A      LDA #&0A
+     0837   20 1E FF   JSR &FF1E
+     083A   68         PLA
 End macro NEWLINE
-     0839   20 48 FF   JSR &FF48
+     083B   20 4B FF   JSR &FF4B
+     083E   20 50 08   JSR &0850
 .prog_end
-     083C   9C 7F 03   STZ &037F
-     083F   8E 00 03   STX &0300
-     0842   A5 62      LDA &62
-     0844   29 F0      AND #&F0
-     0846   85 62      STA &62
-     0848   4C F4 FF   JMP &FFF4
+     0841   9C 7F 03   STZ &037F
+     0844   8E 00 03   STX &0300
+     0847   A5 62      LDA &62
+     0849   29 F0      AND #&F0
+     084B   85 62      STA &62
+     084D   4C F4 FF   JMP &FFF4
+.press_key
+     0850   48         PHA
+.press_key_loop
+     0851   A5 62      LDA &62
+     0853   29 01      AND #&01
+     0855   F0 FA      BEQ &0851
+.press_key_done
+     0857   9C 7F 03   STZ &037F
+     085A   20 09 FF   JSR &FF09
+     085D   68         PLA
+     085E   60         RTS
 .colossus_msg
-     084B   2A 2A 20 ...
-     0855   0A
-     0856   54 48 45 ...
-     0866   0A
-     0867   53 59 53 ...
-     086D   0A
-     086E   00
+     085F   2A 2A 20 ...
+     0869   0A
+     086A   54 48 45 ...
+     087A   0A
+     087B   53 59 53 ...
+     0881   0A
+     0882   00
 .endtag
-     086F   45 4F 46 
-     0872   00
+     0883   45 4F 46 
+     0886   00
 .endcode
 Saving file '../bin/FORBIN.EXE'

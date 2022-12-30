@@ -12,7 +12,7 @@
 .prog_name
   equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
-  equs "1.3.1",0              ; Version string - nul terminated
+  equs "1.4.0",0              ; Version string - nul terminated
 
 .startprog
 .reset                      ; Sometimes this may be different from startprog
@@ -25,20 +25,7 @@
   sta PRG_EXIT_CODE         ; Not sure we're using this yet
   cli
 
-; Using Timer 1 for random numbers. Basically, this will run constantly in
-; free-run mode, counting down constantly 59..0. So we're going to use it like
-; a complex dice. Whenever we need to throw the dice, we just read the state of
-; the counter. We'll only ever need to check the low byte. We can MOD the number
-; by various factors - eg, 20 to get a random room number, 3 to get a random
-; choice of connecting rooms.
-  lda #%01000000		          ; Bit 7 off - don't need interrupts
-  sta USRP_IER
-  lda #%01000000              ; Set timer to free-run mode
-  sta USRP_ACR
-  lda #59                     ; Start value
-  sta USRP_T1CL
-  lda #0
-  sta USRP_T1CH		            ; Starts timer running
+  jsr prng_start_timer      ; Start timer for random number generator
 
 .main
   stz STDIN_BUF               ; Clear input buffer
@@ -95,54 +82,41 @@
   NEWLINE
 
 .init
-  LOAD_MSG init_msg
-  jsr OSWRMSG
-  NEWLINE
   stz Z_STATE                     ; Set Zumpus to sleeping
   stz P_CONDITION                 ; Set Player's condition to default
   lda #NUM_STAPLES                ; Set initial number of staples
   sta STAPLE_COUNT
-
   lda GAMES_PLAYED                ; Update count of games played
   inc A                           ; Otherwise, increment number
   bne init_contd                  ; Did not roll over
   lda #$FF                        ; If it did, reset to maximum value
-
 .init_contd
   sta GAMES_PLAYED                ; and store
 
 ; Randomise initial locations of player & threats
+
+  jsr prng_set_seed
+
+  ldx #NUM_ROOMS                  ; Divisor for MOD
   ldy #0                          ; Counter for number of locs we've set
 .init_loop
-  LOAD_MSG press_enter_msg
-  jsr OSWRMSG
-.init_loop_wait
-  lda STDIN_STATUS_REG
-  and #STDIN_NUL_RCVD_FL          ; Has nul flag been set?
-  beq init_loop_wait              ; If not, loop
-.init_set_loc
-  ldx #NUM_ROOMS                  ; Divisor for MOD
-  phy
-  jsr roll_dice                   ; Random number will be in A
-  ply
+  jsr prng_rand8                  ; Puts result in RAND_SEED and A
+  ;ldx #NUM_ROOMS                  ; Divisor for MOD
+  jsr uint8_div
+  lda FUNC_RESULT                 ; Get the result of the MODding
   sta RANDOM_LOCS,Y
-  stz STDIN_IDX                   ; Clear the input buffer
-  lda STDIN_STATUS_REG            ; Reset the nul received flag
-  and #STDIN_CLEAR_FLAGS
-  sta STDIN_STATUS_REG
   jsr init_check_unique           ; Check that this number not already used
   lda FUNC_RESULT
-  bne init_loop
-  iny
+  bne init_loop                   ; Non-0 means it wasn't unique, so try again
+  iny                             ; Otherwise loop for next go
   cpy #NUM_LOCS
   beq init_done
   jmp init_loop
 .init_done
-  lda #CHR_LINEEND
-  jsr OSWRCH
 
 .start_play
-;  jsr list_locs                ; For debugging only
+  ;jsr list_locs                ; For debugging only
+  ;jsr debug_locations
   NEWLINE
   jsr status_update
   jsr status_msg
@@ -181,6 +155,8 @@
   beq zum_cmd_shoot
   cmp #'Q'
   beq zum_cmd_leave
+  cmp #'D'
+  beq zum_cmd_debug
   lda #ERR_SYNTAX
   sta FUNC_ERR
   jsr show_error_msg
@@ -214,6 +190,11 @@
   jsr OSWRMSG
   NEWLINE
   jmp init
+; ---  DEBUG ----------------------------------------------------------------
+.zum_cmd_debug
+  jsr debug_locations
+  NEWLINE
+  jmp zum_chk_stat
 ; ---  SHOOTING ----------------------------------------------------------------
 .zum_cmd_shoot
   ; The input buf should contain the room number & range of shot.

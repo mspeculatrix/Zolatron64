@@ -36,7 +36,8 @@ ERR_FILE_EXISTS       = ERR_ADDR + 1                ; 21 15 File exists error
 ERR_FILE_OPEN         = ERR_FILE_EXISTS + 1         ; 22 16 Error opening file
 ERR_DELFILE_FAIL      = ERR_FILE_OPEN + 1           ; 23 17 Failed delete file
 ERR_FILENOTFOUND      = ERR_DELFILE_FAIL + 1        ; 24 18 File not found
-STDIN_BUF_EMPTY       = ERR_FILENOTFOUND + 1        ; 25 19 Input buffer empty
+ERR_FILE_BOUNDS       = ERR_FILENOTFOUND + 1
+STDIN_BUF_EMPTY       = ERR_FILE_BOUNDS + 1        ; 25 19 Input buffer empty
 ERR_NO_EXECUTABLE     = STDIN_BUF_EMPTY + 1         ; 26 1A No exec prog loaded
 ERR_PRT_STATE_OL      = ERR_NO_EXECUTABLE + 1       ; 27 1B Printer offline
 ERR_PRT_STATE_PE      = ERR_PRT_STATE_OL + 1
@@ -51,7 +52,8 @@ ERR_PRT_NOT_PRESENT   = ERR_PRT_STATE_ERR + 1       ; Printer board not present
 \    - cfg_page_2.asm - OS Indirection Table
 \-------------------------------------------------------------------------------
 ; READ
-OSRDASC    = $FF00
+OSGETKEY   = $FF00
+OSRDASC    = OSGETKEY + 3
 OSRDBYTE   = OSRDASC + 3
 OSRDCH     = OSRDBYTE + 3
 OSRDHBYTE  = OSRDCH + 3
@@ -64,7 +66,8 @@ OSWRBUF    = OSRDSTR + 3
 OSWRCH     = OSWRBUF + 3
 OSWRERR    = OSWRCH + 3
 OSWRMSG    = OSWRERR + 3
-OSWRSBUF   = OSWRMSG + 3
+OSWROP     = OSWRMSG + 3
+OSWRSBUF   = OSWROP + 3
 OSSOAPP    = OSWRSBUF + 3
 OSSOCH     = OSSOAPP + 3
 ; CONVERSIONS
@@ -73,7 +76,8 @@ OSB2HEX    = OSB2BIN + 3
 OSB2ISTR   = OSB2HEX + 3
 OSHEX2B    = OSB2ISTR + 3
 OSU16HEX   = OSHEX2B + 3
-OSHEX2DEC  = OSU16HEX + 3
+OSU16ISTR  = OSU16HEX + 3
+OSHEX2DEC  = OSU16ISTR + 3
 ; LCD
 OSLCDCH    = OSHEX2DEC + 3
 OSLCDCLS   = OSLCDCH + 3
@@ -103,7 +107,8 @@ OSSFTRST   = $FFF4         ; Use direct JMP with these (not indirected/vectored)
 OSHRDRST   = $FFF7
 
 USR_START = $0800          ; Address where user programs load
-ROM_START = $C000
+USR_END   = $7FFF          ; Top of user memory
+ROM_START = $C000          ; Start of ROM memory
 EXTMEM_SLOT_SEL = $BFE0    ; Write to this address to select memory slot (0-15)
 EXTMEM_START    = $8000    ; This is where extended memory lives
 EXTMEM_END      = $9FFF    ; Last writable byte in extended memory bank
@@ -144,6 +149,20 @@ STDIN_CLEAR_FLAGS = %11110000    ; To be ANDed with reg to clear RX flags
 ; PROCESS FLAGS - for use with SYS_REG
 PROC_ZD_INT_FL    = %10000000    ; Interrupt signal received from ZolaDOS
 
+; GENERAL-PURPOSE CONSTANTS
+BIT0 = %00000001
+BIT1 = %00000010
+BIT2 = %00000100
+BIT3 = %00001000
+BIT4 = %00010000
+BIT5 = %00100000
+BIT6 = %01000000
+BIT7 = %10000000
+OFF  = 0
+ON   = 1
+LOW  = 0
+HIGH = 1
+
 ; Values for stream select. STREAM_SELECT_REG address is defined in
 ; cfg_page_5.asm.
 ; Low nibble - Input Streams
@@ -180,8 +199,10 @@ MACRO PRT_MSG msg_addr, func_addr
 ENDMACRO
 
 MACRO NEWLINE
+  pha
   lda #CHR_LINEEND
   jsr OSWRCH
+  pla
 ENDMACRO
 
 MACRO CLEAR_INPUT_BUF
@@ -212,3 +233,8 @@ MACRO STR_BUF_TO_MSG_VEC
   lda #>STR_BUF
   sta MSG_VEC+1
 ENDMACRO
+
+MACRO CHK_EXTMEM_PRESENT                ; Check to see if extended memory fitted
+  lda SYS_REG
+  ror A                                 ; Shifts Bit 0 into carry
+ENDMACRO                                ; Carry set if extmem present

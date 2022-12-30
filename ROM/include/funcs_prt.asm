@@ -35,10 +35,10 @@
 \ Should be run once during boot by the OS.
 \ To test for the presence of the interface in user programs, do something like:
 \      lda SYS_REG
-\      and #SYS_PARALLEL_YES
+\      and #SYS_PARALLEL
 \      beq parallel_board_not_fitted
 \ ON EXIT : - FUNC_ERR contains error code - 0 = no error
-\           - Sets bit 2 in SYS_REG (SYS_PARALLEL_YES)
+\           - Sets bit 2 in SYS_REG (SYS_PARALLEL)
 \ A - P
 \ X - P
 \ Y - P
@@ -66,7 +66,7 @@
   jmp prt_check_present_done
 .prt_check_present_loop_done
   lda SYS_REG
-  ora #SYS_PARALLEL_YES
+  ora #SYS_PARALLEL
 .prt_check_present_done
   sta SYS_REG
   ply : plx : pla

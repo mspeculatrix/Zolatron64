@@ -10,6 +10,10 @@
 \    - cfg_main.asm   - OS Function Address Table
 
 \ --- READ ---------------------------------------------------------------------
+  lda #<getkey                        ; OSRDASC
+  sta OSGETKEY_VEC
+  lda #>getkey
+  sta OSGETKEY_VEC + 1
   lda #<read_ascii                    ; OSRDASC
   sta OSRDASC_VEC
   lda #>read_ascii
@@ -59,6 +63,10 @@
   sta OSWRMSG_VEC
   lda #>duart_println
   sta OSWRMSG_VEC + 1
+  lda #<duart_writeOP                 ; OSWROP
+  sta OSWROP_VEC
+  lda #>duart_writeOP
+  sta OSWROP_VEC + 1
   lda #<duart_snd_strbuf              ; OSWRSBUF
   sta OSWRSBUF_VEC
   lda #>duart_snd_strbuf
@@ -92,6 +100,10 @@
   sta OSU16HEX_VEC
   lda #>uint16_to_hex_str
   sta OSU16HEX_VEC + 1
+  lda #<uint16_intstr                 ; OSU16ISTR
+  sta OSU16ISTR_VEC
+  lda #>uint16_intstr
+  sta OSU16ISTR_VEC + 1
   lda #<asc_hex_to_dec                ; OSHEX2DEC
   sta OSHEX2DEC_VEC
   lda #>asc_hex_to_dec

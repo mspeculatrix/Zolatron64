@@ -12,13 +12,13 @@
 \ Y - n/a
 .extmem_ram_chk
   stz FUNC_ERR            ; Default to 0
-  lda EXTMEM_START          ; Load what's currently in first byte of ext memory
-  sta TMP_VAL             ; Keep a copy here, to restore later
+  lda EXTMEM_START        ; Load what's currently in first byte of ext memory
+  pha                     ; Keep a copy here, to restore later
   ldx #0                  ; We're going to check that we can write to this
-.extmem_ram_chk_loop      ; bank. If not, it's probably a ROM. We'll write a
-  txa                     ; sequence of numbers to EXTMEM_START and read them back
-  sta EXTMEM_START          ; Store loop value in memory
-  cmp EXTMEM_START          ; Is X the same as what's now stored in this location?
+.extmem_ram_chk_loop      ; bank. If not, probably a ROM. Write a sequence
+  txa                     ; of numbers to EXTMEM_START and read them back
+  sta EXTMEM_START        ; Store loop value in memory
+  cmp EXTMEM_START        ; Is X the same as what's now stored in this location?
   bne extmem_ram_chk_err
   inx
   cpx #5
@@ -33,31 +33,11 @@
   jmp extmem_ram_chk_done
 .extmem_ram_chk_ok
   lda SYS_REG
-  ora #SYS_EXMEM_YES
+  ora #SYS_EXMEM
   sta SYS_REG
 .extmem_ram_chk_done
-  lda TMP_VAL             ; Restore original value of byte, so this process is
+  pla                       ; Restore original value of byte, so this process is
   sta EXTMEM_START          ; non-destructive
-  rts
-
-\ ------------------------------------------------------------------------------
-\ ---  EXTMEM_STAT
-\ ------------------------------------------------------------------------------
-; Check the SYS_EXTMEM status bit in the SYS_REG. This is set on power-up.
-; This just tells us if a board is fitted. It doesn't say whether the
-; selected bank is ROM or RAM. Need the check above for that.
-; ON EXIT : - Carry clear if Ext Mem board fitted.
-;           - Carry set if board NOT fitted.
-\ A - O
-\ X - n/a
-\ Y - n/a
-.extmem_stat
-  clc
-  lda SYS_REG
-  and #SYS_EXMEM_YES
-  bne extmem_stat_end
-  sec
-.extmem_stat_end
   rts
 
 \ ------------------------------------------------------------------------------

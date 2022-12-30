@@ -3,12 +3,31 @@
 \ Library for ZolaDOS using a 6522 VIA
 
 \ HOW STREAMING MIGHT WORK:
-\ * OSZDOPENR - check for error
+\ * OSZDOPENR - open file for reading
+
+\ Load A with ZD_OPCODE_OPENR or ZD_OPCODE_OPENW
+.zd_fopen
+  pha
+  \ check for 'file is open' flag. If set, error
+  pla
+  jsr zd_handshake
+  \ check for error. If none, set 'file is open flag'
+  rts
+
+.zd_fclose
+  \ check for 'file is open' flag
+  lda #ZD_OPCODE_CLOSE
+  jsr zd_handshake
+  \ check for error. If none, unset 'file is open flag'
+  rts
+
+
+\   - check for error
 \ * For each block/byte:
 \   + Use ZD_INIT_PROCESS with the opcode ZD_OPCODE_RBYTE or ZD_OPCODE_RBLK.
 \   + Check return code: 0 = OK, 255 = no more data, anything else is an error.
 \     - If OK, run ZD_RCV_DATA
-\ OSZDCLOSE
+\ * OSZDCLOSE
 
 \ To implement:
 \ These all require a file to have been opened and an active file handle.
@@ -18,6 +37,19 @@
 \  OSZDWBYTE                ; Write byte
 \  OSZDRSTR                 ; Read nul-terminated string
 \  OSZDWSTR                 ; Write nul-terminated string
+
+\ ON ENTRY: - FILE_ADDR/+1 must point to next position in memory into which we
+\             want to load the data.
+\ ON EXIT : - FUNC_ERR contains 0 for OK, 255 for 'end of file' and anything
+\             else is an error code.
+.zd_read_blk
+  lda #ZD_OPCODE_RBLK
+  jsr zd_init_process
+  lda FUNC_ERR
+  bne zd_read_blk_end       ; Non-0 - an error or end of file
+  jsr zd_rcv_data          ; Get data
+.zd_read_blk_end
+  rts
 
 \ ------------------------------------------------------------------------------
 \ ---  ZD_INIT
@@ -45,6 +77,58 @@
   ZD_SET_CR_OFF                     ; Takes line high
   lda #ZD_FSTATE_CLOSED             ; Start with no file open
   sta ZD_FSTATE
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  ZD_FILELOAD_OK
+\ ------------------------------------------------------------------------------
+\ Print the appropriate message if file load operation went okay. Also set
+\ appropriate value for LOMEM.
+\ ON EXIT : LOMEM is set to first free byte above top of program.
+\ A - O
+\ X - n/a
+\ Y - n/a
+.zd_fileload_ok
+  LOAD_MSG file_act_complete_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
+  lda USR_START+CODEHDR_END    ; Get info about first free byte after prog
+  sta LOMEM                    ; to put into our LOMEM variable
+  lda USR_START+CODEHDR_END+1
+  sta LOMEM + 1
+  ; Now we'll set the PROG_END variable
+  sta PROG_END + 1             ; Start by assuming high byte same as LOMEM
+  lda LOMEM
+  bne zd_fileload_ok_cont      ; If low byte wasn't 0
+  dec PROG_END + 1             ; If low byte was 0, dec high byte
+.zd_fileload_ok_cont
+  dec A                        ; Decrement low byte
+  sta PROG_END
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  ZD_GETFILE
+\ ------------------------------------------------------------------------------
+\ Get a filename from STDIN_BUF and load the file into memory at USR_START.
+\ ON ENTRY: The filename must be in STDIN_BUF
+\ ON EXIT : FUNC_ERR contains an error code - 0 for success.
+\ A - O
+\ X - n/a
+\ Y - n/a
+.zd_getfile ; move to funcs_ZolaDOS.asm
+  LOAD_MSG loading_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
+  lda #<USR_START             ; This is where we're going to put the code
+  sta FILE_ADDR
+  lda #>USR_START
+  sta FILE_ADDR + 1
+  jsr read_filename           ; Puts filename in STR_BUF
+  lda FUNC_ERR
+  bne zd_getfile_done
+  lda #ZD_OPCODE_LOAD         ; Use opcode for loading .EXE files
+  jsr zd_loadfile
+.zd_getfile_done
   rts
 
 \ ------------------------------------------------------------------------------
@@ -126,7 +210,7 @@
 \ ---  Implements: OSZDLOAD
 \ ------------------------------------------------------------------------------
 \ Loads a file into memory.
-\ ON ENTRY: - A must contain ZD OPCODE - eg, #ZD_OPCODE_LOAD
+\ ON ENTRY: - A must contain ZD OPCODE - eg, #ZD_OPCODE_LOAD, #ZD_OPCODE_XLOAD
 \           - STR_BUF must contain filename
 \           - FILE_ADDR/+1 must contain address to which we wish to load file.
 \ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
@@ -150,9 +234,9 @@
 
 \ ---  ZD_OPEN_FILE
 .zd_open_file
-\ ON ENTRY: - A must contain ZD OPCODE - eg, #ZD_OPCODE_LOAD
+\ ON ENTRY: - A must contain ZD OPCODE - eg, #ZD_OPCODE_OPENR
 \           - STR_BUF must contain filename
-\           - ??? FILE_ADDR/+1 must contain address to which we wish to load file.
+\           - FILE_ADDR/+1 must contain address to which we wish to load file.
   jsr zd_handshake            ; ----- INITIATE ---------------------------------
   lda FUNC_ERR
   bne zd_openf_end            ; If this is anything but 0, that's an error
@@ -203,8 +287,8 @@
   bne zd_rcv_data_end         ; If not 0, then we're done, otherwise...
   jmp zd_rcv_data_loop        ; Go around for the next byte
 .zd_rcv_data_chkSA
-  jsr zd_strobeDelay          ; *** TRY REMOVING THIS??? ***
-  jsr zd_waitForSAoff
+  jsr zd_strobeDelay
+  jsr zd_waitForSAoff         ; Returns 0 if no error
 .zd_rcv_data_end
   rts
 
@@ -213,7 +297,7 @@
 \ ---  Implements: OSZDSAVE
 \ ------------------------------------------------------------------------------
 \ Saves a section of memory to a file.
-\ ON ENTRY: - A must contain the save type - eg, #ZD_OPCODE_SAVE_CRT
+\ ON ENTRY: - A must contain the save type opcode - eg, #ZD_OPCODE_SAVE_CRT
 \           - TMP_ADDR_A must contain 16-bit start address
 \           - TMP_ADDR_B must contain end address
 \           - STR_BUF must contain nul-terminated filename string
@@ -222,15 +306,7 @@
 \ X - n/a
 \ Y - n/a
 .zd_save_data
-  stz FUNC_ERR                ; Zero out the error code
-  jsr zd_init_process         ; Tell ZolaDOS device we want to perform a SAVE
-  lda FUNC_ERR
-  bne zd_save_data_end        ; If this is anything but 0, that's an error
-  jsr zd_send_strbuf          ; Send the filename over the ZolaDOS port
-  lda FUNC_ERR
-  bne zd_save_data_end
-  ZD_SET_DATADIR_INPUT        ; ----- GET SERVER RESPONSE ----------------------
-  jsr zd_svr_resp
+  jsr zd_handshake
   lda FUNC_ERR
   bne zd_save_data_end
   jsr zd_waitForSAoff
@@ -267,14 +343,20 @@
   jsr zd_waitForSRoff         ; Wait for server response to end
   lda FUNC_ERR
   bne zd_send_data_end
-  inc TMP_ADDR_A_L            ; Increment address low byte
-  bne zd_send_data_chk        ; If it didn't roll over, got to next step
-  inc TMP_ADDR_A_H            ; Otherwise increment high byte
-.zd_send_data_chk
-  jsr compare_tmp_addr        ; Check if we've reached the end
+  jsr compare_addr        ; Check if we've reached the end
   lda FUNC_RESULT
+  cmp #EQUAL
+  beq zd_send_data_end        ; If equal, we're done
   cmp #MORE_THAN
-  bne zd_send_data_loop
+  beq zd_send_data_bounds_err
+  inc TMP_ADDR_A_L            ; Otherwise, increment address low byte
+  bne zd_send_data_next       ; If it didn't roll over, got to next step
+  inc TMP_ADDR_A_H            ; Otherwise increment high byte
+.zd_send_data_next
+  jmp zd_send_data_loop
+.zd_send_data_bounds_err
+  lda #ERR_FILE_BOUNDS
+  sta FUNC_ERR
 .zd_send_data_end
   ZD_SET_CA_OFF
   rts

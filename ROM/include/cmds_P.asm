@@ -6,7 +6,6 @@
 \ Usage: PEEK <addr>
 \ Show the value of a byte at a specific address.
 \ Expects a two-byte hex address as input.
-\ The command '?' also directs here.
 .cmdprcPEEK
   jsr read_hex_addr         ; Get address - puts bytes in FUNC_RES_L, FUNC_RES_H
   lda FUNC_ERR

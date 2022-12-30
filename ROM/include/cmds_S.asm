@@ -25,9 +25,9 @@
   sta TMP_ADDR_A                      ;  "    "       "
   lda #>USR_START                     ;  "    "       "
   sta TMP_ADDR_A + 1                  ;  "    "       "
-  lda LOMEM                           ;  "    "       "
+  lda PROG_END                        ;  "    "       "
   sta TMP_ADDR_B                      ;  "    "       "
-  lda LOMEM + 1                       ;  "    "       "
+  lda PROG_END + 1                    ;  "    "       "
   sta TMP_ADDR_B + 1                  ;  "    "       "
   lda #ZD_OPCODE_SAVE_CRT             ; Set save type - in this case, CREATE EXE
   jsr zd_save_data                    ; Now save the memory contents
@@ -50,6 +50,8 @@
   jsr OSLCDMSG
   jmp cmdprc_success
 
+
+
 \ ------------------------------------------------------------------------------
 \ --- CMD: STAT  :  DISPLAY STATUS
 \ ------------------------------------------------------------------------------
@@ -58,63 +60,17 @@
 .cmdprcSTAT
   ; --- LINE 1 -----------------
   stz STDOUT_IDX                              ; Set offset pointer
-  LOAD_MSG stat_msg_lomem                     ; Show address of LOMEM
+
+  LOAD_MSG stat_msg_progend
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
-  lda LOMEM                                   ; the end of the currently loaded
+  lda PROG_END                                   ; the end of the currently loaded
   sta TMP_ADDR_A_L                            ; program.
-  lda LOMEM+1
+  lda PROG_END+1
   sta TMP_ADDR_A_H
   jsr uint16_to_hex_str                       ; Result will be in STR_BUF
   STR_BUF_TO_MSG_VEC                          ; Set MSG_VEC to point to this
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
 
-  LOAD_MSG stat_msg_spacer
-  jsr OSSOAPP                                 ; Add to STDOUT_BUF
-
-  LOAD_MSG stat_msg_fnres
-  jsr OSSOAPP                                 ; Add to STDOUT_BUF
-  lda FUNC_RESULT
-  jsr display_stat_hex
-
-  jsr OSWRBUF
-  NEWLINE
-  jsr OSLCDWRBUF
-
-  ; --- LINE 2 -----------------
-  stz STDOUT_IDX                              ; Set offset pointer
-
-  LOAD_MSG stat_msg_faddr
-  jsr OSSOAPP
-  lda FILE_ADDR
-  sta TMP_ADDR_A_L
-  lda FILE_ADDR+1
-  sta TMP_ADDR_A_H
-  jsr uint16_to_hex_str                       ; Result will be in STR_BUF
-  STR_BUF_TO_MSG_VEC                          ; Set MSG_VEC to point to this
-  jsr OSSOAPP                                 ; Add to STDOUT_BUF
-
-  LOAD_MSG stat_msg_spacer
-  jsr OSSOAPP                                 ; Add to STDOUT_BUF
-
-  LOAD_MSG stat_msg_fnerr
-  jsr OSSOAPP                                 ; Add to STDOUT_BUF
-  lda FUNC_ERR
-  jsr display_stat_hex
-
-  jsr OSWRBUF
-  NEWLINE
-  jsr OSLCDWRBUF
-
-  ; --- LINE 3 -----------------
-  stz STDOUT_IDX                              ; Set offset pointer
-
-  LOAD_MSG stat_msg_pexit
-  jsr OSSOAPP                                 ; Add to STDOUT_BUF
-  lda PRG_EXIT_CODE
-  jsr display_stat_hex
-
-  LOAD_MSG stat_msg_spacer
-  jsr OSSOAPP                                 ; Add to STDOUT_BUF
   LOAD_MSG stat_msg_spacer
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
 
@@ -129,44 +85,53 @@
   NEWLINE
   jsr OSLCDWRBUF
 
-  ; --- LINE 4 -----------------
+  ; --- LINE 2 -----------------
   stz STDOUT_IDX                              ; Set offset pointer
 
-  LOAD_MSG stat_msg_sysreg
+  LOAD_MSG stat_msg_lomem                     ; Show address of LOMEM
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
-  lda SYS_REG
-  jsr display_stat_hex
+  lda LOMEM                                   ; the end of the currently loaded
+  sta TMP_ADDR_A_L                            ; program.
+  lda LOMEM+1
+  sta TMP_ADDR_A_H
+  jsr uint16_to_hex_str                       ; Result will be in STR_BUF
+  STR_BUF_TO_MSG_VEC                          ; Set MSG_VEC to point to this
+  jsr OSSOAPP                                 ; Add to STDOUT_BUF
 
   LOAD_MSG stat_msg_spacer
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
-  LOAD_MSG stat_msg_spacer
-  jsr OSSOAPP                                 ; Add to STDOUT_BUF
 
-  LOAD_MSG stat_msg_stdin
+  LOAD_MSG stat_msg_pexit
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
-  lda STDIN_STATUS_REG
+  lda PRG_EXIT_CODE
   jsr display_stat_hex
 
   jsr OSWRBUF
   NEWLINE
   jsr OSLCDWRBUF
 
-  ; --- LINES 5&6 - Console-only  -----------------
+  ; --- LINE 3 -----------------
   stz STDOUT_IDX                              ; Set offset pointer
+
   LOAD_MSG stat_msg_sysreg
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
   lda SYS_REG
   jsr display_stat_bin
+
   jsr OSWRBUF
   NEWLINE
+  jsr OSLCDWRBUF
 
+  ; --- LINE 4 -----------------
   stz STDOUT_IDX                              ; Set offset pointer
+
   LOAD_MSG stat_msg_stdin
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
   lda STDIN_STATUS_REG
   jsr display_stat_bin
+
   jsr OSWRBUF
-  NEWLINE
+  jsr OSLCDWRBUF
 
   jmp cmdprc_success
 
@@ -185,12 +150,8 @@
 \ --- DATA --------------------
 .stat_msg_lomem               ; For 'STAT' output
   equs "LOMEM:",0
-.stat_msg_faddr
-  equs "FADDR:",0
-.stat_msg_fnerr
-  equs "FNERR:",0
-.stat_msg_fnres
-  equs "FNRES:",0
+.stat_msg_progend
+  equs "PREND:",0
 .stat_msg_exmem
   equs "EXMEM:",0
 .stat_msg_pexit

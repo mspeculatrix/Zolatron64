@@ -68,7 +68,7 @@ ALIGN &100                ; start on new page
   bne isr_SC28L92_cont        ; If not, skip ahead
   stz STDIN_BUF,X             ; Otherwise replace with null
 .isr_SC28L92_set_null
-  lda STDIN_STATUS_REG        ; Otherwise, load our status register
+  lda STDIN_STATUS_REG        ; Load our status register
   ora #DUART_RxA_NUL_RCVD_FL  ; Set the null byte received flag
   sta STDIN_STATUS_REG        ; Re-save the status register
   jmp isr_SC28L92_cont

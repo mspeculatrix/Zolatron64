@@ -9,10 +9,6 @@
 
 CPU 1                               ; use 65C02 instruction set
 
-BARLED = $0230				      ; for the bar LED display
-BARLED_L = BARLED
-BARLED_H = BARLED + 1
-
 INCLUDE "../../LIB/cfg_main.asm"
 INCLUDE "../../LIB/cfg_page_0.asm"
 ; PAGE 1 is the STACK
@@ -66,6 +62,9 @@ ORG USR_START
   LOAD_MSG lcd_message2
   jsr OSLCDMSG
 
+  jsr press_key
+
+  jsr OSLCDCLS
 
 .prog_end
   stz STDIN_IDX                           ; Clear input buffer

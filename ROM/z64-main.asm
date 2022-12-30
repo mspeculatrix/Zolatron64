@@ -33,17 +33,17 @@ INCLUDE "../LIB/cfg_parallel.asm"
 INCLUDE "../LIB/cfg_prt.asm"
 
 \ ----- INITIALISATION ---------------------------------------------------------
-ORG $8000             ; Using only the top 16KB of a 32KB EEPROM.
-.startrom             ; This is where the ROM bytes start for the file, but...
+ORG $8000              ; Using only the top 16KB of a 32KB EEPROM.
+.startrom              ; This is where the ROM bytes start for the file, but...
 ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v4.1.3", 0
+  equs "ZolOS v4.2.2", 0
 .startcode
-  sei                 ; Don't interrupt me yet
-  cld                 ; We don' need no steenkin' BCD
-  ldx #$ff            ; Set stack pointer to $01FF - only need to set
-  txs                 ; the LSB, as MSB is assumed to be $01
+  sei                  ; Don't interrupt me yet
+  cld                  ; We don' need no steenkin' BCD
+  ldx #$ff             ; Set stack pointer to $01FF - only need to set
+  txs                  ; the LSB, as MSB is assumed to be $01
 
 ; Initialise registers etc
   stz SYS_REG
@@ -59,8 +59,10 @@ ORG ROM_START          ; This is where the actual code starts.
 
   lda #<USR_START           ; Initialise LOMEM to start of user RAM
   sta LOMEM
+  sta PROG_END
   lda #>USR_START
   sta LOMEM + 1
+  sta PROG_END + 1
 
 INCLUDE "include/os_call_vectors.asm"
 
@@ -96,7 +98,7 @@ INCLUDE "include/os_call_vectors.asm"
   jsr duart_init
 
 ; CHECK FOR PARALLEL PORT
-  jsr prt_check_present                 ; Sets SYS_PARALLEL_YES bit in SYS_REG
+  jsr prt_check_present                 ; Sets SYS_PARALLEL bit in SYS_REG
 
 \ ------------------------------------------------------------------------------
 \ ----     MAIN PROGRAM                                                     ----
@@ -151,7 +153,7 @@ INCLUDE "include/os_call_vectors.asm"
 
 ; PARALLEL INTERFACE MESSAGE
   lda SYS_REG
-  and #SYS_PARALLEL_YES                   ; Check if bit is set
+  and #SYS_PARALLEL                       ; Check if bit is set
   bne parallel_ok                         ; If result non-zero, then it is
   LOAD_MSG parallel_if_not_fitted
   jmp parallel_msg
@@ -174,16 +176,14 @@ INCLUDE "include/os_call_vectors.asm"
 ; BOOT ROM
 ; Check to see if there is boot ROM code in bank 0 of extended memory.
 ; If so, run it.
-  lda SYS_REG                           ; Check to see if extended memory fitted
-  and #SYS_EXMEM_YES
-  beq ready                             ; If not, skip to ready prompt
+  CHK_EXTMEM_PRESENT
+  bcc ready                             ; If not, skip to ready prompt
   lda EXTMEM_START + CODEHDR_TYPE       ; Load code type identifier
   cmp #TYPECODE_BOOT                    ; Is it a boot ROM?
   bne ready                             ; If not, skip to ready prompt
   jmp EXTMEM_START                      ; Otherwise, jump to ROM code
 
 .ready
-; READY MESSAGE
   LOAD_MSG ready_msg
   jsr OSWRMSG
   jsr OSLCDMSG
@@ -250,13 +250,16 @@ INCLUDE "include/os_call_vectors.asm"
 
 .cmdprcSTAR
   jmp cmdprc_end
+INCLUDE "include/cmds_punc.asm"
 INCLUDE "include/cmds_B.asm"
 INCLUDE "include/cmds_C.asm"
 INCLUDE "include/cmds_D.asm"
+INCLUDE "include/cmds_E.asm"
 INCLUDE "include/cmds_H.asm"
 INCLUDE "include/cmds_J.asm"
 INCLUDE "include/cmds_L.asm"
 INCLUDE "include/cmds_M.asm"
+INCLUDE "include/cmds_O.asm"
 INCLUDE "include/cmds_P.asm"
 INCLUDE "include/cmds_R.asm"
 INCLUDE "include/cmds_S.asm"
@@ -274,6 +277,7 @@ INCLUDE "include/cmds_X.asm"
   stz STDIN_IDX                                   ; Reset RX buffer index
   stz STDIN_BUF
   LED_OFF LED_BUSY
+  LED_OFF LED_FILE_ACT
   jmp mainloop                                    ; Go around again
 
 INCLUDE "include/funcs_uart_SC28L92.asm"
@@ -282,9 +286,12 @@ INCLUDE "include/funcs_conv.asm"
 INCLUDE "include/funcs_io.asm"
 INCLUDE "include/funcs_isr.asm"
 INCLUDE "include/funcs_ext_mem.asm"
-INCLUDE "../LIB/funcs_math.asm"
 INCLUDE "include/funcs_4x20_lcd.asm"
 INCLUDE "include/funcs_prt.asm"
+INCLUDE "../LIB/funcs_addr.asm"
+INCLUDE "../LIB/math_uint8_div.asm"
+INCLUDE "../LIB/math_uint16_div.asm"
+INCLUDE "../LIB/math_uint16_times10.asm"
 INCLUDE "include/data_tables.asm"
 
 \-------------------------------------------------------------------------------
@@ -306,6 +313,7 @@ ALIGN &100                                        ; Start on new page
 \-------------------------------------------------------------------------------
 ORG $FF00
 .os_calls
+  jmp (OSGETKEY_VEC)
   jmp (OSRDASC_VEC)
   jmp (OSRDBYTE_VEC)
   jmp (OSRDCH_VEC)
@@ -319,6 +327,7 @@ ORG $FF00
   jmp (OSWRCH_VEC)
   jmp (OSWRERR_VEC)
   jmp (OSWRMSG_VEC)
+  jmp (OSWROP_VEC)
   jmp (OSWRSBUF_VEC)
   jmp (OSSOAPP_VEC)
   jmp (OSSOCH_VEC)
@@ -328,6 +337,7 @@ ORG $FF00
   jmp (OSB2ISTR_VEC)
   jmp (OSHEX2B_VEC)
   jmp (OSU16HEX_VEC)
+  jmp (OSU16ISTR_VEC)
   jmp (OSHEX2DEC_VEC)
 
   jmp (OSLCDCH_VEC)
@@ -345,7 +355,6 @@ ORG $FF00
   jmp (OSPRTINIT_VEC)
   jmp (OSPRTMSG_VEC)
   jmp (OSPRTSBUF_VEC)
-  \jmp (OSPRTSTMSG_VEC)
 
   jmp (OSZDDEL_VEC)
   jmp (OSZDLOAD_VEC)
@@ -371,4 +380,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-4.1.bin", startrom, endrom
+SAVE "bin/z64-ROM-4.2.bin", startrom, endrom

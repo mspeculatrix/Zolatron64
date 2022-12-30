@@ -13,12 +13,13 @@ ALIGN &100                  ; Start on new page
 \ the command files that includes).
 .cmdprcptrs
   equw cmdprcSTAR           ; *
-  equw cmdprcPEEK           ; ? - synonym for PEEK
-  equw cmdprcPOKE           ; ! - synonym for POKE
+  equw cmdprcBANG           ; !
+  equw cmdprcQUERY          ; ?
   equw cmdprcBRK            ; BRK
   equw cmdprcCLEAR          ; CLEAR
   equw cmdprcDEL            ; DEL
   equw cmdprcDUMP           ; DUMP
+  equw cmdprcEX             ; EX - load & execute program
   equw cmdprcHELP           ; HELP
   equw cmdprcJMP            ; JMP
   equw cmdprcLM             ; LM - list memory
@@ -26,6 +27,7 @@ ALIGN &100                  ; Start on new page
   equw cmdprcLP             ; LP - list page
   equw cmdprcLS             ; LS - list storage
   equw cmdprcMV             ; MV - move (rename) file
+  equw cmdprcOPEN           ; OPEN
   equw cmdprcPEEK           ; PEEK
   equw cmdprcPOKE           ; POKE
   equw cmdprcPRT            ; PRT
@@ -38,6 +40,7 @@ ALIGN &100                  ; Start on new page
   equw cmdprcXLS            ; XLS
   equw cmdprcXOPEN          ; XOPEN
   equw cmdprcXRUN           ; XRUN
+  equw cmdprcXSAVE          ; XSAVE
   equw cmdprcXSEL           ; XSEL
 
 \ FIRST CHARACTER TABLE
@@ -46,7 +49,7 @@ ALIGN &100                  ; Start on new page
 \ understand where to go next by looking it up in the Command Pointers table
 \ below.
 .cmd_ch1_tbl
-  equs "*?!BCDHJLMPRSVX"
+  equs "*!?BCDEHJLMOPRSVX"
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -58,15 +61,17 @@ ALIGN &100                  ; Start on new page
 \ of the Command Table section.
 .cmd_ptrs                   ; Pointers to command table sections
   equw cmd_tbl_STAR         ; Commands starting '*'
-  equw cmd_tbl_QUERY        ; Commands starting '?'
   equw cmd_tbl_BANG         ; Commands starting '!'
+  equw cmd_tbl_QUERY        ; Commands starting '?'
   equw cmd_tbl_ASCB         ; Commands starting 'B'
   equw cmd_tbl_ASCC         ; Commands starting 'C'
   equw cmd_tbl_ASCD         ; Commands starting 'D'
+  equw cmd_tbl_ASCE         ; Commands starting 'E'
   equw cmd_tbl_ASCH         ; Commands starting 'H'
   equw cmd_tbl_ASCJ         ; Commands starting 'J'
   equw cmd_tbl_ASCL         ; Commands starting 'L'
   equw cmd_tbl_ASCM         ; Commands starting 'M'
+  equw cmd_tbl_ASCO         ; Commands starting 'O'
   equw cmd_tbl_ASCP         ; Commands starting 'P'
   equw cmd_tbl_ASCR         ; Commands starting 'R'
   equw cmd_tbl_ASCS         ; Commands starting 'S'
@@ -82,12 +87,12 @@ ALIGN &100                  ; Start on new page
   equb CMD_TKN_STAR            ; Not sure what I'm using this for yet
   equb EOCMD_SECTION           ; Comes at end of each section
 
-.cmd_tbl_QUERY                 ; Commands starting '?'
-  equb CMD_TKN_PEEK            ; Synonym for PEEK
+.cmd_tbl_BANG                  ; Command '!'
+  equb CMD_TKN_BANG            ;
   equb EOCMD_SECTION
 
-.cmd_tbl_BANG                  ; Commands starting '!'
-  equb CMD_TKN_POKE            ; Synonym for POKE
+.cmd_tbl_QUERY                 ; Command '?'
+  equb CMD_TKN_QUERY           ;
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCB                  ; Commands starting 'B'
@@ -101,6 +106,10 @@ ALIGN &100                  ; Start on new page
 .cmd_tbl_ASCD                  ; Commands starting 'D'
   equs "EL", CMD_TKN_DEL       ; DEL
   equs "UMP", CMD_TKN_DUMP     ; DUMP
+  equb EOCMD_SECTION
+
+.cmd_tbl_ASCE                  ; Commands starting 'E'
+  equs "X", CMD_TKN_EX         ; EX
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCH                  ; Commands starting 'H'
@@ -122,10 +131,13 @@ ALIGN &100                  ; Start on new page
   equs "V", CMD_TKN_MV         ; MV
   equb EOCMD_SECTION
 
+.cmd_tbl_ASCO                  ; Commands starting 'O'
+  equs "PEN", CMD_TKN_OPEN     ; OPEN
+  equb EOCMD_SECTION
+
 .cmd_tbl_ASCP                  ; Commands starting 'P'
   equs "EEK", CMD_TKN_PEEK     ; PEEK
   equs "OKE", CMD_TKN_POKE     ; POKE
-  equs "RT", CMD_TKN_PRT       ; PRT
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCR                  ; Commands starting 'R'
@@ -147,6 +159,7 @@ ALIGN &100                  ; Start on new page
   equs "LS", CMD_TKN_XLS       ; XLS
   equs "OPEN", CMD_TKN_XOPEN   ; XOPEN
   equs "RUN", CMD_TKN_XRUN     ; XRUN
+  equs "SAVE", CMD_TKN_XSAVE   ; XSAVE
   equs "SEL", CMD_TKN_XSEL     ; XSEL
   equb EOCMD_SECTION
 
@@ -187,6 +200,7 @@ ALIGN &100                  ; Start on new page
   equw err_file_open
   equw err_delfile_fail
   equw err_filenotfound
+  equw err_file_bounds
 
   equw err_stdin_buf_empty
 
@@ -203,9 +217,9 @@ ALIGN &100                  ; Start on new page
 .err_msg_hex_bin_conv
   equs "Hex-byte error",0
 .err_msg_parse
-  equs "Parse error",0
+  equs "Don't understand",0
 .err_msg_read_hexbyte
-  equs "Err reading hex input",0
+  equs "Err reading hex",0
 .err_msg_syntax
   equs "What?", 0
 .err_file_read
@@ -226,6 +240,8 @@ ALIGN &100                  ; Start on new page
   equs "Bad filename",0
 .err_filename_badlen
   equs "Bad filename length",0
+.err_file_bounds
+  equs "Data out of bounds",0
 .err_end_of_buffer
   equs "End of buffer",0
 .err_not_a_number
@@ -271,16 +287,17 @@ ALIGN &100                  ; Start on new page
   equs "CLEAR",0
   equs "DEL",0
   equs "DUMP",0
+  equs "EX",0
   equs "HELP",0
   equs "JMP",0
   equs "LM",0
-  equs "LS",0
   equs "LOAD",0
   equs "LP",0
+  equs "LS",0
   equs "(MV)",0
+  equs "OPEN",0
   equs "PEEK",0
   equs "POKE",0
-  equs "(PRT)",0
   equs "RUN",0
   equs "SAVE",0
   equs "STAT",0
@@ -290,6 +307,7 @@ ALIGN &100                  ; Start on new page
   equs "XLS",0
   equs "XOPEN",0
   equs "XRUN",0
+  equs "XSAVE",0
   equs "XSEL",0
   equb EOTBL_MKR
 
@@ -313,6 +331,8 @@ ALIGN &100                  ; Start on new page
 
 .start_msg
 	equs "Zolatron 64", 0
+.okay_msg
+  equs "OK",10,0
 .ready_msg
   equs "Ready",0
 

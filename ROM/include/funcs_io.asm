@@ -153,8 +153,8 @@
   beq display_mem_next_line
   jmp display_mem_next_addr
 .display_mem_output_end
-  lda #CHR_LINEEND
-  jsr OSWRCH
+  ;lda #CHR_LINEEND
+  ;jsr OSWRCH
 ;.display_mem_end
   rts
 
@@ -217,6 +217,38 @@
   rts
 
 \ ------------------------------------------------------------------------------
+\ ---  GETKEY
+\ ---  Implements: OSGETKEY
+\ ------------------------------------------------------------------------------
+\ Waits for the user to enter a key (followed by <return>). The user can enter
+\ more than one key, but only the first one is significant.
+\ ON EXIT : - FUNC_RESULT contains key ASCII code - 0 means just <return> was
+\             pressed.
+\           - STDIN_IDX and STDIN_BUF are both reset.
+\ A - O
+\ X - n/a
+\ Y - n/a
+.getkey
+  stz FUNC_RESULT
+  stz STDIN_IDX                         ; Zero-out buffer
+  stz STDIN_BUF
+  ;lda STDIN_STATUS_REG                  ; Clear the STDIN flags in status reg
+  ;and #STDIN_CLEAR_FLAGS                ; *** NOT SURE THESE 3 LINES ARE
+  ;sta STDIN_STATUS_REG                  ; NECCESARY - HUNTING A BUG
+.getkey_loop
+  lda STDIN_STATUS_REG
+  and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
+  beq getkey_loop                       ; If no, loop until it is
+  lda STDIN_BUF                         ; Read char from STDIN_BUF
+  sta FUNC_RESULT
+  lda STDIN_STATUS_REG                  ; Clear the STDIN flags in status reg
+  and #STDIN_CLEAR_FLAGS
+  sta STDIN_STATUS_REG
+  stz STDIN_IDX                         ; Zero-out buffer
+  stz STDIN_BUF
+  rts
+
+\ ------------------------------------------------------------------------------
 \ ---  READ_ASCII
 \ ---  Implements: OSRDASC
 \ ------------------------------------------------------------------------------
@@ -257,6 +289,7 @@
 \           - Reads the char pointed to by STDIN_IDX
 \ ON EXIT : - Character code is in FUNC_RESULT
 \           - Error code in FUNC_ERR
+\           - STDIN_IDX updated
 \ A - O
 \ X - O
 \ Y - n/a
@@ -367,6 +400,10 @@
   cmp #$3A                    ; ASCII for ':', char above '9'
   bcs read_int_error          ; More than '9' - an error
   jsr uint16_times10          ; Otherwise, multiply the current sum by 10
+  lda FUNC_RES_L              ; into MATH_TMP16
+  sta MATH_TMP16    ; **** RECENTLY ADDED THIS ****
+  lda FUNC_RES_H
+  sta MATH_TMP16+1
 .read_int_next                ; Get the next digit
   inx
   jmp read_int_char

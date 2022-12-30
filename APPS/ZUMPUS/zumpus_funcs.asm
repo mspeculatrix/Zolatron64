@@ -114,26 +114,6 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ --- LIST_LOCS
-\ ------------------------------------------------------------------------------
-;.list_locs                ; FOR DEBUGGING ONLY
-;  ldx #0
-;.list_locs_loop
-;  lda RANDOM_LOCS,X
-;  jsr OSB2HEX
-;  jsr OSWRSBUF
-;  lda #' '
-;  jsr OSWRCH
-;  inx
-;  cpx #NUM_LOCS
-;  beq list_locs_done
-;  jmp list_locs_loop
-;.list_locs_done
-;  lda #CHR_LINEEND
-;  jsr OSWRCH
-;  rts
-
-\ ------------------------------------------------------------------------------
 \ ---  PRINT_ROOM_NUM
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: Room number in A
@@ -182,7 +162,7 @@
   bne roll_dice_mod       ; If it doesn't, we're good to go
   jmp roll_dice           ; Otherwise, try again
 .roll_dice_mod
-  jsr uint8_mod8          ; A contains random number, X contains divisor
+  jsr uint8_div           ; A contains random number, X contains divisor
   lda FUNC_RESULT         ; Get the result of the MODding.
   rts
 
@@ -288,65 +268,6 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ ---  DEBUG_LOCATIONS - for debugging only
-\ ------------------------------------------------------------------------------
-;.debug_locations
-;  lda #'Z'
-;  jsr OSWRCH
-;  lda #':'
-;  jsr OSWRCH
-;  lda ZUMPUS_LOC
-;  jsr print_room_num
-;  lda #' '
-;  jsr OSWRCH
-
-;  lda #'S'
-;  jsr OSWRCH
-;  lda #':'
-;  jsr OSWRCH
-;  lda Z_STATE
-;  jsr OSB2ISTR
-;  jsr OSWRSBUF
-;  lda #' '
-;  jsr OSWRCH
-
-;  lda #'B'
-;  jsr OSWRCH
-;  lda #':'
-;  jsr OSWRCH
-;  lda BAT1_LOC
-;  jsr print_room_num
-;   lda #' '
-;  jsr OSWRCH
-
-;  lda #'B'
-;  jsr OSWRCH
-;  lda #':'
-;  jsr OSWRCH
-;  lda BAT2_LOC
-;  jsr print_room_num
-;  lda #' '
-;  jsr OSWRCH
-
-;  lda #'P'
-;  jsr OSWRCH
-;  lda #':'
-;  jsr OSWRCH
-;  lda PIT1_LOC
-;  jsr print_room_num
-;  lda #' '
-;  jsr OSWRCH
-
-;  lda #'P'
-;  jsr OSWRCH
-;  lda #':'
-;  jsr OSWRCH
-;  lda PIT2_LOC
-;  jsr print_room_num
-;  NEWLINE
-;  rts
-
-\ ------------------------------------------------------------------------------
 \ ---  STATUS_UPDATE
 \ ------------------------------------------------------------------------------
 \ Update the status of the Player - checking, for example, whether the Player
@@ -391,7 +312,6 @@
 \ ------------------------------------------------------------------------------
 \ --- FILE OPERATIONS
 \ ------------------------------------------------------------------------------
-
 
 .set_datafile
   ldx #0                              ; Set filename
@@ -546,27 +466,16 @@
 \ ---  YESNO
 \ ------------------------------------------------------------------------------
 \ Get a 'Y' or 'N' input.
-\ ON ENTRY: Should probably have zeroed-out STDIN_BUF and STDIN_IDX before
-\           coming here.
-\ ON EXIT : A contains result, YESNO_YES, YESNO_NO or YESNO_ERR
+\ ON EXIT : A & FUNC_RESULT contain result, YESNO_YES, YESNO_NO or YESNO_ERR
 .yesno
-  lda STDIN_STATUS_REG
-  and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
-  beq yesno                             ; If no, loop until it is
-  stz STDIN_IDX                         ; Want to get first char
-  jsr OSRDCH                            ; Read character from STDIN_BUF
-  ; --- DEBUGGING ------------------
-;  lda FUNC_RESULT
-;  jsr OSWRCH
-;  lda #' '
-;  jsr OSWRCH
-  ; --------------------------------
+  jsr OSGETKEY
   lda FUNC_RESULT                       ; Check the character we read
+  beq yesno_done                        ; If 0 (NUL), return this
   cmp #'Y'
   beq yesno_yes
   cmp #'N'
   beq yesno_no
-  lda #YESNO_ERR                        ; If no 'Y' or 'N', this is an error
+  lda #YESNO_ERR                        ; If not 'Y' or 'N', this is an error
   jmp yesno_done
 .yesno_yes
   lda #YESNO_YES
@@ -575,9 +484,92 @@
   lda #YESNO_NO
 .yesno_done
   sta FUNC_RESULT
-  stz STDIN_IDX                         ; Clear input buffer
-  stz STDIN_BUF                         ;  "
-  lda STDIN_STATUS_REG                    ; Get our info register
-  and #STDIN_CLEAR_FLAGS                  ; Clear the received flags
-  sta STDIN_STATUS_REG                    ; and re-save the register
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  *** FOR DEBUGGING ONLY ***
+\ ------------------------------------------------------------------------------
+
+\ ------------------------------------------------------------------------------
+\ --- LIST_LOCS
+\ ------------------------------------------------------------------------------
+.list_locs                ; FOR DEBUGGING ONLY
+  ldx #0
+.list_locs_loop
+  lda RANDOM_LOCS,X
+  jsr OSB2HEX
+  jsr OSWRSBUF
+  lda #' '
+  jsr OSWRCH
+  inx
+  cpx #NUM_LOCS
+  beq list_locs_done
+  jmp list_locs_loop
+.list_locs_done
+  lda #CHR_LINEEND
+  jsr OSWRCH
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  DEBUG_LOCATIONS - for debugging only
+\ ------------------------------------------------------------------------------
+.debug_locations
+
+  lda #'Y'
+  jsr OSWRCH
+  lda #':'
+  jsr OSWRCH
+  lda PLAYER_LOC
+  jsr print_room_num
+  lda #' '
+  jsr OSWRCH
+
+  lda #'Z'
+  jsr OSWRCH
+  lda #':'
+  jsr OSWRCH
+  lda ZUMPUS_LOC
+  jsr print_room_num
+  lda #'/'
+  jsr OSWRCH
+  lda Z_STATE
+  jsr OSB2ISTR
+  jsr OSWRSBUF
+  lda #' '
+  jsr OSWRCH
+
+  lda #'B'
+  jsr OSWRCH
+  lda #':'
+  jsr OSWRCH
+  lda BAT1_LOC
+  jsr print_room_num
+   lda #' '
+  jsr OSWRCH
+
+  lda #'B'
+  jsr OSWRCH
+  lda #':'
+  jsr OSWRCH
+  lda BAT2_LOC
+  jsr print_room_num
+  lda #' '
+  jsr OSWRCH
+
+  lda #'P'
+  jsr OSWRCH
+  lda #':'
+  jsr OSWRCH
+  lda PIT1_LOC
+  jsr print_room_num
+  lda #' '
+  jsr OSWRCH
+
+  lda #'P'
+  jsr OSWRCH
+  lda #':'
+  jsr OSWRCH
+  lda PIT2_LOC
+  jsr print_room_num
+  NEWLINE
   rts
