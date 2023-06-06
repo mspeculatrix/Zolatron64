@@ -49,21 +49,24 @@
 \ ------------------------------------------------------------------------------
 \ Usage: LOAD <filename>
 \ This is for loading executable files in main memory.
-\ The filename should not have the '.BIN' extension (this will be added
+\ The filename should not have the '.EXE' extension (this will be added
 \ automatically by ZolaDOS).
 .cmdprcLOAD
   LED_ON LED_FILE_ACT
+  lda #<USR_START                   ; This is where we're going to put the code
+  sta FILE_ADDR
+  lda #>USR_START
+  sta FILE_ADDR + 1
   jsr zd_getfile
-  LED_OFF LED_FILE_ACT
   lda FUNC_ERR
-  bne cmdprcLOAD_err
-  jmp cmdprcLOAD_success
-.cmdprcLOAD_err
+  bne cmdprcLOAD_fail
+  jsr zd_fileload_ok
+  LED_OFF LED_FILE_ACT
+  jmp cmdprc_success
+.cmdprcLOAD_fail
+  LED_OFF LED_FILE_ACT
   LED_ON LED_ERR
   jmp cmdprc_fail
-.cmdprcLOAD_success
-  jsr zd_fileload_ok
-  jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: LP  :  LIST MEMORY PAGE

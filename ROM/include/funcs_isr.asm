@@ -63,10 +63,11 @@ ALIGN &100                ; start on new page
   beq isr_SC28L92_buf_full    ; Yes, so ignore all further data.
   lda SC28L92_RxFIFOA         ; Load the byte in the data register into A
   sta STDIN_BUF,X             ; and store it in the buffer, at the offset
-  beq isr_SC28L92_set_null    ; If the 0 terminator, set null
-  cmp #CHR_LINEEND            ; Is this a linefeed?
-  bne isr_SC28L92_cont        ; If not, skip ahead
-  stz STDIN_BUF,X             ; Otherwise replace with null
+  bne isr_SC28L92_cont        ; If not the 0 terminator, skip ahead
+  ;beq isr_SC28L92_set_null    ; If the 0 terminator, set null
+  ;cmp #CHR_LINEEND            ; Is this a linefeed?
+  ;bne isr_SC28L92_cont        ; If not, skip ahead
+  ;stz STDIN_BUF,X             ; Otherwise replace with null
 .isr_SC28L92_set_null
   lda STDIN_STATUS_REG        ; Load our status register
   ora #DUART_RxA_NUL_RCVD_FL  ; Set the null byte received flag

@@ -61,7 +61,7 @@
   lda FUNC_RES_L
   cmp #16                                 ; Check to see if it's more than 15
   bcs extmem_readset_bank_num_err         ; If it is, error...
-  sta EXTMEM_BANK                         ; Store it for some reason
+  sta EXTMEM_BANK                         ; Store it here for some reason
   sta EXTMEM_SLOT_SEL                     ; Select bank by writing to this addr
   jmp extmem_readset_bank_end
 .extmem_readset_bank_num_err

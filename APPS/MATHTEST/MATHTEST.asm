@@ -5,7 +5,7 @@
 ;
 ; Written for the Beebasm assembler
 ; Assemble with:
-; beebasm -v -i TESTB.asm
+; beebasm -v -i MATHTEST.asm
 
 MACRO PRT_ADDR addr
   lda #'$'
@@ -219,7 +219,7 @@ ORG USR_START
   PRT_ADDR FUNC_RES_L
   NEWLINE
 
-  \ ----- uint16_div_uint8 -----------------------------------------------------------
+  \ ----- uint16_div_uint8 -----------------------------------------------------
   TESTING uint16_div_uint8_msg
 
   lda #<NUM3
@@ -305,7 +305,7 @@ ORG USR_START
   PRT_ADDR FUNC_RES_L
   NEWLINE
 
-  \ ----- uint16_times10 -----------------------------------------------------------
+  \ ----- uint16_times10 -------------------------------------------------------
   TESTING uint16_times10_msg
 
   LOAD_MSG mult_msg

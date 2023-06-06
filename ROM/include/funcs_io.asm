@@ -142,7 +142,14 @@
 .display_mem_chk_LSB
   lda TMP_ADDR_A_L              ; Compare the LSBs
   cmp TMP_ADDR_B_L
-  beq display_mem_output_end    ; If they're also equal, we're done
+  bne display_mem_inc_LSB       ; If they're also equal, we're done
+  ; BUT - do we need to print the ascii? Quite possibly
+  ; If it was an exact line of 16 chars, then won't need to print
+  ; TMP_COUNT would have been reset to 0
+  lda TMP_COUNT
+  beq display_mem_output_end
+  jsr display_mem_ascii
+  jmp display_mem_output_end
 .display_mem_inc_LSB
   inc TMP_ADDR_A_L              ; Increment LSB of start address
   lda TMP_ADDR_A_L
@@ -212,6 +219,7 @@
 \ X - n/a
 \ Y - n/a
   lda #' '
+  jsr OSWRCH
   jsr OSWRCH
   jsr OSWRCH
   rts

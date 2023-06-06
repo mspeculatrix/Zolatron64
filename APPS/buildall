@@ -1,0 +1,11 @@
+!#/usr/bin/env bash
+
+APPS=("FORBIN" "HELLORLD" "INPUT" "PRTFILE" "PRTTEST" "TESTA" "TESTIO" "WARGAMES" "ZUMPUS")
+
+
+for APP in ${APPS[*]}; do
+	echo "Building $APP..."
+	cd $APP
+	zapp
+	cd ..
+done

@@ -109,20 +109,17 @@
 \ ------------------------------------------------------------------------------
 \ ---  ZD_GETFILE
 \ ------------------------------------------------------------------------------
-\ Get a filename from STDIN_BUF and load the file into memory at USR_START.
+\ Get a filename from STDIN_BUF and load the file into memory.
+\ Assumes the load address has already been stored in FILE_ADDR(+1).
 \ ON ENTRY: The filename must be in STDIN_BUF
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
 \ A - O
 \ X - n/a
 \ Y - n/a
-.zd_getfile ; move to funcs_ZolaDOS.asm
+.zd_getfile
   LOAD_MSG loading_msg
   jsr OSWRMSG
   jsr OSLCDMSG
-  lda #<USR_START             ; This is where we're going to put the code
-  sta FILE_ADDR
-  lda #>USR_START
-  sta FILE_ADDR + 1
   jsr read_filename           ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne zd_getfile_done

@@ -1,6 +1,39 @@
 \ cmds_P.asm
 
 \ ------------------------------------------------------------------------------
+\ --- CMD: PDUMP  :  HEX DUMP PROGRAM IN MEMORY TO SCREEN
+\ ------------------------------------------------------------------------------
+\ Usage: PDUMP
+
+.cmdprcPDUMP
+  jsr check_exec                  ; Check if executable program loaded
+  lda FUNC_ERR
+  bne cmdprcPDUMP_err             ; An error suggests not
+	lda #<USR_START                 ; Get start address
+	sta TMP_ADDR_A
+  lda #>USR_START
+	sta TMP_ADDR_A + 1
+  ; Get end address
+	lda USR_START + CODEHDR_END     ; LSB of first free byte after prog
+	dec	A			                      ; Decrement to get last byte of program
+	sta TMP_ADDR_B
+	lda USR_START + CODEHDR_END + 1 ; MSB
+	sta TMP_ADDR_B + 1
+	LOAD_MSG cmdprcPDUMP_msg
+ 	jsr OSWRMSG
+  jsr display_memory
+	lda #10
+	jsr OSWRCH
+	jmp cmdprc_success
+
+.cmdprcPDUMP_err
+  jmp cmdprc_fail
+
+.cmdprcPDUMP_msg
+  equs "Executable program found:",10,0
+
+
+\ ------------------------------------------------------------------------------
 \ --- CMD: PEEK  :  EXAMINE BYTE IN MEMORY
 \ ------------------------------------------------------------------------------
 \ Usage: PEEK <addr>

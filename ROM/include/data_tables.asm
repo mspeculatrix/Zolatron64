@@ -28,6 +28,7 @@ ALIGN &100                  ; Start on new page
   equw cmdprcLS             ; LS - list storage
   equw cmdprcMV             ; MV - move (rename) file
   equw cmdprcOPEN           ; OPEN
+  equw cmdprcPDUMP          ; PDUMP
   equw cmdprcPEEK           ; PEEK
   equw cmdprcPOKE           ; POKE
   equw cmdprcPRT            ; PRT
@@ -136,6 +137,7 @@ ALIGN &100                  ; Start on new page
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCP                  ; Commands starting 'P'
+  equs "DUMP", CMD_TKN_PDUMP   ; PDUMP
   equs "EEK", CMD_TKN_PEEK     ; PEEK
   equs "OKE", CMD_TKN_POKE     ; POKE
   equb EOCMD_SECTION
@@ -296,6 +298,7 @@ ALIGN &100                  ; Start on new page
   equs "LS",0
   equs "(MV)",0
   equs "OPEN",0
+  equs "PDUMP",0
   equs "PEEK",0
   equs "POKE",0
   equs "RUN",0
@@ -316,7 +319,7 @@ ALIGN &100                  ; Start on new page
   equs "0123456789ABCDEF"
 
 .memory_header                ; For 'LM' and 'LP' output
-  equs "----  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F   "
+  equs "----  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F    "
   equs "0123456789ABCDEF", 10, 0
 
 \ MESSAGES
