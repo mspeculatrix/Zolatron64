@@ -85,9 +85,7 @@
 \ Print the appropriate message if file load operation went okay. Also set
 \ appropriate value for LOMEM.
 \ ON EXIT : LOMEM is set to first free byte above top of program.
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_fileload_ok
   LOAD_MSG file_act_complete_msg
   jsr OSWRMSG
@@ -113,10 +111,9 @@
 \ Assumes the load address has already been stored in FILE_ADDR(+1).
 \ ON ENTRY: The filename must be in STDIN_BUF
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_getfile
+  LED_ON LED_FILE_ACT
   LOAD_MSG loading_msg
   jsr OSWRMSG
   jsr OSLCDMSG
@@ -126,6 +123,7 @@
   lda #ZD_OPCODE_LOAD         ; Use opcode for loading .EXE files
   jsr zd_loadfile
 .zd_getfile_done
+  LED_OFF LED_FILE_ACT
   rts
 
 \ ------------------------------------------------------------------------------
@@ -135,9 +133,7 @@
 \ the RPi, sending a code designating which action is required.
 \ ON ENTRY: The relevant opcode must be in A.
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
-\ A - P
-\ X - n/a
-\ Y - n/a
+\ A - P     X - n/a     Y - n/a
 .zd_init_process
   pha
   lda #ZD_DATA_SET_OUT

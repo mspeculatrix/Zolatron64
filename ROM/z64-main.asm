@@ -38,7 +38,7 @@ ORG $8000              ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v5.0.1", 0
+  equs "ZolOS v5.0.2", 0
 .startcode
   sei                  ; Don't interrupt me yet
   cld                  ; We don' need no steenkin' BCD
@@ -222,9 +222,9 @@ INCLUDE "include/os_call_vectors.asm"
   cmp #CMD_TKN_NUL
   beq process_input_nul
   cmp #CMD_TKN_FAIL                       ; This means a syntax error
-  beq process_input_fail
+  beq process_input_nomatch
   cmp #PARSE_ERR_CODE                     ; This means a syntax error
-  beq process_input_fail
+  beq process_input_nomatch
   \\ anything other than CMD_TKN_NUL and CMD_TKN_FAIL should be a valid token
   sec
   sbc #$80                        ; This turns the token into an offset for our
@@ -235,14 +235,26 @@ INCLUDE "include/os_call_vectors.asm"
   lda cmdprcptrs+1,Y              ; Load MSB of pointer
   sta TBL_VEC_H                   ; and also store in table vector
   jmp (TBL_VEC_L)                 ; Now jump to location indicated by pointer
-.process_input_fail
-  LED_ON LED_ERR
+.process_input_nomatch
+  ; See if the command matches the name of an executable file.
+  stz STDIN_IDX                   ; Reset input buffer index to 0
+  lda #<USR_START                 ; This is where we're going to put the code
+  sta FILE_ADDR
+  lda #>USR_START
+  sta FILE_ADDR + 1
+  jsr zd_getfile                  ; Try loading an executable
+  lda FUNC_ERR
+  beq process_input_run           ; If error code 0, run the code
+  LED_ON LED_ERR                  ; Otherwise, this is an error
   lda #PARSE_ERR_CODE
   sta FUNC_ERR
   jsr os_print_error
 .process_input_nul
   SERIAL_PROMPT
   jmp process_input_done
+.process_input_run
+  jmp USR_START
+
 
 \ ******************************************************************************
 \ ***   COMMAND PROCESS FUNCTIONS                                            ***
@@ -304,7 +316,7 @@ ALIGN &100                                        ; Start on new page
 
 \-------------------------------------------------------------------------------
 \ OS CALLS  - OS Call Jump Table
-\ Jump table for OS calls. Requires corresponding entries in:
+\ Requires corresponding entries in:
 \    - cfg_page_2.asm - OS Indirection Table
 \    - cfg_main.asm   - OS Function Address Table
 \    - os_call_vectors.asm - map functions to vectors
@@ -380,4 +392,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-5.0.1.bin", startrom, endrom
+SAVE "bin/z64-ROM-5.0.2.bin", startrom, endrom
