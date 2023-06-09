@@ -1,20 +1,43 @@
-## Zolatron 64 ROM
+# Zolatron 64 OS ROM
 
-This is V3 of the ROM. It considers the following boards to be intrinsic parts of the computer (which need to be served by the OS):
+## CHANGELOG
 
-* CPU board (duh!)
-* LCDV  - LCD/LED board - VIA also provides timer 1 for delay function
-* DUART - SC28L92 DUART board - two serial ports plus other I/O
-* ZD    - RPi/ZolaDOS board - provides terminal & mass storage
-* USRP  - User Port VIA board (provides timers available for user programs)
-* EXMEM - Extended memory (ROM/RAM) board
-* PRT   - Parallel interface board
+### 5.0.4
+
+### 5.0.3 - committed
+
+- Renamed EX command to CHAIN
+- Removed 'Loading...' message when directly calling an .EXE program from the command line (ie, not using LOAD or CHAIN).
+- Fixed bugs in the command pointer jump table.
+
+### 5.0.2 - committed
+
+- Added ability to load & run .EXE programs from command line - eg, as with DOS, CP/M, Unix etc, when a command is typed into the CLI, first the OS checks to see if it's a built-in command. If not, it then looks to see if it can load an executable file of that name from storage (the '.EXE' extension is added automatically). If a load succeeds, the code is run automatically.
+
+### 5.0.1 - committed
+
+- Added PDUMP command.
+- Fixed the hex memory display (last line of ASCII output wasn't shown if it wasn't a full 16 bytes).
+- Linefeeds (ASCII 10) are no longer treated specially in the CLI's main loop. Before, they were treated the same as a Null (ASCII 0) - in fact, that's what they were converted to. Now, a linefeed (or carriage return, for that matter) is treated like any other character. To indicate end of transmission, whatever is sending to the Zolatron must send a Null.
+
+The following boards are considered to be intrinsic parts of the computer (which need to be served by the OS):
+
+- CPU board (duh!)
+- LCDV - LCD/LED board - VIA also provides timer 1 for delay function.
+- DUART - SC28L92 DUART board - two serial ports plus other I/O. One port is used as the main console.
+- ZD - RPi/ZolaDOS board - provides terminal & mass storage.
+- USRP - User Port VIA board (provides timers available for user programs).
+
+The following boards are optional. The OS checks for their existence on boot. But I've still put routines to handle these boards into the OS, rather than expecting user code to manage them.
+
+- EXMEM - Extended memory (ROM/RAM) board
+- PRT - Parallel interface board
 
 The Zolatron's ROM code occupies the top 16KB of the address space – $C000-$FFFF.
 
 I'm using a 32KB EEPROM chip, the AT28C256. So the code needs to sit in the top 16KB of this. That's why the start address for the ROM – ie, the bytes that will be written to the file – start at $8000. But the first 16KB will just be random (and will be ignored because the ROM isn't enabled at addresses below $C000). The real code starts at $C000.
 
-Communication with the Zolatron is via serial at 9600 baud 8N1. As we're not using any form of flow control (yet) any terminal that connects to the Zolatron needs to have a slight delay after sending each character. I'm currently using 30ms, but will experiment with that. Data sent to the Zolatron should be terminated with a null character (ASCII 0) or the line end character – currently I'm using linefeed (ASCII 10, $0A).
+Communication with the Zolatron is via serial at 9600 baud 8N1. As we're not using any form of flow control (yet) any terminal that connects to the Zolatron needs to have a slight delay after sending each character. I'm currently using 30ms, but will experiment with that. Data sent to the Zolatron should be terminated with a null character (ASCII 0) to mark end of transmission.
 
 The output-nn.txt files in the _output_ folder are the output from Beebasm when the code is assembled. Just in case.
 

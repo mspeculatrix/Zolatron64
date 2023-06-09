@@ -12,37 +12,37 @@ ALIGN &100                  ; Start on new page
 \ The entries are the labels of the relevant subroutines in z64-main.asm (or
 \ the command files that includes).
 .cmdprcptrs
-  equw cmdprcSTAR           ; *
-  equw cmdprcBANG           ; !
-  equw cmdprcQUERY          ; ?
-  equw cmdprcBRK            ; BRK
-  equw cmdprcCLEAR          ; CLEAR
-  equw cmdprcDEL            ; DEL
-  equw cmdprcDUMP           ; DUMP
-  equw cmdprcEX             ; EX - load & execute program
-  equw cmdprcHELP           ; HELP
-  equw cmdprcJMP            ; JMP
-  equw cmdprcLM             ; LM - list memory
-  equw cmdprcLOAD           ; LOAD - load file
-  equw cmdprcLP             ; LP - list page
-  equw cmdprcLS             ; LS - list storage
-  equw cmdprcMV             ; MV - move (rename) file
-  equw cmdprcOPEN           ; OPEN
-  equw cmdprcPDUMP          ; PDUMP
-  equw cmdprcPEEK           ; PEEK
-  equw cmdprcPOKE           ; POKE
-  equw cmdprcPRT            ; PRT
-  equw cmdprcRUN            ; RUN user program
-  equw cmdprcSAVE           ; SAVE - save file
-  equw cmdprcSTAT           ; STAT
-  equw cmdprcVERS           ; VERS - version
-  equw cmdprcXCLR           ; XCLR
-  equw cmdprcXLOAD          ; XLOAD
-  equw cmdprcXLS            ; XLS
-  equw cmdprcXOPEN          ; XOPEN
-  equw cmdprcXRUN           ; XRUN
-  equw cmdprcXSAVE          ; XSAVE
-  equw cmdprcXSEL           ; XSEL
+  equw cmdprcSTAR           ; *     - (for future expansion)
+  equw cmdprcBANG           ; !     - poke a byte to memory location
+  equw cmdprcQUERY          ; ?     - read byte at memory location
+  equw cmdprcBRK            ; BRK   - perform soft reset
+  equw cmdprcCHAIN          ; CHAIN - load & execute program
+  equw cmdprcCLEAR          ; CLEAR - clears program from RAM
+  equw cmdprcDEL            ; DEL   - delete a file from persistent store
+  equw cmdprcDUMP           ; DUMP  - dump region of memory to persistent store
+  equw cmdprcHELP           ; HELP  - print list of CLI commands
+  equw cmdprcJMP            ; JMP   - jump to memory loc. & execute from there
+  equw cmdprcLM             ; LM    - list memory
+  equw cmdprcLOAD           ; LOAD  - load file
+  equw cmdprcLP             ; LP    - list memory page
+  equw cmdprcLS             ; LS    - list storage
+  equw cmdprcMV             ; MV    - move (rename) file
+  equw cmdprcOPEN           ; OPEN  - load data to memory
+  equw cmdprcPDUMP          ; PDUMP - hex dump of executable code at USR_START
+  equw cmdprcPEEK           ; PEEK  - read byte at memory location
+  equw cmdprcPOKE           ; POKE  - poke a byte to memory location
+  equw cmdprcPRT            ; PRT   - (for future use)
+  equw cmdprcRUN            ; RUN   - execute user program at USR_START
+  equw cmdprcSAVE           ; SAVE  - save file
+  equw cmdprcSTAT           ; STAT  - status info
+  equw cmdprcVERS           ; VERS  - version
+  equw cmdprcXCLR           ; XCLR  - clear current EXT RAM bank
+  equw cmdprcXLOAD          ; XLOAD - load executable into EXT RAM bank
+  equw cmdprcXLS            ; XLS   - list contents of EXT ROM/RAM banks
+  equw cmdprcXOPEN          ; XOPEN - load data into EXT RAM bank
+  equw cmdprcXRUN           ; XRUN  - run executable in current ROM/RAM bank
+  equw cmdprcXSAVE          ; XSAVE - save contents of ROM/RAM bank
+  equw cmdprcXSEL           ; XSEL  - select ROM/RAM bank
 
 \ FIRST CHARACTER TABLE
 \ Initial characters of our commands. The parsing system first looks to see if
@@ -50,7 +50,7 @@ ALIGN &100                  ; Start on new page
 \ understand where to go next by looking it up in the Command Pointers table
 \ below.
 .cmd_ch1_tbl
-  equs "*!?BCDEHJLMOPRSVX"
+  equs "*!?BCDHJLMOPRSVX"
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -67,7 +67,6 @@ ALIGN &100                  ; Start on new page
   equw cmd_tbl_ASCB         ; Commands starting 'B'
   equw cmd_tbl_ASCC         ; Commands starting 'C'
   equw cmd_tbl_ASCD         ; Commands starting 'D'
-  equw cmd_tbl_ASCE         ; Commands starting 'E'
   equw cmd_tbl_ASCH         ; Commands starting 'H'
   equw cmd_tbl_ASCJ         ; Commands starting 'J'
   equw cmd_tbl_ASCL         ; Commands starting 'L'
@@ -101,16 +100,13 @@ ALIGN &100                  ; Start on new page
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCC                  ; Commands starting 'C'
+  equs "HAIN", CMD_TKN_CHAIN   ; CHAIN
   equs "LEAR", CMD_TKN_CLEAR   ; CLEAR
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCD                  ; Commands starting 'D'
   equs "EL", CMD_TKN_DEL       ; DEL
   equs "UMP", CMD_TKN_DUMP     ; DUMP
-  equb EOCMD_SECTION
-
-.cmd_tbl_ASCE                  ; Commands starting 'E'
-  equs "X", CMD_TKN_EX         ; EX
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCH                  ; Commands starting 'H'
@@ -219,7 +215,8 @@ ALIGN &100                  ; Start on new page
 .err_msg_hex_bin_conv
   equs "Hex-byte error",0
 .err_msg_parse
-  equs "Don't understand",0
+  ;     12345678901234567890
+  equs "Bad command/exec",0
 .err_msg_read_hexbyte
   equs "Err reading hex",0
 .err_msg_syntax
@@ -286,10 +283,10 @@ ALIGN &100                  ; Start on new page
   equs "?",0
   equs "!",0
   equs "BRK",0
+  equs "CHAIN",0
   equs "CLEAR",0
   equs "DEL",0
   equs "DUMP",0
-  equs "EX",0
   equs "HELP",0
   equs "JMP",0
   equs "LM",0
@@ -305,10 +302,10 @@ ALIGN &100                  ; Start on new page
   equs "SAVE",0
   equs "STAT",0
   equs "VERS",0
+  equs "XCHAIN",0
   equs "XCLR",0
   equs "XLOAD",0
   equs "XLS",0
-  equs "XOPEN",0
   equs "XRUN",0
   equs "XSAVE",0
   equs "XSEL",0

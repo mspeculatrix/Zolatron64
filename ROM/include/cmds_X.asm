@@ -176,7 +176,7 @@
   jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------
-\ --- CMD: XOPEN  :  RUN PROGRAM IN CURRENT EXTENDED MEMORY BANK
+\ --- CMD: XOPEN  :  LOAD DATAE FILE INTO CURRENT EXTENDED MEMORY BANK
 \ ------------------------------------------------------------------------------
 \ Usage: XOPEN <filename> <bank>
 \ Wrapper to xload_file.

@@ -57,6 +57,9 @@
   sta FILE_ADDR
   lda #>USR_START
   sta FILE_ADDR + 1
+  LOAD_MSG loading_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
   jsr zd_getfile
   lda FUNC_ERR
   bne cmdprcLOAD_fail

@@ -1,6 +1,27 @@
 \ cmds_C.asm
 
 \ ------------------------------------------------------------------------------
+\ --- CMD: CHAIN  :  LOAD & EXECUTE PROGRAM
+\ ------------------------------------------------------------------------------
+\ Usage: CHAIN <filename>
+\ Load a program to location USR_START and execute.
+.cmdprcCHAIN
+  LED_ON LED_FILE_ACT
+  LOAD_MSG loading_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
+  jsr zd_getfile
+  LED_OFF LED_FILE_ACT
+  lda FUNC_ERR
+  bne cmdprcCHAIN_err
+  jsr zd_fileload_ok
+  NEWLINE
+  jmp cmdprcRUN
+.cmdprcCHAIN_err
+  LED_ON LED_ERR
+  jmp cmdprc_fail
+
+\ ------------------------------------------------------------------------------
 \ --- CMD: CLEAR  :  CLEAR PROGRAM
 \ ------------------------------------------------------------------------------
 \ Usage: CLEAR

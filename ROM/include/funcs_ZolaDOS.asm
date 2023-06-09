@@ -114,9 +114,9 @@
 \ A - O     X - n/a     Y - n/a
 .zd_getfile
   LED_ON LED_FILE_ACT
-  LOAD_MSG loading_msg
-  jsr OSWRMSG
-  jsr OSLCDMSG
+  ;LOAD_MSG loading_msg
+  ;jsr OSWRMSG
+  ;jsr OSLCDMSG
   jsr read_filename           ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne zd_getfile_done

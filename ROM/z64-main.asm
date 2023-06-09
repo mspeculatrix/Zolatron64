@@ -38,7 +38,7 @@ ORG $8000              ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v5.0.2", 0
+  equs "ZolOS v5.0.3", 0
 .startcode
   sei                  ; Don't interrupt me yet
   cld                  ; We don' need no steenkin' BCD
@@ -223,7 +223,7 @@ INCLUDE "include/os_call_vectors.asm"
   beq process_input_nul
   cmp #CMD_TKN_FAIL                       ; This means a syntax error
   beq process_input_nomatch
-  cmp #PARSE_ERR_CODE                     ; This means a syntax error
+  cmp #PARSE_ERR_CODE                     ; This means no match with cmd list
   beq process_input_nomatch
   \\ anything other than CMD_TKN_NUL and CMD_TKN_FAIL should be a valid token
   sec
@@ -266,7 +266,7 @@ INCLUDE "include/cmds_punc.asm"
 INCLUDE "include/cmds_B.asm"
 INCLUDE "include/cmds_C.asm"
 INCLUDE "include/cmds_D.asm"
-INCLUDE "include/cmds_E.asm"
+;INCLUDE "include/cmds_E.asm"
 INCLUDE "include/cmds_H.asm"
 INCLUDE "include/cmds_J.asm"
 INCLUDE "include/cmds_L.asm"
@@ -392,4 +392,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-5.0.2.bin", startrom, endrom
+SAVE "bin/z64-ROM-5.0.3.bin", startrom, endrom
