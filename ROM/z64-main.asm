@@ -247,6 +247,7 @@ INCLUDE "include/os_call_vectors.asm"
   sta FILE_ADDR
   lda #>USR_START
   sta FILE_ADDR + 1
+  lda #MSG_OMIT
   jsr zd_getfile                  ; Try loading an executable
   lda FUNC_ERR
   beq process_input_run           ; If error code 0, run the code

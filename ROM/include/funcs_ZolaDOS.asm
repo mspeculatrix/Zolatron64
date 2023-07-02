@@ -108,19 +108,21 @@
 \ Get a filename from STDIN_BUF and load the file into memory.
 \ Assumes the load address has already been stored in FILE_ADDR(+1).
 \ ON ENTRY: The filename must be in STDIN_BUF
+\           A should contain 1 to show loading message, 0 to not
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
 \ A - O     X - n/a     Y - n/a
 .zd_getfile
   LED_ON LED_FILE_ACT
-  ;LOAD_MSG loading_msg
-  ;jsr OSWRMSG
-  ;jsr OSLCDMSG
+  pha                         ; Save for later
   jsr read_filename           ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne zd_getfile_done
+  pla
+  beq zd_getfile_go
   LOAD_MSG loading_msg
   jsr OSWRMSG
   jsr OSLCDMSG
+.zd_getfile_go
   lda #ZD_OPCODE_LOAD         ; Use opcode for loading .EXE files
   jsr zd_loadfile
 .zd_getfile_done

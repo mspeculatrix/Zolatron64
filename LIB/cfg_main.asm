@@ -7,6 +7,9 @@ STDOUT_IDX     = $03FF ; Location of output buffer index
 STR_BUF_LEN    = 120   ; size of buffers. We actually have 127 bytes available
 STR_BUF_MAX    = 127   ; but this leaves some headroom.
 
+MSG_OMIT = 0           ; Used by file loading routines - maybe other stuff
+MSG_SHOW = 1
+
 \-------------------------------------------------------------------------------
 \ ERROR CODES
 \-------------------------------------------------------------------------------

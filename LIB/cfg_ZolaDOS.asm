@@ -73,8 +73,8 @@ ZD_FILELIST_TERM = 255    ; Terminator for end file list
 ZD_CA_ON        = %11111110           ; PB0 - AND with PB to set /CA bit low
 ZD_CA_OFF       = %00000001           ; PB0 - OR with PB to set /CA bit high
 ; CO - Client Online - when low, tells RPi that Z64 is booted & available
-ZD_CO_ON        = %11111011           ; PB2 - AND with PB to set /CO bit low
-ZD_CO_OFF       = %00000100           ; PB2 - OR with PB to set /CO bit high
+ZD_CO_ON        = %00000100           ; PB2 - OR with PB to set /CO bit high
+ZD_CO_OFF       = %11111011           ; PB2 - AND with PB to set /CO bit low
 ; CR - Client Ready
 ZD_CR_ON        = %11111101           ; PB1 - AND with PB to set /CR bit low
 ZD_CR_OFF       = %00000010           ; PB1 - OR with PB to set /CR bit high
