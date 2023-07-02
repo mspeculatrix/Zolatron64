@@ -1,4 +1,4 @@
-\ funcs_prt.asm
+\ --- PRINTER FUNCTIONS -- funcs_prt.asm ---------------------------------------
 
 \ ******************************************************************************
 \ ***  OS FUNCTIONS
@@ -10,9 +10,7 @@
 \ ------------------------------------------------------------------------------
 \ Print a character. Blocking.
 \ ON ENTRY: A contains ASCII char code
-\ A - O (via subr)
-\ X - n/a
-\ Y - n/a
+\ A - O (via subr)     X - n/a     Y - n/a
 .prt_char
   LED_ON LED_BUSY
   pha
@@ -39,9 +37,7 @@
 \      beq parallel_board_not_fitted
 \ ON EXIT : - FUNC_ERR contains error code - 0 = no error
 \           - Sets bit 2 in SYS_REG (SYS_PARALLEL)
-\ A - P
-\ X - P
-\ Y - P
+\ A - P     X - P     Y - P
 .prt_check_present
   pha : phx : phy
   stz FUNC_ERR
@@ -80,9 +76,7 @@
 \ ---  Implemenents: OSPRTCHK
 \ ------------------------------------------------------------------------------
 \ ON EXIT : - FUNC_ERR contains error code - 0 = no error
-\ A - O
-\ X - n/a
-\ Y - P
+\ A - O     X - n/a     Y - P
 .prt_check_state
   phy
   stz FUNC_ERR
@@ -115,9 +109,7 @@
 \ ---  Implements: OSPRTINIT
 \ ------------------------------------------------------------------------------
 \ Set up the VIA and initialise the printer by sending an /INIT pulse.
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .prt_init
   lda #PRT_CTRL_PT_DIR              ; Set pin directions for control port
   sta PRT_CTRL_DDR
@@ -143,9 +135,7 @@
 \ ON ENTRY: MSG_VEC pointer should point to a message to print
 \ ON EXIT : - FUNC_RESULT will contain a result code
 \           - MSG_VEC will point to an error msg if an error occurred
-\ A - O
-\ X - n/a
-\ Y - O
+\ A - O     X - n/a     Y - O
 .prt_msg
   ldy #PRT_STATE_CHKS         ; Number of attempts we'll make before giving up
 .prt_msg_chk
@@ -178,9 +168,7 @@
 \ ---  Implements: OSPRTBUF
 \ ------------------------------------------------------------------------------
 \ Prints STDOUT_BUF. Wrapper to OSPRTMSG
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .prt_stdout_buf
   lda #<STDOUT_BUF                              ; LSB of message
   sta MSG_VEC
@@ -194,9 +182,7 @@
 \ --- Implements: OSPRTSBUF
 \ ------------------------------------------------------------------------------
 \ Prints STR_BUF.  Wrapper to OSPRTMSG
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .prt_str_buf
   lda #<STR_BUF                              ; LSB of message
   sta MSG_VEC
@@ -217,9 +203,7 @@
 \ ------------------------------------------------------------------------------
 \ ON EXIT : - Carry clear if printer not busy
 \           - Carry set if busy
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .prt_check_busy
   clc
   lda PRT_CTRL_PORT
@@ -236,9 +220,7 @@
 \ This uses a timer-based interval for the length of the strobe. Might be
 \ interesting to try a version that instead waits for an /ACK from the printer.
 .prt_strobe
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
   lda PRT_CTRL_PORT
   and #PRT_STRB_ON
   sta PRT_CTRL_PORT
@@ -260,9 +242,7 @@
 ;  bne prt_wait_for_ack_loop
 ;  rts
 
-\ ------------------------------------------------------------------------------
-\ ---  DATA
-\ ------------------------------------------------------------------------------
+\ ---  DATA  -------------------------------------------------------------------
 .parallel_if_fitted
   equs "+ Parallel interface",0
 .parallel_if_not_fitted

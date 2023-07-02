@@ -1,4 +1,4 @@
-\ cmds_J.asm
+\ ZolOS CLI Commands starting with 'J' - cmds_J.asm
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: JMP  :  JUMP TO ADDRESS
@@ -34,7 +34,8 @@
   LOAD_MSG STDOUT_BUF
   jsr OSLCDMSG
   jmp cmdprc_fail
-; --- DATA ------------------
+
+; --- DATA ---------------------------------------------------------------------
 .cmdprcJMP_msg
   equs "JUMP:",0
 .cmdprcJMP_msg_err

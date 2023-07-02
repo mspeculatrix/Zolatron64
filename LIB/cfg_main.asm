@@ -52,7 +52,7 @@ ERR_PRT_NOT_PRESENT   = ERR_PRT_STATE_ERR + 1       ; Printer board not present
 \    - cfg_page_2.asm - OS Indirection Table
 \-------------------------------------------------------------------------------
 ; READ
-OSGETKEY   = $FF00
+OSGETKEY   = $FF00          ; Must match address at start of z64-main jump table
 OSRDASC    = OSGETKEY + 3
 OSRDBYTE   = OSRDASC + 3
 OSRDCH     = OSRDBYTE + 3
@@ -106,12 +106,12 @@ OSUSRINT   = OSDELAY + 3
 OSSFTRST   = $FFF4         ; Use direct JMP with these (not indirected/vectored)
 OSHRDRST   = $FFF7
 
-USR_START = $0800          ; Address where user programs load
-USR_END   = $7FFF          ; Top of user memory
-ROM_START = $C000          ; Start of ROM memory
-EXTMEM_SLOT_SEL = $BFE0    ; Write to this address to select memory slot (0-15)
-EXTMEM_START    = $8000    ; This is where extended memory lives
-EXTMEM_END      = $9FFF    ; Last writable byte in extended memory bank
+USR_START     = $0800      ; Address where user programs load
+USR_END       = $7FFF      ; Top of user memory
+ROM_START     = $C000      ; Start of ROM memory
+EXTMEM_SELECT = $BFE0      ; Write to this address to select memory slot (0-15)
+EXTMEM_START  = $8000      ; This is where extended memory lives
+EXTMEM_END    = $9FFF      ; Last writable byte in extended memory bank
 
 LCD_TYPE_16x2 = 0
 LCD_TYPE_20x4 = 1
@@ -207,7 +207,7 @@ ENDMACRO
 
 MACRO CLEAR_INPUT_BUF
   stz STDIN_IDX
-  lda STDIN_STATUS_REG ; reset the nul received flag
+  lda STDIN_STATUS_REG                          ; Reset the nul received flag
   and #STDIN_CLEAR_FLAGS
   sta STDIN_STATUS_REG
 ENDMACRO

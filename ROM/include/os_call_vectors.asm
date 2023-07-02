@@ -10,6 +10,7 @@
 \    - cfg_main.asm   - OS Function Address Table
 
 \ --- READ ---------------------------------------------------------------------
+.OS_CALL_VECTORS
   lda #<getkey                        ; OSRDASC
   sta OSGETKEY_VEC
   lda #>getkey
@@ -184,10 +185,10 @@
   lda #>zd_save_data
   sta OSZDSAVE_VEC + 1
 
-; OSUSRINT
 \ --- MISC ---------------------------------------------------------------------
   lda #<delay                         ; OSDELAY
   sta OSDELAY_VEC
   lda #>delay
   sta OSDELAY_VEC + 1
 ; OSUSRINT - to come
+.os_call_vectors_end

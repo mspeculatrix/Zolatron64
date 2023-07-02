@@ -1,4 +1,4 @@
-\ cmds_S.asm
+\ ZolOS CLI Commands starting with 'S' - cmds_S.asm
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: SAVE  :  SAVE PROGRAM
@@ -147,7 +147,7 @@
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
   rts
 
-\ --- DATA --------------------
+\ --- DATA ---------------------------------------------------------------------
 .stat_msg_lomem               ; For 'STAT' output
   equs "LOMEM:",0
 .stat_msg_progend

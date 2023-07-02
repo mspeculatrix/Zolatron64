@@ -4,12 +4,13 @@
 \ Blog: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
 \
 \ Written for the Beebasm assembler. Assemble with:
-\     beebasm -v -i z64-main.asm
+\     beebasm -v -i z64-main.asm -o z64-ROM.bin -S -VSTR="<version>"
 \
 \ Write to EEPROM with:
 \     minipro -p AT28C256 -w z64-ROM-<version>.bin
 
-CPU 1                                             ; Use 65C02 instruction set
+CPU 1                                   ; Use 65C02 instruction set
+VSTR =? "0.0.0"                         ; Will be overwritten with the -S option
 
 ; Include our setup files. These contain address designations and constant
 ; definitions.
@@ -38,17 +39,17 @@ ORG $8000              ; Using only the top 16KB of a 32KB EEPROM.
 ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs "ZolOS v5.0.3", 0
+  equs VSTR, 0
 .startcode
-  sei                  ; Don't interrupt me yet
-  cld                  ; We don' need no steenkin' BCD
-  ldx #$ff             ; Set stack pointer to $01FF - only need to set
-  txs                  ; the LSB, as MSB is assumed to be $01
+  sei                       ; Don't interrupt me yet
+  cld                       ; We don' need no steenkin' BCD
+  ldx #$ff                  ; Set stack pointer to $01FF - only need to set
+  txs                       ; the LSB, as MSB is assumed to be $01
 
 ; Initialise registers etc
   stz SYS_REG
   stz EXTMEM_BANK           ; Default to extended memory bank 0
-  stz EXTMEM_SLOT_SEL       ;    "     "    "       "     "   "
+  stz EXTMEM_SELECT         ;    "     "    "       "     "   "
   stz FUNC_ERR              ; Zero out function return values
   stz FUNC_RESULT
   stz STDIN_BUF             ; Set first byte of STDIN buffer to a nul (0)
@@ -75,9 +76,9 @@ INCLUDE "include/os_call_vectors.asm"
   ora #%00100000     ; Sets bit 5 showing we're using 20x4 display
   sta SYS_REG
   lda #%11111111
-  sta LCDV_DDRB     ; Set all pins on port B to output - data for LCD
-  sta LCDV_DDRA     ; Set all pins on port A to output - signals for LCD & LEDs
-  lda #LCD_TYPE     ; Set 8-bit mode; 2-line display; 5x8 font
+  sta LCDV_DDRB      ; Set all pins on port B to output - data for LCD
+  sta LCDV_DDRA      ; Set all pins on port A to output - signals for LCD & LEDs
+  lda #LCD_TYPE      ; Set 8-bit mode; 2-line display; 5x8 font
   jsr lcd_cmd
   lda #LCD_MODE                         ; Display on; cursor off; blink off
   jsr lcd_cmd
@@ -104,7 +105,7 @@ INCLUDE "include/os_call_vectors.asm"
 \ ----     MAIN PROGRAM                                                     ----
 \ ------------------------------------------------------------------------------
 .main
-  LED_ON LED_ERR                ; Turn on all the LEDs for a light show
+  LED_ON LED_ERR                        ; Turn on all the LEDs for a light show
   LED_ON LED_BUSY
   LED_ON LED_OK
   LED_ON LED_FILE_ACT
@@ -116,18 +117,18 @@ INCLUDE "include/os_call_vectors.asm"
   lda #CHR_LINEEND                      ; Start with a couple of line feeds
   jsr OSWRCH
   jsr OSWRCH
-  PRT_MSG start_msg, duart_println
+  PRT_MSG start_msg, duart_println      ; And now the start-up message
   lda #CHR_LINEEND
   jsr OSWRCH
   PRT_MSG version_str, duart_println
 
-  jsr OSLCDCLS
+  jsr OSLCDCLS                          ; Start-up messages on LCD
   PRT_MSG start_msg, lcd_println
-  PRT_MSG version_str, lcd_println      ; Print initial messages on LCD
+  PRT_MSG version_str, lcd_println
 
 ; CHECK FOR EXTENDED ROM/RAM BOARD
   lda #4                                ; Use bank 4. This is never a ROM
-  sta EXTMEM_SLOT_SEL                   ; Select it
+  sta EXTMEM_SELECT                     ; Select it
   jsr extmem_ram_chk                    ; Run a check. Sets the bit in SYS_REG
   lda FUNC_ERR
   bne boot_exmem_err                    ; If error 0, no problem
@@ -141,7 +142,7 @@ INCLUDE "include/os_call_vectors.asm"
   jsr OSWRMSG
   jsr OSLCDMSG
   lda #0                                  ; Now revert to 0 as default
-  sta EXTMEM_SLOT_SEL                     ; Select it
+  sta EXTMEM_SELECT                       ; Select it
   sta EXTMEM_BANK                         ; Store it for some reason
   NEWLINE
 
@@ -200,7 +201,7 @@ INCLUDE "include/os_call_vectors.asm"
   cpx #STR_BUF_LEN                      ; Are we at the limit?
   bcs process_input                     ; Branch if X >= STR_BUF_LEN
 ;.main_chk_usrp
-;  jsr usrp_chk_timer                    ; Result will be in FUNC_RESULT
+;  jsr usrp_chk_timer                   ; Result will be in FUNC_RESULT
 ;  lda FUNC_RESULT
 ;  cmp #LESS_THAN
 ;  beq mainloop
@@ -237,6 +238,10 @@ INCLUDE "include/os_call_vectors.asm"
   jmp (TBL_VEC_L)                 ; Now jump to location indicated by pointer
 .process_input_nomatch
   ; See if the command matches the name of an executable file.
+  LED_ON LED_FILE_ACT
+  LOAD_MSG searching_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
   stz STDIN_IDX                   ; Reset input buffer index to 0
   lda #<USR_START                 ; This is where we're going to put the code
   sta FILE_ADDR
@@ -251,8 +256,13 @@ INCLUDE "include/os_call_vectors.asm"
   jsr os_print_error
 .process_input_nul
   SERIAL_PROMPT
+  LED_OFF LED_FILE_ACT
   jmp process_input_done
 .process_input_run
+  jsr zd_fileload_ok
+  lda #CHR_LINEEND
+  jsr OSWRCH
+  LED_OFF LED_FILE_ACT
   jmp USR_START
 
 
@@ -292,19 +302,21 @@ INCLUDE "include/cmds_X.asm"
   LED_OFF LED_FILE_ACT
   jmp mainloop                                    ; Go around again
 
-INCLUDE "include/funcs_uart_SC28L92.asm"
-INCLUDE "include/funcs_ZolaDOS.asm"
-INCLUDE "include/funcs_conv.asm"
-INCLUDE "include/funcs_io.asm"
-INCLUDE "include/funcs_isr.asm"
-INCLUDE "include/funcs_ext_mem.asm"
-INCLUDE "include/funcs_4x20_lcd.asm"
-INCLUDE "include/funcs_prt.asm"
+
+INCLUDE "include/data_tables.asm"
 INCLUDE "../LIB/funcs_addr.asm"
 INCLUDE "../LIB/math_uint8_div.asm"
 INCLUDE "../LIB/math_uint16_div.asm"
 INCLUDE "../LIB/math_uint16_times10.asm"
-INCLUDE "include/data_tables.asm"
+INCLUDE "include/funcs_uart_SC28L92.asm"
+INCLUDE "include/funcs_ZolaDOS.asm"
+INCLUDE "include/funcs_conv.asm"
+INCLUDE "include/funcs_io.asm"
+INCLUDE "include/funcs_ext_mem.asm"
+INCLUDE "include/funcs_4x20_lcd.asm"
+INCLUDE "include/funcs_prt.asm"
+
+INCLUDE "include/funcs_isr.asm"
 
 \-------------------------------------------------------------------------------
 \ ---  NMI HANDLER
@@ -323,8 +335,8 @@ ALIGN &100                                        ; Start on new page
 \ These entries must be in the same order as those in the OS Function Address
 \ Table in cfg_main.asm and the Vector Location Table in cfg_page_2.asm.
 \-------------------------------------------------------------------------------
-ORG $FF00
-.os_calls
+ORG $FF00                     ; Must match address at start of OS Function
+.os_call_jump_table           ; Address Table in cfg_main.asm
   jmp (OSGETKEY_VEC)
   jmp (OSRDASC_VEC)
   jmp (OSRDBYTE_VEC)
@@ -392,4 +404,4 @@ ORG $FFF4
 
 .endrom
 
-SAVE "bin/z64-ROM-5.0.3.bin", startrom, endrom
+SAVE startrom, endrom

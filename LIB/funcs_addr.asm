@@ -6,9 +6,7 @@
 \             that addr B is higher than addr A.
 \ ON EXIT : - FUNC_RESULT contains comparison - LESS_THAN if A lower than B,
 \             EQUAL if same, MORE_THAN if higher.
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .compare_addr
   lda TMP_ADDR_A_H                ; Test high bytes first
   cmp TMP_ADDR_B_H

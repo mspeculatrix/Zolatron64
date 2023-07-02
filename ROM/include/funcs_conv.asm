@@ -1,7 +1,4 @@
-\ funcs_conv.asm
-
-\ FUNCTIONS: Conversions -------------------------------------------------------
-\
+\ FUNCTIONS: Conversions -- funcs_conv.asm -------------------------------------
 
 \ ------------------------------------------------------------------------------
 \ ---  BYTE_TO_BIN
@@ -10,26 +7,24 @@
 \ Convert 1-byte integer value to binary string representation.
 \ ON ENTRY: Byte to be converted must be in A.
 \ ON EXIT : Nul-terminated string STR_BUF. Byte 8 is null terminator.
-\ A - O
-\ X - P
-\ Y - P
+\ A - O     X - P     Y - P
 .byte_to_bin
   phx : phy
-  sta TMP_VAL                   ; Preserve initial value
-  ldx #0                        ; Index for STR_BUF
+  sta TMP_VAL                             ; Preserve initial value
+  ldx #0                                  ; Index for STR_BUF
   lda #128
-  sta TEST_VAL                  ; Bit mask for testing bits
+  sta TEST_VAL                            ; Bit mask for testing bits
 .byte_to_bin_loop
   lda TMP_VAL
-  and TEST_VAL                  ; AND supplied value with bit mask
+  and TEST_VAL                            ; AND supplied value with bit mask
   beq byte_to_bin_set_zero
-  lda #'1'                      ; Not a 0 so must be ... umm ...
+  lda #'1'                                ; Not a 0 so must be ... umm ...
   jmp byte_to_bin_next
 .byte_to_bin_set_zero
   lda #'0'
 .byte_to_bin_next
   sta STR_BUF,X
-  lsr TEST_VAL                  ; Shift bit mask
+  lsr TEST_VAL                            ; Shift bit mask
   inx
   cpx #8
   bne byte_to_bin_loop
@@ -45,26 +40,24 @@
 \ ON ENTRY: Byte to be converted must be in A.
 \ ON EXIT : String in three bytes starting at STR_BUF. Third byte is a null
 \           terminator.
-\ A - O
-\ X - P
-\ Y - P
+\ A - O     X - P     Y - P
 .byte_to_hex_str
   phx : phy
-  tax                         ; Keep a copy of A in X for later
-  lsr A                       ; Logical shift right 4 bits
+  tax                           ; Keep a copy of A in X for later
+  lsr A                         ; Logical shift right 4 bits
   lsr A
   lsr A
-  lsr A                       ; A now contains upper nibble of value
-  tay                         ; Put in Y to act as offset
-  lda hex_chr_tbl,Y           ; Load A with appropriate char from lookup table
-  sta STR_BUF                 ; and stash that in the text buffer
-  txa                         ; Recover original value of A
-  and #%00001111              ; Mask to get lower nibble value
-  tay                         ; Again, put in Y to act as offset
-  lda hex_chr_tbl,Y           ; Load A with appropriate char from lookup table
-  sta STR_BUF+1               ; and stash that in the next byte of the buffer
-  stz STR_BUF+2               ; End with a null byte
-  txa                         ; Restore A to original value.
+  lsr A                         ; A now contains upper nibble of value
+  tay                           ; Put in Y to act as offset
+  lda hex_chr_tbl,Y             ; Load A with appropriate char from lookup table
+  sta STR_BUF                   ; and stash that in the text buffer
+  txa                           ; Recover original value of A
+  and #%00001111                ; Mask to get lower nibble value
+  tay                           ; Again, put in Y to act as offset
+  lda hex_chr_tbl,Y             ; Load A with appropriate char from lookup table
+  sta STR_BUF+1                 ; and stash that in the next byte of the buffer
+  stz STR_BUF+2                 ; End with a null byte
+  txa                           ; Restore A to original value.
   ply : plx
   rts
 
@@ -74,9 +67,7 @@
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: A contains the number to be converted
 \ ON EXIT : STR_BUF contains decimal string representation, nul-terminated.
-\ A - O
-\ X - P
-\ Y - P
+\ A - O     X - P     Y - P
 .byte_to_int_str
   pha : phx : phy
   stz TMP_IDX             ; Keep track of digits in buffer
@@ -117,9 +108,7 @@
 \ ON ENTRY: ASCII codes for hex value must be in BYTE_CONV_H and BYTE_CONV_L.
 \ ON EXIT : - Byte value is in FUNC_RESULT.
 \           - Error in FUNC_ERR
-\ A - P
-\ X - P
-\ Y - n/a
+\ A - P     X - P     Y - n/a
 .hex_str_to_byte              ; assumes text is in BYTE_CONV_H and BYTE_CONV_L
   pha : phx
   stz FUNC_ERR                ; Zero out function error
@@ -156,21 +145,19 @@
 \ ON ENTRY: A contains ASCII character value
 \ ON EXIT : - A contains corresponding numeric value
 \           - Error in FUNC_ERR
-\ A - n/a
-\ X - P
-\ Y - n/a
+\ A - n/a     X - P     Y - n/a
 .asc_hex_to_dec
   phx
-  stz FUNC_ERR                ; Zero-out error
+  stz FUNC_ERR                          ; Zero-out error
   sec
-  sbc #$30                    ; Subtract $30 - this is good for 0-9
-  cmp #10                     ; Ss value more than 10?
-  bcc asc_hex_to_dec_end      ; If not, we're okay
-  sbc #$07                    ; Otherwise subtract further for A-F
-  cmp #16                     ; Result should be less than 16
+  sbc #$30                              ; Subtract $30 - this is good for 0-9
+  cmp #10                               ; Ss value more than 10?
+  bcc asc_hex_to_dec_end                ; If not, we're okay
+  sbc #$07                              ; Otherwise subtract further for A-F
+  cmp #16                               ; Result should be less than 16
   bcc asc_hex_to_dec_end
 .asc_hex_to_dec_err
-  ldx #HEX_TO_BIN_ERR_CODE    ; Set error code
+  ldx #HEX_TO_BIN_ERR_CODE              ; Set error code
   stx FUNC_ERR
 .asc_hex_to_dec_end
   plx
@@ -184,9 +171,7 @@
 \ hex string.
 \ ON ENTRY: 16-bit value expected in TMP_ADDR_A/+1
 \ ON EXIT : Hex string in STR_BUF
-\ A - P
-\ X - n/a
-\ Y - n/a
+\ A - P     X - n/a     Y - n/a
 .uint16_to_hex_str
   pha
   lda TMP_ADDR_A_L
@@ -195,7 +180,7 @@
   sta TMP_WORD_L              ; but at locations 0 & 1.
   lda STR_BUF + 1             ; Put these in temporary locations
   sta TMP_WORD_H
-  lda TMP_ADDR_A_H              ; Now process the high byte
+  lda TMP_ADDR_A_H            ; Now process the high byte
   jsr byte_to_hex_str         ; This is now in STR_BUF
   lda TMP_WORD_L              ; Move our previous results into the appropriate
   sta STR_BUF + 2             ; locations in STR_BUF
@@ -213,9 +198,7 @@
 \ representation of the decimal integer value.
 \ ON ENTRY: - 16-bit value expected in MATH_TMP_A/+1
 \ ON EXIT : - String in STR_BUF
-\ A - P
-\ X - P
-\ Y - P
+\ A - P     X - P     Y - P
 .uint16_intstr
   pha : phx : phy
   ; stz TMP_IDX             ; Keep track of digits in buffer

@@ -69,11 +69,13 @@ ZD_MAX_FN_LEN = 12        ; Maximum filename length, not including extension
 ZD_FILES_PER_LINE = 4     ; Number of filenames to be displayed per line
 ZD_FILELIST_TERM = 255    ; Terminator for end file list
 
-; INIT and CR are outputs
+; CA - Client Active
 ZD_CA_ON        = %11111110           ; PB0 - AND with PB to set /CA bit low
 ZD_CA_OFF       = %00000001           ; PB0 - OR with PB to set /CA bit high
-ZD_CO_ON        = %00000100           ; PB2 - OR with PB to set /CO bit low
-ZD_CO_OFF       = %11111011           ; PB2 - AND with PB to set /CO bit high
+; CO - Client Online - when low, tells RPi that Z64 is booted & available
+ZD_CO_ON        = %11111011           ; PB2 - AND with PB to set /CO bit low
+ZD_CO_OFF       = %00000100           ; PB2 - OR with PB to set /CO bit high
+; CR - Client Ready
 ZD_CR_ON        = %11111101           ; PB1 - AND with PB to set /CR bit low
 ZD_CR_OFF       = %00000010           ; PB1 - OR with PB to set /CR bit high
 ; For use with 74LVC4245A - sets direction of level translation

@@ -1,6 +1,4 @@
-\ data_tables.asm
-
-\ --- DATA & TABLES ------------------------------------------------------------
+\ --- DATA & TABLES - data_tables.asm ------------------------------------------
 
 ALIGN &100                  ; Start on new page
 

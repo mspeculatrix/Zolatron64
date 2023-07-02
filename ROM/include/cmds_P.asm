@@ -1,4 +1,4 @@
-\ cmds_P.asm
+\ ZolOS CLI Commands starting with 'P' - cmds_P.asm
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: PDUMP  :  HEX DUMP PROGRAM IN MEMORY TO SCREEN
@@ -84,6 +84,7 @@
 \ --- CMD: PRT  :  PRINT A TEXT FILE
 \ ------------------------------------------------------------------------------
 \ Usage: PRT <filename>
+\ ***** UNDER CONSTRUCTION *****
 .cmdprcPRT
   jsr OSPRTCHK                ; Check the printer state
   lda FUNC_ERR

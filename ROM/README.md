@@ -4,6 +4,10 @@
 
 ### 5.0.4
 
+- Fixed bug with ZD_CO_ON/\_OFF signals.
+- Improved build script so that only one edit is needed to change the version number.
+- Tidied up messages when loading files.
+
 ### 5.0.3 - committed
 
 - Renamed EX command to CHAIN

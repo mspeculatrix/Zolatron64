@@ -1,4 +1,4 @@
-\ cmds_V.asm
+\ ZolOS CLI Commands starting with 'V' - cmds_V.asm
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: VERS  :  PRINT FIRMWARE VERSION

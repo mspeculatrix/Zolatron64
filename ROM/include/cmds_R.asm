@@ -1,4 +1,4 @@
-\ cmds_R.asm
+\ ZolOS CLI Commands starting with 'R' - cmds_R.asm
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: RUN  :  RUN PROGRAM

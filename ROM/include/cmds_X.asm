@@ -1,4 +1,4 @@
-\ cmds_X.asm
+\ ZolOS CLI Commands starting with 'X' - cmds_X.asm
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: XCLR  :  CLEAR EXTENDED RAM BANK
@@ -29,7 +29,7 @@
   jsr OSWRBUF
   jsr OSLCDWRBUF
   pla                                    ; Retrieve previous bank setting
-  sta EXTMEM_SLOT_SEL                    ; And reset it
+  sta EXTMEM_SELECT                    ; And reset it
   sta EXTMEM_BANK
   jmp cmdprc_success
 .cmdprcXCLR_fail
@@ -65,13 +65,13 @@
   jmp cmdprcXLS_loop
 .cmdprcXLS_done
   lda EXTMEM_BANK                 ; Restore the currently selected bank
-  sta EXTMEM_SLOT_SEL
+  sta EXTMEM_SELECT
   LED_OFF LED_FILE_ACT
   jmp cmdprc_success
 
 .cmdprcXLS_prt_item                ; Bank number is in Y
   phx
-  sty EXTMEM_SLOT_SEL              ; Select the ext memory slot
+  sty EXTMEM_SELECT              ; Select the ext memory slot
   cpy #10                          ; See if we need a leading space
   bcs cmdprcXLS_print_idx          ; If not, skip ahead
   lda #' '                         ; Print a space
@@ -176,9 +176,9 @@
   jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------
-\ --- CMD: XOPEN  :  LOAD DATAE FILE INTO CURRENT EXTENDED MEMORY BANK
+\ --- CMD: XOPEN  :  LOAD DATA FILE INTO CURRENT EXTENDED MEMORY BANK
 \ ------------------------------------------------------------------------------
-\ Usage: XOPEN <filename> <bank>
+\ Usage: XOPEN <filename.ext> <bank>
 \ Wrapper to xload_file.
 \ Open a file and loads its contents into <bank>. Similar to XLOAD, except
 \ that no extension is automatically added by ZolaDOS. Use for loading data
@@ -225,7 +225,7 @@
   jsr OSWRMSG
   jsr OSLCDMSG
   lda EXTMEM_BANK
-  sta EXTMEM_SLOT_SEL        ; Select bank by writing to this addr
+  sta EXTMEM_SELECT        ; Select bank by writing to this addr
 .xload_file_done
   LED_OFF LED_FILE_ACT
   rts
@@ -313,7 +313,7 @@
   jsr OSLCDWRBUF
   jmp cmdprc_success
 
-\ --- DATA ----------------
+\ --- DATA ---------------------------------------------------------------------
 .bank_cleared_msg
   equs "Bank cleared: ",0
 .bank_select_msg

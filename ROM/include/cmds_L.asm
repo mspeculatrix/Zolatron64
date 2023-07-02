@@ -1,4 +1,4 @@
-\ cmds_L.asm
+\ ZolOS CLI Commands starting with 'L' - cmds_L.asm
 
 \-------------------------------------------------------------------------------
 \ --- CMD: LM  :  LIST MEMORY
@@ -57,9 +57,6 @@
   sta FILE_ADDR
   lda #>USR_START
   sta FILE_ADDR + 1
-  LOAD_MSG loading_msg
-  jsr OSWRMSG
-  jsr OSLCDMSG
   jsr zd_getfile
   lda FUNC_ERR
   bne cmdprcLOAD_fail
@@ -173,6 +170,7 @@
 .cmdprcLS_fail
   LED_OFF LED_FILE_ACT
   jmp cmdprc_fail
-\ --- DATA -------------------
+
+\ --- DATA ---------------------------------------------------------------------
 .ls_req_msg
   equs "Requesting file list",0
