@@ -11,15 +11,15 @@
   sta FUNC_RESULT           ;
   ldx #0                    ; Init offset counter
   lda STDIN_BUF             ; Load first char in buffer
-  beq parse_cmd_nul         ; if it's a zero, the buffer is empty
-  sta TEST_VAL              ; store buffer char somewhere handy
+  beq parse_cmd_nul         ; If it's a zero, the buffer is empty
+  sta TEST_VAL              ; Store buffer char somewhere handy
 .parse_next_test
-  lda cmd_ch1_tbl,X         ; get next char from table of cmd 1st chars
-  cmp #EOTBL_MKR            ; is it the end of table marker?
-  beq parse_1st_char_fail   ; if so, parsing has failed to find a match
-  cmp TEST_VAL              ; otherwise compare against our input char
-  beq parse_1st_char_match  ; if it matches, on to the next step
-  inx                       ; otherwise, time to test next char in table
+  lda cmd_ch1_tbl,X         ; Get next char from table of cmd 1st chars
+  cmp #EOTBL_MKR            ; Is it the end of table marker?
+  beq parse_1st_char_fail   ; If so, parsing has failed to find a match
+  cmp TEST_VAL              ; Otherwise compare against our input char
+  beq parse_1st_char_match  ; If it matches, on to the next step
+  inx                       ; Otherwise, time to test next char in table
   jmp parse_next_test
 .parse_cmd_nul
   lda #CMD_TKN_NUL
@@ -34,7 +34,7 @@
   asl A                   ; Shift left 1 bit to multiply by 2
   tax                     ; and put back in X
   lda cmd_ptrs,X          ; Get LSB of relevant address from the cmd_ptrs table
-  sta TBL_VEC_L           ; And put in TBL_VEC
+  sta TBL_VEC_L           ; and put in TBL_VEC
   lda cmd_ptrs+1,X
   sta TBL_VEC_H
   ; We now have the start address for the relevant section of the command table
@@ -43,7 +43,7 @@
   ldx #1                  ; offset for the input buffer, starting with 2nd char
 .parse_next_chr
   lda STDIN_BUF,X         ; Get next char from buffer
-  sta TEST_VAL            ; and put it somewhere handy - repurposing TEST_VAL
+  sta TEST_VAL            ; Otherwise put it somewhere handy
   lda (TBL_VEC_L),Y       ; Load the next test char from our command table
   bmi parse_token_found   ; Bit 7 will be set if this is a token - $80 or more
   cmp #EOCMD_SECTION      ; Got to the end of the section without a match?
@@ -52,7 +52,7 @@
   ; so it's time to test the buffer char itself - table char is still in A
   ; and buffer char in TEST_VAL
   cmp TEST_VAL
-  bne parse_next_cmd  ; if it's not equal, this isn't the right command
+  bne parse_next_cmd  ; If it's not equal, this isn't the right command
   inx                 ; otherwise, if it is equal, let's test the next buffer
   iny                 ; char against the next command char
   jmp parse_next_chr
@@ -463,12 +463,12 @@
   lda #FN_CHAR_ERR_CODE
   sta FUNC_ERR
   jmp read_filename_end
-.read_filename_check  ;
+.read_filename_check          ; Check filename is minimum length
   lda #0
   sta STR_BUF,Y               ; Make sure we have a null terminator
-  cpy #ZD_MIN_FN_LEN          ; Minimum filename length
+  cpy #ZD_MIN_FN_LEN - 1      ; Minimum filename length
   bcc read_filename_err
-  cpy #ZD_MAX_FN_LEN+1        ; Maximum filename length
+  cpy #ZD_MAX_FN_LEN          ; Maximum filename length
   bcc read_filename_end
 .read_filename_err
   lda #FN_LEN_ERR_CODE

@@ -9,7 +9,6 @@
 \ the filename
 .cmdprcCHAIN
   LED_ON LED_FILE_ACT
-  lda #MSG_SHOW
   jsr zd_getfile
   LED_OFF LED_FILE_ACT
   lda FUNC_ERR

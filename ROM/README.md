@@ -4,7 +4,10 @@
 
 ### 5.0.4
 
-- Fixed bug with ZD_CO_ON/\_OFF signals.
+- Input now works with Backspace character (ASCII 8) by decrementing input buffer index.
+- Modified messages shown when loading a file. 'Loading ...' message now optional.
+- Fixed bug with filename length checking. Was hanging when two-char commands were entered and causing a reboot when one-char commands were used.
+- Fixed bug with ZD_CO_ON/\_OFF signals. Then fixed them again.
 - Improved build script so that only one edit is needed to change the version number.
 - Tidied up messages when loading files.
 

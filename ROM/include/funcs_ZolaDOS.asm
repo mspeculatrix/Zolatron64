@@ -113,16 +113,12 @@
 \ A - O     X - n/a     Y - n/a
 .zd_getfile
   LED_ON LED_FILE_ACT
-  pha                         ; Save for later
   jsr read_filename           ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne zd_getfile_done
-  pla
-  beq zd_getfile_go
   LOAD_MSG loading_msg
   jsr OSWRMSG
   jsr OSLCDMSG
-.zd_getfile_go
   lda #ZD_OPCODE_LOAD         ; Use opcode for loading .EXE files
   jsr zd_loadfile
 .zd_getfile_done
@@ -620,7 +616,7 @@
 .loading_msg
   equs "Loading ... ",0
 .searching_msg
-  equs "Searching ... ",10,0
+  equs "Searching ... ",0
 .saving_msg
   equs "Saving ... ",0
 .file_act_complete_msg
