@@ -2,7 +2,11 @@
 
 ## CHANGELOG
 
-### 5.0.4
+### 5.0.5
+
+- Improved response to backspace - now sets input index correctly if backspacing goes beyond the beginning of the buffer.
+
+### 5.0.4 - committed
 
 - Input now works with Backspace character (ASCII 8) by decrementing input buffer index.
 - Modified messages shown when loading a file. 'Loading ...' message now optional.

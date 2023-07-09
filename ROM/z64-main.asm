@@ -34,8 +34,10 @@ INCLUDE "../LIB/cfg_parallel.asm"
 INCLUDE "../LIB/cfg_prt.asm"
 
 \ ----- INITIALISATION ---------------------------------------------------------
-ORG $8000              ; Using only the top 16KB of a 32KB EEPROM.
-.startrom              ; This is where the ROM bytes start for the file, but...
+ORG $8000              ; Using only the top 16KB of a 32KB EEPROM. This is
+                       ; where the bytes start for the ROM file, but...
+  ;equs "Deliberately left blank",0
+.startrom
 ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
 .version_str

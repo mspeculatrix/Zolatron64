@@ -79,14 +79,17 @@ ALIGN &100                ; start on new page
   cmp #8                      ; Is it a Backspace?
   bne isr_SC28L92_notbs       ; - no ...
   dex                         ; - yes ...
+  bmi isr_SC28L92_resetidx    ; We've gone beyond start of buffer
   jmp isr_SC28L92_wrapup
 .isr_SC28L92_notbs            ; Wasn't a Backspace
   inx                         ; Increment the index for next time
+  jmp isr_SC28L92_wrapup
+.isr_SC28L92_resetidx
+  ldx #0
 .isr_SC28L92_wrapup
   lda SC28L92_SRA             ; Load status reg to see if more bytes waiting
   and #SC28L92_RxRDY          ; Check RxRDY bit
   bne isr_SC28L92_next_chr    ; If it's still set, there's more data...
-  ;jmp isr_SC28L92_end
 .isr_SC28L92_end
   stx STDIN_IDX               ; Save index
   lda STDIN_STATUS_REG        ; Update register to show that data has
