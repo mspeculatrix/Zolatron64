@@ -59,8 +59,8 @@ ENDMACRO
 
 CPU 1                               ; use 65C02 instruction set
 
-NUM1 = $FF
-NUM2 = $FF
+NUM1 = $AA
+NUM2 = $3
 
 NUM3 = $CEF0
 NUM4 = $13
@@ -102,8 +102,7 @@ ORG USR_START
   ldx #$ff        ; set stack pointer to $01FF - only need to set the
   txs             ; LSB, as MSB is assumed to be $01
 
-  lda #0
-  sta PRG_EXIT_CODE
+  stz PRG_EXIT_CODE
 
   ;lda #SEED_VAL
   ;sta RAND_SEED
@@ -270,8 +269,7 @@ ORG USR_START
 
   LOAD_MSG div_msg2
   jsr OSWRMSG
-  lda #0
-  sta MATH_TMP_B+1
+  stz MATH_TMP_B+1
   lda #NUM4
   sta MATH_TMP_B
   PRT_ADDR MATH_TMP_B
@@ -282,8 +280,7 @@ ORG USR_START
   sta MATH_TMP_A
   lda #>NUM3
   sta MATH_TMP_A+1
-  lda #0
-  sta MATH_TMP_B+1
+  stz MATH_TMP_B+1
   lda #NUM4
   sta MATH_TMP_B
   jsr uint16_div

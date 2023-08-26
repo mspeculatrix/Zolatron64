@@ -25,7 +25,17 @@ ZD_IFR   = ZD_BASE_ADDR + $0D		      ; Interrupt Flag Register
 
 ZD_TIMER_COUNT = $0600                ; Using page 6 as workspace memory
 ZD_FSTATE      = ZD_TIMER_COUNT + 2   ; for ZolaDOS
-ZD_WKSPC       = ZD_FSTATE + 1        ; General workspace
+ZD_CTRL_REG    = ZD_FSTATE + 1        ; Control register
+ZD_WKSPC       = ZD_CTRL_REG + 1      ; General workspace
+
+\ ZD_CTRL_REG
+\ Control various ZD functions. It's assumed that only one bit at a time will
+\ be set, just prior to a ZD operation, and that this register will be reset to
+\ its default value of %00000000 following the operation.
+\ Bit 7   - 0 - Include allowance for extension in max filename length check
+\           1 - Don't include ext - use shorter filename check
+ZD_CTRL_EXCL_EXT = %1000000
+
 
 ZD_FSTATE_CLOSED    = 0               ; No file open
 ZD_FSTATE_OPENR     = 1               ; File has been opened for reading
@@ -64,10 +74,11 @@ ZD_OPCODE_SAVE_APP  = 142             ; Save - append
 
 ZD_STREAM_SZ        = 256             ; How many bytes per chunk when streaming
 
-ZD_MIN_FN_LEN = 3         ; Minimum filename length
-ZD_MAX_FN_LEN = 12        ; Maximum filename length, not including extension
-ZD_FILES_PER_LINE = 4     ; Number of filenames to be displayed per line
-ZD_FILELIST_TERM = 255    ; Terminator for end file list
+ZD_MIN_FN_LEN     = 3           ; Minimum filename length
+ZD_MAX_FN_LEN     = 12          ; Maximum filename length without extension
+ZD_MAX_FN_LEN_EX  = 16          ; Maximum filename length with extension
+ZD_FILES_PER_LINE = 4           ; Number of filenames to be displayed per line
+ZD_FILELIST_TERM  = 255         ; Terminator for end file list
 
 ; CA - Client Active
 ZD_CA_ON        = %11111110           ; PB0 - AND with PB to set /CA bit low
@@ -159,4 +170,9 @@ MACRO ZD_SET_DATADIR_INPUT
   lda ZD_CTRL_PORT
   and #ZD_DDIR_INPUT
   sta ZD_CTRL_PORT
+ENDMACRO
+
+MACRO SET_EXCL_EXT_FLAG
+  lda #ZD_CTRL_EXCL_EXT
+  sta ZD_CTRL_REG
 ENDMACRO

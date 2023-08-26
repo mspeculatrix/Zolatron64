@@ -11,6 +11,7 @@
   jsr check_exec                      ; Check executable code is loaded
   lda FUNC_ERR
   bne cmdprcSAVE_err
+  SET_EXCL_EXT_FLAG
   jsr read_filename                   ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne cmdprcSAVE_err

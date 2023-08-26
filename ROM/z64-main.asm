@@ -9,8 +9,8 @@
 \ Write to EEPROM with:
 \     minipro -p AT28C256 -w z64-ROM-<version>.bin
 
-CPU 1                                   ; Use 65C02 instruction set
-VSTR =? "0.0.0"                         ; Will be overwritten with the -S option
+CPU 1                   ; Use 65C02 instruction set
+VSTR =? "0.0.0"         ; Version string. Will be overwritten with the -S option
 
 ; Include our setup files. These contain address designations and constant
 ; definitions.
@@ -22,7 +22,7 @@ INCLUDE "../LIB/cfg_page_2.asm"                   ; OS Indirection Table
 INCLUDE "../LIB/cfg_page_4.asm"                   ; Misc buffers etc
 ; PAGE 5 - Reserved for user program workspace
 ; PAGE 6 - ZolaDOS workspace
-; PAGE 7 - Reserved for future expansion
+; PAGE 7 - RTC, SPI
 
 INCLUDE "include/cfg_ROM.asm"
 INCLUDE "../LIB/cfg_uart_SC28L92.asm"
@@ -36,7 +36,6 @@ INCLUDE "../LIB/cfg_prt.asm"
 \ ----- INITIALISATION ---------------------------------------------------------
 ORG $8000              ; Using only the top 16KB of a 32KB EEPROM. This is
                        ; where the bytes start for the ROM file, but...
-  ;equs "Deliberately left blank",0
 .startrom
 ORG ROM_START          ; This is where the actual code starts.
   jmp startcode
@@ -59,6 +58,8 @@ ORG ROM_START          ; This is where the actual code starts.
   stz STDOUT_BUF            ; Do the same for the STDOUT buffer
   stz STDOUT_IDX
   stz STDIN_STATUS_REG      ; Zero out the STDIN register
+
+  stz ZD_CTRL_REG
 
   lda #<USR_START           ; Initialise LOMEM to start of user RAM
   sta LOMEM
@@ -143,9 +144,8 @@ INCLUDE "include/os_call_vectors.asm"
   jsr OSWRCH
   jsr OSWRMSG
   jsr OSLCDMSG
-  lda #0                                  ; Now revert to 0 as default
-  sta EXTMEM_SELECT                       ; Select it
-  sta EXTMEM_BANK                         ; Store it for some reason
+  stz EXTMEM_SELECT                       ; Now revert to 0 as default & select it
+  stz EXTMEM_BANK                         ; Store it for some reason
   NEWLINE
 
 ; SET UP DELAY TIMER
@@ -245,6 +245,7 @@ INCLUDE "include/os_call_vectors.asm"
   jsr OSWRMSG
   jsr OSLCDMSG
   stz STDIN_IDX                   ; Reset input buffer index to 0
+  ;stz STDIN_BUF
   lda #<USR_START                 ; This is where we're going to put the code
   sta FILE_ADDR
   lda #>USR_START
@@ -265,6 +266,8 @@ INCLUDE "include/os_call_vectors.asm"
   lda #CHR_LINEEND
   jsr OSWRCH
   LED_OFF LED_FILE_ACT
+  stz STDIN_IDX                   ; Reset input buffer index to 0
+  stz STDIN_BUF
   jmp USR_START
 
 

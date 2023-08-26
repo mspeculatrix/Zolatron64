@@ -48,6 +48,7 @@
   jsr compare_addr                ; Check that address A is lower than B
   lda FUNC_RESULT                 ; Result should be 0 (LESS_THAN)
   bne cmdprcDUMP_addr_err
+  SET_EXCL_EXT_FLAG
   jsr read_filename               ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne cmdprcDUMP_err

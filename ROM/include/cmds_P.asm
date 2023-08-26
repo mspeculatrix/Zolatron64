@@ -89,6 +89,7 @@
   jsr OSPRTCHK                ; Check the printer state
   lda FUNC_ERR
   bne cmdprcPRT_fail          ; 0 = OK, all else is an error state
+
   jsr read_filename           ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne cmdprcPRT_fail

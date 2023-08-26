@@ -34,17 +34,14 @@
   lda #%00000010                  ; Enable interrupts on RX on port A
   sta SC28L92_IMR
   \\ Set Output Port
-  lda #0
-  sta SC28L92_OPCR                ; Set bits 2-7 of OP to gen-purpose outputs
+  stz SC28L92_OPCR                ; Set bits 2-7 of OP to gen-purpose outputs
   lda #%11111100
   sta SC28L92_SOPR                ; Reset all pins to LOW.
   pla
   rts
 
 .duart_wait_send_clr
-\ A - P
-\ X - n/a
-\ Y - n/a
+\ A - P   X - n/a   Y - n/a
   pha
 .duart_wait_loop
   lda SC28L92_SRA                 ; Load the status register

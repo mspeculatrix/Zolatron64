@@ -16,16 +16,7 @@ MACRO PRT_ADDR addr
   jsr OSWRSBUF
 ENDMACRO
 
-\ USRP_PORTA
-\ USRP_DDRA
 
-\ This is based on Ben Eater's code and works only if you use these specific
-\ bits for the signals.
-\ https://www.youtube.com/watch?v=MCi7dCBhVpQ
-SPI_CLK = %00000001
-SPI_SDO = %00000010                     ; MOSI
-SPI_SDI = %01000000                     ; MISO - Bit 6 so we can use BIT opcode
-SPI_CS  = %00000100
 
 CPU 1                               ; use 65C02 instruction set
 
@@ -63,105 +54,150 @@ ORG USR_START
   ldx #$ff        ; set stack pointer to $01FF - only need to set the
   txs             ; LSB, as MSB is assumed to be $01
 
-  lda #0
-  sta PRG_EXIT_CODE
+  stz PRG_EXIT_CODE
 
   cli
 
 .main
-  LOAD_MSG start_msg
+
+  jsr carry_set
+  jsr divisor_smaller
+  sec
+  lda #$AA
+  sbc #$99
+  bcc carry_clear1
+  jsr carry_set
+  jmp next1
+.carry_clear1
+  jsr carry_clear
+
+.next1
+  lda #'-'
+  jsr OSWRCH
+  lda #10
+  jsr OSWRCH
+  jsr carry_clear
+  jsr divisor_smaller
+  clc
+  lda #$AA
+  sbc #$99
+  bcc carry_clear2
+  jsr carry_set
+  jmp next2
+.carry_clear2
+  jsr carry_clear
+
+.next2
+  lda #'-'
+  jsr OSWRCH
+  lda #10
+  jsr OSWRCH
+  jsr carry_set
+  jsr divisor_bigger
+  sec
+  lda #$AA
+  sbc #$BB
+  bcc carry_clear3
+  jsr carry_set
+  jmp next3
+.carry_clear3
+  jsr carry_clear
+
+.next3
+  lda #'-'
+  jsr OSWRCH
+  lda #10
+  jsr OSWRCH
+  jsr carry_clear
+  jsr divisor_bigger
+  clc
+  lda #$AA
+  sbc #$BB
+  bcc carry_clear4
+  jsr carry_set
+  jmp next4
+.carry_clear4
+  jsr carry_clear
+
+.next4
+  lda #'-'
+  jsr OSWRCH
+  lda #10
+  jsr OSWRCH
+  jsr carry_set
+  jsr divisor_same
+  sec
+  lda #$AA
+  sbc #$AA
+  bcc carry_clear5
+  jsr carry_set
+  jmp next5
+.carry_clear5
+  jsr carry_clear
+
+.next5
+  lda #'-'
+  jsr OSWRCH
+  lda #10
+  jsr OSWRCH
+  jsr carry_clear
+  jsr divisor_same
+  clc
+  lda #$AA
+  sbc #$AA
+  bcc carry_clear6
+  jsr carry_set
+  jmp next6
+.carry_clear6
+  jsr carry_clear
+
+.next6
+  jmp prog_end
+
+.divisor_same
+  LOAD_MSG divisor_same_msg
   jsr OSWRMSG
+  rts
 
-  jsr spi_init
 
-  \ EXAMPLE: Writing to registers
-  stz USRP_PORTA          ; Takes all lines low, including CS, so starts session
-  lda #75                 ; Load register value
-  jsr spi_transceive
-  lda #%00000110          ; Load value to put in register
-  jsr spi_transceive      ; Send it
-  lda #SPI_CS             ; Load bit mask
-  sta USRP_PORTA          ; Sets CS high, ends session
+.divisor_bigger
+  LOAD_MSG divisor_bigger_msg
+  jsr OSWRMSG
+  rts
 
-  \ EXAMPLE: Sending command & receiving response
-  stz USRP_PORTA          ; Takes all lines low, including CS, so starts session
-  lda #$FA                ; Load command
-  jsr spi_transceive      ; Send command
-  jsr spi_transceive      ; Receive response - byte in A
-  sta SOMEWHERE
-  lda #SPI_CS             ; Load bit mask
-  sta USRP_PORTA          ; Sets CS high, ends session
+.divisor_smaller
+  LOAD_MSG divisor_smaller_msg
+  jsr OSWRMSG
+  rts
+
+.carry_set
+  LOAD_MSG carry_set_msg
+  jsr OSWRMSG
+  rts
+
+.carry_clear
+  LOAD_MSG carry_clear_msg
+  jsr OSWRMSG
+  rts
 
 .prog_end
   jmp OSSFTRST
 
-\ ------------------------------------------------------------------------------
-\ -----  FUNCTIONS
-\ ------------------------------------------------------------------------------
 
-.spi_init
-  lda #SPI_CS
-  sta USRP_PORTA                      ; Set high by default
-  ; The above also has the effect of setting the clock bit to 0.
-  stz USRP_DDRA                       ; Reset to all inputs as default
-  lda #(SPI_CLK OR SPI_SDO OR SPI_CS) ; Set these as outputs
-  sta USRP_DDRA
-  rts
-
-\ ------------------------------------------------------------------------------
-\ ---  SPI_TRANSCEIVE
-\ ------------------------------------------------------------------------------
-\ Going into this function, the SPI_CLK bit is assumed to be 0, so that
-\ incrementing USRP_PORTA has the effect of setting the clock line high
-\ and decrementing it sets the clock line low.
-\ WORKS FOR SPI MODES 0 & 3 - sampling on rising edge
-\ ON ENTRY: - Byte to be sent (if any) in A
-\ ON EXIT : - Received byte in A
-.spi_transceive
-  stz SPI_INBUF                       ; Clear input buffer
-  sta SPI_OUTBUF                      ; Store outgoing byte
-  ldy #8                              ; Counter for loop
-  lda #SPI_SDO                        ; Sets A to MOSI bit mask
-.spi_transceive_loop
-  asl SPI_OUTBUF                      ; Puts msb into Carry flag
-  bcs spi_transceive_send1            ; If it's a 1...
-  ; TRB (Test and Reset Bits)
-  ; Any bit set to 1 in A is set to 0 in memory.
-  ; Any bit set to 0 in A have no effect.
-  ; A is unaffected.
-  ; Also sets Z flag if a bitwise AND of A and memory location would result in
-  ; a 0. No other flags affected.
-  trb USRP_PORTA                      ; MOSI was high - set it low
-  jmp spi_transceive_input
-.spi_transceive_send1
-  ; TSB (Test and Set Bits) is like a bitwise OR with the accumulator. The
-  ; result is stored back in the memory address (USRP_PORTA in this case).
-  ; Any bit set to 1 in A is set to 1 in memory.
-  ; Any bit set to 0 in A have no effect.
-  ; A is unaffected.
-  ; Also sets Z flag if a bitwise AND of A and memory location would result in
-  ; a 0. No other flags affected.
-  tsb USRP_PORTA                  ; Effective OR - sets MOSI high
-.spi_transceive_input
-  inc USRP_PORTA                  ; Set SPI_CLK high
-  bit USRP_PORTA                  ; Put MISO into Overflow flag
-  clc                             ; Clear Carry
-  bvc spi_transceive_setinbit     ; Test the Overflow flag
-  sec                             ; Overflow was set, set Carry
-.spi_transceive_setinbit
-  rol SPI_INBUF                   ; Rotate Carry flag into receive buffer
-  dec USRP_PORTA                  ; Set SPI_CLK low
-  dey                             ; Decrement counter
-  bne spi_transceive_loop
-  lda SPI_INBUF                   ; Put the receive buffer into A
-  clc
-  rts
 
 ;INCLUDE "../../LIB/funcs_math.asm"
 ;INCLUDE "../../LIB/math_uint16_div.asm"
 
-.start_msg
-  equs "SPI Test",0
+.carry_set_msg
+  equs "Carry Set",10,0
+.carry_clear_msg
+  equs "Carry Clear",10,0
+.divisor_smaller_msg
+  equs "Divisor smaller", 10, 0
+.divisor_bigger_msg
+  equs "Divisor bigger",10,0
+.divisor_same_msg
+  equs "Divisor same",10,0
 
 .endtag
   equs "EOF",0

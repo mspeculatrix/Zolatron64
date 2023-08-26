@@ -6,7 +6,7 @@ This is a backplane design because that allows me to work, fix and improve vario
 
 The main CPU board has decoding for ROM, RAM and the /RD_EN & /WR_EN signals.
 
-Each I/O board has its own address decoding (1K blocks).
+Each I/O board has its own address decoding.
 
 Currently, the modules are:
 
@@ -17,6 +17,10 @@ Currently, the modules are:
 - Raspberry Pi board: Has a 65C22 VIA talking to a Raspberry Pi Zero 2 W which provides terminal access (via the serial port) and acts as a mass storage device.
 - Parallel port board: Uses a 65C22 VIA connecting to a 25-pin Centronics-like port for connecting to my dot-matrix printer.
 - Extended memory board: Has a 128KB RAM chip providing 16 x 8KB memory banks mapped in at address $8000. The four lowest slots (0-3) can also be used to address EEPROMs. Switching between EEPROMs and RAM is via jumpers. Selecting which of the 16 banks is currently mapped in is via software. Using an ATF1502ASL CPLD on this board for decoding.
+- SPI Interface board / RTC / SRAM / SD Card. This uses SPI65 in a CPLD to provide a SPI interface. Up to eight devices are supported, three of which are built into the board:
+  - Battery-backed real-time clock (RTC).
+  - Battery-backed Serial RAM (64KB).
+  - SD card drive.
 
 Using Beebasm as the assembler.
 
@@ -31,5 +35,6 @@ The branches are:
 
 $0000 - $7FFF - Main RAM 32KB
 $8000 - $9FFF - Banked ROM/RAM 8x 8KB banks
-$A000 - $BFFF - I/O 8KB
+$A000 - $BBFF - 7x I/O (8KB)
+$BF00 - $BFFF - 8x I/O (32-byte)
 $C000 - $FFFF - ROM 16KB

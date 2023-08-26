@@ -43,8 +43,7 @@ ORG USR_START
   ldx #$ff        ; set stack pointer to $01FF - only need to set the
   txs             ; LSB, as MSB is assumed to be $01
 
-  lda #0
-  sta PRG_EXIT_CODE
+  stz PRG_EXIT_CODE
   cli
 
   jsr OSLCDCLS

@@ -257,6 +257,7 @@
   jsr extmem_readset_bank             ; Set and select the bank
   lda FUNC_ERR
   bne cmdprcXSAVE_fail
+  SET_EXCL_EXT_FLAG
   jsr read_filename                   ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne cmdprcXSAVE_fail

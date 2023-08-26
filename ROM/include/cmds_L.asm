@@ -87,8 +87,7 @@
   lda FUNC_RESULT           ; Get the result from jsr read_hex_byte
   sta TMP_ADDR_A_H          ; Put the same byte in the high bytes of both
   sta TMP_ADDR_B_H          ; the start address and end address
-  lda #0                    ; The low byte of the start address is 0
-  sta TMP_ADDR_A_L
+  stz TMP_ADDR_A_L          ; The low byte of the start address is 0
   lda #$FF                  ; The low byte of the end address is $FF
   sta TMP_ADDR_B_L
   jsr display_memory        ; Use our display memory routine to display

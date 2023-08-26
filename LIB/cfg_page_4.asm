@@ -23,12 +23,19 @@ BYTE_CONV_H = BYTE_CONV_L + 1
 
 STR_BUF = BYTE_CONV_H + 1
 
-RAND_SEED   = STR_BUF + STR_BUF_SZ + 1	; 2-byte random seed number
-MATH_TMP16  = RAND_SEED + 2
-MATH_TMP_A  = MATH_TMP16			          ; Alias
-MATH_TMP_B  = MATH_TMP_A + 2
+\ MATH STUFF
+RAND_SEED    = STR_BUF + STR_BUF_SZ + 1	; 2-byte random seed number
+UINT16_A     = RAND_SEED + 2
+MATH_TMP16   = UINT16_A                   ; Alias
+MATH_TMP_A   = UINT16_A			              ; Alias
+MATH_TMP_B   = MATH_TMP_A + 2
+UINT16_B	 = MATH_TMP_B + 1
+UINT32_A     = UINT16_B + 2
+UINT32_B     = UINT32_A + 4
+UINT32_RES64 = UINT32_B + 4             ; Allow 8 bytes for this
+UINT32_RES   = UINT32_RES64 + 8
 
-PRG_EXIT_CODE = MATH_TMP_B + 2
+PRG_EXIT_CODE = UINT32_RES + 2
 
 ; Stream Select Register
 STREAM_SELECT_REG = PRG_EXIT_CODE + 1

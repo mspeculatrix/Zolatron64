@@ -10,18 +10,25 @@
 CPU 1                               ; use 65C02 instruction set
 
 INCLUDE "../../LIB/cfg_main.asm"
-INCLUDE "../../LIB/cfg_page_0.asm"
+INCLUDE "../../LIB/cfg_page_0.asm"    ; System ero page addresses
 ; PAGE 1 is the STACK
-INCLUDE "../../LIB/cfg_page_2.asm"
+INCLUDE "../../LIB/cfg_page_2.asm"    ; OS Indirection Table
 ; PAGE 3 is used for STDIN & STDOUT buffers, plus indexes
-INCLUDE "../../LIB/cfg_page_4.asm"
-; -- OPTIONAL --
+INCLUDE "../../LIB/cfg_page_4.asm"    ; Misc buffers etc
+; PAGE 5 is available for user code workspace
+; PAGE 6 - ZolaDOS workspace
+INCLUDE "../../LIB/cfg_page_7.asm"    ; SPI, RTC, SD addresses etc
+
+\ ------------------------------------------------------------------------------
+\ ---  OPTIONAL LIBRARY CONFIG FILES
+\ ------------------------------------------------------------------------------
 ; INCLUDE "../../LIB/cfg_parallel.asm"
 ; INCLUDE "../../LIB/cfg_prt.asm"
 ; INCLUDE "../../LIB/cfg_user_port.asm"
 ; INCLUDE "../../LIB/cfg_ZolaDOS.asm"
 ; INCLUDE "../../LIB/cfg_chk_char.asm"
-; INCLUDE "../../LIB/cfg_math.asm"
+; INCLUDE "../../LIB/cfg_rtc_ds3234.asm"
+; INCLUDE "../../LIB/cfg_spi65.asm"
 
 ORG USR_START
 .header                     ; HEADER INFO
@@ -51,13 +58,34 @@ ORG USR_START
   stz FUNC_RESULT
   cli
 
+\ ------------------------------------------------------------------------------
+\ ---  MAIN PROGRAM
+\ ------------------------------------------------------------------------------
 .main
 
 
 .prog_end
   jmp OSSFTRST
+
+\ ------------------------------------------------------------------------------
+\ ---  FUNCTIONS
+\ ------------------------------------------------------------------------------
+
+
+\ ------------------------------------------------------------------------------
+\ ---  DATA
+\ ------------------------------------------------------------------------------
+
+
+\ ------------------------------------------------------------------------------
+\ ---  OPTIONAL LIBRARY FUNCTION FILES
+\ ------------------------------------------------------------------------------
+; INCLUDE "../../LIB/math_uint8_mult.asm"
+; INCLUDE "../../LIB/funcs_spi_rtc_ds3234.asm"
+; INCLUDE "../../LIB/funcs_spi65.asm"
+
 .endtag
   equs "EOF",0
 .endcode
 
-SAVE "../bin/TEMPLATE.BIN", header, endcode
+SAVE "../bin/TEMPLATE.EXE", header, endcode

@@ -66,12 +66,13 @@
 \ ---  Implements: OSB2ISTR
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: A contains the number to be converted
-\ ON EXIT : STR_BUF contains decimal string representation, nul-terminated.
+\ ON EXIT : - STR_BUF contains decimal string representation, nul-terminated.
+\           - FUNC_RESULT contains number of digits (not incl null terminator)
 \ A - O     X - P     Y - P
 .byte_to_int_str
   pha : phx : phy
   stz TMP_IDX             ; Keep track of digits in buffer
-  stz STR_BUF             ; Set nul terminator at start of buffer
+  stz STR_BUF             ; Set null terminator at start of buffer
 .byte_to_int_str_next_digit
   ldx #10                 ; Divisor for MOD function
   jsr uint8_div           ; FUNC_RESULT contains remainder, X contains quotient
@@ -97,6 +98,8 @@
   beq byte_to_int_str_done
   jmp byte_to_int_str_next_digit
 .byte_to_int_str_done
+  lda TMP_IDX
+  sta FUNC_RESULT
   ply : plx : pla
   rts
 

@@ -415,8 +415,9 @@
 \ This function reads characters from STDIN_BUF and stores them in STR_BUF.
 \ It assumes that STDIN_IDX contains an offset pointer to the part of STDIN_BUF
 \ from which we want to read next.
-\ ON ENTRY: Nul- or space- terminated filename string expected in STDIN_BUF
-\ ON EXIT : - Nul-terminated filename in STR_BUF
+\ ON ENTRY: - Null- or space-terminated filename string in STDIN_BUF
+\           - ZD_INCL_EXT should be 0 or 1 (defaults to 0)
+\ ON EXIT : - Null-terminated filename in STR_BUF
 \           - Error in FUNC_ERR
 \           - STDIN_IDX updated
 \ A - P     X - P     Y - P
@@ -463,18 +464,30 @@
   lda #FN_CHAR_ERR_CODE
   sta FUNC_ERR
   jmp read_filename_end
-.read_filename_check          ; Check filename is minimum length
+.read_filename_check              ; Check filename is minimum length
   lda #0
-  sta STR_BUF,Y               ; Make sure we have a null terminator
-  cpy #ZD_MIN_FN_LEN - 1      ; Minimum filename length
+  sta STR_BUF,Y                   ; Make sure we have a null terminator
+  cpy #ZD_MIN_FN_LEN - 1          ; Minimum filename length
   bcc read_filename_err
-  cpy #ZD_MAX_FN_LEN          ; Maximum filename length
+  lda ZD_CTRL_REG                 ; Should length check include extension?
+  and #ZD_CTRL_EXCL_EXT
+  bne read_filename_check_len_no_ext
+  lda #ZD_MAX_FN_LEN_EX
+  sta TMP_VAL
+  jmp read_filename_check_max_chk
+.read_filename_check_len_no_ext
+  lda #ZD_MAX_FN_LEN
+  sta TMP_VAL
+.read_filename_check_max_chk
+  cpy TMP_VAL                     ; Maximum filename length
   bcc read_filename_end
 .read_filename_err
   lda #FN_LEN_ERR_CODE
   sta FUNC_ERR
 .read_filename_end
   stx STDIN_IDX
+  lda #1
+  stz ZD_CTRL_REG                 ; Reset to default
   ply : plx : pla
   rts
 
