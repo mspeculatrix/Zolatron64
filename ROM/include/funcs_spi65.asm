@@ -2,6 +2,7 @@
 
 \ ------------------------------------------------------------------------------
 \ ---  SPI_EXCHANGE_BYTE
+\ ---  Implements: OSSPIEXCH
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: Byte to send should be in A
 \ ON EXIT : Returned byte is in A

@@ -69,10 +69,3 @@
   sta FUNC_ERR
 .extmem_readset_bank_end
   rts
-
-\ --- DATA --------------------
-.exmem_fitted_msg
-  equs "+ Extended memory",0
-.exmem_absent_msg
-  ;     01234567890123456789
-  equs "- No extended memory",0

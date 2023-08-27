@@ -43,6 +43,7 @@ ERR_PRT_STATE_OL      = ERR_NO_EXECUTABLE + 1       ; 27 1B Printer offline
 ERR_PRT_STATE_PE      = ERR_PRT_STATE_OL + 1
 ERR_PRT_STATE_ERR     = ERR_PRT_STATE_PE + 1
 ERR_PRT_NOT_PRESENT   = ERR_PRT_STATE_ERR + 1       ; Printer board not present
+ERR_RTC_NOT_PRESENT   = ERR_PRT_NOT_PRESENT + 1     ; RTC not fitted
 
 \-------------------------------------------------------------------------------
 \ OS CALLS  - OS Function Address Table
@@ -102,6 +103,7 @@ OSZDSAVE   = OSZDLOAD + 3
 ; MISC
 OSDELAY    = OSZDSAVE + 3
 OSUSRINT   = OSDELAY + 3
+OSSPIEXCH  = OSUSRINT + 3
 
 OSSFTRST   = $FFF4         ; Use direct JMP with these (not indirected/vectored)
 OSHRDRST   = $FFF7
@@ -162,6 +164,8 @@ OFF  = 0
 ON   = 1
 LOW  = 0
 HIGH = 1
+LF   = $0A
+CR   = $0D
 
 ; Values for stream select. STREAM_SELECT_REG address is defined in
 ; cfg_page_5.asm.

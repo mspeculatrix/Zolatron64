@@ -1,4 +1,3 @@
-
 SPI_DATA_REG = $BF00
 SPI_STAT_REG = $BF01	; when reading
 SPI_CTRL_REG = $BF01	; when writing
@@ -21,6 +20,20 @@ SRAM_BYTE_MODE = %00000000          ; Values to be written to mode reg
 SRAM_PAGE_MODE = %10000000
 SRAM_SEQU_MODE = %01000000
 
+MACRO SPI_SELECT_RTC
+  lda #SPI_RTC_DEV              ; Select the RTC
+  sta SPI_DEV_SEL
+ENDMACRO
+
+MACRO SPI_SELECT_SD
+  lda #SPI_SD_DEV              ; Select the RTC
+  sta SPI_DEV_SEL
+ENDMACRO
+
+MACRO SPI_SELECT_SRAM
+  lda #SPI_SRAM_DEV              ; Select the RTC
+  sta SPI_DEV_SEL
+ENDMACRO
 
 MACRO SPI_COMM_START
   ldx SPI_DATA_REG    ; to clear TC flag, if set
@@ -30,4 +43,9 @@ ENDMACRO
 
 MACRO SPI_COMM_END
   stz SPI_DEV_SEL
+ENDMACRO
+
+MACRO SPI_CHECK_PRESENT
+  lda SYS_REG
+  and #SYS_SPI          ; A will be 0 if interface not present, non-0 otherwise
 ENDMACRO

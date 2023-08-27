@@ -9,7 +9,7 @@
 .sram_read_byte
   lda #SRAM_CMD_READ
   jsr sram_start_WR_op
-  jsr spi_exchange_byte             ; Value of byte at address now in A
+  jsr OSSPIEXCH             ; Value of byte at address now in A
   SPI_COMM_END
   rts
 
@@ -25,7 +25,7 @@
   jsr sram_start_WR_op
   ldx #0
 .sram_read_page_loop
-  jsr spi_exchange_byte   ; Doesn't matter what's in A to start with
+  jsr OSSPIEXCH   ; Doesn't matter what's in A to start with
   sta SPI_BUF_32,X
   inx
   cpx #SRAM_PG_SZ
@@ -42,9 +42,9 @@
   pha                       ; Set aside for a moment
   SPI_COMM_START
   lda #SRAM_CMD_WRMR        ; Send the relevant command
-  jsr spi_exchange_byte
+  jsr OSSPIEXCH
   pla                       ; Now send the mode code
-  jsr spi_exchange_byte
+  jsr OSSPIEXCH
   SPI_COMM_END
   rts
 
@@ -56,11 +56,11 @@
 \           - TMP_ADDR_A/+1 contains address
 .sram_start_WR_op
   SPI_COMM_START
-  jsr spi_exchange_byte
+  jsr OSSPIEXCH
   lda TMP_ADDR_A_H
-  jsr spi_exchange_byte
+  jsr OSSPIEXCH
   lda TMP_ADDR_A_L
-  jsr spi_exchange_byte
+  jsr OSSPIEXCH
   ; No SPI_COMM_END because that will be sent by function
   ; calling this one.
   rts
@@ -78,7 +78,7 @@
   ldx #0
 .sram_write_page_loop
   lda SPI_BUF_32,X
-  jsr spi_exchange_byte
+  jsr OSSPIEXCH
   inx
   cpx #SRAM_PG_SZ
   bne sram_write_page_loop

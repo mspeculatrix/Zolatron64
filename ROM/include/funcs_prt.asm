@@ -241,10 +241,3 @@
 ;  and #PRT_ACK
 ;  bne prt_wait_for_ack_loop
 ;  rts
-
-\ ---  DATA  -------------------------------------------------------------------
-.parallel_if_fitted
-  equs "+ Parallel interface",0
-.parallel_if_not_fitted
-  ;     01234567890123456789
-  equs "- No parallel i/face",0

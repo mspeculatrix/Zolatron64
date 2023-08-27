@@ -23,10 +23,10 @@ ZD_ACR   = ZD_BASE_ADDR + $0B		      ; Auxiliary Control register
 ZD_IER   = ZD_BASE_ADDR + $0E 	      ; Interrupt Enable Register
 ZD_IFR   = ZD_BASE_ADDR + $0D		      ; Interrupt Flag Register
 
-ZD_TIMER_COUNT = $0600                ; Using page 6 as workspace memory
-ZD_FSTATE      = ZD_TIMER_COUNT + 2   ; for ZolaDOS
-ZD_CTRL_REG    = ZD_FSTATE + 1        ; Control register
+ZD_TIMER_COUNT = $0600                ; Using page 6 as workspace memory for ZD
+ZD_CTRL_REG    = ZD_TIMER_COUNT + 2   ; Control register
 ZD_WKSPC       = ZD_CTRL_REG + 1      ; General workspace
+;ZD_FSTATE
 
 \ ZD_CTRL_REG
 \ Control various ZD functions. It's assumed that only one bit at a time will
@@ -36,10 +36,9 @@ ZD_WKSPC       = ZD_CTRL_REG + 1      ; General workspace
 \           1 - Don't include ext - use shorter filename check
 ZD_CTRL_EXCL_EXT = %1000000
 
-
-ZD_FSTATE_CLOSED    = 0               ; No file open
-ZD_FSTATE_OPENR     = 1               ; File has been opened for reading
-ZD_FSTATE_OPENW     = 2               ; File has been opened for writing
+;ZD_FSTATE_CLOSED    = 0               ; No file open
+;ZD_FSTATE_OPENR     = 1               ; File has been opened for reading
+;ZD_FSTATE_OPENW     = 2               ; File has been opened for writing
 
 ZD_OPCODE_LOAD      = 2               ; Load executable .EXE files
 ZD_OPCODE_DLOAD     = 3               ; Load data files - no ext added

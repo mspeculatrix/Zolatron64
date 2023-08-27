@@ -191,4 +191,8 @@
   lda #>delay
   sta OSDELAY_VEC + 1
 ; OSUSRINT - to come
+  lda #<spi_exchange_byte
+  sta OSSPIEXCH_VEC
+  lda #>spi_exchange_byte
+  sta OSSPIEXCH_VEC + 1
 .os_call_vectors_end

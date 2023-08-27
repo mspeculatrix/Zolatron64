@@ -37,13 +37,33 @@ ALIGN &100                ; start on new page
   and #DUART_RxA_RDY_MASK      ; triggered the interrupt
   bne isr_SC28L92              ; If result not zero, that means RxRDYA bit set
 
+; --- CHECK ZOLADOS IRQ --------------------------------------------------------
 .isr_chk_zolados
-  lda ZD_CTRL_PORT
-  and #ZD_INT_SEL
-  beq isr_end_chks
-  lda SYS_REG
-  ora #PROC_ZD_INT_FL
-  sta SYS_REG
+  lda ZD_CTRL_PORT              ; Load the control port state
+  and #ZD_INT_SEL               ; Check the IRQ bit
+  beq isr_chk_zolados_next      ; If clear, not this, so jump to next check
+  lda IRQ_REG                   ; Load SYS_REG
+  ora #ZD_IRQ                   ; and set the appropriate flag
+  sta IRQ_REG                   ; Store SYS_REG again
+  jmp isr_end_chks              ; Done doing checks
+.isr_chk_zolados_next
+
+; --- CHECK RTC ALARM ----------------------------------------------------------
+.isr_chk_rtc
+  lda #SPI_RTC_DEV              ; Select the RTC
+  sta SPI_DEV_SEL
+  lda #RTC_STAT_REG             ; Select the status register
+  SPI_COMM_START
+  jsr spi_exchange_byte			    ; Selects the reg, don't care what's in A
+  jsr spi_exchange_byte			    ; Sends dummy value, register value is in A
+  SPI_COMM_END
+  and #%00000001                ; Check Alarm 1 flag
+  beq isr_chk_rtc_next          ; If it's 0, not this, go on to next check
+  lda IRQ_REG                   ; Load SYS_REG
+  ora #RTC_ALARM                ; and set the appropriate flag
+  sta IRQ_REG                   ; Store SYS_REG again
+  jmp isr_end_chks              ; Done doing checks
+.isr_chk_rtc_next
 
 .isr_end_chks
   jmp isr_exit

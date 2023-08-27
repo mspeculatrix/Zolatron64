@@ -27,8 +27,8 @@ INCLUDE "../../LIB/cfg_page_7.asm"    ; SPI, RTC, SD addresses etc
 ; INCLUDE "../../LIB/cfg_user_port.asm"
 ; INCLUDE "../../LIB/cfg_ZolaDOS.asm"
 ; INCLUDE "../../LIB/cfg_chk_char.asm"
-INCLUDE "../../LIB/cfg_rtc_ds3234.asm"
 INCLUDE "../../LIB/cfg_spi65.asm"
+INCLUDE "../../LIB/cfg_spi_rtc_ds3234.asm"
 
 ORG USR_START
 .header                     ; HEADER INFO
@@ -62,6 +62,7 @@ ORG USR_START
 \ ---  MAIN PROGRAM
 \ ------------------------------------------------------------------------------
 .main
+  SPI_SELECT_RTC
 
   jsr rtc_read_time
   jsr rtc_display_time
@@ -75,8 +76,9 @@ ORG USR_START
 \ ---  OPTIONAL LIBRARY FUNCTION FILES
 \ ------------------------------------------------------------------------------
 ; INCLUDE "../../LIB/math_uint8_mult.asm"
-INCLUDE "../../LIB/funcs_spi65.asm"
-INCLUDE "../../LIB/funcs_spi_rtc_ds3234.asm"
+INCLUDE "../../LIB/funcs_spi_rtc_common.asm"
+;INCLUDE "../../LIB/funcs_spi_rtc_date.asm"
+INCLUDE "../../LIB/funcs_spi_rtc_time.asm"
 INCLUDE "../../LIB/math_uint8_mult.asm"
 INCLUDE "../../LIB/math_uint8_div.asm"
 

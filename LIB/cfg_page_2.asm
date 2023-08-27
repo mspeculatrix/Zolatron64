@@ -59,4 +59,5 @@ OSZDLOAD_VEC   = OSZDDEL_VEC + 2
 OSZDSAVE_VEC   = OSZDLOAD_VEC + 2
 ; MISC
 OSDELAY_VEC    = OSZDSAVE_VEC + 2
-OSUSRINT_VEC   = OSDELAY_VEC + 2    ; Vector for user interrupt handling routines
+OSUSRINT_VEC   = OSDELAY_VEC + 2    ; Vector for user interrupt service routines
+OSSPIEXCH_VEC  = OSUSRINT_VEC + 2	; SPI exchange byte

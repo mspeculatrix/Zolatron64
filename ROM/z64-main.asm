@@ -22,7 +22,7 @@ INCLUDE "../LIB/cfg_page_2.asm"                   ; OS Indirection Table
 INCLUDE "../LIB/cfg_page_4.asm"                   ; Misc buffers etc
 ; PAGE 5 - Reserved for user program workspace
 ; PAGE 6 - ZolaDOS workspace
-; PAGE 7 - RTC, SPI
+INCLUDE "../LIB/cfg_page_7.asm"                   ; SPI
 
 INCLUDE "include/cfg_ROM.asm"
 INCLUDE "../LIB/cfg_uart_SC28L92.asm"
@@ -32,8 +32,12 @@ INCLUDE "../LIB/cfg_ZolaDOS.asm"
 INCLUDE "../LIB/cfg_user_port.asm"
 INCLUDE "../LIB/cfg_parallel.asm"
 INCLUDE "../LIB/cfg_prt.asm"
+INCLUDE "../LIB/cfg_spi65.asm"
+INCLUDE "../LIB/cfg_spi_rtc_ds3234.asm"
 
-\ ----- INITIALISATION ---------------------------------------------------------
+\ ------------------------------------------------------------------------------
+\ ----    INITIALISATION                                                    ----
+\ ------------------------------------------------------------------------------
 ORG $8000              ; Using only the top 16KB of a 32KB EEPROM. This is
                        ; where the bytes start for the ROM file, but...
 .startrom
@@ -49,15 +53,17 @@ ORG ROM_START          ; This is where the actual code starts.
 
 ; Initialise registers etc
   stz SYS_REG
+  stz IRQ_REG
   stz EXTMEM_BANK           ; Default to extended memory bank 0
   stz EXTMEM_SELECT         ;    "     "    "       "     "   "
   stz FUNC_ERR              ; Zero out function return values
   stz FUNC_RESULT
-  stz STDIN_BUF             ; Set first byte of STDIN buffer to a nul (0)
-  stz STDIN_IDX             ; and set the corresponding index
-  stz STDOUT_BUF            ; Do the same for the STDOUT buffer
-  stz STDOUT_IDX
-  stz STDIN_STATUS_REG      ; Zero out the STDIN register
+  ; Now doing the following at the soft reset stage
+;  stz STDIN_BUF             ; Set first byte of STDIN buffer to a nul (0)
+;  stz STDIN_IDX             ; and set the corresponding index
+;  stz STDOUT_BUF            ; Do the same for the STDOUT buffer
+;  stz STDOUT_IDX
+;  stz STDIN_STATUS_REG      ; Zero out the STDIN register
 
   stz ZD_CTRL_REG
 
@@ -74,7 +80,7 @@ INCLUDE "include/os_call_vectors.asm"
 ;  lda #STR_SEL_SERIAL       ; not used yet
 ;  sta STREAM_SELECT_REG
 
-; SETUP LCD display & LEDs
+\ ----  SETUP LCD display & LEDs   ---------------------------------------------
   lda SYS_REG
   ora #%00100000     ; Sets bit 5 showing we're using 20x4 display
   sta SYS_REG
@@ -88,21 +94,18 @@ INCLUDE "include/os_call_vectors.asm"
   lda #LCD_CLS                          ; Clear display, reset display memory
   jsr lcd_cmd
 
-; SETUP USER PORT
+\ ----  SETUP USER PORT  -------------------------------------------------------
   lda #$FF
   sta USRP_DDRA                         ; Set all lines on user ports as outputs
   sta USRP_DDRB
   stz USRP_PORTA                        ; And set all lines to low
   stz USRP_PORTB
 
-; SETUP ZolaDOS RPi INTERFACE
+\ ----  SETUP ZolaDOS RPi INTERFACE  -------------------------------------------
   jsr zd_init
 
-; SETUP SERIAL PORTS
+\ ----  SETUP SERIAL PORTS  ----------------------------------------------------
   jsr duart_init
-
-; CHECK FOR PARALLEL PORT
-  jsr prt_check_present                 ; Sets SYS_PARALLEL bit in SYS_REG
 
 \ ------------------------------------------------------------------------------
 \ ----     MAIN PROGRAM                                                     ----
@@ -117,19 +120,52 @@ INCLUDE "include/os_call_vectors.asm"
   stz PRG_EXIT_CODE
 
 ; Print initial message & prompt via serial
-  lda #CHR_LINEEND                      ; Start with a couple of line feeds
+  lda #CHR_LINEEND                          ; Start with a couple of line feeds
   jsr OSWRCH
   jsr OSWRCH
-  PRT_MSG start_msg, duart_println      ; And now the start-up message
+  PRT_MSG start_msg, duart_println          ; And now the start-up message
   lda #CHR_LINEEND
   jsr OSWRCH
   PRT_MSG version_str, duart_println
+  lda #CHR_LINEEND
+  jsr OSWRCH
 
-  jsr OSLCDCLS                          ; Start-up messages on LCD
+  jsr OSLCDCLS                              ; Start-up messages on LCD
   PRT_MSG start_msg, lcd_println
   PRT_MSG version_str, lcd_println
 
-; CHECK FOR EXTENDED ROM/RAM BOARD
+\ -----  CHECK FOR PARALLEL PORT  ----------------------------------------------
+  jsr prt_check_present                     ; Sets SYS_PARALLEL bit in SYS_REG
+
+\ -----  CHECK FOR SPI INTERFACE BOARD  ----------------------------------------
+\ Sets the SYS_SPI bit in SYS_REG
+\ SPI65 device register is at $BF02
+  lda #0
+  sta $BF02
+  lda $BF02
+  bne spi_chk_not_present
+  lda #3
+  sta $BF02
+  lda $BF02
+  cmp #3
+  beq spi_chk_present
+.spi_chk_not_present
+  lda SYS_REG
+  and #SYS_SPI_NO
+  sta SYS_REG
+  LOAD_MSG spi_if_not_present_msg
+  jmp spi_chk_done
+.spi_chk_present
+  lda SYS_REG
+  ora #SYS_SPI
+  sta SYS_REG
+  LOAD_MSG spi_if_present_msg
+.spi_chk_done
+  jsr OSWRMSG
+  jsr OSLCDMSG
+
+\ -----  CHECK FOR EXTENDED ROM/RAM BOARD  -------------------------------------
+\ Sets the SYS_EXMEM bit in SYS_REG
   lda #4                                ; Use bank 4. This is never a ROM
   sta EXTMEM_SELECT                     ; Select it
   jsr extmem_ram_chk                    ; Run a check. Sets the bit in SYS_REG
@@ -144,12 +180,12 @@ INCLUDE "include/os_call_vectors.asm"
   jsr OSWRCH
   jsr OSWRMSG
   jsr OSLCDMSG
-  stz EXTMEM_SELECT                       ; Now revert to 0 as default & select it
-  stz EXTMEM_BANK                         ; Store it for some reason
+  stz EXTMEM_SELECT                     ; Now revert to 0 as default & select it
+  stz EXTMEM_BANK                       ; Store it for some reason
   NEWLINE
 
 ; SET UP DELAY TIMER
-  lda #<500                               ; Interval for delay function - in ms
+  lda #<500                             ; Interval for delay function - in ms
   sta LCDV_TIMER_INTVL
   lda #>500
   sta LCDV_TIMER_INTVL+1
@@ -169,12 +205,21 @@ INCLUDE "include/os_call_vectors.asm"
 
   cli                     	              ; Enable interrupts
 
+\ ------------------------------------------------------------------------------
+\ -----  SOFT RESET
+\ ------------------------------------------------------------------------------
 .soft_reset
   LED_OFF LED_ERR                         ; Turn off the LEDs
   LED_OFF LED_BUSY
   LED_OFF LED_FILE_ACT
   LED_OFF LED_DEBUG
   LED_ON LED_OK
+
+  stz STDIN_BUF             ; Set first byte of STDIN buffer to a nul (0)
+  stz STDIN_IDX             ; and set the corresponding index
+  stz STDOUT_BUF            ; Do the same for the STDOUT buffer
+  stz STDOUT_IDX
+  stz STDIN_STATUS_REG      ; Zero out the STDIN register
 
 ; BOOT ROM
 ; Check to see if there is boot ROM code in bank 0 of extended memory.
@@ -196,6 +241,12 @@ INCLUDE "include/os_call_vectors.asm"
 \ ----- MAIN LOOP
 \ ------------------------------------------------------------------------------
 .mainloop                               ; Loop forever
+  ; SHOULD CHECK IRQ_REG here
+  ; lda IRQ_REG                         ; Load the IRQ register
+  ; beq mainloop_chk_input              ; If zero, nothing to worry about
+  ; otherwise deal with interrupts here
+  ; stz IRQ_REG                         ; Reset flags
+.mainloop_chk_input
   lda STDIN_STATUS_REG
   and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
   bne process_input                     ; If yes, process the buffer
@@ -281,7 +332,6 @@ INCLUDE "include/cmds_punc.asm"
 INCLUDE "include/cmds_B.asm"
 INCLUDE "include/cmds_C.asm"
 INCLUDE "include/cmds_D.asm"
-;INCLUDE "include/cmds_E.asm"
 INCLUDE "include/cmds_H.asm"
 INCLUDE "include/cmds_J.asm"
 INCLUDE "include/cmds_L.asm"
@@ -320,8 +370,8 @@ INCLUDE "include/funcs_io.asm"
 INCLUDE "include/funcs_ext_mem.asm"
 INCLUDE "include/funcs_4x20_lcd.asm"
 INCLUDE "include/funcs_prt.asm"
-
 INCLUDE "include/funcs_isr.asm"
+INCLUDE "include/funcs_spi65.asm"
 
 \-------------------------------------------------------------------------------
 \ ---  NMI HANDLER
@@ -397,6 +447,8 @@ ORG $FF00                     ; Must match address at start of OS Function
 
   jmp (OSDELAY_VEC)
   jmp (OSUSRINT_VEC)
+
+  jmp (OSSPIEXCH_VEC)
 
 ORG $FFF4
 .reset

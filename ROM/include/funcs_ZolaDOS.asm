@@ -73,8 +73,8 @@
   ; Initialise outputs
   ZD_SET_CA_OFF                     ; Takes line high
   ZD_SET_CR_OFF                     ; Takes line high
-  lda #ZD_FSTATE_CLOSED             ; Start with no file open
-  sta ZD_FSTATE
+  ;lda #ZD_FSTATE_CLOSED             ; Start with no file open
+  ;sta ZD_FSTATE
   rts
 
 \ ------------------------------------------------------------------------------
@@ -405,24 +405,24 @@
 \             the data.
 \           - STR_BUF must contain filename
 \ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
-.zd_streamin
-  lda #ZD_OPCODE_OPENR
-  jsr zd_handshake            ; ----- INITIATE ---------------------------------
-  lda FUNC_ERR
-  bne zd_streamin_end         ; If this is anything but 0, that's an error
+;.zd_streamin
+;  lda #ZD_OPCODE_OPENR
+;  jsr zd_handshake            ; ----- INITIATE ---------------------------------
+;  lda FUNC_ERR
+;  bne zd_streamin_end         ; If this is anything but 0, that's an error
 
-  lda #ZD_FSTATE_OPENR
-  sta ZD_FSTATE
+;  lda #ZD_FSTATE_OPENR
+;  sta ZD_FSTATE
 
-.zd_streamin_close
-  lda #ZD_OPCODE_CLOSE
-  jsr zd_init_process
-  lda FUNC_ERR
+;.zd_streamin_close
+;  lda #ZD_OPCODE_CLOSE
+;  jsr zd_init_process
+;  lda FUNC_ERR
   ;  deal with error
-  lda #ZD_FSTATE_CLOSED
-  sta ZD_FSTATE
-.zd_streamin_end
-  rts
+;  lda #ZD_FSTATE_CLOSED
+;  sta ZD_FSTATE
+;.zd_streamin_end
+;  rts
 
 \ ------------------------------------------------------------------------------
 \ ---  ZD_STROBEDELAY

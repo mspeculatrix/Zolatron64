@@ -27,8 +27,8 @@ INCLUDE "../../LIB/cfg_page_7.asm"    ; SPI, RTC, SD addresses etc
 ; INCLUDE "../../LIB/cfg_user_port.asm"
 ; INCLUDE "../../LIB/cfg_ZolaDOS.asm"
 ; INCLUDE "../../LIB/cfg_chk_char.asm"
-INCLUDE "../../LIB/cfg_rtc_ds3234.asm"
 INCLUDE "../../LIB/cfg_spi65.asm"
+INCLUDE "../../LIB/cfg_spi_rtc_ds3234.asm"
 
 
 ORG USR_START
@@ -63,6 +63,8 @@ ORG USR_START
 \ ---  MAIN PROGRAM
 \ ------------------------------------------------------------------------------
 .main
+  SPI_SELECT_RTC
+
   LOAD_MSG start_msg
   jsr OSWRMSG
   jsr rtc_init
@@ -72,56 +74,47 @@ ORG USR_START
   jsr OSWRMSG
   jsr get_number
   lda FUNC_ERR
-  beq print_hour
+  beq get_hour_chk
   jmp input_error
-.print_hour
+.get_hour_chk
   lda FUNC_RES_L
   cmp #24
   bcs error_invalid_entry
   sta RTC_CLK_BUF + 2
-  jsr OSB2ISTR
-  jsr OSWRSBUF
-  lda #10
-  jsr OSWRCH
 
-.get_minute
+.get_mins
   LOAD_MSG get_mins_msg
   jsr OSWRMSG
   jsr get_number
   lda FUNC_ERR
-  beq print_mins
+  beq get_mins_chk
   jmp input_error
-.print_mins
+.get_mins_chk
   lda FUNC_RES_L
   cmp #60
   bcs error_invalid_entry
   sta RTC_CLK_BUF + 1
-  jsr OSB2ISTR
-  jsr OSWRSBUF
-  lda #10
-  jsr OSWRCH
 
 .get_secs
   LOAD_MSG get_secs_msg
   jsr OSWRMSG
   jsr get_number
   lda FUNC_ERR
-  beq print_secs
+  beq get_secs_chk
   jmp input_error
-.print_secs
+.get_secs_chk
   lda FUNC_RES_L
   cmp #60
   bcs error_invalid_entry
   sta RTC_CLK_BUF
-  jsr OSB2ISTR
-  jsr OSWRSBUF
-  lda #10
-  jsr OSWRCH
 
   jsr rtc_set_time
 
-  jmp prog_end
+  jsr rtc_read_time
+  jsr rtc_display_time
+  NEWLINE
 
+  jmp prog_end
 
 .error_invalid_entry
   LOAD_MSG err_inv_entry
@@ -183,8 +176,9 @@ ORG USR_START
 \ ------------------------------------------------------------------------------
 INCLUDE "../../LIB/math_uint8_mult.asm"
 INCLUDE "../../LIB/math_uint8_div.asm"
-INCLUDE "../../LIB/funcs_spi_rtc_ds3234.asm"
-INCLUDE "../../LIB/funcs_spi65.asm"
+INCLUDE "../../LIB/funcs_spi_rtc_common.asm"
+;INCLUDE "../../LIB/funcs_spi_rtc_date.asm"
+INCLUDE "../../LIB/funcs_spi_rtc_time.asm"
 
 .endtag
   equs "EOF",0

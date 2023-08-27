@@ -27,18 +27,21 @@ SYS_REG = STDIN_STATUS_REG + 1      ; $65 System Register
 ; SYSTEM REGISTER
 ; The SYS_EXMEM and SYS_PARALELL must be in bits 0 and 1.
 ; Bit     Flag name            Function
-;  0      SYS_EXMEM/_NO        Extended memory fitted - 1=yes, 0=no
-;  1      SYS_PARALLEL/_NO     Parallel board fitted  - 1=yes, 0=no
-;  2
+;  0      SYS_EXMEM/_NO        Extended memory fitted     - 1=yes, 0=no
+;  1      SYS_PARALLEL/_NO     Parallel board fitted      - 1=yes, 0=no
+;  2      SYS_SPI/_NO          SPI interface board fitted - 1=yes, 0=no
 ;  3
 ;  4
 ;  5      LCD_SIZE             0 = 2x16, 1 = 4x20
 ;  6
-;  7      ZD_INT_FL			   Not sure about this yet
-SYS_EXMEM        = %00000001  ; ORA with reg to set or AND to test flag
-SYS_EXMEM_NO     = %11111110  ; AND with reg to unset flag
-SYS_PARALLEL     = %00000010  ; ORA with reg to set or AND to test flag
-SYS_PARALLEL_NO  = %11111101  ; AND with reg to unset flag
+;  7
+SYS_EXMEM         = %00000001   ; ORA with reg to set or AND to test flag
+SYS_EXMEM_NO      = %11111110   ; AND with reg to unset flag
+SYS_PARALLEL      = %00000010   ; ORA with reg to set or AND to test flag
+SYS_PARALLEL_NO   = %11111101   ; AND with reg to unset flag
+SYS_SPI           = %00000100   ; ORA with reg to set or AND to test flag
+SYS_SPI_NO        = %11111011   ; AND with reg to unset flag
 
-SPI_INBUF  = SYS_REG + 1
-SPI_OUTBUF = SPI_INBUF + 1
+IRQ_REG       = SYS_REG + 1			    ; $66 - IRQ register
+ZD_IRQ    = %10000000
+RTC_ALARM = %01000000

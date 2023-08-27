@@ -24,11 +24,10 @@ INCLUDE "../../LIB/cfg_page_7.asm"    ; SPI, RTC, SD addresses etc
 \ ------------------------------------------------------------------------------
 ; INCLUDE "../../LIB/cfg_parallel.asm"
 ; INCLUDE "../../LIB/cfg_prt.asm"
+; INCLUDE "../../LIB/cfg_spi65.asm"
+; INCLUDE "../../LIB/cfg_spi_rtc_ds3234.asm"
 ; INCLUDE "../../LIB/cfg_user_port.asm"
 ; INCLUDE "../../LIB/cfg_ZolaDOS.asm"
-; INCLUDE "../../LIB/cfg_chk_char.asm"
-; INCLUDE "../../LIB/cfg_rtc_ds3234.asm"
-; INCLUDE "../../LIB/cfg_spi65.asm"
 
 ORG USR_START
 .header                     ; HEADER INFO
@@ -80,9 +79,23 @@ ORG USR_START
 \ ------------------------------------------------------------------------------
 \ ---  OPTIONAL LIBRARY FUNCTION FILES
 \ ------------------------------------------------------------------------------
+; INCLUDE "../../LIB/funcs_addr.asm"
+; INCLUDE "../../LIB/funcs_chk_char.asm"
+; INCLUDE "../../LIB/funcs_prng.asm"
+; INCLUDE "../../LIB/funcs_spi_rtc_common.asm"
+; INCLUDE "../../LIB/funcs_spi_rtc_date.asm"
+; INCLUDE "../../LIB/funcs_spi_rtc_time.asm"
+; INCLUDE "../../LIB/funcs_spi_sram.asm"
+; INCLUDE "../../LIB/math_uint8_div.asm"
 ; INCLUDE "../../LIB/math_uint8_mult.asm"
-; INCLUDE "../../LIB/funcs_spi_rtc_ds3234.asm"
-; INCLUDE "../../LIB/funcs_spi65.asm"
+; INCLUDE "../../LIB/math_uint16_div_uint8.asm"
+; INCLUDE "../../LIB/math_uint16_div.asm"
+; INCLUDE "../../LIB/math_uint16_sub.asm"
+; INCLUDE "../../LIB/math_uint16_times10.asm"
+; INCLUDE "../../LIB/math_uint32_div8.asm"
+; INCLUDE "../../LIB/math_uint32_div16.asm"
+; INCLUDE "../../LIB/math_uint32_mult8.asm"
+; INCLUDE "../../LIB/math_uint32_mult32.asm"
 
 .endtag
   equs "EOF",0

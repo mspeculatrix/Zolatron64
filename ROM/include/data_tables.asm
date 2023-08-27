@@ -73,6 +73,7 @@ ALIGN &100                  ; Start on new page
   equw cmd_tbl_ASCP         ; Commands starting 'P'
   equw cmd_tbl_ASCR         ; Commands starting 'R'
   equw cmd_tbl_ASCS         ; Commands starting 'S'
+;  equw cmd_tbl_ASCT         ; Commands starting 'T'
   equw cmd_tbl_ASCV         ; Commands starting 'V'
   equw cmd_tbl_ASCX         ; Commands starting 'X'
 
@@ -103,6 +104,7 @@ ALIGN &100                  ; Start on new page
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCD                  ; Commands starting 'D'
+;  equs "ATE", CMD_TKN_DATE     ; DATE
   equs "EL", CMD_TKN_DEL       ; DEL
   equs "UMP", CMD_TKN_DUMP     ; DUMP
   equb EOCMD_SECTION
@@ -144,6 +146,10 @@ ALIGN &100                  ; Start on new page
   equs "AVE", CMD_TKN_SAVE     ; SAVE
   equs "TAT", CMD_TKN_STAT     ; STAT
   equb EOCMD_SECTION
+
+;.cmd_tbl_ASCT                  ; Commands starting 'T'
+;  equs "IME", CMD_TKN_TIME     ; TIME
+;  equb EOCMD_SECTION
 
 .cmd_tbl_ASCV                  ; Commands starting 'V'
   equs "ERS", CMD_TKN_VERS     ; VERS
@@ -206,6 +212,8 @@ ALIGN &100                  ; Start on new page
   equw err_printer_state_pe
   equw err_printer_state_err
   equw err_printer_not_present
+
+  equw err_rtc_not_present
 
 \ Error Messages
 .err_msg_cmd
@@ -271,6 +279,8 @@ ALIGN &100                  ; Start on new page
   equs "Printer error",0
 .err_printer_not_present
   equs "No printer interface",0
+.err_rtc_not_present
+  equs "No RTC",0
 
 \ ===== MISC TABLES & STRINGS ==================================================
 
@@ -318,6 +328,21 @@ ALIGN &100                  ; Start on new page
   equs "0123456789ABCDEF", 10, 0
 
 \ MESSAGES
+;       01234567890123456789
+.exmem_fitted_msg
+  equs "+ Extended memory",0
+.exmem_absent_msg
+  equs "- No extended memory",0
+
+.parallel_if_fitted
+  equs "+ Parallel interface",0
+.parallel_if_not_fitted
+  equs "- No parallel I/F",0
+
+.spi_if_present_msg
+  equs "+ SPI interface",0
+.spi_if_not_present_msg
+  equs "- No SPI I/F",0
 
 .test_msg
   equs "Hello World!",0

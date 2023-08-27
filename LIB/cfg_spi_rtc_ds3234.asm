@@ -56,8 +56,30 @@ RTC_DAYT_MASK = %00000000
 RTC_DAYW_MASK = %11111000
 
 
-RTC_CTRL_INIT = %00000111    \\ Initial state for CTRL register
+RTC_CTRL_INIT = %00000100    \\ Initial state for CTRL register
 RTC_STAT_INIT = %00000000    \\ Initial state for STAT register
 
-\\ ADDRESSES
-\\ Using page 7 for workspace
+\ CTRL register
+\   Bit
+\    7   oscillator on 0 = on
+\    6   battery-backed square wave enable
+\    5   force convert temperature
+\    4   Rate select for square wave output
+\    3     "    "
+\    2   interrupt control 0=SQW output enabled  1=alarm interrupts enabled
+\    1   alarm 2 enable interrupt
+\    0   alarm 1 enable interrupt
+\
+\ STAT register
+\   Bit
+\    7   oscillator stop flag (read only)  1=stopped
+\    6   battery-backed 32KHz output (default=1)
+\    5   temp conversion rate
+\    4     "     "
+\    3   32KHz output enable (default = 1)
+\    2   busy bit (read only) - 1 when chip is busy doing temp conversion
+\    1   alarm flag 2
+\    0   alarm flag 1
+
+
+\\ ADDRESSES - Using page 7 for workspace

@@ -27,8 +27,8 @@ INCLUDE "../../LIB/cfg_page_7.asm"    ; SPI, RTC, SD addresses etc
 ; INCLUDE "../../LIB/cfg_user_port.asm"
 ; INCLUDE "../../LIB/cfg_ZolaDOS.asm"
 ; INCLUDE "../../LIB/cfg_chk_char.asm"
-; INCLUDE "../../LIB/cfg_rtc_ds3234.asm"
 INCLUDE "../../LIB/cfg_spi65.asm"
+; INCLUDE "../../LIB/cfg_spi_rtc_ds3234.asm"
 
 MEM_ADDR = $1000
 
@@ -44,7 +44,7 @@ ORG USR_START
   equb >endcode
   equs 0,0,0                ; -- Reserved for future use --
 .prog_name
-  equs "SRAM",0         ; @ $080D Short name, max 15 chars - nul terminated
+  equs "SRAM",0             ; @ $080D Short name, max 15 chars - nul terminated
 .version_string
   equs "1.0",0              ; Version string - nul terminated
 
@@ -65,8 +65,7 @@ ORG USR_START
 \ ------------------------------------------------------------------------------
 .main
 
-  lda #SPI_SRAM_DEV
-  sta SPI_CURR_DEV
+  SPI_SELECT_SRAM
 
   jsr print_mem_buf
 
@@ -145,7 +144,6 @@ ORG USR_START
 \ ------------------------------------------------------------------------------
 ; INCLUDE "../../LIB/math_uint8_mult.asm"
 ; INCLUDE "../../LIB/funcs_rtc_ds3234.asm"
-INCLUDE "../../LIB/funcs_spi65.asm"
 INCLUDE "../../LIB/funcs_spi_sram.asm"
 
 .clear_buf_msg
