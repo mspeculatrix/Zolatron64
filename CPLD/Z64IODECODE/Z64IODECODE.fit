@@ -1,0 +1,345 @@
+Atmel ATF1502AS Fitter Version 1.8.7.8 ,running Thu Jul 20 11:34:47 2023
+
+
+fit1502 E:\NasSync\DEV\Dev-PLD\CUPL_Projects\Z64IODECODE\\Z64IODECODE.tt2 -CUPL -dev P1502C44 -JTAG ON -logic_doubling off
+
+
+****** Initial fitting strategy and property ******
+ Pla_in_file = Z64IODECODE.tt2
+ Pla_out_file = Z64IODECODE.tt3
+ Jedec_file = Z64IODECODE.jed
+ Vector_file = Z64IODECODE.tmv
+ verilog_file = Z64IODECODE.vt
+ Time_file = 
+ Log_file = Z64IODECODE.fit
+ err_file = 
+ Device_name = PLCC44
+ Module_name = 
+ Package_type = PLCC
+ Preassign_file = 
+ Property_file = 
+ Sleep_mode = 
+ Preassignment = 
+ Security_mode = OFF
+ Pin_keep_mode = ON
+ Dedicated_input_clock = 
+ Dedicated_input_reset = 
+ Dedicated_input_oe = 
+ supporter = CUPL
+ optimize = ON
+ Soft_buffer = 
+ Xor_synthesis = OFF
+ Foldback_logic =  on
+ Expander = 
+ Cascade_logic = OFF
+ Dedicated_input = 
+ Output_fast = OFF
+ *******************************
+ Power down pin 1 = OFF
+ Power down pin 2 = OFF
+ power_reset = OFF
+ JTAG = ON
+ TDI pullup = OFF
+ TMS pullup = OFF
+ MC_power = OFF
+ Open_collector = OFF
+ ITD0 = ON
+ ITD1 = ON
+ ITD2 = ON
+ Fast_inlatch = off
+ *******************************
+Info: E:\NasSync\DEV\Dev-PLD\CUPL_Projects\Z64IODECODE\\Z64IODECODE uses 95% of the pins available in device PLCC44
+  If you wish to have more pins available for future logic changes
+  Atmel  recommends using a larger device
+---------------------------------------------------------
+ Fitter_Pass 1, Preassign = KEEP, LOGIC_DOUBLING : OFF 
+ ... 
+
+Performing global Output Enable pin assignments ...
+
+Performing global pin assignments ...
+--------------------------------------
+
+
+
+Final global control pins assignment (if applicable)...
+-------------------------------------------------------
+
+
+
+Performing input pin pre-assignments ...
+------------------------------------
+AET assigned to pin  2
+AEL assigned to pin  43
+ANN assigned to pin  1
+ATN assigned to pin  44
+
+Attempt to place floating signals ...
+------------------------------------
+ASV is placed at pin 4 (MC 1)
+ASX is placed at pin 5 (MC 2)
+AFV is placed at pin 6 (MC 3)
+TDI is placed at pin 7 (MC 4)
+CLK is placed at pin 8 (MC 5)
+RW is placed at pin 9 (MC 6)
+READ_EN is placed at pin 11 (MC 7)
+IOH7 is placed at pin 12 (MC 8)
+TMS is placed at pin 13 (MC 9)
+IOH6 is placed at pin 14 (MC 10)
+IOH5 is placed at pin 16 (MC 11)
+IOH4 is placed at pin 17 (MC 12)
+IOH3 is placed at pin 18 (MC 13)
+IOH2 is placed at pin 19 (MC 14)
+IOH1 is placed at pin 20 (MC 15)
+IOH0 is placed at pin 21 (MC 16)
+ATW is placed at pin 41 (MC 17)
+A13 is placed at pin 40 (MC 18)
+A14 is placed at pin 39 (MC 19)
+TDO is placed at pin 38 (MC 20)
+A15 is placed at pin 37 (MC 21)
+ROM_EN is placed at pin 36 (MC 22)
+WRITE_EN is placed at pin 34 (MC 23)
+IOK0 is placed at pin 33 (MC 24)
+TCK is placed at pin 32 (MC 25)
+IOK1 is placed at pin 31 (MC 26)
+IOK2 is placed at pin 29 (MC 27)
+IOK3 is placed at pin 28 (MC 28)
+IOK4 is placed at pin 27 (MC 29)
+IOK5 is placed at pin 26 (MC 30)
+IOK6 is placed at pin 25 (MC 31)
+IO_EN is placed at pin 24 (MC 32)
+
+                                                                 
+                                                                 
+                                                                 
+                                                                 
+                  A  A  A  V  A  A A  A  G  A  A                 
+                  F  S  S  C  E  N T  E  N  T  1                 
+                  V  X  V  C  T  N N  L  D  W  3                 
+               ____________________________________              
+              /   6  5  4  3  2  1 44 43 42 41 40  \             
+         TDI |  7                                39 | A14        
+         CLK |  8                                38 | TDO        
+          RW |  9                                37 | A15        
+         GND | 10                                36 | ROM_EN     
+     READ_EN | 11                                35 | VCC        
+        IOH7 | 12            ATF1502             34 | WRITE_EN   
+         TMS | 13          44-Lead PLCC          33 | IOK0       
+        IOH6 | 14                                32 | TCK        
+         VCC | 15                                31 | IOK1       
+        IOH5 | 16                                30 | GND        
+        IOH4 | 17                                29 | IOK2       
+             |   18 19 20 21 22 23 24 25 26 27 28   |            
+              \____________________________________/             
+                 I  I  I  I  G  V  I  I  I  I  I                 
+                 O  O  O  O  N  C  O  O  O  O  O                 
+                 H  H  H  H  D  C  _  K  K  K  K                 
+                 3  2  1  0        E  6  5  4  3                 
+                                   N                             
+
+
+
+VCC = Supply Voltage pin which must be connected to (5.0V or 3.0V)
+
+GND = GND pin which must be connected to ground
+
+TMS,TDI,TDO,TDI = JTAG pins which must reserved for the JTAG interface
+
+NC = Unused I/O pins which must be unconnected on the board
+
+Universal-Interconnect-Multiplexer assignments
+------------------------------------------------
+FanIn assignment for block A [11]
+{
+AEL,ATN,ASV,ASX,AFV,ATW,ANN,AET,
+CLK,
+IO_EN,
+RW,
+}
+Multiplexer assignment for block A
+AEL			(MC2	FB)  : MUX 0		Ref (GCLK)
+RW			(MC6	P)   : MUX 1		Ref (A6p)
+CLK			(MC5	P)   : MUX 2		Ref (A5p)
+ATN			(MC3	FB)  : MUX 10		Ref (OE1)
+ASV			(MC8	P)   : MUX 12		Ref (A1p)
+ASX			(MC9	P)   : MUX 13		Ref (A2p)
+AFV			(MC7	P)   : MUX 14		Ref (A3p)
+ATW			(MC4	P)   : MUX 18		Ref (B17p)
+ANN			(MC11	FB)  : MUX 20		Ref (GCLR)
+IO_EN			(MC1	P)   : MUX 22		Ref (B32p)
+AET			(MC10	FB)  : MUX 30		Ref (OE2)
+
+FanIn assignment for block B [9]
+{
+AEL,A15,A13,A14,ATW,ATN,
+CLK,
+IO_EN,
+RW,
+}
+Multiplexer assignment for block B
+AEL			(MC2	FB)  : MUX 0		Ref (GCLK)
+RW			(MC6	P)   : MUX 1		Ref (A6p)
+CLK			(MC5	P)   : MUX 2		Ref (A5p)
+A15			(MC9	P)   : MUX 8		Ref (B21p)
+A13			(MC7	P)   : MUX 10		Ref (B18p)
+A14			(MC8	P)   : MUX 14		Ref (B19p)
+ATW			(MC4	P)   : MUX 18		Ref (B17p)
+ATN			(MC3	FB)  : MUX 19		Ref (OE1)
+IO_EN			(MC1	P)   : MUX 22		Ref (B32p)
+
+Creating JEDEC file E:\NasSync\DEV\Dev-PLD\CUPL_Projects\Z64IODECODE\\Z64IODECODE.jed ...
+
+PLCC44 programmed logic:
+-----------------------------------
+!ROM_EN = (A14 & A15);
+
+!READ_EN = (CLK & !RW);
+
+!IO_EN = (A13 & !A14 & A15);
+
+!WRITE_EN = (CLK & RW);
+
+!IOK0 = (!IO_EN & !AEL & !ATN & !ATW);
+
+!IOK2 = (!IO_EN & AEL & !ATN & !ATW);
+
+!IOK1 = (!IO_EN & !AEL & ATN & !ATW);
+
+!IOK4 = (!IO_EN & !AEL & !ATN & ATW);
+
+!IOK3 = (!IO_EN & AEL & ATN & !ATW);
+
+!IOK5 = (!IO_EN & !AEL & ATN & ATW);
+
+!IOK6 = (!IO_EN & AEL & !ATN & ATW);
+
+!IOH2 = (!AFV & !ASV & ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
+
+!IOH0 = (!AFV & !ASV & !ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
+
+!IOH1 = (AFV & !ASV & !ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
+
+!IOH7 = (AFV & ASV & ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
+
+!IOH3 = (AFV & !ASV & ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
+
+!IOH4 = (!AFV & ASV & !ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
+
+!IOH5 = (AFV & ASV & !ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
+
+!IOH6 = (!AFV & ASV & ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
+
+
+PLCC44 Pin/Node Placement:
+------------------------------------
+Pin 1  = ANN;
+Pin 2  = AET;
+Pin 4  = ASV; /* MC 1 */
+Pin 5  = ASX; /* MC 2 */
+Pin 6  = AFV; /* MC 3 */
+Pin 7  = TDI; /* MC 4 */
+Pin 8  = CLK; /* MC 5 */
+Pin 9  = RW; /* MC 6 */
+Pin 11 = READ_EN; /* MC  7 */
+Pin 12 = IOH7; /* MC  8 */
+Pin 13 = TMS; /* MC  9 */
+Pin 14 = IOH6; /* MC 10 */ 
+Pin 16 = IOH5; /* MC 11 */ 
+Pin 17 = IOH4; /* MC 12 */ 
+Pin 18 = IOH3; /* MC 13 */ 
+Pin 19 = IOH2; /* MC 14 */ 
+Pin 20 = IOH1; /* MC 15 */ 
+Pin 21 = IOH0; /* MC 16 */ 
+Pin 24 = IO_EN; /* MC 32 */ 
+Pin 25 = IOK6; /* MC 31 */ 
+Pin 26 = IOK5; /* MC 30 */ 
+Pin 27 = IOK4; /* MC 29 */ 
+Pin 28 = IOK3; /* MC 28 */ 
+Pin 29 = IOK2; /* MC 27 */ 
+Pin 31 = IOK1; /* MC 26 */ 
+Pin 32 = TCK; /* MC 25 */ 
+Pin 33 = IOK0; /* MC 24 */ 
+Pin 34 = WRITE_EN; /* MC 23 */ 
+Pin 36 = ROM_EN; /* MC 22 */ 
+Pin 37 = A15; /* MC 21 */ 
+Pin 38 = TDO; /* MC 20 */ 
+Pin 39 = A14; /* MC 19 */ 
+Pin 40 = A13; /* MC 18 */ 
+Pin 41 = ATW; /* MC 17 */ 
+Pin 43 = AEL;
+Pin 44 = ATN;
+
+** Resource Usage **
+
+
+DCERP Field = Summary of Allocations.
+|||||
+|||||_Preset [p,-]       ==  p = PT preset, - No Preset.
+||||
+||||__Reset [g,r,-]      ==  g= Global AR, r = PT reset, - No reset.
+|||
+|||___Clock Enable [e,-] ==  e = Product Term, - always enabled, - none.
+||
+||____Clock [c,g,-],     ==  c = Product term, g = Global term, - No Clock.
+|
+|_____Type [C,D,L,T],    ==  Register type C= combin, D=dff, L=latch, T=tff.
+
+For input only = INPUT.
+
+MCell Pin# Oe   PinDrive  DCERP  FBDrive  DCERP  Foldback  CascadeOut     TotPT output_slew
+MC1   4    --   ASV       INPUT  --              --        --             0     slow
+MC2   5    --   ASX       INPUT  --              --        --             0     slow
+MC3   6    --   AFV       INPUT  --              --        --             0     slow
+MC4   7    --   TDI       INPUT  --              --        --             0     slow
+MC5   8    --   CLK       INPUT  --              --        --             0     slow
+MC6   9    --   RW        INPUT  --              --        --             0     slow
+MC7   11   on   READ_EN   C----  --              --        --             1     slow
+MC8   12   on   IOH7      C----  --              --        --             1     slow
+MC9   13   --   TMS       INPUT  --              --        --             0     slow
+MC10  14   on   IOH6      C----  --              --        --             1     slow
+MC11  16   on   IOH5      C----  --              --        --             1     slow
+MC12  17   on   IOH4      C----  --              --        --             1     slow
+MC13  18   on   IOH3      C----  --              --        --             1     slow
+MC14  19   on   IOH2      C----  --              --        --             1     slow
+MC15  20   on   IOH1      C----  --              --        --             1     slow
+MC16  21   on   IOH0      C----  --              --        --             1     slow
+MC17  41   --   ATW       INPUT  --              --        --             0     slow
+MC18  40   --   A13       INPUT  --              --        --             0     slow
+MC19  39   --   A14       INPUT  --              --        --             0     slow
+MC20  38   --   TDO       INPUT  --              --        --             0     slow
+MC21  37   --   A15       INPUT  --              --        --             0     slow
+MC22  36   on   ROM_EN    C----  --              --        --             1     slow
+MC23  34   on   WRITE_EN  C----  --              --        --             1     slow
+MC24  33   on   IOK0      C----  --              --        --             1     slow
+MC25  32   --   TCK       INPUT  --              --        --             0     slow
+MC26  31   on   IOK1      C----  --              --        --             1     slow
+MC27  29   on   IOK2      C----  --              --        --             1     slow
+MC28  28   on   IOK3      C----  --              --        --             1     slow
+MC29  27   on   IOK4      C----  --              --        --             1     slow
+MC30  26   on   IOK5      C----  --              --        --             1     slow
+MC31  25   on   IOK6      C----  --              --        --             1     slow
+MC32  24   on   IO_EN     C----  --              --        --             1     slow
+MC0   2         AET       INPUT  --              --        --             0     slow
+MC0   1         ANN       INPUT  --              --        --             0     slow
+MC0   44        ATN       INPUT  --              --        --             0     slow
+MC0   43        AEL       INPUT  --              --        --             0     slow
+
+Logic Array Block	Logic Cells	I/O Pins	Foldbacks	TotalPT		FanIN	Cascades
+A: LC1	- LC16		9/16(56%)	16/16(100%)	0/16(0%)	9/80(11%)	(11)	0
+B: LC17	- LC32		10/16(62%)	16/16(100%)	0/16(0%)	10/80(12%)	(9)	0
+
+Total dedicated input used:	4/4 	(100%)
+Total I/O pins used		32/32 	(100%)
+Total Logic cells used 		19/32 	(59%)
+Total Flip-Flop used 		0/32 	(0%)
+Total Foldback logic used 	0/32 	(0%)
+Total Nodes+FB/MCells 		19/32 	(59%)
+Total cascade used 		0
+Total input pins 		17
+Total output pins 		19
+Total Pts 			19
+Creating pla file E:\NasSync\DEV\Dev-PLD\CUPL_Projects\Z64IODECODE\\Z64IODECODE.tt3 with 0 inputs 0 outputs, 0 pins 0 nodes and 0 pterms...
+
+----------------  End fitter, Design FITS
+$Device PLCC44 fits 
+FIT1502 completed in 0.00 seconds

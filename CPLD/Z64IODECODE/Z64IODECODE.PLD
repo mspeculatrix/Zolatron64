@@ -1,0 +1,85 @@
+Name     Z64IO32DECODE ;
+PartNo   00 ;
+Date     11/06/2022 ;
+Revision 01 ;
+Designer SMD ;
+Company  Machina Speculatrix ;
+Assembly ;
+Location Earth ;
+Device   f1502plcc44 ;
+
+/*
+  This does the decoding for the Z64's I/O lines.
+  It decodes for both sets of I/O addresses:
+  - 7x 1KB spaces with start addresses A000 to B800.
+  - 8x 32B spaces with start addresses BF00 to BFE0.
+  It also provides the following signals:
+  - clock-qualified /READ_EN
+  - clock-qualified /WRITE_EN
+  - /ROM_ENABLE
+  - /IO_EN
+*/
+
+
+/* *************** INPUT PINS ******************** */
+PIN 8 = CLK ;                                 /* PHI2 clock                   */
+PIN [37,39,40] = [A15..A13] ;                 /* Address bus                  */
+PIN 41 = ATW ;                                /* These pins are named         */
+PIN 43 = AEL ;                                /* indidvidually, rather than   */
+PIN 44 = ATN ;                                /* being indexed because when   */
+PIN 1 = ANN ;                                 /* indexed it created a problem */
+PIN 2 = AET ;                                 /* mixing them with the         */
+PIN 4 = ASV ;                                 /* non-indexed *_EN nodes       */
+PIN 5 = ASX ;
+PIN 6 = AFV ;
+
+
+PIN 9 = RW ;                                  /* READ/WRITE Output from 6502  */
+
+/* *************** OUTPUT PINS ******************** */
+PIN [12,14,16..21] = [IOH7..0] ;              /* 32-byte I/O addresses        */
+PIN [25..29,31,33] = [IOK6..0] ;              /* 1K I/O addresses             */
+PIN 11 = !READ_EN ;                           /* Clock-qualified read enable  */
+PIN 34 = !WRITE_EN ;                          /* Clock-qualified write enable */
+PIN 36 = !ROM_EN ;                            /* ROM enable                   */
+PIN 24 = !IO_EN ;
+
+NODE IO_ENH ;
+
+IO_EN = A15 & !A14 & A13 ;                      /* Addr decode - 1KB blocks   */
+IO_ENH = IO_EN & ATW & AEL & ATN & ANN & AET ;  /* Addr decode - 32B blocks   */
+
+/* Clock-Qualified Read and Write Enable & ROM Enable Signals --------------- */
+READ_EN  = !RW & CLK ;
+WRITE_EN = RW & CLK  ;
+ROM_EN   = A15 & A14 ;        /* Doesn't need to be clk-enabled as READ_EN is */
+
+/* 1K I/O address blocks ---------------------------------------------------- */
+FIELD IOK_ADDR = [IO_EN, ATW, AEL, ATN] ;     /* Address to select I/O dev    */
+FIELD IOK_SELECT = [IOK6..0] ;                /* I/O output state             */
+TABLE IOK_ADDR => IOK_SELECT {  /* Match address state to I/O output state    */
+'b'0XXX => 'b'1111111 ;         /* If IO_ENK is false, no output selected     */
+'b'1000 => 'b'1111110 ;         /* Selected output is LOW                     */
+'b'1001 => 'b'1111101 ;         /*    "                                       */
+'b'1010 => 'b'1111011 ;         /*    "                                       */
+'b'1011 => 'b'1110111 ;         /*    "                                       */
+'b'1100 => 'b'1101111 ;         /*    "                                       */
+'b'1101 => 'b'1011111 ;         /*    "                                       */
+'b'1110 => 'b'0111111 ;         /*    "                                       */
+'b'1111 => 'b'1111111 ;         /*    "                                       */
+}
+
+/* 32-byte I/O address blocks ----------------------------------------------- */
+FIELD IOH_ADDR = [IO_ENH, ASV, ASX, AFV];     /* Address to select I/O dev    */
+FIELD IOH_SELECT = [IOH7..0] ;                /* I/O output state             */
+TABLE IOH_ADDR => IOH_SELECT {  /* Match address state to I/O output state    */
+'b'0XXX => 'b'11111111 ;        /* If IO_ENH is false, no output selected     */
+'b'1000 => 'b'11111110 ;        /* Selected output is LOW                     */
+'b'1001 => 'b'11111101 ;        /*    "                                       */
+'b'1010 => 'b'11111011 ;        /*    "                                       */
+'b'1011 => 'b'11110111 ;        /*    "                                       */
+'b'1100 => 'b'11101111 ;        /*    "                                       */
+'b'1101 => 'b'11011111 ;        /*    "                                       */
+'b'1110 => 'b'10111111 ;        /*    "                                       */
+'b'1111 => 'b'01111111 ;        /*    "                                       */
+}

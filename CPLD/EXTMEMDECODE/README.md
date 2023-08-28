@@ -1,6 +1,6 @@
-## EXTMEMDECODE
+# EXTMEMDECODE
 
-This provides decoding for extended memory on the Zolatron 64.
+This provides decoding for extended memory on the Zolatron 64. This code programs a CPLD that sites on the extended memory board itself.
 
 It's CUPL code for programming an ATF1502ASL CPLD.
 
