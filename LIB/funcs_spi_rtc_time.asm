@@ -27,13 +27,6 @@
   plx : pla
   rts
 
-.rtc_display_date
-  rts
-
-
-\ **********  TIME OPERATIONS **************************************************
-
-
 \ ------------------------------------------------------------------------------
 \ ---  RTC_READ_TIME
 \ ------------------------------------------------------------------------------
@@ -84,7 +77,7 @@
   tax                           ; Put into X for later
   lda #RTC_SECW_MASK            ; Load appropriate write mask into RTC_REG_MASK
   sta RTC_REG_MASK
-  lda #RTC_SECS_REG             ; Load A with value of register
+  lda #RTC_SECS_REG             ; Load A with number of register
   jsr rtc_write_reg_with_mask
 
 
@@ -94,7 +87,7 @@
   tax                           ; Put into X for later
   lda #RTC_MINW_MASK            ; Load appropriate write mask into RTC_REG_MASK
   sta RTC_REG_MASK
-  lda #RTC_MINS_REG             ; Load A with value of register
+  lda #RTC_MINS_REG             ; Load A with number of register
   jsr rtc_write_reg_with_mask
 
   ; SET HOURS
@@ -103,7 +96,7 @@
   tax                           ; Put into X for later
   lda #RTC_HRW_MASK             ; Load appropriate write mask into RTC_REG_MASK
   sta RTC_REG_MASK
-  lda #RTC_HOUR_REG             ; Load A with value of register
+  lda #RTC_HOUR_REG             ; Load A with number of register
   jsr rtc_write_reg_with_mask
 
   cli

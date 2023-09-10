@@ -16,7 +16,7 @@ ALIGN &100                ; start on new page
   bne isr_zd_timer_end
   inc ZD_TIMER_COUNT + 1	  ; Previous byte rolled over
 .isr_zd_timer_end
-  jmp isr_end_chks
+  jmp isr_exit
 .isr_zd_timer_next
 
 ; --- CHECK LCD VIA TIMER ------------------------------------------------------
@@ -28,14 +28,16 @@ ALIGN &100                ; start on new page
   bne isr_lcdvia_timer_end
   inc LCDV_TIMER_COUNT + 1	   ; Previous byte rolled over
 .isr_lcdvia_timer_end
-  jmp isr_end_chks
+  jmp isr_exit
 .isr_lcdvia_timer_next
 
 ; --- CHECK SC28L92 ------------------------------------------------------------
 .isr_chk_SC28L92
-  lda SC28L92_ISR              ; Bit 1 of the ISR will be set if incoming data
-  and #DUART_RxA_RDY_MASK      ; triggered the interrupt
-  bne isr_SC28L92              ; If result not zero, that means RxRDYA bit set
+  lda SC28L92_ISR               ; Bit 1 of the ISR will be set if incoming data
+  and #DUART_RxA_RDY_MASK       ; triggered the interrupt
+  beq isr_chk_SC28L92_next          ; If result is zero, RxRDYA bit is not set
+  jmp isr_SC28L92               ; Otherwise go to the SC28L92 handlng routine
+.isr_chk_SC28L92_next
 
 ; --- CHECK ZOLADOS IRQ --------------------------------------------------------
 .isr_chk_zolados
@@ -45,29 +47,57 @@ ALIGN &100                ; start on new page
   lda IRQ_REG                   ; Load SYS_REG
   ora #ZD_IRQ                   ; and set the appropriate flag
   sta IRQ_REG                   ; Store SYS_REG again
-  jmp isr_end_chks              ; Done doing checks
+  jmp isr_exit                  ; Done doing checks
 .isr_chk_zolados_next
 
 ; --- CHECK RTC ALARM ----------------------------------------------------------
 .isr_chk_rtc
+  ;
+  ; **** THIS CODE IS UNTESTED ****
+  ;
+  lda SYS_REG                   ; Check register to see if SPI board fitted
+  and #SYS_SPI
+  beq isr_chk_rtc_next          ; No SPI board fitted
   lda #SPI_RTC_DEV              ; Select the RTC
   sta SPI_DEV_SEL
   lda #RTC_STAT_REG             ; Select the status register
-  SPI_COMM_START
+  lda SPI_DATA_REG              ; Comm start
+  lda SPI_CURR_DEV
+  sta SPI_DEV_SEL
+
   jsr spi_exchange_byte			    ; Selects the reg, don't care what's in A
   jsr spi_exchange_byte			    ; Sends dummy value, register value is in A
-  SPI_COMM_END
+  stz SPI_DEV_SEL
+  tay                           ; Keep RTC_STAT_REG value for later
   and #%00000001                ; Check Alarm 1 flag
   beq isr_chk_rtc_next          ; If it's 0, not this, go on to next check
   lda IRQ_REG                   ; Load SYS_REG
   ora #RTC_ALARM                ; and set the appropriate flag
   sta IRQ_REG                   ; Store SYS_REG again
-  jmp isr_end_chks              ; Done doing checks
+  tya                           ; Bring back RTC_STAT_REG value
+  and #%11111100                ; Unset the interrupt flags
+  tax                           ; Put in X as value to write to register
+  lda #RTC_STAT_REG             ; Load RTC_STAT_REG number
+  ora $80                       ; Set high bit to select write operation
+  lda SPI_DATA_REG              ; Comm start
+  lda SPI_CURR_DEV
+  sta SPI_DEV_SEL
+
+  jsr spi_exchange_byte			    ; Select the reg
+  txa                           ; Put the value to write in A
+  jsr spi_exchange_byte			    ; Send value
+  stz SPI_DEV_SEL
 .isr_chk_rtc_next
 
-.isr_end_chks
+; --- USER ISR -----------------------------------------------------------------
+  jmp (OSUSRINT_VEC)
+.isr_usrint_rtn                 ; Label for return address - this is important
+
+; --- END OF CHECKS ------------------------------------------------------------
+.isr_end_checks
   jmp isr_exit
 
+; --- HANDLING ROUTINES --------------------------------------------------------
 .isr_SC28L92
   ; The ISR needs to empty out the receive buffer (at least to the fill level
   ; selected) in order to clear the interrupt condition.
@@ -115,7 +145,7 @@ ALIGN &100                ; start on new page
   lda STDIN_STATUS_REG        ; Update register to show that data has
   ora #DUART_RxA_DAT_RCVD_FL  ; been received.
   sta STDIN_STATUS_REG
-  jmp isr_exit
+  ;jmp isr_exit
 
 .isr_exit
   ply : plx : pla             ; Resume original register state

@@ -15,6 +15,10 @@
   sta OSGETKEY_VEC
   lda #>getkey
   sta OSGETKEY_VEC + 1
+  lda #<get_input                        ; OSRDASC
+  sta OSGETINP_VEC
+  lda #>get_input
+  sta OSGETINP_VEC + 1
   lda #<read_ascii                    ; OSRDASC
   sta OSRDASC_VEC
   lda #>read_ascii
@@ -190,7 +194,13 @@
   sta OSDELAY_VEC
   lda #>delay
   sta OSDELAY_VEC + 1
-; OSUSRINT - to come
+; OSUSRINT - This is configured by the soft reset routine and also by user s/w
+
+  lda #<isr_usrint_rtn
+  sta OSUSRINTRTN_VEC
+  lda #>isr_usrint_rtn
+  sta OSUSRINTRTN_VEC + 1
+
   lda #<spi_exchange_byte
   sta OSSPIEXCH_VEC
   lda #>spi_exchange_byte

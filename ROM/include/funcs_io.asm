@@ -11,7 +11,7 @@
   sta FUNC_RESULT           ;
   ldx #0                    ; Init offset counter
   lda STDIN_BUF             ; Load first char in buffer
-  beq parse_cmd_nul         ; If it's a zero, the buffer is empty
+  beq parse_cmd_null        ; If it's a zero, the buffer is empty
   sta TEST_VAL              ; Store buffer char somewhere handy
 .parse_next_test
   lda cmd_ch1_tbl,X         ; Get next char from table of cmd 1st chars
@@ -21,7 +21,7 @@
   beq parse_1st_char_match  ; If it matches, on to the next step
   inx                       ; Otherwise, time to test next char in table
   jmp parse_next_test
-.parse_cmd_nul
+.parse_cmd_null
   lda #CMD_TKN_NUL
   sta FUNC_RESULT
   jmp parse_end
@@ -213,6 +213,35 @@
   rts
 
 \ ------------------------------------------------------------------------------
+\ ---  GET_INPUT
+\ ---  Implements: OSGETINP
+\ ------------------------------------------------------------------------------
+\ Creates a wait loop until the STDIN_NUL_RCVD_FL is set in STDIN_STATUS_REG.
+\ ON ENTRY: - Clears any content in STDIN_BUF.
+\ ON EXIT : - Input text is in STDIN_BUF and STDIN_IDX is set.
+\           - STDIN_NUL_RCVD_FL is cleared.
+\ A - O     X - n/a     Y - n/a
+.get_input
+  stz STDIN_IDX                         ; Zero out input buffer
+  stz STDIN_BUF
+  lda STDIN_STATUS_REG
+  and #STDIN_CLEAR_FLAGS                ; Clear flag
+  sta STDIN_STATUS_REG
+.get_input_loop
+  lda STDIN_STATUS_REG
+  and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
+  bne get_input_done                    ; If yes, process the buffer
+  ldx STDIN_IDX                         ; Load the value of the RX buffer index
+  cpx #STR_BUF_LEN                      ; Are we at the limit?
+  bcs get_input_done                    ; Branch if X >= STR_BUF_LEN
+  jmp get_input_loop
+.get_input_done
+  lda STDIN_STATUS_REG
+  and #STDIN_CLEAR_FLAGS                ; Clear flag
+  sta STDIN_STATUS_REG
+  rts
+
+\ ------------------------------------------------------------------------------
 \ ---  GETKEY
 \ ---  Implements: OSGETKEY
 \ ------------------------------------------------------------------------------
@@ -395,6 +424,9 @@
   sta FUNC_ERR
   jmp read_int_end
 .read_int_done
+  lda TMP_VAL
+  beq read_int_error
+.read_int_store
   lda MATH_TMP16
   sta FUNC_RES_L
   lda MATH_TMP16 + 1
@@ -408,9 +440,6 @@
 \ ------------------------------------------------------------------------------
 \ ---  READ_FILENAME
 \ ---  Implements: OSRDFNAME
-\ COULD BE RENAMED TO READ_STRING AS A MORE GENERAL-PURPOSE ROUTINE - OSRDSTR
-\ Keep READ_FILENAME AS A WRAPPER
-\ WOULD NEED TO UPGRADE TO ACCEPT NUMBERS (and maybe lowercase)
 \ ------------------------------------------------------------------------------
 \ This function reads characters from STDIN_BUF and stores them in STR_BUF.
 \ It assumes that STDIN_IDX contains an offset pointer to the part of STDIN_BUF
@@ -496,7 +525,7 @@
 \ ---  Implements: OSRDSTR
 \ ------------------------------------------------------------------------------
 \ Reads string from STDIN_BUF. The string is terminated when the routine
-\ encounters a nul or a space (except when spaces occur before it has
+\ encounters a null or a space (except when spaces occur before it has
 \ read any other type of character). It accepts only printable characters in
 \ certain ranges:
 \     -./0-9:
@@ -651,7 +680,13 @@
   bne read_hexbyte_fail
   jmp read_hexbyte_end
 .read_hexbyte_fail
+  cpy #1                      ; If still 1, nothing was found
+  beq read_hexbyte_null
   lda #READ_HEXBYTE_ERR_CODE
+  sta FUNC_ERR
+  jmp read_hexbyte_end
+.read_hexbyte_null
+  lda #NULL_ENTRY_ERR_CODE
   sta FUNC_ERR
 .read_hexbyte_end
   stx STDIN_IDX

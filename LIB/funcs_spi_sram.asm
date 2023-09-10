@@ -9,8 +9,23 @@
 .sram_read_byte
   lda #SRAM_CMD_READ
   jsr sram_start_WR_op
-  jsr OSSPIEXCH             ; Value of byte at address now in A
-  SPI_COMM_END
+  jsr OSSPIEXCH                   ; Value of byte at address now in A
+  stz SPI_DEV_SEL                 ; End comms
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  SRAM_WRITE_BYTE
+\ ------------------------------------------------------------------------------
+\ Assumes that SRAM has been put into SRAM_BYTE_MODE using sram_set_WR_mode
+\ ON ENTRY: - TMP_ADDR_A/+1 contains byte address
+\           - Byte value in A
+.sram_write_byte
+  pha
+  lda #SRAM_CMD_WRITE
+  jsr sram_start_WR_op
+  pla
+  jsr OSSPIEXCH
+  stz SPI_DEV_SEL                 ; End comms
   rts
 
 \ ------------------------------------------------------------------------------
@@ -30,13 +45,12 @@
   inx
   cpx #SRAM_PG_SZ
   bne sram_read_page_loop
-  SPI_COMM_END
+  stz SPI_DEV_SEL                 ; End comms
   rts
 
 \ ------------------------------------------------------------------------------
 \ ---  SRAM_SET_WR_MODE
 \ ------------------------------------------------------------------------------
-\ Replicates: setWRMode()
 \ ON ENTRY: - A contains mode code
 .sram_set_WR_mode
   pha                       ; Set aside for a moment
@@ -45,30 +59,33 @@
   jsr OSSPIEXCH
   pla                       ; Now send the mode code
   jsr OSSPIEXCH
-  SPI_COMM_END
+  stz SPI_DEV_SEL                 ; End comms
   rts
 
 \ ------------------------------------------------------------------------------
 \ ---  SRAM_START_WR_OP
 \ ------------------------------------------------------------------------------
-\ Replicates: _startWROp()
-\ ON ENTRY: - A contains operation code
+\ ON ENTRY: - Device number must have been set in SPI_CURR_DEV
+\.          - A contains operation code
 \           - TMP_ADDR_A/+1 contains address
 .sram_start_WR_op
-  SPI_COMM_START
+  pha                               ; Keep A for later
+  lda SPI_CURR_DEV                  ; Start comms
+  sta SPI_DEV_SEL
+  lda SPI_DATA_REG                  ; To clear TC flag, if set
+  pla                               ; Get back operation code
   jsr OSSPIEXCH
   lda TMP_ADDR_A_H
   jsr OSSPIEXCH
   lda TMP_ADDR_A_L
   jsr OSSPIEXCH
-  ; No SPI_COMM_END because that will be sent by function
+  ; No stz SPI_DEV_SEL because that will be sent by function
   ; calling this one.
   rts
 
 \ ------------------------------------------------------------------------------
 \ ---  SRAM_WRITE_PAGE
 \ ------------------------------------------------------------------------------
-\ Replicates: writePage()
 \ Assumes that SRAM has been put into SRAM_PAGE_MODE using sram_set_WR_mode
 \ ON ENTRY: - TMP_ADDR_A/+1 contains start address
 \           - SPI_BUF_32 buffer contains data to write
@@ -82,5 +99,5 @@
   inx
   cpx #SRAM_PG_SZ
   bne sram_write_page_loop
-  SPI_COMM_END
+  stz SPI_DEV_SEL                 ; End comms
   rts

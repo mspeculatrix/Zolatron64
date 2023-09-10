@@ -28,7 +28,7 @@
   jsr compare_addr
   lda FUNC_RESULT
   bne cmdprcLM_addr_fail
-  jmp cmdprcLM_chk_nul
+  jmp cmdprcLM_chk_null
 .cmdprcLM_addr_fail
   lda #ERR_ADDR
   sta FUNC_ERR
@@ -37,7 +37,7 @@
   lda #SYNTAX_ERR_CODE      ; We'll return a syntax error
   sta FUNC_ERR
   jmp cmdprc_fail
-.cmdprcLM_chk_nul           ; Check there's nothing left in the RX buffer
+.cmdprcLM_chk_null          ; Check there's nothing left in the RX buffer
   ldx STDIN_IDX
   lda STDIN_BUF,X           ; Should be null. Anything else is a mistake
   bne cmdprcLM_chk_fail
@@ -80,7 +80,7 @@
   jsr read_hex_byte         ; Read 2 hex chars from input: result in FUNC_RESULT
   lda FUNC_ERR              ; Check for error
   bne cmdprcLP_fail
-.cmdprcLP_chk_nul           ; Check there's nothing left in the RX buffer
+.cmdprcLP_chk_null           ; Check there's nothing left in the RX buffer
   ldx STDIN_IDX
   lda STDIN_BUF,X           ; Should be null. Anything else is a mistake
   bne cmdprcLP_fail

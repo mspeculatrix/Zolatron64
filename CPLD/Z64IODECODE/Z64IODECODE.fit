@@ -1,7 +1,7 @@
-Atmel ATF1502AS Fitter Version 1.8.7.8 ,running Thu Jul 20 11:34:47 2023
+Atmel ATF1504AS Fitter Version 1.8.7.8 ,running Sat Sep 09 10:18:02 2023
 
 
-fit1502 E:\NasSync\DEV\Dev-PLD\CUPL_Projects\Z64IODECODE\\Z64IODECODE.tt2 -CUPL -dev P1502C44 -JTAG ON -logic_doubling off
+fit1504 E:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE.tt2 -CUPL -dev P1504C44 -JTAG ON -logic_doubling off
 
 
 ****** Initial fitting strategy and property ******
@@ -48,7 +48,7 @@ fit1502 E:\NasSync\DEV\Dev-PLD\CUPL_Projects\Z64IODECODE\\Z64IODECODE.tt2 -CUPL 
  ITD2 = ON
  Fast_inlatch = off
  *******************************
-Info: E:\NasSync\DEV\Dev-PLD\CUPL_Projects\Z64IODECODE\\Z64IODECODE uses 95% of the pins available in device PLCC44
+Info: E:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE uses 95% of the pins available in device PLCC44
   If you wish to have more pins available for future logic changes
   Atmel  recommends using a larger device
 ---------------------------------------------------------
@@ -76,38 +76,38 @@ ATN assigned to pin  44
 
 Attempt to place floating signals ...
 ------------------------------------
-ASV is placed at pin 4 (MC 1)
-ASX is placed at pin 5 (MC 2)
-AFV is placed at pin 6 (MC 3)
-TDI is placed at pin 7 (MC 4)
+IOH7 is placed at pin 12 (MC 1)
+READ_EN is placed at pin 11 (MC 3)
+RW is placed at pin 9 (MC 4)
 CLK is placed at pin 8 (MC 5)
-RW is placed at pin 9 (MC 6)
-READ_EN is placed at pin 11 (MC 7)
-IOH7 is placed at pin 12 (MC 8)
-TMS is placed at pin 13 (MC 9)
-IOH6 is placed at pin 14 (MC 10)
-IOH5 is placed at pin 16 (MC 11)
-IOH4 is placed at pin 17 (MC 12)
-IOH3 is placed at pin 18 (MC 13)
-IOH2 is placed at pin 19 (MC 14)
-IOH1 is placed at pin 20 (MC 15)
-IOH0 is placed at pin 21 (MC 16)
-ATW is placed at pin 41 (MC 17)
-A13 is placed at pin 40 (MC 18)
-A14 is placed at pin 39 (MC 19)
-TDO is placed at pin 38 (MC 20)
-A15 is placed at pin 37 (MC 21)
-ROM_EN is placed at pin 36 (MC 22)
-WRITE_EN is placed at pin 34 (MC 23)
-IOK0 is placed at pin 33 (MC 24)
-TCK is placed at pin 32 (MC 25)
-IOK1 is placed at pin 31 (MC 26)
-IOK2 is placed at pin 29 (MC 27)
-IOK3 is placed at pin 28 (MC 28)
-IOK4 is placed at pin 27 (MC 29)
-IOK5 is placed at pin 26 (MC 30)
-IOK6 is placed at pin 25 (MC 31)
-IO_EN is placed at pin 24 (MC 32)
+TDI is placed at pin 7 (MC 8)
+AFV is placed at pin 6 (MC 11)
+ASX is placed at pin 5 (MC 14)
+ASV is placed at pin 4 (MC 16)
+IOH0 is placed at pin 21 (MC 17)
+IOH1 is placed at pin 20 (MC 19)
+IOH2 is placed at pin 19 (MC 20)
+IOH3 is placed at pin 18 (MC 21)
+IOH4 is placed at pin 17 (MC 24)
+IOH5 is placed at pin 16 (MC 25)
+IOH6 is placed at pin 14 (MC 30)
+TMS is placed at pin 13 (MC 32)
+IO_EN is placed at pin 24 (MC 33)
+IOK6 is placed at pin 25 (MC 35)
+IOK5 is placed at pin 26 (MC 36)
+IOK4 is placed at pin 27 (MC 37)
+IOK3 is placed at pin 28 (MC 40)
+IOK2 is placed at pin 29 (MC 41)
+IOK1 is placed at pin 31 (MC 46)
+TCK is placed at pin 32 (MC 48)
+IOK0 is placed at pin 33 (MC 49)
+WRITE_EN is placed at pin 34 (MC 51)
+ROM_EN is placed at pin 36 (MC 52)
+A15 is placed at pin 37 (MC 53)
+TDO is placed at pin 38 (MC 56)
+A14 is placed at pin 39 (MC 57)
+A13 is placed at pin 40 (MC 62)
+ATW is placed at pin 41 (MC 64)
 
                                                                  
                                                                  
@@ -123,7 +123,7 @@ IO_EN is placed at pin 24 (MC 32)
           RW |  9                                37 | A15        
          GND | 10                                36 | ROM_EN     
      READ_EN | 11                                35 | VCC        
-        IOH7 | 12            ATF1502             34 | WRITE_EN   
+        IOH7 | 12            ATF1504             34 | WRITE_EN   
          TMS | 13          44-Lead PLCC          33 | IOK0       
         IOH6 | 14                                32 | TCK        
          VCC | 15                                31 | IOK1       
@@ -151,61 +151,106 @@ Universal-Interconnect-Multiplexer assignments
 ------------------------------------------------
 FanIn assignment for block A [11]
 {
-AEL,ATN,ASV,ASX,AFV,ATW,ANN,AET,
+AFV,AET,ATN,ATW,ASX,AEL,ASV,ANN,
 CLK,
 IO_EN,
 RW,
 }
 Multiplexer assignment for block A
-AEL			(MC2	FB)  : MUX 0		Ref (GCLK)
-RW			(MC6	P)   : MUX 1		Ref (A6p)
-CLK			(MC5	P)   : MUX 2		Ref (A5p)
-ATN			(MC3	FB)  : MUX 10		Ref (OE1)
-ASV			(MC8	P)   : MUX 12		Ref (A1p)
-ASX			(MC9	P)   : MUX 13		Ref (A2p)
-AFV			(MC7	P)   : MUX 14		Ref (A3p)
-ATW			(MC4	P)   : MUX 18		Ref (B17p)
-ANN			(MC11	FB)  : MUX 20		Ref (GCLR)
-IO_EN			(MC1	P)   : MUX 22		Ref (B32p)
-AET			(MC10	FB)  : MUX 30		Ref (OE2)
+AFV			(MC6	P)   : MUX 0		Ref (A11p)
+AET			(MC5	FB)  : MUX 12		Ref (OE2)
+ATN			(MC3	FB)  : MUX 13		Ref (OE1)
+RW			(MC11	P)   : MUX 17		Ref (A4p)
+ATW			(MC4	P)   : MUX 20		Ref (D64p)
+CLK			(MC10	P)   : MUX 23		Ref (A5p)
+ASX			(MC9	P)   : MUX 32		Ref (A14p)
+AEL			(MC2	FB)  : MUX 33		Ref (GCLK)
+ASV			(MC8	P)   : MUX 36		Ref (A16p)
+IO_EN			(MC1	P)   : MUX 37		Ref (C33p)
+ANN			(MC7	FB)  : MUX 38		Ref (GCLR)
 
 FanIn assignment for block B [9]
 {
-AEL,A15,A13,A14,ATW,ATN,
+AFV,AET,ATN,ATW,ASX,ASV,AEL,ANN,
+IO_EN,
+}
+Multiplexer assignment for block B
+AFV			(MC6	P)   : MUX 0		Ref (A11p)
+AET			(MC5	FB)  : MUX 12		Ref (OE2)
+ATN			(MC3	FB)  : MUX 13		Ref (OE1)
+ATW			(MC4	P)   : MUX 20		Ref (D64p)
+IO_EN			(MC1	P)   : MUX 23		Ref (C33p)
+ASX			(MC9	P)   : MUX 32		Ref (A14p)
+ASV			(MC8	P)   : MUX 36		Ref (A16p)
+AEL			(MC2	FB)  : MUX 37		Ref (GCLK)
+ANN			(MC7	FB)  : MUX 38		Ref (GCLR)
+
+FanIn assignment for block C [7]
+{
+A14,ATN,ATW,A13,AEL,A15,
+IO_EN,
+}
+Multiplexer assignment for block C
+A14			(MC5	P)   : MUX 8		Ref (D57p)
+ATN			(MC3	FB)  : MUX 13		Ref (OE1)
+ATW			(MC4	P)   : MUX 20		Ref (D64p)
+IO_EN			(MC1	P)   : MUX 23		Ref (C33p)
+A13			(MC7	P)   : MUX 26		Ref (D62p)
+AEL			(MC2	FB)  : MUX 33		Ref (GCLK)
+A15			(MC6	P)   : MUX 37		Ref (D53p)
+
+FanIn assignment for block D [8]
+{
+A14,ATN,ATW,AEL,A15,
 CLK,
 IO_EN,
 RW,
 }
-Multiplexer assignment for block B
-AEL			(MC2	FB)  : MUX 0		Ref (GCLK)
-RW			(MC6	P)   : MUX 1		Ref (A6p)
-CLK			(MC5	P)   : MUX 2		Ref (A5p)
-A15			(MC9	P)   : MUX 8		Ref (B21p)
-A13			(MC7	P)   : MUX 10		Ref (B18p)
-A14			(MC8	P)   : MUX 14		Ref (B19p)
-ATW			(MC4	P)   : MUX 18		Ref (B17p)
-ATN			(MC3	FB)  : MUX 19		Ref (OE1)
-IO_EN			(MC1	P)   : MUX 22		Ref (B32p)
+Multiplexer assignment for block D
+A14			(MC7	P)   : MUX 8		Ref (D57p)
+ATN			(MC3	FB)  : MUX 13		Ref (OE1)
+RW			(MC6	P)   : MUX 17		Ref (A4p)
+ATW			(MC4	P)   : MUX 20		Ref (D64p)
+CLK			(MC5	P)   : MUX 21		Ref (A5p)
+IO_EN			(MC1	P)   : MUX 23		Ref (C33p)
+AEL			(MC2	FB)  : MUX 33		Ref (GCLK)
+A15			(MC8	P)   : MUX 37		Ref (D53p)
 
-Creating JEDEC file E:\NasSync\DEV\Dev-PLD\CUPL_Projects\Z64IODECODE\\Z64IODECODE.jed ...
+Creating JEDEC file E:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE.jed ...
 
 PLCC44 programmed logic:
 -----------------------------------
 !ROM_EN = (A14 & A15);
 
-!READ_EN = (CLK & !RW);
-
 !IO_EN = (A13 & !A14 & A15);
+
+!READ_EN = (CLK & !RW);
 
 !WRITE_EN = (CLK & RW);
 
+!IOH2 = (!IO_EN & AEL & AET & !AFV & ANN & !ASV & ASX & ATN & ATW);
+
+!IOH3 = (!IO_EN & AEL & AET & AFV & ANN & !ASV & ASX & ATN & ATW);
+
+!IOH0 = (!IO_EN & AEL & AET & !AFV & ANN & !ASV & !ASX & ATN & ATW);
+
+!IOH1 = (!IO_EN & AEL & AET & AFV & ANN & !ASV & !ASX & ATN & ATW);
+
+!IOH4 = (!IO_EN & AEL & AET & !AFV & ANN & ASV & !ASX & ATN & ATW);
+
+!IOH7 = (!IO_EN & AEL & AET & AFV & ANN & ASV & ASX & ATN & ATW);
+
 !IOK0 = (!IO_EN & !AEL & !ATN & !ATW);
 
-!IOK2 = (!IO_EN & AEL & !ATN & !ATW);
+!IOH5 = (!IO_EN & AEL & AET & AFV & ANN & ASV & !ASX & ATN & ATW);
+
+!IOH6 = (!IO_EN & AEL & AET & !AFV & ANN & ASV & ASX & ATN & ATW);
 
 !IOK1 = (!IO_EN & !AEL & ATN & !ATW);
 
 !IOK4 = (!IO_EN & !AEL & !ATN & ATW);
+
+!IOK2 = (!IO_EN & AEL & !ATN & !ATW);
 
 !IOK3 = (!IO_EN & AEL & ATN & !ATW);
 
@@ -213,59 +258,43 @@ PLCC44 programmed logic:
 
 !IOK6 = (!IO_EN & AEL & !ATN & ATW);
 
-!IOH2 = (!AFV & !ASV & ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
-
-!IOH0 = (!AFV & !ASV & !ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
-
-!IOH1 = (AFV & !ASV & !ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
-
-!IOH7 = (AFV & ASV & ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
-
-!IOH3 = (AFV & !ASV & ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
-
-!IOH4 = (!AFV & ASV & !ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
-
-!IOH5 = (AFV & ASV & !ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
-
-!IOH6 = (!AFV & ASV & ASX & AEL & AET & ANN & ATN & ATW & !IO_EN);
-
 
 PLCC44 Pin/Node Placement:
 ------------------------------------
 Pin 1  = ANN;
 Pin 2  = AET;
-Pin 4  = ASV; /* MC 1 */
-Pin 5  = ASX; /* MC 2 */
-Pin 6  = AFV; /* MC 3 */
-Pin 7  = TDI; /* MC 4 */
+Pin 4  = ASV; /* MC 16 */
+Pin 5  = ASX; /* MC 14 */
+Pin 6  = AFV; /* MC 11 */
+Pin 7  = TDI; /* MC 8 */
 Pin 8  = CLK; /* MC 5 */
-Pin 9  = RW; /* MC 6 */
-Pin 11 = READ_EN; /* MC  7 */
-Pin 12 = IOH7; /* MC  8 */
-Pin 13 = TMS; /* MC  9 */
-Pin 14 = IOH6; /* MC 10 */ 
-Pin 16 = IOH5; /* MC 11 */ 
-Pin 17 = IOH4; /* MC 12 */ 
-Pin 18 = IOH3; /* MC 13 */ 
-Pin 19 = IOH2; /* MC 14 */ 
-Pin 20 = IOH1; /* MC 15 */ 
-Pin 21 = IOH0; /* MC 16 */ 
-Pin 24 = IO_EN; /* MC 32 */ 
-Pin 25 = IOK6; /* MC 31 */ 
-Pin 26 = IOK5; /* MC 30 */ 
-Pin 27 = IOK4; /* MC 29 */ 
-Pin 28 = IOK3; /* MC 28 */ 
-Pin 29 = IOK2; /* MC 27 */ 
-Pin 31 = IOK1; /* MC 26 */ 
-Pin 32 = TCK; /* MC 25 */ 
-Pin 33 = IOK0; /* MC 24 */ 
-Pin 34 = WRITE_EN; /* MC 23 */ 
-Pin 36 = ROM_EN; /* MC 22 */ 
-Pin 37 = A15; /* MC 21 */ 
-Pin 38 = TDO; /* MC 20 */ 
-Pin 39 = A14; /* MC 19 */ 
-Pin 40 = A13; /* MC 18 */ 
-Pin 41 = ATW; /* MC 17 */ 
+Pin 9  = RW; /* MC 4 */
+Pin 11 = READ_EN; /* MC  3 */
+Pin 12 = IOH7; /* MC  1 */
+Pin 13 = TMS; /* MC 32 */ 
+Pin 14 = IOH6; /* MC 30 */ 
+Pin 16 = IOH5; /* MC 25 */ 
+Pin 17 = IOH4; /* MC 24 */ 
+Pin 18 = IOH3; /* MC 21 */ 
+Pin 19 = IOH2; /* MC 20 */ 
+Pin 20 = IOH1; /* MC 19 */ 
+Pin 21 = IOH0; /* MC 17 */ 
+Pin 24 = IO_EN; /* MC 33 */ 
+Pin 25 = IOK6; /* MC 35 */ 
+Pin 26 = IOK5; /* MC 36 */ 
+Pin 27 = IOK4; /* MC 37 */ 
+Pin 28 = IOK3; /* MC 40 */ 
+Pin 29 = IOK2; /* MC 41 */ 
+Pin 31 = IOK1; /* MC 46 */ 
+Pin 32 = TCK; /* MC 48 */ 
+Pin 33 = IOK0; /* MC 49 */ 
+Pin 34 = WRITE_EN; /* MC 51 */ 
+Pin 36 = ROM_EN; /* MC 52 */ 
+Pin 37 = A15; /* MC 53 */ 
+Pin 38 = TDO; /* MC 56 */ 
+Pin 39 = A14; /* MC 57 */ 
+Pin 40 = A13; /* MC 62 */ 
+Pin 41 = ATW; /* MC 64 */ 
 Pin 43 = AEL;
 Pin 44 = ATN;
 
@@ -287,59 +316,93 @@ DCERP Field = Summary of Allocations.
 For input only = INPUT.
 
 MCell Pin# Oe   PinDrive  DCERP  FBDrive  DCERP  Foldback  CascadeOut     TotPT output_slew
-MC1   4    --   ASV       INPUT  --              --        --             0     slow
-MC2   5    --   ASX       INPUT  --              --        --             0     slow
-MC3   6    --   AFV       INPUT  --              --        --             0     slow
-MC4   7    --   TDI       INPUT  --              --        --             0     slow
+MC1   12   on   IOH7      C----  --              --        --             1     slow
+MC2   0         --               --              --        --             0     slow
+MC3   11   on   READ_EN   C----  --              --        --             1     slow
+MC4   9    --   RW        INPUT  --              --        --             0     slow
 MC5   8    --   CLK       INPUT  --              --        --             0     slow
-MC6   9    --   RW        INPUT  --              --        --             0     slow
-MC7   11   on   READ_EN   C----  --              --        --             1     slow
-MC8   12   on   IOH7      C----  --              --        --             1     slow
-MC9   13   --   TMS       INPUT  --              --        --             0     slow
-MC10  14   on   IOH6      C----  --              --        --             1     slow
-MC11  16   on   IOH5      C----  --              --        --             1     slow
-MC12  17   on   IOH4      C----  --              --        --             1     slow
-MC13  18   on   IOH3      C----  --              --        --             1     slow
-MC14  19   on   IOH2      C----  --              --        --             1     slow
-MC15  20   on   IOH1      C----  --              --        --             1     slow
-MC16  21   on   IOH0      C----  --              --        --             1     slow
-MC17  41   --   ATW       INPUT  --              --        --             0     slow
-MC18  40   --   A13       INPUT  --              --        --             0     slow
-MC19  39   --   A14       INPUT  --              --        --             0     slow
-MC20  38   --   TDO       INPUT  --              --        --             0     slow
-MC21  37   --   A15       INPUT  --              --        --             0     slow
-MC22  36   on   ROM_EN    C----  --              --        --             1     slow
-MC23  34   on   WRITE_EN  C----  --              --        --             1     slow
-MC24  33   on   IOK0      C----  --              --        --             1     slow
-MC25  32   --   TCK       INPUT  --              --        --             0     slow
-MC26  31   on   IOK1      C----  --              --        --             1     slow
-MC27  29   on   IOK2      C----  --              --        --             1     slow
-MC28  28   on   IOK3      C----  --              --        --             1     slow
-MC29  27   on   IOK4      C----  --              --        --             1     slow
-MC30  26   on   IOK5      C----  --              --        --             1     slow
-MC31  25   on   IOK6      C----  --              --        --             1     slow
-MC32  24   on   IO_EN     C----  --              --        --             1     slow
+MC6   0         --               --              --        --             0     slow
+MC7   0         --               --              --        --             0     slow
+MC8   7    --   TDI       INPUT  --              --        --             0     slow
+MC9   0         --               --              --        --             0     slow
+MC10  0         --               --              --        --             0     slow
+MC11  6    --   AFV       INPUT  --              --        --             0     slow
+MC12  0         --               --              --        --             0     slow
+MC13  0         --               --              --        --             0     slow
+MC14  5    --   ASX       INPUT  --              --        --             0     slow
+MC15  0         --               --              --        --             0     slow
+MC16  4    --   ASV       INPUT  --              --        --             0     slow
+MC17  21   on   IOH0      C----  --              --        --             1     slow
+MC18  0         --               --              --        --             0     slow
+MC19  20   on   IOH1      C----  --              --        --             1     slow
+MC20  19   on   IOH2      C----  --              --        --             1     slow
+MC21  18   on   IOH3      C----  --              --        --             1     slow
+MC22  0         --               --              --        --             0     slow
+MC23  0         --               --              --        --             0     slow
+MC24  17   on   IOH4      C----  --              --        --             1     slow
+MC25  16   on   IOH5      C----  --              --        --             1     slow
+MC26  0         --               --              --        --             0     slow
+MC27  0         --               --              --        --             0     slow
+MC28  0         --               --              --        --             0     slow
+MC29  0         --               --              --        --             0     slow
+MC30  14   on   IOH6      C----  --              --        --             1     slow
+MC31  0         --               --              --        --             0     slow
+MC32  13   --   TMS       INPUT  --              --        --             0     slow
+MC33  24   on   IO_EN     C----  --              --        --             1     slow
+MC34  0         --               --              --        --             0     slow
+MC35  25   on   IOK6      C----  --              --        --             1     slow
+MC36  26   on   IOK5      C----  --              --        --             1     slow
+MC37  27   on   IOK4      C----  --              --        --             1     slow
+MC38  0         --               --              --        --             0     slow
+MC39  0         --               --              --        --             0     slow
+MC40  28   on   IOK3      C----  --              --        --             1     slow
+MC41  29   on   IOK2      C----  --              --        --             1     slow
+MC42  0         --               --              --        --             0     slow
+MC43  0         --               --              --        --             0     slow
+MC44  0         --               --              --        --             0     slow
+MC45  0         --               --              --        --             0     slow
+MC46  31   on   IOK1      C----  --              --        --             1     slow
+MC47  0         --               --              --        --             0     slow
+MC48  32   --   TCK       INPUT  --              --        --             0     slow
+MC49  33   on   IOK0      C----  --              --        --             1     slow
+MC50  0         --               --              --        --             0     slow
+MC51  34   on   WRITE_EN  C----  --              --        --             1     slow
+MC52  36   on   ROM_EN    C----  --              --        --             1     slow
+MC53  37   --   A15       INPUT  --              --        --             0     slow
+MC54  0         --               --              --        --             0     slow
+MC55  0         --               --              --        --             0     slow
+MC56  38   --   TDO       INPUT  --              --        --             0     slow
+MC57  39   --   A14       INPUT  --              --        --             0     slow
+MC58  0         --               --              --        --             0     slow
+MC59  0         --               --              --        --             0     slow
+MC60  0         --               --              --        --             0     slow
+MC61  0         --               --              --        --             0     slow
+MC62  40   --   A13       INPUT  --              --        --             0     slow
+MC63  0         --               --              --        --             0     slow
+MC64  41   --   ATW       INPUT  --              --        --             0     slow
 MC0   2         AET       INPUT  --              --        --             0     slow
 MC0   1         ANN       INPUT  --              --        --             0     slow
 MC0   44        ATN       INPUT  --              --        --             0     slow
 MC0   43        AEL       INPUT  --              --        --             0     slow
 
 Logic Array Block	Logic Cells	I/O Pins	Foldbacks	TotalPT		FanIN	Cascades
-A: LC1	- LC16		9/16(56%)	16/16(100%)	0/16(0%)	9/80(11%)	(11)	0
-B: LC17	- LC32		10/16(62%)	16/16(100%)	0/16(0%)	10/80(12%)	(9)	0
+A: LC1	- LC16		2/16(12%)	8/16(50%)	0/16(0%)	2/80(2%)	(11)	0
+B: LC17	- LC32		7/16(43%)	8/16(50%)	0/16(0%)	7/80(8%)	(9)	0
+C: LC33	- LC48		7/16(43%)	8/16(50%)	0/16(0%)	7/80(8%)	(7)	0
+D: LC49	- LC64		3/16(18%)	8/16(50%)	0/16(0%)	3/80(3%)	(8)	0
 
 Total dedicated input used:	4/4 	(100%)
 Total I/O pins used		32/32 	(100%)
-Total Logic cells used 		19/32 	(59%)
-Total Flip-Flop used 		0/32 	(0%)
-Total Foldback logic used 	0/32 	(0%)
-Total Nodes+FB/MCells 		19/32 	(59%)
+Total Logic cells used 		19/64 	(29%)
+Total Flip-Flop used 		0/64 	(0%)
+Total Foldback logic used 	0/64 	(0%)
+Total Nodes+FB/MCells 		19/64 	(29%)
 Total cascade used 		0
 Total input pins 		17
 Total output pins 		19
 Total Pts 			19
-Creating pla file E:\NasSync\DEV\Dev-PLD\CUPL_Projects\Z64IODECODE\\Z64IODECODE.tt3 with 0 inputs 0 outputs, 0 pins 0 nodes and 0 pterms...
+Creating pla file E:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE.tt3 with 0 inputs 0 outputs, 0 pins 0 nodes and 0 pterms...
 
 ----------------  End fitter, Design FITS
 $Device PLCC44 fits 
-FIT1502 completed in 0.00 seconds
+FIT1504 completed in 0.00 seconds

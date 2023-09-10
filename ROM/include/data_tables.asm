@@ -174,6 +174,7 @@ ALIGN &100                  ; Start on new page
 \ text in the Error Messages section.
 .err_ptrs
   equw err_msg_cmd
+  equw err_null_entry
   equw err_msg_hex_bin_conv
   equw err_msg_parse
   equw err_msg_read_hexbyte
@@ -218,6 +219,8 @@ ALIGN &100                  ; Start on new page
 \ Error Messages
 .err_msg_cmd
   equs "Bad command! Bad, bad command!", 0
+.err_null_entry
+  equs "Null entry",0
 .err_msg_hex_bin_conv
   equs "Hex-byte error",0
 .err_msg_parse

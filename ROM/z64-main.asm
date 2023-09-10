@@ -59,7 +59,7 @@ ORG ROM_START          ; This is where the actual code starts.
   stz FUNC_ERR              ; Zero out function return values
   stz FUNC_RESULT
   ; Now doing the following at the soft reset stage
-;  stz STDIN_BUF             ; Set first byte of STDIN buffer to a nul (0)
+;  stz STDIN_BUF             ; Set first byte of STDIN buffer to a null (0)
 ;  stz STDIN_IDX             ; and set the corresponding index
 ;  stz STDOUT_BUF            ; Do the same for the STDOUT buffer
 ;  stz STDOUT_IDX
@@ -140,13 +140,12 @@ INCLUDE "include/os_call_vectors.asm"
 \ -----  CHECK FOR SPI INTERFACE BOARD  ----------------------------------------
 \ Sets the SYS_SPI bit in SYS_REG
 \ SPI65 device register is at $BF02
-  lda #0
-  sta $BF02
-  lda $BF02
-  bne spi_chk_not_present
+  stz SPI_DEV_SEL                 ; Try writing a couple of different values
+  lda SPI_DEV_SEL                 ; to the device select register and read them
+  bne spi_chk_not_present         ; back to see if they stick.
   lda #3
-  sta $BF02
-  lda $BF02
+  sta SPI_DEV_SEL
+  lda SPI_DEV_SEL
   cmp #3
   beq spi_chk_present
 .spi_chk_not_present
@@ -159,6 +158,7 @@ INCLUDE "include/os_call_vectors.asm"
   lda SYS_REG
   ora #SYS_SPI
   sta SYS_REG
+  stz SPI_DEV_SEL                 ; Set device to 0 (ie, none)
   LOAD_MSG spi_if_present_msg
 .spi_chk_done
   jsr OSWRMSG
@@ -208,18 +208,27 @@ INCLUDE "include/os_call_vectors.asm"
 \ ------------------------------------------------------------------------------
 \ -----  SOFT RESET
 \ ------------------------------------------------------------------------------
-.soft_reset
+.soft_reset                               ; OSSFTRST
   LED_OFF LED_ERR                         ; Turn off the LEDs
   LED_OFF LED_BUSY
   LED_OFF LED_FILE_ACT
   LED_OFF LED_DEBUG
   LED_ON LED_OK
 
-  stz STDIN_BUF             ; Set first byte of STDIN buffer to a nul (0)
-  stz STDIN_IDX             ; and set the corresponding index
-  stz STDOUT_BUF            ; Do the same for the STDOUT buffer
+  stz STDIN_BUF                   ; Set first byte of STDIN buffer to a null (0)
+  stz STDIN_IDX                   ; and set the corresponding index
+  stz STDOUT_BUF                  ; Do the same for the STDOUT buffer
   stz STDOUT_IDX
-  stz STDIN_STATUS_REG      ; Zero out the STDIN register
+  stz STDIN_STATUS_REG            ; Zero out the STDIN register
+
+  ; Unset user port interrupts
+  lda #%01111111                  ; Unset all interrupts
+  sta USRP_IER                    ; Write to enable register
+
+  lda #<isr_usrint_rtn            ; Reset user interrupt vector
+  sta OSUSRINT_VEC
+  lda #>isr_usrint_rtn
+  sta OSUSRINT_VEC + 1
 
 ; BOOT ROM
 ; Check to see if there is boot ROM code in bank 0 of extended memory.
@@ -240,7 +249,7 @@ INCLUDE "include/os_call_vectors.asm"
 \ ------------------------------------------------------------------------------
 \ ----- MAIN LOOP
 \ ------------------------------------------------------------------------------
-.mainloop                               ; Loop forever
+.mainloop                               ;
   ; SHOULD CHECK IRQ_REG here
   ; lda IRQ_REG                         ; Load the IRQ register
   ; beq mainloop_chk_input              ; If zero, nothing to worry about
@@ -274,7 +283,7 @@ INCLUDE "include/os_call_vectors.asm"
   jsr parse_input                         ; Puts command token in FUNC_RESULT
   lda FUNC_RESULT                         ; Get the result
   cmp #CMD_TKN_NUL
-  beq process_input_nul
+  beq process_input_null
   cmp #CMD_TKN_FAIL                       ; This means a syntax error
   beq process_input_nomatch
   cmp #PARSE_ERR_CODE                     ; This means no match with cmd list
@@ -308,7 +317,7 @@ INCLUDE "include/os_call_vectors.asm"
   lda #PARSE_ERR_CODE
   sta FUNC_ERR
   jsr os_print_error
-.process_input_nul
+.process_input_null
   SERIAL_PROMPT
   LED_OFF LED_FILE_ACT
   jmp process_input_done
@@ -393,6 +402,7 @@ ALIGN &100                                        ; Start on new page
 ORG $FF00                     ; Must match address at start of OS Function
 .os_call_jump_table           ; Address Table in cfg_main.asm
   jmp (OSGETKEY_VEC)
+  jmp (OSGETINP_VEC)
   jmp (OSRDASC_VEC)
   jmp (OSRDBYTE_VEC)
   jmp (OSRDCH_VEC)
@@ -447,6 +457,7 @@ ORG $FF00                     ; Must match address at start of OS Function
 
   jmp (OSDELAY_VEC)
   jmp (OSUSRINT_VEC)
+  jmp (OSUSRINTRTN_VEC)
 
   jmp (OSSPIEXCH_VEC)
 

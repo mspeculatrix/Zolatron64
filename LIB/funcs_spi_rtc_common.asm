@@ -2,6 +2,7 @@
 \ ---  RTC_INIT
 \ ------------------------------------------------------------------------------
 .rtc_init
+  sei
   lda #SPI_RTC_DEV              ; Select the RTC
   sta SPI_DEV_SEL
   lda #RTC_HOUR_REG             ; Set 12/24 bit to ensure 24-hour operation
@@ -18,42 +19,51 @@
   ldx #RTC_STAT_INIT
   jsr rtc_write_reg
 
+  \ Maybe should clear interrupt bits here
+  cli
   rts
-
 
 \ ------------------------------------------------------------------------------
 \ ---  RTC_READ_REG
 \ ------------------------------------------------------------------------------
-\ ON ENTRY: Register address should be in A
+\ ON ENTRY: Register number should be in A
 \ ON EXIT : A contains read value
 \ A - O     X - n/a     Y - n/a
 .rtc_read_reg
-  SPI_COMM_START
-  jsr OSSPIEXCH			; Selects the reg, don't care what's in A
-  jsr OSSPIEXCH			; Sends dummy value, register value is in A
-  SPI_COMM_END
+  pha                               ; Save register number for later
+  lda SPI_DATA_REG                  ; Comm start
+  lda SPI_CURR_DEV
+  sta SPI_DEV_SEL
+  pla                               ; Get register number back
+  jsr OSSPIEXCH			                ; Selects the reg, don't care what's in A
+  jsr OSSPIEXCH			                ; Sends dummy value, register value is in A
+  stz SPI_DEV_SEL                   ; Comm end
   rts
 
 \ ------------------------------------------------------------------------------
 \ ---  RTC_WRITE_REG
 \ ------------------------------------------------------------------------------
-\ ON ENTRY: - Register address should be in A
+\ ON ENTRY: - Register number should be in A
 \           - Value to be written should be in X
 \ This does no masking of bits nor conversion to BCD
 \ A - O     X - O     Y - n/a
 .rtc_write_reg
-  ora $80                   ; To select write version of register
-  SPI_COMM_START
-  jsr OSSPIEXCH			; Select the reg, don't care what comes back in A
-  tax                       ; Put the value to write in A
-  jsr OSSPIEXCH			; Send value
-  SPI_COMM_END
+  ora #$80                  ; To select write version of register
+  pha                       ; Save register number for later
+  lda SPI_DATA_REG          ; Comm start - do read to clear TC if set
+  lda SPI_CURR_DEV
+  sta SPI_DEV_SEL
+  pla                       ; Get register number back
+  jsr OSSPIEXCH			        ; Select the reg, don't care what comes back in A
+  txa                       ; Put the value to write in A
+  jsr OSSPIEXCH			        ; Send value
+  stz SPI_DEV_SEL           ; Comm end
   rts
 
 \ ------------------------------------------------------------------------------
 \ ---  RTC_WRITE_REG_WITH_MASK
 \ ------------------------------------------------------------------------------
-\ ON ENTRY: - Register address in A
+\ ON ENTRY: - Register number in A
 \           - Value to be written in X
 \           - Write mask in RTC_REG_MASK
 \ A - O     X - O     Y - n/a

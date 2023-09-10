@@ -10,9 +10,9 @@
   equb >endcode
   equs 0,0,0                ; -- Reserved for future use --
 .prog_name
-  equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - nul terminated
+  equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - null terminated
 .version_string
-  equs "1.4.0",0              ; Version string - nul terminated
+  equs "1.4.0",0            ; Version string - null terminated
 
 .startprog
 .reset                      ; Sometimes this may be different from startprog
@@ -170,7 +170,7 @@
 ; ---  MOVING ------------------------------------------------------------------
 .zum_cmd_move
   jsr get_input_room              ; Get the room the player requested
-  lda FUNC_ERR                    ; Errors include entering an invalied room
+  lda FUNC_ERR                    ; Errors include entering an invalid room
   bne zum_cmd_move_err
   lda ROOM_NUM
   sta PLAYER_LOC

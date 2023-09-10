@@ -35,6 +35,7 @@ SYS_REG = STDIN_STATUS_REG + 1      ; $65 System Register
 ;  5      LCD_SIZE             0 = 2x16, 1 = 4x20
 ;  6
 ;  7
+; BIT MASKS FOR SYS_REG
 SYS_EXMEM         = %00000001   ; ORA with reg to set or AND to test flag
 SYS_EXMEM_NO      = %11111110   ; AND with reg to unset flag
 SYS_PARALLEL      = %00000010   ; ORA with reg to set or AND to test flag
@@ -42,6 +43,7 @@ SYS_PARALLEL_NO   = %11111101   ; AND with reg to unset flag
 SYS_SPI           = %00000100   ; ORA with reg to set or AND to test flag
 SYS_SPI_NO        = %11111011   ; AND with reg to unset flag
 
-IRQ_REG       = SYS_REG + 1			    ; $66 - IRQ register
+IRQ_REG   = SYS_REG + 1			    ; $66 - IRQ register
+; BIT MASKS FOR IRQ_REG
 ZD_IRQ    = %10000000
 RTC_ALARM = %01000000

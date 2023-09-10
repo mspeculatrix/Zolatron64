@@ -9,27 +9,23 @@
 \ ON EXIT : Nul-terminated string STR_BUF. Byte 8 is null terminator.
 \ A - O     X - P     Y - P
 .byte_to_bin
-  phx : phy
-  sta TMP_VAL                             ; Preserve initial value
-  ldx #0                                  ; Index for STR_BUF
-  lda #128
-  sta TEST_VAL                            ; Bit mask for testing bits
+  pha : phx : phy
+  sta TMP_VAL
+  ldx #7                    ; Loop counter and buffer index
 .byte_to_bin_loop
-  lda TMP_VAL
-  and TEST_VAL                            ; AND supplied value with bit mask
-  beq byte_to_bin_set_zero
-  lda #'1'                                ; Not a 0 so must be ... umm ...
-  jmp byte_to_bin_next
-.byte_to_bin_set_zero
-  lda #'0'
-.byte_to_bin_next
-  sta STR_BUF,X
-  lsr TEST_VAL                            ; Shift bit mask
-  inx
-  cpx #8
-  bne byte_to_bin_loop
+  lsr TMP_VAL               ; Bit 0 now in Carry
+  bcs byte_to_bin_one       ; Is it a 1?
+  lda #'0'                  ; If not, load '0' character
+  jmp byte_to_bin_add       ; and go add it to the buffer
+.byte_to_bin_one
+  lda #'1'
+.byte_to_bin_add
+  sta STR_BUF,X             ; Add the character to the buffer
+  dex                       ; Decrement counter/buffer index
+  bpl byte_to_bin_loop      ; If it hasn't rolled over, loop
+  ldx #8                    ; Add null string terminator at offset 8
   stz STR_BUF,X
-  ply : plx
+  ply : plx : pla
   rts
 
 \ ------------------------------------------------------------------------------
@@ -205,7 +201,7 @@
 .uint16_intstr
   pha : phx : phy
   ; stz TMP_IDX             ; Keep track of digits in buffer
-  stz STR_BUF               ; Set nul terminator at start of buffer
+  stz STR_BUF               ; Set null terminator at start of buffer
   lda #10
   sta MATH_TMP_B
   stz MATH_TMP_B+1

@@ -3,7 +3,7 @@ REM Make sure this script basename is identical to both the folder name
 REM and the file basename of the .pld file.
 REM Also, edit the CPLD and package variables to suit the chip
 
-set CPLD=1502
+set CPLD=1504
 set package=plcc
 
 if %CPLD% equ 1502 (
