@@ -58,7 +58,7 @@ ALIGN &100                ; start on new page
   lda SYS_REG                   ; Check register to see if SPI board fitted
   and #SYS_SPI
   beq isr_chk_rtc_next          ; No SPI board fitted
-  lda #SPI_RTC_DEV              ; Select the RTC
+  lda #SPI_DEV_RTC              ; Select the RTC
   sta SPI_DEV_SEL
   lda #RTC_STAT_REG             ; Select the status register
   lda SPI_DATA_REG              ; Comm start
@@ -86,7 +86,8 @@ ALIGN &100                ; start on new page
   jsr spi_exchange_byte			    ; Select the reg
   txa                           ; Put the value to write in A
   jsr spi_exchange_byte			    ; Send value
-  stz SPI_DEV_SEL
+  lda #SPI_DEV_NONE
+  sta SPI_DEV_SEL
 .isr_chk_rtc_next
 
 ; --- USER ISR -----------------------------------------------------------------

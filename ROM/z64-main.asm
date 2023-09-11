@@ -158,11 +158,12 @@ INCLUDE "include/os_call_vectors.asm"
   lda SYS_REG
   ora #SYS_SPI
   sta SYS_REG
-  stz SPI_DEV_SEL                 ; Set device to 0 (ie, none)
   LOAD_MSG spi_if_present_msg
 .spi_chk_done
   jsr OSWRMSG
   jsr OSLCDMSG
+  lda #SPI_DEV_NONE
+  sta SPI_DEV_SEL                 ; Set all device selects high
 
 \ -----  CHECK FOR EXTENDED ROM/RAM BOARD  -------------------------------------
 \ Sets the SYS_EXMEM bit in SYS_REG

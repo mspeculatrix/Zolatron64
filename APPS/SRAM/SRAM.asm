@@ -68,7 +68,7 @@ ORG USR_START
   lda #$80
   sta SPI_CTRL_REG
 
-  lda #SPI_SRAM_DEV                 ; Select the SRAM
+  lda #SPI_DEV_SRAM                 ; Select the SRAM
   sta SPI_CURR_DEV
 
   ; -----  SETTING PAGE MODE  --------------------------------------------------

@@ -3,8 +3,9 @@
 \ ------------------------------------------------------------------------------
 .rtc_init
   sei
-  lda #SPI_RTC_DEV              ; Select the RTC
+  lda #SPI_DEV_RTC              ; Select the RTC
   sta SPI_DEV_SEL
+
   lda #RTC_HOUR_REG             ; Set 12/24 bit to ensure 24-hour operation
   jsr rtc_read_reg              ; Read hour reg - value now in A
   and #RTC_24HR_MASK            ; AND with this to ensure bit is unset
@@ -26,18 +27,19 @@
 \ ------------------------------------------------------------------------------
 \ ---  RTC_READ_REG
 \ ------------------------------------------------------------------------------
-\ ON ENTRY: Register number should be in A
-\ ON EXIT : A contains read value
-\ A - O     X - n/a     Y - n/a
+\ ON ENTRY: - Register number should be in A
+\ ON EXIT : - A contains read value
+\ A - O     - X - n/a     Y - n/a
 .rtc_read_reg
   pha                               ; Save register number for later
-  lda SPI_DATA_REG                  ; Comm start
-  lda SPI_CURR_DEV
-  sta SPI_DEV_SEL
+  lda SPI_CURR_DEV                  ; -- Comm Start
+  sta SPI_DEV_SEL                   ; --  "     "
+  lda SPI_DATA_REG                  ; --  "     " : perform read to clear TC
   pla                               ; Get register number back
   jsr OSSPIEXCH			                ; Selects the reg, don't care what's in A
   jsr OSSPIEXCH			                ; Sends dummy value, register value is in A
-  stz SPI_DEV_SEL                   ; Comm end
+  lda #SPI_DEV_NONE                 ; -- Comm End --
+  sta SPI_DEV_SEL                   ; --  "    "  --
   rts
 
 \ ------------------------------------------------------------------------------
@@ -57,7 +59,8 @@
   jsr OSSPIEXCH			        ; Select the reg, don't care what comes back in A
   txa                       ; Put the value to write in A
   jsr OSSPIEXCH			        ; Send value
-  stz SPI_DEV_SEL           ; Comm end
+  lda #SPI_DEV_NONE                 ; Comm end
+  sta SPI_DEV_SEL
   rts
 
 \ ------------------------------------------------------------------------------

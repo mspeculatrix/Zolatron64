@@ -3,9 +3,10 @@ SPI_STAT_REG = $BF01	              ; When reading
 SPI_CTRL_REG = $BF01	              ; When writing
 SPI_DEV_SEL  = $BF02	              ; Device select
 
-SPI_SRAM_DEV = %11011111            ; Device select setting for SRAM
-SPI_SD_DEV   = %10111111            ; Device select setting for SD
-SPI_RTC_DEV  = %01111111            ; Device select setting for RTC
+SPI_DEV_SRAM = %11011111            ; Device select setting for SRAM
+SPI_DEV_SD   = %10111111            ; Device select setting for SD
+SPI_DEV_RTC  = %01111111            ; Device select setting for RTC
+SPI_DEV_NONE = %11111111
 
 SPI_TC_FLAG   = %10000000
 SPU_BUSY_FLAG = %01000000

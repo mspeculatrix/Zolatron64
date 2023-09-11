@@ -10,7 +10,8 @@
   lda #SRAM_CMD_READ
   jsr sram_start_WR_op
   jsr OSSPIEXCH                   ; Value of byte at address now in A
-  stz SPI_DEV_SEL                 ; End comms
+  lda #SPI_DEV_NONE                 ; Comm end
+  sta SPI_DEV_SEL
   rts
 
 \ ------------------------------------------------------------------------------
@@ -25,7 +26,8 @@
   jsr sram_start_WR_op
   pla
   jsr OSSPIEXCH
-  stz SPI_DEV_SEL                 ; End comms
+  lda #SPI_DEV_NONE                 ; Comm end
+  sta SPI_DEV_SEL
   rts
 
 \ ------------------------------------------------------------------------------
@@ -45,7 +47,8 @@
   inx
   cpx #SRAM_PG_SZ
   bne sram_read_page_loop
-  stz SPI_DEV_SEL                 ; End comms
+  lda #SPI_DEV_NONE                 ; Comm end
+  sta SPI_DEV_SEL
   rts
 
 \ ------------------------------------------------------------------------------
@@ -59,7 +62,8 @@
   jsr OSSPIEXCH
   pla                       ; Now send the mode code
   jsr OSSPIEXCH
-  stz SPI_DEV_SEL                 ; End comms
+  lda #SPI_DEV_NONE                 ; Comm end
+  sta SPI_DEV_SEL
   rts
 
 \ ------------------------------------------------------------------------------
@@ -79,7 +83,7 @@
   jsr OSSPIEXCH
   lda TMP_ADDR_A_L
   jsr OSSPIEXCH
-  ; No stz SPI_DEV_SEL because that will be sent by function
+  ; No Comm End because that will be sent by function
   ; calling this one.
   rts
 
@@ -99,5 +103,6 @@
   inx
   cpx #SRAM_PG_SZ
   bne sram_write_page_loop
-  stz SPI_DEV_SEL                 ; End comms
+  lda #SPI_DEV_NONE                 ; Comm end
+  sta SPI_DEV_SEL
   rts
