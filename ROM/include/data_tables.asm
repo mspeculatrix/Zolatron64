@@ -16,6 +16,7 @@ ALIGN &100                  ; Start on new page
   equw cmdprcBRK            ; BRK   - perform soft reset
   equw cmdprcCHAIN          ; CHAIN - load & execute program
   equw cmdprcCLEAR          ; CLEAR - clears program from RAM
+  equw cmdprcDATE           ; DATE  - print current date
   equw cmdprcDEL            ; DEL   - delete a file from persistent store
   equw cmdprcDUMP           ; DUMP  - dump region of memory to persistent store
   equw cmdprcHELP           ; HELP  - print list of CLI commands
@@ -33,6 +34,7 @@ ALIGN &100                  ; Start on new page
   equw cmdprcRUN            ; RUN   - execute user program at USR_START
   equw cmdprcSAVE           ; SAVE  - save file
   equw cmdprcSTAT           ; STAT  - status info
+  equw cmdprcTIME           ; TIME  - print time
   equw cmdprcVERS           ; VERS  - version
   equw cmdprcXCLR           ; XCLR  - clear current EXT RAM bank
   equw cmdprcXLOAD          ; XLOAD - load executable into EXT RAM bank
@@ -48,7 +50,7 @@ ALIGN &100                  ; Start on new page
 \ understand where to go next by looking it up in the Command Pointers table
 \ below.
 .cmd_ch1_tbl
-  equs "*!?BCDHJLMOPRSVX"
+  equs "*!?BCDHJLMOPRSTVX"
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -73,7 +75,7 @@ ALIGN &100                  ; Start on new page
   equw cmd_tbl_ASCP         ; Commands starting 'P'
   equw cmd_tbl_ASCR         ; Commands starting 'R'
   equw cmd_tbl_ASCS         ; Commands starting 'S'
-;  equw cmd_tbl_ASCT         ; Commands starting 'T'
+  equw cmd_tbl_ASCT         ; Commands starting 'T'
   equw cmd_tbl_ASCV         ; Commands starting 'V'
   equw cmd_tbl_ASCX         ; Commands starting 'X'
 
@@ -104,7 +106,7 @@ ALIGN &100                  ; Start on new page
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCD                  ; Commands starting 'D'
-;  equs "ATE", CMD_TKN_DATE     ; DATE
+  equs "ATE", CMD_TKN_DATE     ; DATE
   equs "EL", CMD_TKN_DEL       ; DEL
   equs "UMP", CMD_TKN_DUMP     ; DUMP
   equb EOCMD_SECTION
@@ -147,9 +149,9 @@ ALIGN &100                  ; Start on new page
   equs "TAT", CMD_TKN_STAT     ; STAT
   equb EOCMD_SECTION
 
-;.cmd_tbl_ASCT                  ; Commands starting 'T'
-;  equs "IME", CMD_TKN_TIME     ; TIME
-;  equb EOCMD_SECTION
+.cmd_tbl_ASCT                  ; Commands starting 'T'
+  equs "IME", CMD_TKN_TIME     ; TIME
+  equb EOCMD_SECTION
 
 .cmd_tbl_ASCV                  ; Commands starting 'V'
   equs "ERS", CMD_TKN_VERS     ; VERS
@@ -214,7 +216,7 @@ ALIGN &100                  ; Start on new page
   equw err_printer_state_err
   equw err_printer_not_present
 
-  equw err_rtc_not_present
+  equw err_spi_not_present
 
 \ Error Messages
 .err_msg_cmd
@@ -282,8 +284,8 @@ ALIGN &100                  ; Start on new page
   equs "Printer error",0
 .err_printer_not_present
   equs "No printer interface",0
-.err_rtc_not_present
-  equs "No RTC",0
+.err_spi_not_present
+  equs "No SPI interface",0
 
 \ ===== MISC TABLES & STRINGS ==================================================
 
@@ -296,6 +298,7 @@ ALIGN &100                  ; Start on new page
   equs "BRK",0
   equs "CHAIN",0
   equs "CLEAR",0
+  equs "DATE",0
   equs "DEL",0
   equs "DUMP",0
   equs "HELP",0
@@ -312,6 +315,7 @@ ALIGN &100                  ; Start on new page
   equs "RUN",0
   equs "SAVE",0
   equs "STAT",0
+  equs "TIME",0
   equs "VERS",0
   equs "XCHAIN",0
   equs "XCLR",0

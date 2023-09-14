@@ -5,6 +5,8 @@
 ### 5.0.6
 
 - Swapped functionality of PEEK and ?.
+- Added OSRDDATE and OSRDTIME OS functions.
+- Added TIME and DATE commands.
 - Improved POKE command - can now enter multiple bytes.
 - Added 'get input' function and OSGETINP OS call.
 - Added 'null input' error code.

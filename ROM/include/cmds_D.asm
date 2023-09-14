@@ -1,5 +1,43 @@
 \ ZolOS CLI Commands starting with 'D' - cmds_D.asm
 
+
+\ ------------------------------------------------------------------------------
+\ --- CMD: DATE  :  PRINT THE DATE TO STDOUT
+\ ------------------------------------------------------------------------------
+.cmdprcDATE
+  jsr rtc_read_date
+  lda FUNC_ERR
+  beq cmdprcDATE_display
+  jmp cmdprc_fail
+.cmdprcDATE_display
+  ldx #2
+.cmdprcDATE_loop
+  cpx #0
+  bne cmdprcDATE_get_next
+  lda #'2'
+  jsr OSWRCH
+  lda #'0'
+  jsr OSWRCH
+.cmdprcDATE_get_next
+  lda RTC_DAT_BUF,X
+  jsr OSB2ISTR
+  dec FUNC_RESULT                   ; Will start as 1 if result is single digit
+  bne cmdprcDATE_prt          ; 0 if single digit
+  lda #'0'
+  jsr OSWRCH
+.cmdprcDATE_prt
+  jsr OSWRSBUF
+  cpx #0
+  beq cmdprcDATE_done
+  lda #'/'
+  jsr OSWRCH
+  dex
+  jmp cmdprcDATE_loop
+.cmdprcDATE_done
+  jmp cmdprc_success
+
+
+
 \ ------------------------------------------------------------------------------
 \ --- CMD: DEL  :  DELETE FILE ON SERVER
 \ ------------------------------------------------------------------------------

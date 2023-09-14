@@ -28,36 +28,36 @@
   rts
 
 \ ------------------------------------------------------------------------------
-\ ---  RTC_READ_TIME
+\ ---  RTC_READ_TIME - replaced by OSRDTIME
 \ ------------------------------------------------------------------------------
 \ Reads the time and puts values into RTC_CLK_BUF
-.rtc_read_time
+;.rtc_read_time
 
   ; READ HOUR
-  lda #RTC_HOUR_REG
-  jsr rtc_read_reg    ; Read the register. Result in A
-  ldx #RTC_HRT_MASK
-  stx RTC_REG_MASK
-  jsr rtc_convert_from_bcd ; Now the value is in A
-  sta RTC_CLK_BUF + 2
+;  lda #RTC_HOUR_REG
+;  jsr rtc_read_reg    ; Read the register. Result in A
+;  ldx #RTC_HRT_MASK
+;  stx RTC_REG_MASK
+;  jsr rtc_convert_from_bcd ; Now the value is in A
+;  sta RTC_CLK_BUF + 2
 
   ; READ MINUTES
-  lda #RTC_MINS_REG
-  jsr rtc_read_reg    ; Read the register. Result in A
-  ldx #RTC_MINT_MASK
-  stx RTC_REG_MASK
-  jsr rtc_convert_from_bcd ; Now the value is in A
-  sta RTC_CLK_BUF + 1
+;  lda #RTC_MINS_REG
+;  jsr rtc_read_reg    ; Read the register. Result in A
+;  ldx #RTC_MINT_MASK
+;  stx RTC_REG_MASK
+;  jsr rtc_convert_from_bcd ; Now the value is in A
+;  sta RTC_CLK_BUF + 1
 
   ; READ SECONDS
-  lda #RTC_SECS_REG
-  jsr rtc_read_reg    ; Read the register. Result in A
-  ldx #RTC_SECT_MASK
-  stx RTC_REG_MASK
-  jsr rtc_convert_from_bcd ; Now the value is in A
-  sta RTC_CLK_BUF
+;  lda #RTC_SECS_REG
+;  jsr rtc_read_reg    ; Read the register. Result in A
+;  ldx #RTC_SECT_MASK
+;  stx RTC_REG_MASK
+;  jsr rtc_convert_from_bcd ; Now the value is in A
+;  sta RTC_CLK_BUF
 
-  rts
+;  rts
 
 
 \ ------------------------------------------------------------------------------

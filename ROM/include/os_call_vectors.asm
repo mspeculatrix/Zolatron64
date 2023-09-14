@@ -205,4 +205,16 @@
   sta OSSPIEXCH_VEC
   lda #>spi_exchange_byte
   sta OSSPIEXCH_VEC + 1
+
+  lda #<rtc_read_date
+  sta OSRDDATE_VEC
+  lda #>rtc_read_date
+  sta OSRDDATE_VEC + 1
+
+  lda #<rtc_read_time
+  sta OSRDTIME_VEC
+  lda #>rtc_read_time
+  sta OSRDTIME_VEC + 1
+
+
 .os_call_vectors_end

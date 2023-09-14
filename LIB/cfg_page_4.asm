@@ -18,7 +18,7 @@ FUNC_PARAM  = TMP_WORD_H + 1
 FUNC_PARAM_L = FUNC_PARAM	            ; Alias
 FUNC_PARAM_H = FUNC_PARAM_L + 1
 
-BYTE_CONV_L = FUNC_PARAM_H + 1          ; For converting bytes between num & str
+BYTE_CONV_L = FUNC_PARAM_H + 1        ; For converting bytes between num & str
 BYTE_CONV_H = BYTE_CONV_L + 1
 
 STR_BUF = BYTE_CONV_H + 1

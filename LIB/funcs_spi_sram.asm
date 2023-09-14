@@ -1,3 +1,20 @@
+\ All SPI libraries should have following two functions
+
+\ ------------------------------------------------------------------------------
+\ ---  SRAM_INIT
+\ ------------------------------------------------------------------------------
+.sram_init
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  SRAM_SELECT
+\ ------------------------------------------------------------------------------
+.sram_select
+  lda #SPI_DEV_SRAM             ; Select the SRAM device
+  sta SPI_CURR_DEV
+  lda #%00000000                ; Set SPI Mode 0 on 65SPI
+  sta SPI_CTRL_REG
+  rts
 
 \ ------------------------------------------------------------------------------
 \ ---  SRAM_READ_BYTE
@@ -62,8 +79,8 @@
   jsr OSSPIEXCH
   pla                       ; Now send the mode code
   jsr OSSPIEXCH
-  lda #SPI_DEV_NONE                 ; Comm end
-  sta SPI_DEV_SEL
+  lda #SPI_DEV_NONE         ; -- Comm end --
+  sta SPI_DEV_SEL           ; --  "    "  --
   rts
 
 \ ------------------------------------------------------------------------------
@@ -76,7 +93,6 @@
   pha                               ; Keep A for later
   lda SPI_CURR_DEV                  ; Start comms
   sta SPI_DEV_SEL
-  lda SPI_DATA_REG                  ; To clear TC flag, if set
   pla                               ; Get back operation code
   jsr OSSPIEXCH
   lda TMP_ADDR_A_H

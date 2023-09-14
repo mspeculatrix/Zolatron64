@@ -350,6 +350,7 @@ INCLUDE "include/cmds_O.asm"
 INCLUDE "include/cmds_P.asm"
 INCLUDE "include/cmds_R.asm"
 INCLUDE "include/cmds_S.asm"
+INCLUDE "include/cmds_T.asm"
 INCLUDE "include/cmds_V.asm"
 INCLUDE "include/cmds_X.asm"
 .cmdprc_success
@@ -371,6 +372,7 @@ INCLUDE "include/cmds_X.asm"
 INCLUDE "include/data_tables.asm"
 INCLUDE "../LIB/funcs_addr.asm"
 INCLUDE "../LIB/math_uint8_div.asm"
+INCLUDE "../LIB/math_uint8_mult.asm"
 INCLUDE "../LIB/math_uint16_div.asm"
 INCLUDE "../LIB/math_uint16_times10.asm"
 INCLUDE "include/funcs_uart_SC28L92.asm"
@@ -382,6 +384,7 @@ INCLUDE "include/funcs_4x20_lcd.asm"
 INCLUDE "include/funcs_prt.asm"
 INCLUDE "include/funcs_isr.asm"
 INCLUDE "include/funcs_spi65.asm"
+INCLUDE "include/funcs_rtc_core.asm"
 
 \-------------------------------------------------------------------------------
 \ ---  NMI HANDLER
@@ -461,6 +464,8 @@ ORG $FF00                     ; Must match address at start of OS Function
   jmp (OSUSRINTRTN_VEC)
 
   jmp (OSSPIEXCH_VEC)
+  jmp (OSRDDATE_VEC)
+  jmp (OSRDTIME_VEC)
 
 ORG $FFF4
 .reset

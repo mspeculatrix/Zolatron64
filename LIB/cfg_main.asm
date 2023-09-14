@@ -44,7 +44,7 @@ ERR_PRT_STATE_OL      = ERR_NO_EXECUTABLE + 1       ; 29 1B Printer offline
 ERR_PRT_STATE_PE      = ERR_PRT_STATE_OL + 1        ; 30
 ERR_PRT_STATE_ERR     = ERR_PRT_STATE_PE + 1        ; 31
 ERR_PRT_NOT_PRESENT   = ERR_PRT_STATE_ERR + 1       ; 32 Printer board not present
-ERR_RTC_NOT_PRESENT   = ERR_PRT_NOT_PRESENT + 1     ; 33 RTC not fitted
+ERR_SPI_NOT_PRESENT   = ERR_PRT_NOT_PRESENT + 1     ; 33 SPI I/F not fitted
 
 \-------------------------------------------------------------------------------
 \ OS CALLS  - OS Function Address Table
@@ -106,7 +106,11 @@ OSZDSAVE    = OSZDLOAD + 3
 OSDELAY     = OSZDSAVE + 3
 OSUSRINT    = OSDELAY + 3
 OSUSRINTRTN = OSUSRINT + 3
+; SPI
 OSSPIEXCH   = OSUSRINTRTN + 3
+OSRDDATE    = OSSPIEXCH + 3
+OSRDTIME    = OSRDDATE + 3
+
 
 OSSFTRST   = $FFF4         ; Use direct JMP with these (not indirected/vectored)
 OSHRDRST   = $FFF7

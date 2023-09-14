@@ -65,11 +65,7 @@ ORG USR_START
 \ ------------------------------------------------------------------------------
 .main
 
-  lda #$80
-  sta SPI_CTRL_REG
-
-  lda #SPI_DEV_SRAM                 ; Select the SRAM
-  sta SPI_CURR_DEV
+  jsr sram_select                           ; Select device and SPI Mode
 
   ; -----  SETTING PAGE MODE  --------------------------------------------------
   LOAD_MSG page_mode_msg
