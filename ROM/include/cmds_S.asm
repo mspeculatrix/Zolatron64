@@ -1,4 +1,4 @@
-\ cmds_S.asm
+\ ZolOS CLI Commands starting with 'S' - cmds_S.asm
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: SAVE  :  SAVE PROGRAM
@@ -11,6 +11,7 @@
   jsr check_exec                      ; Check executable code is loaded
   lda FUNC_ERR
   bne cmdprcSAVE_err
+  SET_EXCL_EXT_FLAG
   jsr read_filename                   ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne cmdprcSAVE_err
@@ -147,7 +148,7 @@
   jsr OSSOAPP                                 ; Add to STDOUT_BUF
   rts
 
-\ --- DATA --------------------
+\ --- DATA ---------------------------------------------------------------------
 .stat_msg_lomem               ; For 'STAT' output
   equs "LOMEM:",0
 .stat_msg_progend

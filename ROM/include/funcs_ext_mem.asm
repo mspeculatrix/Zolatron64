@@ -61,18 +61,11 @@
   lda FUNC_RES_L
   cmp #16                                 ; Check to see if it's more than 15
   bcs extmem_readset_bank_num_err         ; If it is, error...
-  sta EXTMEM_BANK                         ; Store it for some reason
-  sta EXTMEM_SLOT_SEL                     ; Select bank by writing to this addr
+  sta EXTMEM_BANK                         ; Store it here for some reason
+  sta EXTMEM_SELECT                     ; Select bank by writing to this addr
   jmp extmem_readset_bank_end
 .extmem_readset_bank_num_err
   lda #ERR_EXTMEM_BANK
   sta FUNC_ERR
 .extmem_readset_bank_end
   rts
-
-\ --- DATA --------------------
-.exmem_fitted_msg
-  equs "+ Extended memory",0
-.exmem_absent_msg
-  ;     01234567890123456789
-  equs "- No extended memory",0

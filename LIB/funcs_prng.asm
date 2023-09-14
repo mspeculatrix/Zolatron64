@@ -1,6 +1,4 @@
-\ funcs_prng.asm
-
-\ PSEUDO-RANDOM NUMBER GENERATOR FUNCTIONS
+\ PSEUDO-RANDOM NUMBER GENERATOR FUNCTIONS -- funcs_prng.asm -------------------
 
 \ ------------------------------------------------------------------------------
 \ ---  PRNG_RAND8
@@ -47,17 +45,17 @@
 \ ---  PRNG_START_TIMER
 \ ------------------------------------------------------------------------------
 \ Using Timer 1 for random numbers. This runs in free-run mode, counting down
-\ constantly. We read the low byte at suitably random moments to get a random
-\ value 0-255.
+\ constantly.
+\ A - P     X - n/a     Y - n/a
 .prng_start_timer
   pha
   lda #%01000000		          ; Bit 7 off - don't need interrupts
   sta USRP_IER
   lda #%01000000              ; Set timer to free-run mode
   sta USRP_ACR
-  lda #255                    ; Start value
+  lda #255                    ; Start value - low byte
   sta USRP_T1CL
-  lda #0
+  lda #255                    ; Start value - high byte
   sta USRP_T1CH		            ; Starts timer running
   pla
   rts

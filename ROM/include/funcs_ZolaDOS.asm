@@ -55,9 +55,7 @@
 \ ---  ZD_INIT
 \ ------------------------------------------------------------------------------
 \ Set up the VIA and other general initialisation.
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_init
   lda #ZD_CTRL_PINDIR               ; Set pin directions
   sta ZD_CTRL_DDR
@@ -75,8 +73,8 @@
   ; Initialise outputs
   ZD_SET_CA_OFF                     ; Takes line high
   ZD_SET_CR_OFF                     ; Takes line high
-  lda #ZD_FSTATE_CLOSED             ; Start with no file open
-  sta ZD_FSTATE
+  ;lda #ZD_FSTATE_CLOSED             ; Start with no file open
+  ;sta ZD_FSTATE
   rts
 
 \ ------------------------------------------------------------------------------
@@ -85,9 +83,7 @@
 \ Print the appropriate message if file load operation went okay. Also set
 \ appropriate value for LOMEM.
 \ ON EXIT : LOMEM is set to first free byte above top of program.
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_fileload_ok
   LOAD_MSG file_act_complete_msg
   jsr OSWRMSG
@@ -109,26 +105,24 @@
 \ ------------------------------------------------------------------------------
 \ ---  ZD_GETFILE
 \ ------------------------------------------------------------------------------
-\ Get a filename from STDIN_BUF and load the file into memory at USR_START.
+\ Get a filename from STDIN_BUF and load the file into memory.
+\ Assumes the load address has already been stored in FILE_ADDR(+1).
 \ ON ENTRY: The filename must be in STDIN_BUF
+\           A should contain 1 to show loading message, 0 to not
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
-\ A - O
-\ X - n/a
-\ Y - n/a
-.zd_getfile ; move to funcs_ZolaDOS.asm
-  LOAD_MSG loading_msg
-  jsr OSWRMSG
-  jsr OSLCDMSG
-  lda #<USR_START             ; This is where we're going to put the code
-  sta FILE_ADDR
-  lda #>USR_START
-  sta FILE_ADDR + 1
+\ A - O     X - n/a     Y - n/a
+.zd_getfile
+  LED_ON LED_FILE_ACT
   jsr read_filename           ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne zd_getfile_done
+  LOAD_MSG loading_msg
+  jsr OSWRMSG
+  jsr OSLCDMSG
   lda #ZD_OPCODE_LOAD         ; Use opcode for loading .EXE files
   jsr zd_loadfile
 .zd_getfile_done
+  LED_OFF LED_FILE_ACT
   rts
 
 \ ------------------------------------------------------------------------------
@@ -138,9 +132,7 @@
 \ the RPi, sending a code designating which action is required.
 \ ON ENTRY: The relevant opcode must be in A.
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
-\ A - P
-\ X - n/a
-\ Y - n/a
+\ A - P     X - n/a     Y - n/a
 .zd_init_process
   pha
   lda #ZD_DATA_SET_OUT
@@ -170,9 +162,7 @@
 \ Deletes a file on the ZolaDOS server.
 \ ON ENTRY: STR_BUF must contain filename
 \ ON EXIT : FUNC_ERR contains error code - 0 for success
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_delfile
   lda #ZD_OPCODE_DEL
   jsr zd_handshake
@@ -188,9 +178,7 @@
 \ ON ENTRY: - A must contain opcode we want to send to server.
 \           - STR_BUF must contain a string such as a filename
 \ ON EXIT : - FUNC_ERR contains error code - 0 for success
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_handshake
   stz FUNC_ERR                ; Zero out the error code
   stz FUNC_RESULT             ; This is where we'll store the server's response
@@ -214,9 +202,7 @@
 \           - STR_BUF must contain filename
 \           - FILE_ADDR/+1 must contain address to which we wish to load file.
 \ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_loadfile
   jsr zd_handshake            ; ----- INITIATE ---------------------------------
   lda FUNC_ERR
@@ -261,9 +247,7 @@
 \ ON ENTRY: FILE_ADDR/+1 must contain the 16-bit address
 \           for where to store the data.
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_rcv_data
   jsr zd_waitForSA            ; Wait for /SA signal to go low
   lda FUNC_ERR
@@ -302,9 +286,7 @@
 \           - TMP_ADDR_B must contain end address
 \           - STR_BUF must contain nul-terminated filename string
 \ ON EXIT : FUNC_ERR contains error code
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_save_data
   jsr zd_handshake
   lda FUNC_ERR
@@ -321,9 +303,7 @@
 \ ------------------------------------------------------------------------------
 \ ---  ZD_SEND_DATA
 \ ------------------------------------------------------------------------------
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_send_data
   ZD_SET_CR_OFF               ; Not sure if needed - but to be sure
   ZD_SET_DATADIR_OUTPUT
@@ -370,9 +350,7 @@
 \ function puts the filename into STR_BUF).
 \ ON ENTRY: The data needs to be in STR_BUF with a null terminator.
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
-\ A - O
-\ X - O
-\ Y - n/a
+\ A - O     X - O     Y - n/a
 .zd_send_strbuf
   ldx #0                      ; Offset for STR_BUF
   ZD_SET_CA_ON                ; Take /CA low
@@ -401,9 +379,7 @@
 \ ---  ZD_SIGNALDELAY
 \ ------------------------------------------------------------------------------
 \ Pause to allow signals to stabilise
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_signalDelay
   lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
   sta ZD_IER
@@ -429,31 +405,29 @@
 \             the data.
 \           - STR_BUF must contain filename
 \ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
-.zd_streamin
-  lda #ZD_OPCODE_OPENR
-  jsr zd_handshake            ; ----- INITIATE ---------------------------------
-  lda FUNC_ERR
-  bne zd_streamin_end         ; If this is anything but 0, that's an error
+;.zd_streamin
+;  lda #ZD_OPCODE_OPENR
+;  jsr zd_handshake            ; ----- INITIATE ---------------------------------
+;  lda FUNC_ERR
+;  bne zd_streamin_end         ; If this is anything but 0, that's an error
 
-  lda #ZD_FSTATE_OPENR
-  sta ZD_FSTATE
+;  lda #ZD_FSTATE_OPENR
+;  sta ZD_FSTATE
 
-.zd_streamin_close
-  lda #ZD_OPCODE_CLOSE
-  jsr zd_init_process
-  lda FUNC_ERR
+;.zd_streamin_close
+;  lda #ZD_OPCODE_CLOSE
+;  jsr zd_init_process
+;  lda FUNC_ERR
   ;  deal with error
-  lda #ZD_FSTATE_CLOSED
-  sta ZD_FSTATE
-.zd_streamin_end
-  rts
+;  lda #ZD_FSTATE_CLOSED
+;  sta ZD_FSTATE
+;.zd_streamin_end
+;  rts
 
 \ ------------------------------------------------------------------------------
 \ ---  ZD_STROBEDELAY
 \ ------------------------------------------------------------------------------
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_strobeDelay
   lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
   sta ZD_IER
@@ -479,9 +453,7 @@
 \ ON ENTRY: Must have set the appropriate data direction on the data port -
 \           eg, with the macro ZD_SET_DATADIR_INPUT.
 \ ON EXIT : FUNC_ERR contains an error code - 0 for success.
-\ A - O
-\ X - O
-\ Y - n/a
+\ A - O     X - O     Y - n/a
 .zd_svr_resp
   ldx #128                    ; For longer timeout counter
 .zd_svr_resp_SA_waitloop
@@ -509,9 +481,7 @@
 \ ---  TIMER FUNCTIONS
 \ ------------------------------------------------------------------------------
 \ Check to see if the counter has incremented
-\ A - P
-\ X - n/a
-\ Y - n/a
+\ A - P     X - n/a     Y - n/a
 .zd_chk_timer
   sei                           ; to the same value as the set limit. This is
   pha                           ; basically a standard 16-bit comparison.
@@ -537,9 +507,7 @@
   rts
 
 \ Stop timer running
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_timer1_stop
   lda ZD_IER
   and #%10111111	; Setting bit 7 enables interrupts and bit 6 disables Timer 1
@@ -547,9 +515,7 @@
   rts
 
 \ Start timeout timer
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .zd_timeout_timer_start
   stz ZD_TIMER_COUNT
   stz ZD_TIMER_COUNT + 1
@@ -566,9 +532,7 @@
 \ ------------------------------------------------------------------------------
 \ --- FLOW CONTROL FUNCTIONS
 \ ------------------------------------------------------------------------------
-\ A - P
-\ X - P
-\ Y - n/a
+\ A - P     X - P      Y - n/a
 .zd_waitForSA
   pha : phx
   jsr zd_timeout_timer_start
@@ -588,9 +552,7 @@
   plx : pla
   rts
 
-\ A - P
-\ X - P
-\ Y - n/a
+\ A - P     X - P     Y - n/a
 .zd_waitForSAoff
   pha : phx
   jsr zd_timeout_timer_start
@@ -610,9 +572,7 @@
   plx : pla
   rts
 
-\ A - P
-\ X - P
-\ Y - n/a
+\ A - P     X - P     Y - n/a
 .zd_waitForSR
   pha : phx
   jsr zd_timeout_timer_start
@@ -631,9 +591,7 @@
   plx : pla
   rts
 
-\ A - P
-\ X - P
-\ Y - n/a
+\ A - P     X - P     Y - n/a
 .zd_waitForSRoff
   pha : phx
   jsr zd_timeout_timer_start
@@ -657,6 +615,8 @@
   equs "Deleting ... ",0
 .loading_msg
   equs "Loading ... ",0
+.searching_msg
+  equs "Searching ... ",0
 .saving_msg
   equs "Saving ... ",0
 .file_act_complete_msg

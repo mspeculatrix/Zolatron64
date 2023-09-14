@@ -1,6 +1,4 @@
-\ data_tables.asm
-
-\ --- DATA & TABLES ------------------------------------------------------------
+\ --- DATA & TABLES - data_tables.asm ------------------------------------------
 
 ALIGN &100                  ; Start on new page
 
@@ -12,36 +10,39 @@ ALIGN &100                  ; Start on new page
 \ The entries are the labels of the relevant subroutines in z64-main.asm (or
 \ the command files that includes).
 .cmdprcptrs
-  equw cmdprcSTAR           ; *
-  equw cmdprcBANG           ; !
-  equw cmdprcQUERY          ; ?
-  equw cmdprcBRK            ; BRK
-  equw cmdprcCLEAR          ; CLEAR
-  equw cmdprcDEL            ; DEL
-  equw cmdprcDUMP           ; DUMP
-  equw cmdprcEX             ; EX - load & execute program
-  equw cmdprcHELP           ; HELP
-  equw cmdprcJMP            ; JMP
-  equw cmdprcLM             ; LM - list memory
-  equw cmdprcLOAD           ; LOAD - load file
-  equw cmdprcLP             ; LP - list page
-  equw cmdprcLS             ; LS - list storage
-  equw cmdprcMV             ; MV - move (rename) file
-  equw cmdprcOPEN           ; OPEN
-  equw cmdprcPEEK           ; PEEK
-  equw cmdprcPOKE           ; POKE
-  equw cmdprcPRT            ; PRT
-  equw cmdprcRUN            ; RUN user program
-  equw cmdprcSAVE           ; SAVE - save file
-  equw cmdprcSTAT           ; STAT
-  equw cmdprcVERS           ; VERS - version
-  equw cmdprcXCLR           ; XCLR
-  equw cmdprcXLOAD          ; XLOAD
-  equw cmdprcXLS            ; XLS
-  equw cmdprcXOPEN          ; XOPEN
-  equw cmdprcXRUN           ; XRUN
-  equw cmdprcXSAVE          ; XSAVE
-  equw cmdprcXSEL           ; XSEL
+  equw cmdprcSTAR           ; *     - (for future expansion)
+  equw cmdprcBANG           ; !     - poke a byte to memory location
+  equw cmdprcQUERY          ; ?     - read byte at memory location
+  equw cmdprcBRK            ; BRK   - perform soft reset
+  equw cmdprcCHAIN          ; CHAIN - load & execute program
+  equw cmdprcCLEAR          ; CLEAR - clears program from RAM
+  equw cmdprcDATE           ; DATE  - print current date
+  equw cmdprcDEL            ; DEL   - delete a file from persistent store
+  equw cmdprcDUMP           ; DUMP  - dump region of memory to persistent store
+  equw cmdprcHELP           ; HELP  - print list of CLI commands
+  equw cmdprcJMP            ; JMP   - jump to memory loc. & execute from there
+  equw cmdprcLM             ; LM    - list memory
+  equw cmdprcLOAD           ; LOAD  - load file
+  equw cmdprcLP             ; LP    - list memory page
+  equw cmdprcLS             ; LS    - list storage
+  equw cmdprcMV             ; MV    - move (rename) file
+  equw cmdprcOPEN           ; OPEN  - load data to memory
+  equw cmdprcPDUMP          ; PDUMP - hex dump of executable code at USR_START
+  equw cmdprcPEEK           ; PEEK  - read byte at memory location
+  equw cmdprcPOKE           ; POKE  - poke a byte to memory location
+  equw cmdprcPRT            ; PRT   - (for future use)
+  equw cmdprcRUN            ; RUN   - execute user program at USR_START
+  equw cmdprcSAVE           ; SAVE  - save file
+  equw cmdprcSTAT           ; STAT  - status info
+  equw cmdprcTIME           ; TIME  - print time
+  equw cmdprcVERS           ; VERS  - version
+  equw cmdprcXCLR           ; XCLR  - clear current EXT RAM bank
+  equw cmdprcXLOAD          ; XLOAD - load executable into EXT RAM bank
+  equw cmdprcXLS            ; XLS   - list contents of EXT ROM/RAM banks
+  equw cmdprcXOPEN          ; XOPEN - load data into EXT RAM bank
+  equw cmdprcXRUN           ; XRUN  - run executable in current ROM/RAM bank
+  equw cmdprcXSAVE          ; XSAVE - save contents of ROM/RAM bank
+  equw cmdprcXSEL           ; XSEL  - select ROM/RAM bank
 
 \ FIRST CHARACTER TABLE
 \ Initial characters of our commands. The parsing system first looks to see if
@@ -49,7 +50,7 @@ ALIGN &100                  ; Start on new page
 \ understand where to go next by looking it up in the Command Pointers table
 \ below.
 .cmd_ch1_tbl
-  equs "*!?BCDEHJLMOPRSVX"
+  equs "*!?BCDHJLMOPRSTVX"
   equb EOTBL_MKR            ; End of table marker
 
 \ COMMAND POINTERS
@@ -66,7 +67,6 @@ ALIGN &100                  ; Start on new page
   equw cmd_tbl_ASCB         ; Commands starting 'B'
   equw cmd_tbl_ASCC         ; Commands starting 'C'
   equw cmd_tbl_ASCD         ; Commands starting 'D'
-  equw cmd_tbl_ASCE         ; Commands starting 'E'
   equw cmd_tbl_ASCH         ; Commands starting 'H'
   equw cmd_tbl_ASCJ         ; Commands starting 'J'
   equw cmd_tbl_ASCL         ; Commands starting 'L'
@@ -75,6 +75,7 @@ ALIGN &100                  ; Start on new page
   equw cmd_tbl_ASCP         ; Commands starting 'P'
   equw cmd_tbl_ASCR         ; Commands starting 'R'
   equw cmd_tbl_ASCS         ; Commands starting 'S'
+  equw cmd_tbl_ASCT         ; Commands starting 'T'
   equw cmd_tbl_ASCV         ; Commands starting 'V'
   equw cmd_tbl_ASCX         ; Commands starting 'X'
 
@@ -100,16 +101,14 @@ ALIGN &100                  ; Start on new page
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCC                  ; Commands starting 'C'
+  equs "HAIN", CMD_TKN_CHAIN   ; CHAIN
   equs "LEAR", CMD_TKN_CLEAR   ; CLEAR
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCD                  ; Commands starting 'D'
+  equs "ATE", CMD_TKN_DATE     ; DATE
   equs "EL", CMD_TKN_DEL       ; DEL
   equs "UMP", CMD_TKN_DUMP     ; DUMP
-  equb EOCMD_SECTION
-
-.cmd_tbl_ASCE                  ; Commands starting 'E'
-  equs "X", CMD_TKN_EX         ; EX
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCH                  ; Commands starting 'H'
@@ -136,6 +135,7 @@ ALIGN &100                  ; Start on new page
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCP                  ; Commands starting 'P'
+  equs "DUMP", CMD_TKN_PDUMP   ; PDUMP
   equs "EEK", CMD_TKN_PEEK     ; PEEK
   equs "OKE", CMD_TKN_POKE     ; POKE
   equb EOCMD_SECTION
@@ -147,6 +147,10 @@ ALIGN &100                  ; Start on new page
 .cmd_tbl_ASCS                  ; Commands starting 'S'
   equs "AVE", CMD_TKN_SAVE     ; SAVE
   equs "TAT", CMD_TKN_STAT     ; STAT
+  equb EOCMD_SECTION
+
+.cmd_tbl_ASCT                  ; Commands starting 'T'
+  equs "IME", CMD_TKN_TIME     ; TIME
   equb EOCMD_SECTION
 
 .cmd_tbl_ASCV                  ; Commands starting 'V'
@@ -172,6 +176,7 @@ ALIGN &100                  ; Start on new page
 \ text in the Error Messages section.
 .err_ptrs
   equw err_msg_cmd
+  equw err_null_entry
   equw err_msg_hex_bin_conv
   equw err_msg_parse
   equw err_msg_read_hexbyte
@@ -211,13 +216,18 @@ ALIGN &100                  ; Start on new page
   equw err_printer_state_err
   equw err_printer_not_present
 
+  equw err_spi_not_present
+
 \ Error Messages
 .err_msg_cmd
   equs "Bad command! Bad, bad command!", 0
+.err_null_entry
+  equs "Null entry",0
 .err_msg_hex_bin_conv
   equs "Hex-byte error",0
 .err_msg_parse
-  equs "Don't understand",0
+  ;     12345678901234567890
+  equs "Bad command/exec",0
 .err_msg_read_hexbyte
   equs "Err reading hex",0
 .err_msg_syntax
@@ -274,6 +284,8 @@ ALIGN &100                  ; Start on new page
   equs "Printer error",0
 .err_printer_not_present
   equs "No printer interface",0
+.err_spi_not_present
+  equs "No SPI interface",0
 
 \ ===== MISC TABLES & STRINGS ==================================================
 
@@ -284,10 +296,11 @@ ALIGN &100                  ; Start on new page
   equs "?",0
   equs "!",0
   equs "BRK",0
+  equs "CHAIN",0
   equs "CLEAR",0
+  equs "DATE",0
   equs "DEL",0
   equs "DUMP",0
-  equs "EX",0
   equs "HELP",0
   equs "JMP",0
   equs "LM",0
@@ -296,16 +309,18 @@ ALIGN &100                  ; Start on new page
   equs "LS",0
   equs "(MV)",0
   equs "OPEN",0
+  equs "PDUMP",0
   equs "PEEK",0
   equs "POKE",0
   equs "RUN",0
   equs "SAVE",0
   equs "STAT",0
+  equs "TIME",0
   equs "VERS",0
+  equs "XCHAIN",0
   equs "XCLR",0
   equs "XLOAD",0
   equs "XLS",0
-  equs "XOPEN",0
   equs "XRUN",0
   equs "XSAVE",0
   equs "XSEL",0
@@ -316,10 +331,25 @@ ALIGN &100                  ; Start on new page
   equs "0123456789ABCDEF"
 
 .memory_header                ; For 'LM' and 'LP' output
-  equs "----  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F   "
+  equs "----  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F    "
   equs "0123456789ABCDEF", 10, 0
 
 \ MESSAGES
+;       01234567890123456789
+.exmem_fitted_msg
+  equs "+ Extended memory",0
+.exmem_absent_msg
+  equs "- No extended memory",0
+
+.parallel_if_fitted
+  equs "+ Parallel interface",0
+.parallel_if_not_fitted
+  equs "- No parallel I/F",0
+
+.spi_if_present_msg
+  equs "+ SPI interface",0
+.spi_if_not_present_msg
+  equs "- No SPI I/F",0
 
 .test_msg
   equs "Hello World!",0

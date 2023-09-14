@@ -29,9 +29,9 @@ ORG USR_START
   equb >endcode
   equs 0,0,0                ; -- Reserved for future use --
 .prog_name
-  equs "BOOTTEST",0            ; @ $080D Short name, max 15 chars - nul terminated
+  equs "BOOTTEST",0         ; @ $080D Short name, max 15 chars - null terminated
 .version_string
-  equs "1.0",0              ; Version string - nul terminated
+  equs "1.0",0              ; Version string - null terminated
 
 .startprog
 .reset
@@ -40,8 +40,7 @@ ORG USR_START
   ldx #$ff        ; set stack pointer to $01FF - only need to set the
   txs             ; LSB, as MSB is assumed to be $01
 
-  lda #0
-  sta PRG_EXIT_CODE
+  stz PRG_EXIT_CODE
   cli
 
   jsr OSLCDCLS

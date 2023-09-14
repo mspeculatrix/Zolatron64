@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+APPS=("SETDATE" "SETTIME" "SRAM" "TIME" "TS" "ZUMPUS")
+
+for APP in ${APPS[*]}; do
+	echo "Building $APP..."
+	cd $APP
+	zapp
+	cd ..
+done

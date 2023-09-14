@@ -1,4 +1,4 @@
-\ cmds_L.asm
+\ ZolOS CLI Commands starting with 'L' - cmds_L.asm
 
 \-------------------------------------------------------------------------------
 \ --- CMD: LM  :  LIST MEMORY
@@ -28,7 +28,7 @@
   jsr compare_addr
   lda FUNC_RESULT
   bne cmdprcLM_addr_fail
-  jmp cmdprcLM_chk_nul
+  jmp cmdprcLM_chk_null
 .cmdprcLM_addr_fail
   lda #ERR_ADDR
   sta FUNC_ERR
@@ -37,7 +37,7 @@
   lda #SYNTAX_ERR_CODE      ; We'll return a syntax error
   sta FUNC_ERR
   jmp cmdprc_fail
-.cmdprcLM_chk_nul           ; Check there's nothing left in the RX buffer
+.cmdprcLM_chk_null          ; Check there's nothing left in the RX buffer
   ldx STDIN_IDX
   lda STDIN_BUF,X           ; Should be null. Anything else is a mistake
   bne cmdprcLM_chk_fail
@@ -49,21 +49,24 @@
 \ ------------------------------------------------------------------------------
 \ Usage: LOAD <filename>
 \ This is for loading executable files in main memory.
-\ The filename should not have the '.BIN' extension (this will be added
+\ The filename should not have the '.EXE' extension (this will be added
 \ automatically by ZolaDOS).
 .cmdprcLOAD
   LED_ON LED_FILE_ACT
+  lda #<USR_START                   ; This is where we're going to put the code
+  sta FILE_ADDR
+  lda #>USR_START
+  sta FILE_ADDR + 1
   jsr zd_getfile
-  LED_OFF LED_FILE_ACT
   lda FUNC_ERR
-  bne cmdprcLOAD_err
-  jmp cmdprcLOAD_success
-.cmdprcLOAD_err
+  bne cmdprcLOAD_fail
+  jsr zd_fileload_ok
+  LED_OFF LED_FILE_ACT
+  jmp cmdprc_success
+.cmdprcLOAD_fail
+  LED_OFF LED_FILE_ACT
   LED_ON LED_ERR
   jmp cmdprc_fail
-.cmdprcLOAD_success
-  jsr zd_fileload_ok
-  jmp cmdprc_success
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: LP  :  LIST MEMORY PAGE
@@ -77,15 +80,14 @@
   jsr read_hex_byte         ; Read 2 hex chars from input: result in FUNC_RESULT
   lda FUNC_ERR              ; Check for error
   bne cmdprcLP_fail
-.cmdprcLP_chk_nul           ; Check there's nothing left in the RX buffer
+.cmdprcLP_chk_null           ; Check there's nothing left in the RX buffer
   ldx STDIN_IDX
   lda STDIN_BUF,X           ; Should be null. Anything else is a mistake
   bne cmdprcLP_fail
   lda FUNC_RESULT           ; Get the result from jsr read_hex_byte
   sta TMP_ADDR_A_H          ; Put the same byte in the high bytes of both
   sta TMP_ADDR_B_H          ; the start address and end address
-  lda #0                    ; The low byte of the start address is 0
-  sta TMP_ADDR_A_L
+  stz TMP_ADDR_A_L          ; The low byte of the start address is 0
   lda #$FF                  ; The low byte of the end address is $FF
   sta TMP_ADDR_B_L
   jsr display_memory        ; Use our display memory routine to display
@@ -167,6 +169,7 @@
 .cmdprcLS_fail
   LED_OFF LED_FILE_ACT
   jmp cmdprc_fail
-\ --- DATA -------------------
+
+\ --- DATA ---------------------------------------------------------------------
 .ls_req_msg
   equs "Requesting file list",0

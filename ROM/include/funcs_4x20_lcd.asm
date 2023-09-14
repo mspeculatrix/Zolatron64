@@ -1,6 +1,4 @@
-\ funcs_4x20_lcd.asm
-
-\ LCD FUNCTIONS ----------------------------------------------------------------
+\ LCD FUNCTIONS -- 4x20 LCD -- funcs_4x20_lcd.asm ------------------------------
 
 \ Character addresses for 20x4 display:
 \ Line 0 :  0 ($0)  -  19 ($13)
@@ -19,56 +17,54 @@
 \ ON ENTRY: - Assumes a 16-bit value in LCDV_TIMER_INTVL.
 \             This number should be the length of the desired delay
 \             in milliseconds.
-\ A - P
-\ X - n/a
-\ Y - n/a
+\ A - P     X - n/a     Y - n/a
 .delay
   pha
-  stz LCDV_TIMER_COUNT		    ; Zero-out counter
+  stz LCDV_TIMER_COUNT		      ; Zero-out counter
   stz LCDV_TIMER_COUNT + 1
   lda LCDV_IER
-  ora #%11000000		          ; Bit 7 enables interrupts, bit 6 enables Timer 1
+  ora #%11000000		            ; Bit 7 enables interrupts, b6 enables Timer 1
   sta LCDV_IER
-  lda #%01000000              ; Set timer to free-run mode
+  lda #%01000000                ; Set timer to free-run mode
   sta LCDV_ACL
   lda #$E6				  ; Going to use a base of 1ms. At 1MHz that's 1K cycles but,
   sta LCDV_T1CL     ; allowing for other operations, it's actually 998 ($03E6)
   lda #$03
-  sta LCDV_T1CH		            ; Starts timer running
+  sta LCDV_T1CH		              ; Starts timer running
 .delay_loop
   lda #100
-.nop_loop                     ; Adding a small NOP loop to give the timer time
-  nop                         ; to increase the counter
+.nop_loop                       ; Adding a small NOP loop to give the timer time
+  nop                           ; to increase the counter
   dec A
   bne nop_loop
-  jsr delay_timer_chk         ; Check how far our counter has got
+  jsr delay_timer_chk           ; Check how far our counter has got
   lda FUNC_RESULT
   cmp #LESS_THAN
-  beq delay_loop              ; If still less than our target, go around again
+  beq delay_loop                ; If still less than our target, go around again
   lda LCDV_IER
-  and #%01111111              ; Disable TIMER 1 interrupts
+  and #%01111111                ; Disable TIMER 1 interrupts
   sta LCDV_IER
   pla
-  stz FUNC_RESULT             ; Done with this, so zero out
+  stz FUNC_RESULT               ; Done with this, so zero out
   rts
 
-.delay_timer_chk              ; Check to see if the counter has incremented
-  sei                         ; to the same value as the set delay.
-  lda LCDV_TIMER_COUNT+1      ; Compare the high bytes first as if they aren't
-  cmp LCDV_TIMER_INTVL+1      ; equal, we don't need to compare the low bytes
-  bcc delay_timer_chk_less_than                 ; Count is less than interval
-  bne delay_timer_chk_more_than                 ; Count is more than interval
-  lda LCDV_TIMER_COUNT        ; High bytes were equal - what about low bytes?
+.delay_timer_chk                ; Check to see if the counter has incremented
+  sei                           ; to the same value as the set delay.
+  lda LCDV_TIMER_COUNT+1        ; Compare the high bytes first as if they aren't
+  cmp LCDV_TIMER_INTVL+1        ; equal, we don't need to compare the low bytes
+  bcc delay_timer_chk_less_than ; Count is less than interval
+  bne delay_timer_chk_more_than ; Count is more than interval
+  lda LCDV_TIMER_COUNT          ; High bytes were equal - what about low bytes?
   cmp LCDV_TIMER_INTVL
   bcc delay_timer_chk_less_than
   bne delay_timer_chk_more_than
-  lda #EQUAL				          ; COUNT = INTVL - this what we're looking for.
+  lda #EQUAL				            ; COUNT = INTVL - this what we're looking for.
   jmp delay_timer_chk_end
 .delay_timer_chk_less_than
-  lda #LESS_THAN			        ; COUNT < INTVL - counter isn't big enough yet
-  jmp delay_timer_chk_end     ; so let's bug out.
+  lda #LESS_THAN			          ; COUNT < INTVL - counter isn't big enough yet
+  jmp delay_timer_chk_end       ; so let's bug out.
 .delay_timer_chk_more_than
-  lda #MORE_THAN			        ; COUNT > INTVL - shouldn't happen, but still...
+  lda #MORE_THAN			          ; COUNT > INTVL - shouldn't happen, but still...
 .delay_timer_chk_end
   sta FUNC_RESULT
   cli
@@ -78,9 +74,7 @@
 \ ---  LCD_CLEAR_BUF
 \ ------------------------------------------------------------------------------
 \ Fill the LCD buffer with spaces
-\ A - O
-\ X - n/a
-\ Y - O
+\ A - O     X - n/a     Y - O
 .lcd_clear_buf
   ldy #0
   lda #CHR_SPACE
@@ -95,9 +89,7 @@
 \ ---  LCD_CLEAR_SIG
 \ ------------------------------------------------------------------------------
 \ Clear the RS, RW & E bits on PORT A
-\ A - P
-\ X - n/a
-\ Y - n/a
+\ A - P     X - n/a     Y - n/a
 .lcd_clear_sig
   pha
   lda LCDV_PORTA
@@ -111,12 +103,10 @@
 \ ------------------------------------------------------------------------------
 \ Send a command to the LCD
 \ ON ENTRY: - A must contain command byte
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .lcd_cmd
-  jsr lcd_wait                      ; check LCD is ready to receive
-  sta LCDV_PORTB                    ; assumes command byte is in A
+  jsr lcd_wait                      ; Check LCD is ready to receive
+  sta LCDV_PORTB                    ; Assumes command byte is in A
   jsr lcd_clear_sig                 ; Clear RS/RW/E bits. Writing to instr reg
   LCD_SET_CTL LCD_EX                ; Set E bit to send instruction
   jsr lcd_clear_sig
@@ -127,9 +117,7 @@
 \ ------------------------------------------------------------------------------
 \ Prints a line's worth from the LCD_BUF buffer.
 \ ON ENTRY: - Y must contain line index - 0-3 for a 4-line display
-\ A - P
-\ X - P
-\ Y - P
+\ A - P     X - P     Y - P
 .lcd_prt_linebuf
   pha : phx : phy
   ldx #0                      ; Set cursor to start of line
@@ -162,36 +150,23 @@
 \ ---  LCD_WAIT
 \ ------------------------------------------------------------------------------
 \ Wait until LCD is ready to receive next byte. Blocking!
-\ A - P
-\ X - n/a
-\ Y - n/a
-.lcd_wait         ; Check to see if LCD is ready to receive next byte
-  pha             ; Save current contents of A in stack, so it isn't corrupted
-  lda #%00000000  ; Set Port B as input
+\ A - P     X - n/a     Y - n/a
+.lcd_wait                   ; Check to see if LCD is ready to receive next byte
+  pha                       ; Save contents of A in stack, so it isn't corrupted
+  lda #%00000000            ; Set Port B as input
   sta LCDV_DDRB
 .lcd_busy
   LCD_SET_CTL LCD_RW
   ora #(LCD_RW OR LCD_EX)
   sta LCDV_PORTA
   lda LCDV_PORTB
-  and #LCD_BUSY_FLAG      ; Sets zero flag - non-0 if LCD busy flag set
-  bne lcd_busy            ; If result was non-0, keep looping
+  and #LCD_BUSY_FLAG        ; Sets zero flag - non-0 if LCD busy flag set
+  bne lcd_busy              ; If result was non-0, keep looping
   LCD_SET_CTL LCD_RW
-  lda #%11111111          ; Set Port B as output
+  lda #%11111111            ; Set Port B as output
   sta LCDV_DDRB
-  pla                     ; pull previous A contents back from stack
+  pla                       ; pull previous A contents back from stack
   rts
-
-;.lcd_prt_msg	            ; assumes LSB of msg address at MSG_VEC
-;  ldy #0                  ; and MSB at MSG_VEC+1
-;.lcd_prt_msg_chr
-;  lda (MSG_VEC),Y         ; LDA sets zero flag if it's loaded with 0
-;  beq lcd_prt_msg_end     ; BEQ branches if zero flag set
-;  jsr lcd_prt_chr         ; display the character
-;  iny                     ; increment message string offset
-;  jmp lcd_prt_msg_chr     ; go around again
-;.lcd_prt_msg_end
-;  rts
 
 \ ------------------------------------------------------------------------------
 \ ---  OS API Functions
@@ -202,9 +177,7 @@
 \ ---  Implements: OSLCDCLS
 \ ------------------------------------------------------------------------------
 \ Clear the LCD screen
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .lcd_cls
   jsr lcd_clear_buf                       ; Overwrite LCD_BUF with spaces
   lda #LCD_CLS                            ; Clear display, reset display memory
@@ -217,9 +190,7 @@
 \ ------------------------------------------------------------------------------
 \ Prints an 8-bit value as a 2-char hex string
 \ ON ENTRY: - A must contain value of byte to be printed.
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .lcd_print_byte
   jsr byte_to_hex_str               ; Results in three bytes starting at STR_BUF
   lda STR_BUF
@@ -234,9 +205,7 @@
 \ ------------------------------------------------------------------------------
 \ Prints the contents of STDOUT_BUF to LCD
 \ ON ENTRY: - Expects a nul-terminated string in STDOUT_BUF
-\ A - P
-\ X - n/a
-\ Y - n/a
+\ A - P     X - n/a     Y - n/a
 .lcd_prt_buf
   pha
   lda #<STDOUT_BUF
@@ -253,9 +222,7 @@
 \ ------------------------------------------------------------------------------
 \ Prints the contents of STR_BUF to LCD
 \ ON ENTRY: - Expects a nul-terminated string in STR_BUF
-\ A - P
-\ X - n/a
-\ Y - n/a
+\ A - P     X - n/a     Y - n/a
 .lcd_prt_sbuf
   pha
   lda #<STR_BUF
@@ -272,9 +239,7 @@
 \ ------------------------------------------------------------------------------
 \ Prints text to the LCD.
 \ ON ENTRY: - MSG_VEC should point to location of text.
-\ A - P
-\ X - P
-\ Y - P
+\ A - P     X - P     Y - P
 .lcd_println
   pha : phx : phy
   ; We start by moving all the text in the buffer up one line, effectively
@@ -330,14 +295,13 @@
 .lcd_println_padline
   lda #CHR_SPACE
 .lcd_println_padline_next
-  cpx #LCD_BUF_SZ            ; Have we already got a buffer's worth?
-  beq lcd_println_padline_done  ; If so, ensure we have a terminator
-  sta LCD_BUF,X                 ; Otherwise add the space to the buffer
-  ;iny                           ; Increment indexes
+  cpx #LCD_BUF_SZ                   ; Have we already got a buffer's worth?
+  beq lcd_println_padline_done      ; If so, ensure we have a terminator
+  sta LCD_BUF,X                     ; Otherwise add the space to the buffer
   inx
-  jmp lcd_println_padline_next  ; Loop
+  jmp lcd_println_padline_next      ; Loop
 .lcd_println_padline_done
-  dex                           ; X is currently one MORE than index for EOL
+  dex                               ; X is currently one MORE than index for EOL
   stz LCD_BUF,X
   rts
 
@@ -350,12 +314,12 @@
   ; Start index, for where we want to copy lines TO, is 0
   ldy #0
 .lcd_println_shiftbuf_loop
-  lda LCD_BUF,X                 ; X = FROM
-  sta LCD_BUF,Y                 ; Y = TO
+  lda LCD_BUF,X                                 ; X = FROM
+  sta LCD_BUF,Y                                 ; Y = TO
   inx
   iny
-  cpx #LCD_BUF_SZ               ; At end of buffer?
-  bne lcd_println_shiftbuf_loop ; If not, loop
+  cpx #LCD_BUF_SZ                               ; At end of buffer?
+  bne lcd_println_shiftbuf_loop                 ; If not, loop
   rts
 
 
@@ -367,12 +331,10 @@
 \ ------------------------------------------------------------------------------
 \ Print a character to the LCD.
 \ ON ENTRY: - A must contain ASCII code for character.
-\ A - P
-\ X - n/a
-\ Y - n/a
+\ A - P     X - n/a     Y - n/a
 .lcd_prt_chr
   pha
-  jsr lcd_wait                      ; check LCD is ready to receive
+  jsr lcd_wait                      ; Check LCD is ready to receive
   sta LCDV_PORTB
   LCD_SET_CTL LCD_RS
   LCD_SET_CTL (LCD_RS OR LCD_EX)    ; Keep RS & set E bit to send instruction
@@ -386,9 +348,7 @@
 \ ------------------------------------------------------------------------------
 \ Print an error message to the LCD.
 \ ON ENTRY: - Assumes error code in FUNC_ERR
-\ A - O
-\ X - O
-\ Y - n/a
+\ A - O     X - O     Y - n/a
 .lcd_prt_err
   lda FUNC_ERR
   dec A                   ; To get offset for table
@@ -409,18 +369,16 @@
 \ ON ENTRY: - X & Y co-ords must be in X and Y.
 \               - X should contain the X param in range 0-19.
 \               - Y should be 0-3.
-\ A - O
-\ X - O
-\ Y - n/a
+\ A - O     X - O     Y - n/a
 .lcd_set_cursor
   stx TMP_VAL
-  lda lcd_ln_base_addr,Y  ; Base address for line, from lookup table
+  lda lcd_ln_base_addr,Y          ; Base address for line, from lookup table
   clc
   adc TMP_VAL
-  ora #LCD_SET_DDRAM      ; OR with LCD_SET_DDRAM command byte
+  ora #LCD_SET_DDRAM              ; OR with LCD_SET_DDRAM command byte
   jsr lcd_cmd
   rts
 
-\ --- DATA -------------------
-.lcd_ln_base_addr             ; Lookup table - base addresses for lines
+\ --- DATA ---------------------------------------------------------------------
+.lcd_ln_base_addr                 ; Lookup table - base addresses for lines
   equs $00,$40,$14,$54

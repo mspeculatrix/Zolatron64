@@ -10,9 +10,9 @@
   equb >endcode
   equs 0,0,0                ; -- Reserved for future use --
 .prog_name
-  equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - nul terminated
+  equs "ZUMPUS",0           ; @ $080D Short name, max 15 chars - null terminated
 .version_string
-  equs "1.4.0",0              ; Version string - nul terminated
+  equs "1.4.0",0            ; Version string - null terminated
 
 .startprog
 .reset                      ; Sometimes this may be different from startprog
@@ -21,8 +21,7 @@
   ldx #$ff                  ; Set stack pointer to $01FF - only need to set the
   txs                       ; LSB, as MSB is assumed to be $01
 
-  lda #0
-  sta PRG_EXIT_CODE         ; Not sure we're using this yet
+  stz PRG_EXIT_CODE         ; Not sure we're using this yet
   cli
 
   jsr prng_start_timer      ; Start timer for random number generator
@@ -48,8 +47,7 @@
   beq main_data_clr_end
   jmp main_data_clr_loop
 .main_data_clr_end
-  lda #0
-  sta DATA_END                ; End of file marker
+  stz DATA_END                ; End of file marker
 
   NEWLINE
   LOAD_MSG game_title
@@ -140,7 +138,7 @@
   lda STDIN_STATUS_REG                    ; Get our info register
   eor #STDIN_NUL_RCVD_FL                  ; Zero the received flag
   sta STDIN_STATUS_REG                    ; and re-save the register
-  stz STDIN_IDX                           ; Want to read from firs char in buf
+  stz STDIN_IDX                           ; Want to read from first char in buf
 
   ; We're expecting the first item to be 'I', 'M', 'S' or 'Q'
   jsr OSRDCH
@@ -172,7 +170,7 @@
 ; ---  MOVING ------------------------------------------------------------------
 .zum_cmd_move
   jsr get_input_room              ; Get the room the player requested
-  lda FUNC_ERR                    ; Errors include entering an invalied room
+  lda FUNC_ERR                    ; Errors include entering an invalid room
   bne zum_cmd_move_err
   lda ROOM_NUM
   sta PLAYER_LOC

@@ -18,8 +18,10 @@
   asl MATH_TMP_A
   ; ROL - Carry shifted into bit 0; original bit 7 shifted into Carry.
   rol MATH_TMP_A+1
+
   rol FUNC_RES_L
   rol FUNC_RES_H
+
   lda FUNC_RES_L
   sec                           ; Trial subtraction
   sbc MATH_TMP_B

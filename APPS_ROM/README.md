@@ -15,9 +15,9 @@ ORG $8000
   equw endcode              ; @ $8007 Addr of first byte after end of program
   equb 'P'                  ; @ $8008 A code of 2 denotes a standalone program
   equs 0,0,0                ; -- Reserved for future use --
-  equs "ZUMPUS",0           ; @ $800D Short name, max 15 chars - nul terminated
+  equs "ZUMPUS",0           ; @ $800D Short name, max 15 chars - null terminated
 .version_string
-  equs "1.0",0              ; Version string - nul terminated
+  equs "1.0",0              ; Version string - null terminated
 
 .startprog or .startdata
 .reset						; Sometimes this may be different from startprog
@@ -28,7 +28,7 @@ case of data, the second and third bytes provide the address of the start of
 the data.
 
 Valid codes for the byte at $8008 are:
-	'P' Standalone program
-	'O'	Program overlay
-	'D'	Data
-	'X'	OS extension
+'P' Standalone program
+'O' Program overlay
+'D' Data
+'X' OS extension

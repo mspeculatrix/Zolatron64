@@ -1,4 +1,42 @@
-\ cmds_D.asm
+\ ZolOS CLI Commands starting with 'D' - cmds_D.asm
+
+
+\ ------------------------------------------------------------------------------
+\ --- CMD: DATE  :  PRINT THE DATE TO STDOUT
+\ ------------------------------------------------------------------------------
+.cmdprcDATE
+  jsr rtc_read_date
+  lda FUNC_ERR
+  beq cmdprcDATE_display
+  jmp cmdprc_fail
+.cmdprcDATE_display
+  ldx #2
+.cmdprcDATE_loop
+  cpx #0
+  bne cmdprcDATE_get_next
+  lda #'2'
+  jsr OSWRCH
+  lda #'0'
+  jsr OSWRCH
+.cmdprcDATE_get_next
+  lda RTC_DAT_BUF,X
+  jsr OSB2ISTR
+  dec FUNC_RESULT                   ; Will start as 1 if result is single digit
+  bne cmdprcDATE_prt          ; 0 if single digit
+  lda #'0'
+  jsr OSWRCH
+.cmdprcDATE_prt
+  jsr OSWRSBUF
+  cpx #0
+  beq cmdprcDATE_done
+  lda #'/'
+  jsr OSWRCH
+  dex
+  jmp cmdprcDATE_loop
+.cmdprcDATE_done
+  jmp cmdprc_success
+
+
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: DEL  :  DELETE FILE ON SERVER
@@ -6,6 +44,7 @@
 \ Usage: DEL <filename.ext>
 \ Delete a file on the ZolaDOS server.
 \ Note that any extension must be specified (unlike LOAD and DUMP commands).
+\ No confirmation is asked and no quarter given.
 
 .cmdprcDEL
   LED_ON LED_FILE_ACT
@@ -41,20 +80,21 @@
   LOAD_MSG cdmprcDUMP_msg
   jsr OSWRMSG
   jsr OSLCDMSG
-  jsr read_hex_addr_pair              ; Get addresses from input
+  jsr read_hex_addr_pair          ; Get addresses from input
   lda FUNC_ERR
   bne cmdprcDUMP_err
   jsr compare_addr                ; Check that address A is lower than B
-  lda FUNC_RESULT                     ; Result should be 0 (LESS_THAN)
+  lda FUNC_RESULT                 ; Result should be 0 (LESS_THAN)
   bne cmdprcDUMP_addr_err
-  jsr read_filename                   ; Puts filename in STR_BUF
+  SET_EXCL_EXT_FLAG
+  jsr read_filename               ; Puts filename in STR_BUF
   lda FUNC_ERR
   bne cmdprcDUMP_err
   ldx STDIN_IDX
   lda STDIN_BUF,X                 ; Check there's nothing left in the RX buffer
   bne cmdprcDUMP_synerr           ; Should be null. Anything else is a mistake
-  lda #ZD_OPCODE_DUMP_CRT             ; Set save type - in this case, CREATE
-  jsr zd_save_data                    ; Now save the memory contents
+  lda #ZD_OPCODE_DUMP_CRT         ; Set save type - in this case, CREATE
+  jsr zd_save_data                ; Now save the memory contents
   lda FUNC_ERR
   bne cmdprcDUMP_err
   jmp cmdprcDUMP_success
@@ -67,7 +107,7 @@
   sta FUNC_ERR
 .cmdprcDUMP_err
   LED_OFF LED_FILE_ACT
-  jmp cmdprc_fail                   ; Will display error in FUNC_ERR
+  jmp cmdprc_fail                 ; Will display error in FUNC_ERR
 .cmdprcDUMP_success
   LED_OFF LED_FILE_ACT
   LOAD_MSG file_act_complete_msg
@@ -75,6 +115,6 @@
   jsr OSLCDMSG
   jmp cmdprc_success
 
-\ --- DATA ------------------
+\ --- DATA ---------------------------------------------------------------------
 .cdmprcDUMP_msg
   equs "Dumping memory ... ",0

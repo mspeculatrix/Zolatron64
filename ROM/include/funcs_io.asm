@@ -5,25 +5,23 @@
 \ Inspired somewhat by keyword parsing in EhBASIC:
 \ https://github.com/Klaus2m5/6502_EhBASIC_V2.22/blob/master/patched/basic.asm
 \ (see line 8273 onward)
-\ A - O
-\ X - O
-\ Y - O
+\ A - O     X - O     Y - O
 .parse_input
   lda #CMD_TKN_FAIL         ; We'll use this as the default result
   sta FUNC_RESULT           ;
   ldx #0                    ; Init offset counter
   lda STDIN_BUF             ; Load first char in buffer
-  beq parse_cmd_nul         ; if it's a zero, the buffer is empty
-  sta TEST_VAL              ; store buffer char somewhere handy
+  beq parse_cmd_null        ; If it's a zero, the buffer is empty
+  sta TEST_VAL              ; Store buffer char somewhere handy
 .parse_next_test
-  lda cmd_ch1_tbl,X         ; get next char from table of cmd 1st chars
-  cmp #EOTBL_MKR            ; is it the end of table marker?
-  beq parse_1st_char_fail   ; if so, parsing has failed to find a match
-  cmp TEST_VAL              ; otherwise compare against our input char
-  beq parse_1st_char_match  ; if it matches, on to the next step
-  inx                       ; otherwise, time to test next char in table
+  lda cmd_ch1_tbl,X         ; Get next char from table of cmd 1st chars
+  cmp #EOTBL_MKR            ; Is it the end of table marker?
+  beq parse_1st_char_fail   ; If so, parsing has failed to find a match
+  cmp TEST_VAL              ; Otherwise compare against our input char
+  beq parse_1st_char_match  ; If it matches, on to the next step
+  inx                       ; Otherwise, time to test next char in table
   jmp parse_next_test
-.parse_cmd_nul
+.parse_cmd_null
   lda #CMD_TKN_NUL
   sta FUNC_RESULT
   jmp parse_end
@@ -32,31 +30,29 @@
 .parse_1st_char_match
   ; At this point, X holds the offset we need to look up an address in cmd_ptrs
   ; although we need to multiply it by 2
-  txa                 ; move into A
-  asl A               ; shift left 1 bit to multiply by 2
-  tax                 ; and put back in X
-  lda cmd_ptrs,X      ; get LSB of relevant address from the cmd_ptrs table
-  sta TBL_VEC_L       ; and put in TBL_VEC
+  txa                     ; Move offset into A
+  asl A                   ; Shift left 1 bit to multiply by 2
+  tax                     ; and put back in X
+  lda cmd_ptrs,X          ; Get LSB of relevant address from the cmd_ptrs table
+  sta TBL_VEC_L           ; and put in TBL_VEC
   lda cmd_ptrs+1,X
   sta TBL_VEC_H
   ; We now have the start address for the relevant section of the command table
   ; in TBL_VEC and we've already matched on the first char
-  ldy #0              ; offset for the command table
-  ldx #1              ; offset for the input buffer, starting with 2nd char
+  ldy #0                  ; offset for the command table
+  ldx #1                  ; offset for the input buffer, starting with 2nd char
 .parse_next_chr
-  lda STDIN_BUF,X   ; get next char from buffer
-  sta TEST_VAL        ; and put it somewhere handy - repurposing TEST_VAL
-  lda (TBL_VEC_L),Y   ; load the next test char from our command table
-  bmi parse_token_found ; bit 7 will be set if this is a token - $80 or more
-;  cmp #$80            ; does it have a value $80 or more?
-;  bcs parse_token_found ; if >= $80, it's a token - success!
-  cmp #EOCMD_SECTION  ; have we got to the end of the section without a match?
-  beq parse_fail      ; if so, we've failed, time to leave
+  lda STDIN_BUF,X         ; Get next char from buffer
+  sta TEST_VAL            ; Otherwise put it somewhere handy
+  lda (TBL_VEC_L),Y       ; Load the next test char from our command table
+  bmi parse_token_found   ; Bit 7 will be set if this is a token - $80 or more
+  cmp #EOCMD_SECTION      ; Got to the end of the section without a match?
+  beq parse_fail          ; if so, we've failed, time to leave
   ; At this point, we've matched neither a token nor an end of section marker.
   ; so it's time to test the buffer char itself - table char is still in A
   ; and buffer char in TEST_VAL
   cmp TEST_VAL
-  bne parse_next_cmd  ; if it's not equal, this isn't the right command
+  bne parse_next_cmd  ; If it's not equal, this isn't the right command
   inx                 ; otherwise, if it is equal, let's test the next buffer
   iny                 ; char against the next command char
   jmp parse_next_chr
@@ -64,31 +60,31 @@
   ; We've mached against a command. The next char in the buffer should be a
   ; space or a null. X already indicates this char because it was incremented
   ; above at the same time as we incremented Y to get the token byte.
-  pha                 ; prserve A (which holds our token code)
-  lda STDIN_BUF,X     ; get the byte from the buffer
-  tay                 ; store it in Y
-  pla                 ; restore A
-  cpy #$20            ; is buffer byte a space?
+  pha                         ; Preserve A (which holds our token code)
+  lda STDIN_BUF,X             ; Get the byte from the buffer
+  tay                         ; Store it in Y
+  pla                         ; Restore A
+  cpy #$20                    ; Is buffer byte a space?
   beq parse_token_ok
-  cpy #0              ; or is it a null?
+  cpy #0                      ; Or is it a null?
   beq parse_token_ok
-  jmp parse_fail       ; if neither of above, this is an error
+  jmp parse_fail              ; If neither of above, this is an error
 .parse_token_ok
   sta FUNC_RESULT
   jmp parse_end
 .parse_next_cmd
-  ; previous command didn't match, so let's spin ahead to the next one.
+  ; Previous command didn't match, so let's spin ahead to the next one.
   ; X needs to be reset; Y needs to be incremented
   ldx #1
 .parse_fast_forward
-  iny                     ; increment offset
-  lda (TBL_VEC_L),Y       ; load next char from cmd table
-  cmp #$80                ; is it a token?
-  bcs parse_next_cmd_jmp  ; if so, we're nearly done
-  jmp parse_fast_forward  ; otherwise, loop
+  iny                               ; Increment offset
+  lda (TBL_VEC_L),Y                 ; Load next char from cmd table
+  cmp #$80                          ; Is it a token?
+  bcs parse_next_cmd_jmp            ; If so, we're nearly done
+  jmp parse_fast_forward            ; otherwise, loop
 .parse_next_cmd_jmp
-  iny                     ; one more for luck - or to move to start of next cmd
-  jmp parse_next_chr      ; now let's try again
+  iny                     ; One more for luck - or to move to start of next cmd
+  jmp parse_next_chr      ; Now let's try again
 .parse_fail
   lda #PARSE_ERR_CODE
   sta FUNC_RESULT
@@ -102,9 +98,7 @@
 \ ------------------------------------------------------------------------------
 \ Display the contents of memory
 \ ON ENTRY: Start and end addresses must be in TMP_ADDR_A and TMP_ADDR_B.
-\ A - O
-\ X - O
-\ Y - n/a
+\ A - O     X - O     Y - n/a
 ; We leave TMP_ADDR_B alone, but increment TMP_ADDR_A until the two match.
 .display_memory
   LOAD_MSG memory_header
@@ -142,7 +136,14 @@
 .display_mem_chk_LSB
   lda TMP_ADDR_A_L              ; Compare the LSBs
   cmp TMP_ADDR_B_L
-  beq display_mem_output_end    ; If they're also equal, we're done
+  bne display_mem_inc_LSB       ; If they're also equal, we're done
+  ; BUT - do we need to print the ascii? Quite possibly
+  ; If it was an exact line of 16 chars, then won't need to print
+  ; TMP_COUNT would have been reset to 0
+  lda TMP_COUNT
+  beq display_mem_output_end
+  jsr display_mem_ascii
+  jmp display_mem_output_end
 .display_mem_inc_LSB
   inc TMP_ADDR_A_L              ; Increment LSB of start address
   lda TMP_ADDR_A_L
@@ -159,9 +160,7 @@
   rts
 
 .display_mem_copy_addr
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
   lda TMP_ADDR_A_L                ; Keep a copy for ASCII display
   sta TMP_ADDR_C_L
   lda TMP_ADDR_A_H
@@ -169,9 +168,7 @@
   rts
 
 .display_mem_ascii
-\ A - O
-\ X - n/a
-\ Y - O
+\ A - O     X - n/a     Y - O
   lda TMP_COUNT
   bne display_mem_ascii_len
   lda #16
@@ -208,12 +205,40 @@
   rts
 
 .display_mem_pad
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
   lda #' '
   jsr OSWRCH
   jsr OSWRCH
+  jsr OSWRCH
+  rts
+
+\ ------------------------------------------------------------------------------
+\ ---  GET_INPUT
+\ ---  Implements: OSGETINP
+\ ------------------------------------------------------------------------------
+\ Creates a wait loop until the STDIN_NUL_RCVD_FL is set in STDIN_STATUS_REG.
+\ ON ENTRY: - Clears any content in STDIN_BUF.
+\ ON EXIT : - Input text is in STDIN_BUF and STDIN_IDX is set.
+\           - STDIN_NUL_RCVD_FL is cleared.
+\ A - O     X - n/a     Y - n/a
+.get_input
+  stz STDIN_IDX                         ; Zero out input buffer
+  stz STDIN_BUF
+  lda STDIN_STATUS_REG
+  and #STDIN_CLEAR_FLAGS                ; Clear flag
+  sta STDIN_STATUS_REG
+.get_input_loop
+  lda STDIN_STATUS_REG
+  and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
+  bne get_input_done                    ; If yes, process the buffer
+  ldx STDIN_IDX                         ; Load the value of the RX buffer index
+  cpx #STR_BUF_LEN                      ; Are we at the limit?
+  bcs get_input_done                    ; Branch if X >= STR_BUF_LEN
+  jmp get_input_loop
+.get_input_done
+  lda STDIN_STATUS_REG
+  and #STDIN_CLEAR_FLAGS                ; Clear flag
+  sta STDIN_STATUS_REG
   rts
 
 \ ------------------------------------------------------------------------------
@@ -225,16 +250,11 @@
 \ ON EXIT : - FUNC_RESULT contains key ASCII code - 0 means just <return> was
 \             pressed.
 \           - STDIN_IDX and STDIN_BUF are both reset.
-\ A - O
-\ X - n/a
-\ Y - n/a
+\ A - O     X - n/a     Y - n/a
 .getkey
   stz FUNC_RESULT
   stz STDIN_IDX                         ; Zero-out buffer
   stz STDIN_BUF
-  ;lda STDIN_STATUS_REG                  ; Clear the STDIN flags in status reg
-  ;and #STDIN_CLEAR_FLAGS                ; *** NOT SURE THESE 3 LINES ARE
-  ;sta STDIN_STATUS_REG                  ; NECCESARY - HUNTING A BUG
 .getkey_loop
   lda STDIN_STATUS_REG
   and #STDIN_NUL_RCVD_FL                ; Is the 'null received' bit set?
@@ -259,9 +279,7 @@
 \           - Reads the char pointed to by STDIN_IDX
 \ ON EXIT : - Character code is in FUNC_RESULT
 \           - Error code in FUNC_ERR
-\ A - O
-\ X - O
-\ Y - n/a
+\ A - O     X - O     Y - n/a
 .read_ascii
   jsr read_byte
   lda FUNC_ERR
@@ -290,9 +308,7 @@
 \ ON EXIT : - Character code is in FUNC_RESULT
 \           - Error code in FUNC_ERR
 \           - STDIN_IDX updated
-\ A - O
-\ X - O
-\ Y - n/a
+\ A - O     X - O     Y - n/a
 .read_byte
   stz FUNC_RESULT
   stz FUNC_ERR
@@ -325,9 +341,7 @@
 \           - Reads the char pointed to by STDIN_IDX
 \ ON EXIT : - Character code is in FUNC_RESULT
 \           - Error code in FUNC_ERR
-\ A - O
-\ X - O
-\ Y - n/a
+\ A - O     X - O     Y - n/a
 .read_char
   jsr read_byte
   lda FUNC_ERR
@@ -350,9 +364,7 @@
 \           - Assumes STDIN_IDX points to next byte to be read from STDIN_BUF.
 \ ON EXIT : - 16-bit number in FUNC_RES_L/H
 \           - Error in FUNC_ERR
-\ A - P
-\ X - P
-\ Y - P
+\ A - P     X - P     Y - P
 .read_int16
   pha : phx : phy
   stz FUNC_ERR
@@ -412,6 +424,9 @@
   sta FUNC_ERR
   jmp read_int_end
 .read_int_done
+  lda TMP_VAL
+  beq read_int_error
+.read_int_store
   lda MATH_TMP16
   sta FUNC_RES_L
   lda MATH_TMP16 + 1
@@ -425,31 +440,27 @@
 \ ------------------------------------------------------------------------------
 \ ---  READ_FILENAME
 \ ---  Implements: OSRDFNAME
-\ COULD BE RENAMED TO READ_STRING AS A MORE GENERAL-PURPOSE ROUTINE - OSRDSTR
-\ Keep READ_FILENAME AS A WRAPPER
-\ WOULD NEED TO UPGRADE TO ACCEPT NUMBERS (and maybe lowercase)
 \ ------------------------------------------------------------------------------
 \ This function reads characters from STDIN_BUF and stores them in STR_BUF.
 \ It assumes that STDIN_IDX contains an offset pointer to the part of STDIN_BUF
 \ from which we want to read next.
-\ ON ENTRY: Nul- or space- terminated filename string expected in STDIN_BUF
-\ ON EXIT : - Nul-terminated filename in STR_BUF
+\ ON ENTRY: - Null- or space-terminated filename string in STDIN_BUF
+\           - ZD_INCL_EXT should be 0 or 1 (defaults to 0)
+\ ON EXIT : - Null-terminated filename in STR_BUF
 \           - Error in FUNC_ERR
 \           - STDIN_IDX updated
-\ A - P
-\ X - P
-\ Y - P
+\ A - P     X - P     Y - P
 .read_filename
   pha : phx : phy
-  stz FUNC_ERR              ; Initialise to 0
-  ldy #0                    ; Offset for where we're storing each byte
+  stz FUNC_ERR                ; Initialise to 0
+  ldy #0                      ; Offset for where we're storing each byte
   ldx STDIN_IDX
 .read_filename_next_char
-  lda STDIN_BUF,X           ; Get next byte from buffer
-  beq read_filename_check   ; If a null (0), at end of input
-  cmp #CHR_LINEEND          ; If a line end, we're done.
+  lda STDIN_BUF,X             ; Get next byte from buffer
+  beq read_filename_check     ; If a null (0), at end of input
+  cmp #CHR_LINEEND            ; If a line end, we're done.
   beq read_filename_check
-  cmp #CHR_SPACE            ; If it's a space, check if we should ignore it
+  cmp #CHR_SPACE              ; If it's a space, check if we should ignore it
   beq read_filename_chkspc
   ; If we're not at or near the beginning of the filename, numbers and certain
   ; special chars are allowed
@@ -482,18 +493,30 @@
   lda #FN_CHAR_ERR_CODE
   sta FUNC_ERR
   jmp read_filename_end
-.read_filename_check  ;
+.read_filename_check              ; Check filename is minimum length
   lda #0
-  sta STR_BUF,Y               ; Make sure we have a null terminator
-  cpy #ZD_MIN_FN_LEN          ; Minimum filename length
+  sta STR_BUF,Y                   ; Make sure we have a null terminator
+  cpy #ZD_MIN_FN_LEN - 1          ; Minimum filename length
   bcc read_filename_err
-  cpy #ZD_MAX_FN_LEN+1        ; Maximum filename length
+  lda ZD_CTRL_REG                 ; Should length check include extension?
+  and #ZD_CTRL_EXCL_EXT
+  bne read_filename_check_len_no_ext
+  lda #ZD_MAX_FN_LEN_EX
+  sta TMP_VAL
+  jmp read_filename_check_max_chk
+.read_filename_check_len_no_ext
+  lda #ZD_MAX_FN_LEN
+  sta TMP_VAL
+.read_filename_check_max_chk
+  cpy TMP_VAL                     ; Maximum filename length
   bcc read_filename_end
 .read_filename_err
   lda #FN_LEN_ERR_CODE
   sta FUNC_ERR
 .read_filename_end
   stx STDIN_IDX
+  lda #1
+  stz ZD_CTRL_REG                 ; Reset to default
   ply : plx : pla
   rts
 
@@ -502,7 +525,7 @@
 \ ---  Implements: OSRDSTR
 \ ------------------------------------------------------------------------------
 \ Reads string from STDIN_BUF. The string is terminated when the routine
-\ encounters a nul or a space (except when spaces occur before it has
+\ encounters a null or a space (except when spaces occur before it has
 \ read any other type of character). It accepts only printable characters in
 \ certain ranges:
 \     -./0-9:
@@ -514,9 +537,7 @@
 \ ON EXIT : - String is in STR_BUF
 \           - FUNC_ERR contains error code (0 = success)
 \           - STDIN_IDX is updated
-\ A - P
-\ X - P
-\ Y - P
+\ A - P     X - P     Y - P
 .read_string
   pha : phx : phy
   stz FUNC_ERR                ; Initialise to 0
@@ -559,7 +580,7 @@
   jmp read_string_end
 .read_string_check
   lda #0
-  sta STR_BUF,Y             ; Make sure we have a null terminator
+  sta STR_BUF,Y               ; Make sure we have a null terminator
   jmp read_string_end
 .read_string_err
   lda #FN_LEN_ERR_CODE
@@ -580,9 +601,7 @@
 \           space.
 \ ON EXIT : - 16-bit value in FUNC_RES_L/FUNC_RES_H.
 \           - FUNC_ERR contains error code.
-\ A - P
-\ X - n/a
-\ Y - P
+\ A - P     X - n/a     Y - P
 .read_hex_addr
   pha : phy
   ldy #1                    ; Offset for where we're storing each byte from buf
@@ -608,9 +627,7 @@
 \           terminator or space.
 \ ON EXIT : - Two 16-bit addresses in TMP_ADDR_A and TMP_ADDR_B.
 \           - FUNC_ERR contains error code.
-\ A - O
-\ X - n/a
-\ Y - O
+\ A - O     X - n/a     Y - O
 .read_hex_addr_pair
   ldy #0
 .read_hex_addr_pair_next        ; Get next address from buffer
@@ -640,9 +657,7 @@
 \             of STDIN_BUF from which we want to read next.
 \ ON EXIT : - Value in FUNC_RESULT
 \           - Error in FUNC_ERR
-\ A - P
-\ X - P
-\ Y - P
+\ A - P     X - P     Y - P
 .read_hex_byte
   pha : phx : phy
   stz FUNC_ERR                ; Initialise to 0
@@ -665,7 +680,13 @@
   bne read_hexbyte_fail
   jmp read_hexbyte_end
 .read_hexbyte_fail
+  cpy #1                      ; If still 1, nothing was found
+  beq read_hexbyte_null
   lda #READ_HEXBYTE_ERR_CODE
+  sta FUNC_ERR
+  jmp read_hexbyte_end
+.read_hexbyte_null
+  lda #NULL_ENTRY_ERR_CODE
   sta FUNC_ERR
 .read_hexbyte_end
   stx STDIN_IDX
@@ -677,9 +698,7 @@
 \ ---  Implements: OSWRERR
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: An error code is assumed to be in FUNC_ERR
-\ A - O
-\ X - O
-\ Y - n/a
+\ A - O     X - O     Y - n/a
 .os_print_error
   lda FUNC_ERR
   dec A                   ; To get offset for table
@@ -700,9 +719,7 @@
 \ ON ENTRY: - A contains ASCII code for character
 \ ON EXIT : - FUNC_ERR contains error code - 0 for success
 \           - STDOUT_IDX updated
-\ A - O
-\ X - P
-\ Y - P
+\ A - O     X - P     Y - P
 .stdout_add_char
   phx
   stz FUNC_ERR
@@ -718,13 +735,12 @@
 \ ---  STDOUT_APPEND
 \ ---  Implements: OSSOAPP
 \ ------------------------------------------------------------------------------
+\ Appends a text string to the STDOUT buffer.
 \ ON ENTRY: - Assumes index for next char is in STDOUT_IDX
 \           - MSG_VEC/+1 contains pointer to text string
 \ ON EXIT : - FUNC_ERR contains error code - 0 for success
 \           - STDOUT_IDX updated
-\ A - O
-\ X - P
-\ Y - P
+\ A - O     X - P     Y - P
 .stdout_append
   phx : phy
   stz FUNC_ERR
@@ -732,15 +748,14 @@
   ldy #0
   ldx STDOUT_IDX
 .stdout_append_copy_loop
-  lda (MSG_VEC),Y
-  beq stdout_append_copy_done
-  sta STDOUT_BUF,X
-  inx
-  iny
+  lda (MSG_VEC),Y                     ; Get character from string
+  beq stdout_append_copy_done         ; If it's 0, we're done
+  sta STDOUT_BUF,X                    ; Otherwise copy it to the buffer
+  inx                                 ; Increment index for buffer
+  iny                                 ; Increment index for string
   jmp stdout_append_copy_loop
 .stdout_append_copy_done
-  lda #0
-  sta STDOUT_BUF,X
+  stz STDOUT_BUF,X                    ; Terminate buffer with a 0
   stx STDOUT_IDX
   ply : plx
   rts

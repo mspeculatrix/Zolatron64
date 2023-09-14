@@ -99,12 +99,12 @@ SC28L92_RxRDY     = %00000001
 
 ; Synonyms for the STDIN flags above. As we're using Port A as the main
 ; console port now, probably better to use the generic STDIN_ constants.
-DUART_RxA_NUL_RCVD_FL  = %00000001		; We've received a nul byte
+DUART_RxA_NUL_RCVD_FL  = %00000001		; We've received a null byte
 DUART_RxA_DAT_RCVD_FL  = %00000010		; We've transferred data to our buffer
 DUART_RxA_BUF_FULL_FL  = %00000100		; The buffer is full.
 DUART_RxA_CLR_FLAGS    = %11110000      ; AND with reg to clear input flags
 
-DUART_RxB_NUL_RCVD_FL  = %00010000		; We've received a nul byte
+DUART_RxB_NUL_RCVD_FL  = %00010000		; We've received a null byte
 DUART_RxB_DAT_RCVD_FL  = %00100000		; We've transferred data to our buffer
 DUART_RxB_BUF_FULL_FL  = %01000000		; The buffer is full.
 DUART_RxB_CLR_FLAGS    = %00001111      ; AND with reg to clear input flags

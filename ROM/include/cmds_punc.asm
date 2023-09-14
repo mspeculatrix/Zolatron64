@@ -1,3 +1,5 @@
+\ ZolOS CLI Commands starting with punctuation - cmds_punc.asm
+
 \ ------------------------------------------------------------------------------
 \ --- CMD: !  :  ENTER BYTE(S) IN MEMORY
 \ ------------------------------------------------------------------------------
@@ -22,9 +24,9 @@
   beq cmdprcBANG_success    ; If it's a nul, we're done
   iny
   cpy #16
-  beq cmdprcBANG_success       ; If w've got 16 bytes, we're done
-  inc FUNC_RES_L            ; Increment low byte of address
-  bne cmdprcBANG_loop       ; If it didn't roll over, good to go again
+  beq cmdprcBANG_success        ; If w've got 16 bytes, we're done
+  inc FUNC_RES_L                ; Increment low byte of address
+  bne cmdprcBANG_loop           ; If it didn't roll over, good to go again
   inc FUNC_RES_H
   jmp cmdprcBANG_loop
 
@@ -43,43 +45,19 @@
 \ ------------------------------------------------------------------------------
 \ --- CMD: ?  :  EXAMINE BYTE(S) IN MEMORY
 \ ------------------------------------------------------------------------------
-\ Usage: ? <addr>
+\ Usage: PEEK <addr>
 \ Show the value of a byte at a specific address.
 \ Expects a two-byte hex address as input.
-\ Pressing <return> increments the address and shows the next byte.
-\ Entering <Q> <return> stops the routine.
 .cmdprcQUERY
-  jsr read_hex_addr           ; Get address - bytes in FUNC_RES_L, FUNC_RES_H
+  jsr read_hex_addr         ; Get address - puts bytes in FUNC_RES_L, FUNC_RES_H
   lda FUNC_ERR
   bne cmdprcQUERY_fail
-;  ldx STDIN_IDX
-;  lda STDIN_BUF,X            ; Check there's nothing left in the RX buffer
-;  bne cmdprcQUERY_fail       ; Should be null. Anything else is a mistake
-.cmdprcQUERY_loop
-  lda FUNC_RES_L
-  sta TMP_ADDR_A
-  lda FUNC_RES_L + 1
-  sta TMP_ADDR_A + 1
-  jsr OSU16HEX                ; Puts address string in STR_BUF
-  jsr OSWRSBUF
-  lda #' '
-  jsr OSWRCH
-  lda (FUNC_RES_L)            ; Get value of byte at address
-  jsr byte_to_hex_str         ; Resulting string is in STR_BUF
-  jsr OSWRSBUF
-  lda #' '
-  jsr OSWRCH
-.cmdprcQUERY_getkey
-  jsr getkey
-  lda FUNC_RESULT
-  cmp #'Q'
-  beq cmdprcQUERY_done
-  inc FUNC_RES_L						          ; Increment address
-  bne cmdprcQUERY_loop                ; Isn't zero so didn't roll over
-  inc FUNC_RES_H                      ; Did roll over, so increment high byte
-  beq cmdprcQUERY_done	              ; Rolled over, so we're at top of memory
-  jmp cmdprcQUERY_loop
-.cmdprcQUERY_done
+  ldx STDIN_IDX
+  lda STDIN_BUF,X           ; Check there's nothing left in the RX buffer
+  bne cmdprcQUERY_fail      ; Should be null. Anything else is a mistake
+  lda (FUNC_RES_L)
+  jsr byte_to_hex_str       ; Resulting string is in STR_BUF
+  jsr duart_snd_strbuf
   jmp cmdprc_success
 .cmdprcQUERY_fail
   lda #SYNTAX_ERR_CODE

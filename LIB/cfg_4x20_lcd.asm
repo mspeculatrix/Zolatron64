@@ -45,7 +45,7 @@ LED_DEBUG 	 = 4
 
 ; LCD PANEL
 LCD_LINES     = 4          ; Number of lines on display
-LCD_LN_BUF_SZ = 21		     ; 20 chars + nul terminator per  line
+LCD_LN_BUF_SZ = 21		     ; 20 chars + null terminator per  line
 LCD_BUF_SZ    = LCD_LINES * LCD_LN_BUF_SZ
 LCD_CLS       = %00000001  ; Clear screen & reset display memory
 LCD_TYPE      = %00111000  ; Set 8-bit mode; 2-line display; 5x8 font

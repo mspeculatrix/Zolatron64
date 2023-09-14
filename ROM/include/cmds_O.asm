@@ -1,9 +1,9 @@
-\ cmds_O.asm
+\ ZolOS CLI Commands starting with 'O' - cmds_O.asm
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: OPEN  :  LOAD FILE INTO SPECIFIC ADDRESS
 \ ------------------------------------------------------------------------------
-\ Usage: OPEN <filename> <start_address>
+\ Usage: OPEN <filename.ext> <start_address>
 \ This is for loading any kind of file into a specific memory location.
 \ The filename needs to include the extension.
 .cmdprcOPEN
