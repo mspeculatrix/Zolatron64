@@ -81,7 +81,7 @@ ORG USR_START
   beq error_invalid_entry   ; 0 is not valid
   cmp #32
   bcs error_invalid_entry
-  sta RTC_DAT_BUF + 2
+  sta RTC_DAT_BUF
 
 .get_month
   LOAD_MSG get_month_msg
@@ -109,7 +109,7 @@ ORG USR_START
   beq error_invalid_entry   ; 0 is not valid
   cmp #100
   bcs error_invalid_entry
-  sta RTC_DAT_BUF
+  sta RTC_DAT_BUF + 2
 
 .get_dow
   LOAD_MSG get_dow_msg
@@ -161,11 +161,11 @@ ORG USR_START
   bcs get_number_process                ; Branch if X >= STR_BUF_LEN
   jmp get_number_loop
 .get_number_process
-  lda STDIN_STATUS_REG                    ; Get our info register
-  eor #STDIN_NUL_RCVD_FL                  ; Zero the received flag
-  sta STDIN_STATUS_REG                    ; and re-save the register
-  stz STDIN_IDX                           ; Want to read from first char in buf
-  jsr OSRDINT16               ; Going to use only lower byte value
+  lda STDIN_STATUS_REG                  ; Get our info register
+  eor #STDIN_NUL_RCVD_FL                ; Zero the received flag
+  sta STDIN_STATUS_REG                  ; and re-save the register
+  stz STDIN_IDX                         ; Want to read from first char in buf
+  jsr OSRDINT16                         ; Going to use only lower byte value
   rts
 
 
