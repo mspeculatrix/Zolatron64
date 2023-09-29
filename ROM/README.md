@@ -5,6 +5,8 @@
 ### 5.1.0
 
 - Fixed bug in date handling.
+- Added SD card init routine to ROM.
+- Initial/basic SD card functions.
 
 ### 5.0.6 - committed
 

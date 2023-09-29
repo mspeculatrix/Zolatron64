@@ -158,6 +158,17 @@ INCLUDE "include/os_call_vectors.asm"
   lda SYS_REG
   ora #SYS_SPI
   sta SYS_REG
+  ; --- INITIALISATIONS --------------------------------------------------------
+  ; Put SD card into SPI mode
+  lda #SPI_DEV_NONE               ; We need to do this operation with the CS
+  sta SPI_DEV_SEL                 ; line high - yes, high
+  ldx #10                         ; Cycle clock at least 74 times - we'll 'send'
+  lda #$FF                        ; 10 bytes - ie, 80 clock cycles
+.spi_chk_sd_init_loop
+  jsr OSSPIEXCH
+  dex
+  bne spi_chk_sd_init_loop
+  ; --- END OF INITIALISATIONS -------------------------------------------------
   LOAD_MSG spi_if_present_msg
 .spi_chk_done
   jsr OSWRMSG

@@ -79,6 +79,8 @@
   jsr OSWRMSG
   NEWLINE
 
+; We restart here after a game has been played and the player opts to
+; play another.
 .init
   stz Z_STATE                     ; Set Zumpus to sleeping
   stz P_CONDITION                 ; Set Player's condition to default
