@@ -7,9 +7,9 @@
 \ current time into the buffer.
 .rtc_display_date
   pha : phx
-  ldx #2
+  ldx #0
 .rtc_display_date_loop
-  cpx #0
+  cpx #2
   bne rtc_display_date_get_next
   lda #'2'
   jsr OSWRCH
@@ -24,11 +24,11 @@
   jsr OSWRCH
 .rtc_display_date_prt
   jsr OSWRSBUF
-  cpx #0
+  cpx #2
   beq rtc_display_date_done
   lda #'/'
   jsr OSWRCH
-  dex
+  inx
   jmp rtc_display_date_loop
 .rtc_display_date_done
   lda #' '
@@ -88,10 +88,8 @@
   lda RTC_DAT_BUF
   jsr rtc_convert_to_bcd
   tax                           ; Put into X for later
-  lda #RTC_DATW_MASK            ; Load appropriate write mask into RTC_REG_MASK
-  sta RTC_REG_MASK
   lda #RTC_DATE_REG             ; Load A with value of register
-  jsr rtc_write_reg_with_mask
+  jsr rtc_write_reg             ; Date doesn't need write mask
 
   ; SET MONTH
   lda RTC_DAT_BUF + 1

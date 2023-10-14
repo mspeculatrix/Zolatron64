@@ -1,10 +1,8 @@
 # Z64IODECODE
 
-**_ UNTESTED _**
-
 CUPL code for address decoding logic for the Z64.
 
-Target device: ATF1502AS
+Target device: ATF1504AS
 
 This provides address decoding for:
 

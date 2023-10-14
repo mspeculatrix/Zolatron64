@@ -2,18 +2,18 @@
 
 
 \ ------------------------------------------------------------------------------
-\ --- CMD: DATE  :  PRINT THE DATE TO STDOUT
+\ --- CMD: DATE  :  PRINT THE CURRENT DATE TO STDOUT
 \ ------------------------------------------------------------------------------
 .cmdprcDATE
-  jsr rtc_read_date
+  jsr rtc_read_date                 ; Read date data from RTC into RTC_DAT_BUF
   lda FUNC_ERR
   beq cmdprcDATE_display
   jmp cmdprc_fail
 .cmdprcDATE_display
-  ldx #2
+  ldx #0
 .cmdprcDATE_loop
-  cpx #0
-  bne cmdprcDATE_get_next
+  cpx #2
+  bne cmdprcDATE_get_next           ; If we're at 2, this is the year
   lda #'2'
   jsr OSWRCH
   lda #'0'
@@ -21,22 +21,20 @@
 .cmdprcDATE_get_next
   lda RTC_DAT_BUF,X
   jsr OSB2ISTR
-  dec FUNC_RESULT                   ; Will start as 1 if result is single digit
-  bne cmdprcDATE_prt          ; 0 if single digit
+  dec FUNC_RESULT                   ; Will now be 1 if string is more than a
+  bne cmdprcDATE_prt                ; single digit, 0 if a single digit
   lda #'0'
   jsr OSWRCH
 .cmdprcDATE_prt
   jsr OSWRSBUF
-  cpx #0
+  cpx #2
   beq cmdprcDATE_done
   lda #'/'
   jsr OSWRCH
-  dex
+  inx
   jmp cmdprcDATE_loop
 .cmdprcDATE_done
   jmp cmdprc_success
-
-
 
 \ ------------------------------------------------------------------------------
 \ --- CMD: DEL  :  DELETE FILE ON SERVER

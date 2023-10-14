@@ -2,7 +2,13 @@
 
 ## CHANGELOG
 
-### 5.0.6
+### 5.1.0
+
+- Fixed bug in date handling.
+- Added SD card init routine to ROM.
+- Initial/basic SD card functions.
+
+### 5.0.6 - committed
 
 - Swapped functionality of PEEK and ?.
 - Added OSRDDATE and OSRDTIME OS functions.
@@ -10,14 +16,14 @@
 - Improved POKE command - can now enter multiple bytes.
 - Added 'get input' function and OSGETINP OS call.
 - Added 'null input' error code.
-- Added SPI functionality. Created OSSPIEXCH OS call.
+- Added SPI functionality. Created OSSPIEXCH OS call. Added basic real-time clock functions.
 - Updated OSB2ISTR to return number of digits in FUNC_RESULT.
 - Changed filename reading routine to control when an extension is or isn't included in the maximum filename length check. Created the ZD_CTRL_REG register to manage this. Set bit 7 to 1 before reading a filename if the extension isn't to be included.
 - Fixed bug with DEL command.
 - Fixed bug with input routine where junk was being left in input buffer.
 - Added user program interrupt vector.
 
-### 5.0.5
+### 5.0.5 - committed
 
 - Improved response to backspace - now sets input index correctly if backspacing goes beyond the beginning of the buffer.
 

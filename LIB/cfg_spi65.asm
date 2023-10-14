@@ -1,3 +1,5 @@
+\ CFG_SPI65.ASM
+
 SPI_DATA_REG = $BF00
 SPI_STAT_REG = $BF01	              ; When reading
 SPI_CTRL_REG = $BF01	              ; When writing

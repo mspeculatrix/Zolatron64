@@ -6,11 +6,12 @@
 \ ------------------------------------------------------------------------------
 \ ON ENTRY:
 \ ON EXIT :
-\ A - ?     X - ?     Y - ?
+\ A - O     X - O     Y - n/a
 .rtc_read_date
   jsr rtc_select
   lda FUNC_ERR
   bne rtc_read_date_done
+
   ; READ YEAR
   lda #RTC_YEAR_REG
   jsr rtc_read_reg    ; Read the register. Result in A
