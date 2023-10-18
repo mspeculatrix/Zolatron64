@@ -215,12 +215,13 @@ INCLUDE "include/os_call_vectors.asm"
   NEWLINE
   jsr OSLCDMSG
 
-  cli                     	              ; Enable interrupts
+  ;cli                     	              ; Enable interrupts
 
 \ ------------------------------------------------------------------------------
 \ -----  SOFT RESET
 \ ------------------------------------------------------------------------------
 .soft_reset                               ; OSSFTRST
+  sei
   LED_OFF LED_ERR                         ; Turn off the LEDs
   LED_OFF LED_BUSY
   LED_OFF LED_FILE_ACT
@@ -234,13 +235,15 @@ INCLUDE "include/os_call_vectors.asm"
   stz STDIN_STATUS_REG            ; Zero out the STDIN register
 
   ; Unset user port interrupts
-  lda #%01111111                  ; Unset all interrupts
+  lda #%01111111                  ; Disable all interrupts
   sta USRP_IER                    ; Write to enable register
+  sta USRP_IFR                    ; and clear flag register
 
   lda #<isr_usrint_rtn            ; Reset user interrupt vector
   sta OSUSRINT_VEC
   lda #>isr_usrint_rtn
   sta OSUSRINT_VEC + 1
+  cli
 
 ; BOOT ROM
 ; Check to see if there is boot ROM code in bank 0 of extended memory.
@@ -262,7 +265,7 @@ INCLUDE "include/os_call_vectors.asm"
 \ ----- MAIN LOOP
 \ ------------------------------------------------------------------------------
 .mainloop                               ;
-  ; SHOULD CHECK IRQ_REG here
+  ; SHOULD CHECK IRQ_REG here?
   ; lda IRQ_REG                         ; Load the IRQ register
   ; beq mainloop_chk_input              ; If zero, nothing to worry about
   ; otherwise deal with interrupts here

@@ -40,15 +40,32 @@ ALIGN &100                ; start on new page
 .isr_chk_SC28L92_next
 
 ; --- CHECK ZOLADOS IRQ --------------------------------------------------------
-.isr_chk_zolados
-  lda ZD_CTRL_PORT              ; Load the control port state
-  and #ZD_INT_SEL               ; Check the IRQ bit
-  beq isr_chk_zolados_next      ; If clear, not this, so jump to next check
-  lda IRQ_REG                   ; Load SYS_REG
-  ora #ZD_IRQ                   ; and set the appropriate flag
-  sta IRQ_REG                   ; Store SYS_REG again
-  jmp isr_exit                  ; Done doing checks
-.isr_chk_zolados_next
+; *** NOT SURE THIS IS BEING USED ???? ***
+;.isr_chk_zolados
+;  lda ZD_CTRL_PORT              ; Load the control port state
+;  and #ZD_INT_SEL               ; Check the IRQ bit
+;  beq isr_chk_zolados_next      ; If clear, not this, so jump to next check
+;  lda IRQ_REG                   ; Load SYS_REG
+;  ora #ZD_IRQ                   ; and set the appropriate flag
+;  sta IRQ_REG                   ; Store SYS_REG again
+;  jmp isr_exit                  ; Done doing checks
+;.isr_chk_zolados_next
+
+; --- CHECK USER PORT IRQs -----------------------------------------------------
+  ;
+  ; **** THIS CODE IS UNTESTED ****
+  ;
+;.isr_chk_usrp
+;  lda USRP_IFR                  ; Load the user port interrupt flags
+;  beq isr_chk_next              ; If zero, no interrupts to report, move on
+;  ora IRQ_REG                   ; Otherwise combine with what's in IRQ_REG
+;  sta IRQ_REG                   ; Store the result
+;  ; could possibly replace above two lines with:
+;  ; tsb IRQ_REG
+;  lda #%01111111                ; Reset the user port interrupt flags
+;  sta USRP_IFR
+;  jmp isr_exit                  ; Done doing checks
+;.isr_chk_next
 
 ; --- CHECK RTC ALARM ----------------------------------------------------------
 .isr_chk_rtc
