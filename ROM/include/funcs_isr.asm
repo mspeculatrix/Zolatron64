@@ -55,17 +55,15 @@ ALIGN &100                ; start on new page
   ;
   ; **** THIS CODE IS UNTESTED ****
   ;
-;.isr_chk_usrp
-;  lda USRP_IFR                  ; Load the user port interrupt flags
-;  beq isr_chk_next              ; If zero, no interrupts to report, move on
-;  ora IRQ_REG                   ; Otherwise combine with what's in IRQ_REG
-;  sta IRQ_REG                   ; Store the result
-;  ; could possibly replace above two lines with:
-;  ; tsb IRQ_REG
-;  lda #%01111111                ; Reset the user port interrupt flags
-;  sta USRP_IFR
-;  jmp isr_exit                  ; Done doing checks
-;.isr_chk_next
+.isr_chk_usrp
+  lda USRP_IFR                  ; Load the user port interrupt flags
+  beq isr_chk_next              ; If zero, no interrupts to report, move on
+  ora IRQ_REG                   ; Otherwise combine with what's in IRQ_REG
+  sta IRQ_REG                   ; Store the result
+  lda #%01111111                ; Reset the user port interrupt flags
+  sta USRP_IFR
+  jmp isr_exit                  ; Done doing checks
+.isr_chk_next
 
 ; --- CHECK RTC ALARM ----------------------------------------------------------
 .isr_chk_rtc
