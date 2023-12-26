@@ -33,8 +33,8 @@ The branches are:
 
 ## MEMORY MAP
 
-$0000 - $7FFF - Main RAM 32KB
-$8000 - $9FFF - Banked ROM/RAM 8x 8KB banks
-$A000 - $BBFF - 7x I/O (8KB)
-$BF00 - $BFFF - 8x I/O (32-byte)
-$C000 - $FFFF - ROM 16KB
+- $0000 - $7FFF - Main RAM 32KB
+- $8000 - $9FFF - Banked ROM/RAM 8x 8KB banks
+- $A000 - $BBFF - 7x I/O (8KB)
+- $BF00 - $BFFF - 8x I/O (32-byte)
+- $C000 - $FFFF - ROM 16KB
