@@ -35,7 +35,7 @@ ALIGN &100                ; start on new page
 .isr_chk_SC28L92
   lda SC28L92_ISR               ; Bit 1 of the ISR will be set if incoming data
   and #DUART_RxA_RDY_MASK       ; triggered the interrupt
-  beq isr_chk_SC28L92_next          ; If result is zero, RxRDYA bit is not set
+  beq isr_chk_SC28L92_next      ; If result is zero, RxRDYA bit is not set
   jmp isr_SC28L92               ; Otherwise go to the SC28L92 handlng routine
 .isr_chk_SC28L92_next
 
@@ -52,21 +52,19 @@ ALIGN &100                ; start on new page
 ;.isr_chk_zolados_next
 
 ; --- CHECK USER PORT IRQs -----------------------------------------------------
-  ;
-  ; **** THIS CODE IS UNTESTED ****
-  ;
 .isr_chk_usrp
   lda USRP_IFR                  ; Load the user port interrupt flags
-  beq isr_chk_next              ; If zero, no interrupts to report, move on
+  beq isr_chk_usrp_next         ; If zero, no interrupts to report, move on
   ora IRQ_REG                   ; Otherwise combine with what's in IRQ_REG
   sta IRQ_REG                   ; Store the result
   lda #%01111111                ; Reset the user port interrupt flags
   sta USRP_IFR
   jmp isr_exit                  ; Done doing checks
-.isr_chk_next
+.isr_chk_usrp_next
 
 ; --- CHECK RTC ALARM ----------------------------------------------------------
 .isr_chk_rtc
+  jmp isr_chk_rtc_next  ; *** TEMPORARY *** skip this section for now
   ;
   ; **** THIS CODE IS UNTESTED ****
   ;
@@ -106,6 +104,7 @@ ALIGN &100                ; start on new page
 .isr_chk_rtc_next
 
 ; --- USER ISR -----------------------------------------------------------------
+; --- This needs to be the last of the checks.
   jmp (OSUSRINT_VEC)
 .isr_usrint_rtn                 ; Label for return address - this is important
 

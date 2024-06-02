@@ -194,19 +194,19 @@
      C1D1   8D 54 02   STA &0254
      C1D4   A9 DF      LDA #&DF
      C1D6   8D 55 02   STA &0255
-     C1D9   A9 8E      LDA #&8E
+     C1D9   A9 91      LDA #&91
      C1DB   8D 58 02   STA &0258
      C1DE   A9 E3      LDA #&E3
      C1E0   8D 59 02   STA &0259
-     C1E3   A9 E0      LDA #&E0
+     C1E3   A9 E3      LDA #&E3
      C1E5   8D 5A 02   STA &025A
      C1E8   A9 E3      LDA #&E3
      C1EA   8D 5B 02   STA &025B
-     C1ED   A9 EC      LDA #&EC
+     C1ED   A9 EF      LDA #&EF
      C1EF   8D 5C 02   STA &025C
      C1F2   A9 E3      LDA #&E3
      C1F4   8D 5D 02   STA &025D
-     C1F7   A9 2C      LDA #&2C
+     C1F7   A9 2F      LDA #&2F
      C1F9   8D 5E 02   STA &025E
      C1FC   A9 E4      LDA #&E4
      C1FE   8D 5F 02   STA &025F
@@ -457,7 +457,7 @@ End macro LED_ON
      C3A8   A9 7F      LDA #&7F
      C3AA   8D 0E A8   STA &A80E
      C3AD   8D 0D A8   STA &A80D
-     C3B0   A9 8E      LDA #&8E
+     C3B0   A9 91      LDA #&91
      C3B2   8D 56 02   STA &0256
      C3B5   A9 E3      LDA #&E3
      C3B7   8D 57 02   STA &0257
@@ -761,7 +761,7 @@ End macro NEWLINE
      C5B8   50 72 6F ...
      C5C7   00
 .cmdprcDATE
-     C5C8   20 EC E3   JSR &E3EC
+     C5C8   20 EF E3   JSR &E3EF
      C5CB   A5 55      LDA &55
      C5CD   F0 03      BEQ &C5D2
      C5CF   4C 46 CF   JMP &CF46
@@ -1649,7 +1649,7 @@ End macro STR_BUF_TO_MSG_VEC
      CC33   20 20 
      CC35   00
 .cmdprcTIME
-     CC36   20 2C E4   JSR &E42C
+     CC36   20 2F E4   JSR &E42F
      CC39   A5 55      LDA &55
      CC3B   F0 03      BEQ &CC40
      CC3D   4C 46 CF   JMP &CF46
@@ -4471,7 +4471,7 @@ End macro PRT_PULSE_DELAY
      E30E   D0 03      BNE &E313
      E310   EE 01 06   INC &0601
 .isr_zd_timer_end
-     E313   4C DC E3   JMP &E3DC
+     E313   4C DF E3   JMP &E3DF
 .isr_zd_timer_next
 .isr_lcdvia_timer
      E316   2C 0D A0   BIT &A00D
@@ -4481,13 +4481,13 @@ End macro PRT_PULSE_DELAY
      E321   D0 03      BNE &E326
      E323   EE 48 04   INC &0448
 .isr_lcdvia_timer_end
-     E326   4C DC E3   JMP &E3DC
+     E326   4C DF E3   JMP &E3DF
 .isr_lcdvia_timer_next
 .isr_chk_SC28L92
      E329   AD 05 B4   LDA &B405
      E32C   29 02      AND #&02
      E32E   F0 03      BEQ &E333
-     E330   4C 91 E3   JMP &E391
+     E330   4C 94 E3   JMP &E394
 .isr_chk_SC28L92_next
 .isr_chk_usrp
      E333   AD 0D A8   LDA &A80D
@@ -4496,189 +4496,190 @@ End macro PRT_PULSE_DELAY
      E33A   85 66      STA &66
      E33C   A9 7F      LDA #&7F
      E33E   8D 0D A8   STA &A80D
-     E341   4C DC E3   JMP &E3DC
-.isr_chk_next
+     E341   4C DF E3   JMP &E3DF
+.isr_chk_usrp_next
 .isr_chk_rtc
-     E344   A5 65      LDA &65
-     E346   29 04      AND #&04
-     E348   F0 41      BEQ &E38B
-     E34A   A9 7F      LDA #&7F
-     E34C   8D 02 BF   STA &BF02
-     E34F   A9 0F      LDA #&0F
-     E351   AD 00 BF   LDA &BF00
-     E354   AD 00 07   LDA &0700
-     E357   8D 02 BF   STA &BF02
-     E35A   20 E0 E3   JSR &E3E0
-     E35D   20 E0 E3   JSR &E3E0
-     E360   9C 02 BF   STZ &BF02
-     E363   A8         TAY
-     E364   29 01      AND #&01
-     E366   F0 23      BEQ &E38B
-     E368   A5 66      LDA &66
-     E36A   09 04      ORA #&04
-     E36C   85 66      STA &66
-     E36E   98         TYA
-     E36F   29 FC      AND #&FC
-     E371   AA         TAX
-     E372   A9 0F      LDA #&0F
-     E374   05 80      ORA &80
-     E376   AD 00 BF   LDA &BF00
-     E379   AD 00 07   LDA &0700
-     E37C   8D 02 BF   STA &BF02
-     E37F   20 E0 E3   JSR &E3E0
-     E382   8A         TXA
-     E383   20 E0 E3   JSR &E3E0
-     E386   A9 FF      LDA #&FF
-     E388   8D 02 BF   STA &BF02
+     E344   4C 8E E3   JMP &E38E
+     E347   A5 65      LDA &65
+     E349   29 04      AND #&04
+     E34B   F0 41      BEQ &E38E
+     E34D   A9 7F      LDA #&7F
+     E34F   8D 02 BF   STA &BF02
+     E352   A9 0F      LDA #&0F
+     E354   AD 00 BF   LDA &BF00
+     E357   AD 00 07   LDA &0700
+     E35A   8D 02 BF   STA &BF02
+     E35D   20 E3 E3   JSR &E3E3
+     E360   20 E3 E3   JSR &E3E3
+     E363   9C 02 BF   STZ &BF02
+     E366   A8         TAY
+     E367   29 01      AND #&01
+     E369   F0 23      BEQ &E38E
+     E36B   A5 66      LDA &66
+     E36D   09 04      ORA #&04
+     E36F   85 66      STA &66
+     E371   98         TYA
+     E372   29 FC      AND #&FC
+     E374   AA         TAX
+     E375   A9 0F      LDA #&0F
+     E377   05 80      ORA &80
+     E379   AD 00 BF   LDA &BF00
+     E37C   AD 00 07   LDA &0700
+     E37F   8D 02 BF   STA &BF02
+     E382   20 E3 E3   JSR &E3E3
+     E385   8A         TXA
+     E386   20 E3 E3   JSR &E3E3
+     E389   A9 FF      LDA #&FF
+     E38B   8D 02 BF   STA &BF02
 .isr_chk_rtc_next
-     E38B   6C 56 02   JMP (&0256)
+     E38E   6C 56 02   JMP (&0256)
 .isr_usrint_rtn
 .isr_end_checks
-     E38E   4C DC E3   JMP &E3DC
+     E391   4C DF E3   JMP &E3DF
 .isr_SC28L92
-     E391   AE 7F 03   LDX &037F
+     E394   AE 7F 03   LDX &037F
 .isr_SC28L92_next_chr
-     E394   E0 78      CPX #&78
-     E396   F0 11      BEQ &E3A9
-     E398   AD 03 B4   LDA &B403
-     E39B   9D 00 03   STA &0300,X
-     E39E   D0 19      BNE &E3B9
-     E3A0   A5 64      LDA &64
-     E3A2   09 01      ORA #&01
-     E3A4   85 64      STA &64
-     E3A6   4C B9 E3   JMP &E3B9
+     E397   E0 78      CPX #&78
+     E399   F0 11      BEQ &E3AC
+     E39B   AD 03 B4   LDA &B403
+     E39E   9D 00 03   STA &0300,X
+     E3A1   D0 19      BNE &E3BC
+     E3A3   A5 64      LDA &64
+     E3A5   09 01      ORA #&01
+     E3A7   85 64      STA &64
+     E3A9   4C BC E3   JMP &E3BC
 .isr_SC28L92_buf_full
-     E3A9   AD 01 B4   LDA &B401
-     E3AC   29 01      AND #&01
-     E3AE   D0 F9      BNE &E3A9
-     E3B0   A5 64      LDA &64
-     E3B2   09 04      ORA #&04
-     E3B4   85 64      STA &64
-     E3B6   4C D3 E3   JMP &E3D3
+     E3AC   AD 01 B4   LDA &B401
+     E3AF   29 01      AND #&01
+     E3B1   D0 F9      BNE &E3AC
+     E3B3   A5 64      LDA &64
+     E3B5   09 04      ORA #&04
+     E3B7   85 64      STA &64
+     E3B9   4C D6 E3   JMP &E3D6
 .isr_SC28L92_cont
-     E3B9   BD 00 03   LDA &0300,X
-     E3BC   C9 08      CMP #&08
-     E3BE   D0 06      BNE &E3C6
-     E3C0   CA         DEX
-     E3C1   30 07      BMI &E3CA
-     E3C3   4C CC E3   JMP &E3CC
+     E3BC   BD 00 03   LDA &0300,X
+     E3BF   C9 08      CMP #&08
+     E3C1   D0 06      BNE &E3C9
+     E3C3   CA         DEX
+     E3C4   30 07      BMI &E3CD
+     E3C6   4C CF E3   JMP &E3CF
 .isr_SC28L92_notbs
-     E3C6   E8         INX
-     E3C7   4C CC E3   JMP &E3CC
+     E3C9   E8         INX
+     E3CA   4C CF E3   JMP &E3CF
 .isr_SC28L92_resetidx
-     E3CA   A2 00      LDX #&00
+     E3CD   A2 00      LDX #&00
 .isr_SC28L92_wrapup
-     E3CC   AD 01 B4   LDA &B401
-     E3CF   29 01      AND #&01
-     E3D1   D0 C1      BNE &E394
+     E3CF   AD 01 B4   LDA &B401
+     E3D2   29 01      AND #&01
+     E3D4   D0 C1      BNE &E397
 .isr_SC28L92_end
-     E3D3   8E 7F 03   STX &037F
-     E3D6   A5 64      LDA &64
-     E3D8   09 02      ORA #&02
-     E3DA   85 64      STA &64
+     E3D6   8E 7F 03   STX &037F
+     E3D9   A5 64      LDA &64
+     E3DB   09 02      ORA #&02
+     E3DD   85 64      STA &64
 .isr_exit
-     E3DC   7A         PLY
-     E3DD   FA         PLX
-     E3DE   68         PLA
-     E3DF   40         RTI
+     E3DF   7A         PLY
+     E3E0   FA         PLX
+     E3E1   68         PLA
+     E3E2   40         RTI
 .spi_exchange_byte
-     E3E0   8D 00 BF   STA &BF00
+     E3E3   8D 00 BF   STA &BF00
 .spi_wait_for_tc
-     E3E3   2C 01 BF   BIT &BF01
-     E3E6   10 FB      BPL &E3E3
-     E3E8   AD 00 BF   LDA &BF00
-     E3EB   60         RTS
+     E3E6   2C 01 BF   BIT &BF01
+     E3E9   10 FB      BPL &E3E6
+     E3EB   AD 00 BF   LDA &BF00
+     E3EE   60         RTS
 .rtc_read_date
-     E3EC   20 8D E4   JSR &E48D
-     E3EF   A5 55      LDA &55
-     E3F1   D0 38      BNE &E42B
-     E3F3   A9 06      LDA #&06
-     E3F5   20 79 E4   JSR &E479
-     E3F8   A2 F0      LDX #&F0
-     E3FA   8E 21 07   STX &0721
-     E3FD   20 64 E4   JSR &E464
-     E400   8D 27 07   STA &0727
-     E403   A9 05      LDA #&05
-     E405   20 79 E4   JSR &E479
-     E408   A2 10      LDX #&10
-     E40A   8E 21 07   STX &0721
-     E40D   20 64 E4   JSR &E464
-     E410   8D 26 07   STA &0726
-     E413   A9 04      LDA #&04
-     E415   20 79 E4   JSR &E479
-     E418   A2 30      LDX #&30
-     E41A   8E 21 07   STX &0721
-     E41D   20 64 E4   JSR &E464
-     E420   8D 25 07   STA &0725
-     E423   A9 03      LDA #&03
-     E425   20 79 E4   JSR &E479
-     E428   8D 28 07   STA &0728
+     E3EF   20 90 E4   JSR &E490
+     E3F2   A5 55      LDA &55
+     E3F4   D0 38      BNE &E42E
+     E3F6   A9 06      LDA #&06
+     E3F8   20 7C E4   JSR &E47C
+     E3FB   A2 F0      LDX #&F0
+     E3FD   8E 21 07   STX &0721
+     E400   20 67 E4   JSR &E467
+     E403   8D 27 07   STA &0727
+     E406   A9 05      LDA #&05
+     E408   20 7C E4   JSR &E47C
+     E40B   A2 10      LDX #&10
+     E40D   8E 21 07   STX &0721
+     E410   20 67 E4   JSR &E467
+     E413   8D 26 07   STA &0726
+     E416   A9 04      LDA #&04
+     E418   20 7C E4   JSR &E47C
+     E41B   A2 30      LDX #&30
+     E41D   8E 21 07   STX &0721
+     E420   20 67 E4   JSR &E467
+     E423   8D 25 07   STA &0725
+     E426   A9 03      LDA #&03
+     E428   20 7C E4   JSR &E47C
+     E42B   8D 28 07   STA &0728
 .rtc_read_date_done
-     E42B   60         RTS
+     E42E   60         RTS
 .rtc_read_time
-     E42C   20 8D E4   JSR &E48D
-     E42F   A5 55      LDA &55
-     E431   D0 30      BNE &E463
-     E433   A9 02      LDA #&02
-     E435   20 79 E4   JSR &E479
-     E438   A2 30      LDX #&30
-     E43A   8E 21 07   STX &0721
-     E43D   20 64 E4   JSR &E464
-     E440   8D 24 07   STA &0724
-     E443   A9 01      LDA #&01
-     E445   20 79 E4   JSR &E479
-     E448   A2 70      LDX #&70
-     E44A   8E 21 07   STX &0721
-     E44D   20 64 E4   JSR &E464
-     E450   8D 23 07   STA &0723
-     E453   A9 00      LDA #&00
-     E455   20 79 E4   JSR &E479
-     E458   A2 70      LDX #&70
-     E45A   8E 21 07   STX &0721
-     E45D   20 64 E4   JSR &E464
-     E460   8D 22 07   STA &0722
+     E42F   20 90 E4   JSR &E490
+     E432   A5 55      LDA &55
+     E434   D0 30      BNE &E466
+     E436   A9 02      LDA #&02
+     E438   20 7C E4   JSR &E47C
+     E43B   A2 30      LDX #&30
+     E43D   8E 21 07   STX &0721
+     E440   20 67 E4   JSR &E467
+     E443   8D 24 07   STA &0724
+     E446   A9 01      LDA #&01
+     E448   20 7C E4   JSR &E47C
+     E44B   A2 70      LDX #&70
+     E44D   8E 21 07   STX &0721
+     E450   20 67 E4   JSR &E467
+     E453   8D 23 07   STA &0723
+     E456   A9 00      LDA #&00
+     E458   20 7C E4   JSR &E47C
+     E45B   A2 70      LDX #&70
+     E45D   8E 21 07   STX &0721
+     E460   20 67 E4   JSR &E467
+     E463   8D 22 07   STA &0722
 .rtc_read_time_done
-     E463   60         RTS
+     E466   60         RTS
 .rtc_convert_from_bcd
-     E464   48         PHA
-     E465   2D 21 07   AND &0721
-     E468   18         CLC
-     E469   6A         ROR A
-     E46A   6A         ROR A
-     E46B   6A         ROR A
+     E467   48         PHA
+     E468   2D 21 07   AND &0721
+     E46B   18         CLC
      E46C   6A         ROR A
-     E46D   A2 0A      LDX #&0A
-     E46F   20 27 D5   JSR &D527
-     E472   68         PLA
-     E473   29 0F      AND #&0F
-     E475   18         CLC
-     E476   65 52      ADC &52
-     E478   60         RTS
+     E46D   6A         ROR A
+     E46E   6A         ROR A
+     E46F   6A         ROR A
+     E470   A2 0A      LDX #&0A
+     E472   20 27 D5   JSR &D527
+     E475   68         PLA
+     E476   29 0F      AND #&0F
+     E478   18         CLC
+     E479   65 52      ADC &52
+     E47B   60         RTS
 .rtc_read_reg
-     E479   48         PHA
-     E47A   AD 00 07   LDA &0700
-     E47D   8D 02 BF   STA &BF02
-     E480   68         PLA
-     E481   20 87 FF   JSR &FF87
+     E47C   48         PHA
+     E47D   AD 00 07   LDA &0700
+     E480   8D 02 BF   STA &BF02
+     E483   68         PLA
      E484   20 87 FF   JSR &FF87
-     E487   A2 FF      LDX #&FF
-     E489   8E 02 BF   STX &BF02
-     E48C   60         RTS
+     E487   20 87 FF   JSR &FF87
+     E48A   A2 FF      LDX #&FF
+     E48C   8E 02 BF   STX &BF02
+     E48F   60         RTS
 .rtc_select
-     E48D   64 55      STZ &55
-     E48F   A5 65      LDA &65
-     E491   29 04      AND #&04
-     E493   F0 0D      BEQ &E4A2
-     E495   A9 7F      LDA #&7F
-     E497   8D 00 07   STA &0700
-     E49A   A9 03      LDA #&03
-     E49C   8D 01 BF   STA &BF01
-     E49F   4C A6 E4   JMP &E4A6
+     E490   64 55      STZ &55
+     E492   A5 65      LDA &65
+     E494   29 04      AND #&04
+     E496   F0 0D      BEQ &E4A5
+     E498   A9 7F      LDA #&7F
+     E49A   8D 00 07   STA &0700
+     E49D   A9 03      LDA #&03
+     E49F   8D 01 BF   STA &BF01
+     E4A2   4C A9 E4   JMP &E4A9
 .rtc_select_error
-     E4A2   A9 21      LDA #&21
-     E4A4   85 55      STA &55
+     E4A5   A9 21      LDA #&21
+     E4A7   85 55      STA &55
 .rtc_select_done
-     E4A6   60         RTS
+     E4A9   60         RTS
 .NMI_handler
 .exit_nmi
      E500   40         RTI

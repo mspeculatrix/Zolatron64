@@ -25,12 +25,7 @@ INCLUDE "../../LIB/cfg_page_7.asm"    ; SPI, RTC, SD addresses etc
 \ ------------------------------------------------------------------------------
 \ ---  OPTIONAL LIBRARY CONFIG FILES
 \ ------------------------------------------------------------------------------
-; INCLUDE "../../LIB/cfg_parallel.asm"
-; INCLUDE "../../LIB/cfg_prt.asm"
-; INCLUDE "../../LIB/cfg_spi65.asm"
-; INCLUDE "../../LIB/cfg_spi_rtc_ds3234.asm"
 INCLUDE "../../LIB/cfg_user_port.asm"
-; INCLUDE "../../LIB/cfg_ZolaDOS.asm"
 
 ORG USR_START
 .header                     ; HEADER INFO
@@ -64,27 +59,28 @@ ORG USR_START
 \ ---  MAIN PROGRAM
 \ ------------------------------------------------------------------------------
 .main
-  stz USRP_DDRA             ; Set User Port A as all inputs
-  lda USRP_IER              ; Load Interrupt Enable Register
-  ora #%10000010            ; Enable interrupts for CA1
-  sta USRP_IER
+;  stz USRP_DDRA             ; Set User Port A as all inputs
+;  lda USRP_IER              ; Load Interrupt Enable Register
+;  ora #%10000010            ; Enable interrupts for CA1
+;  sta USRP_IER
 
-  lda USRP_PCR              ; Ensure bit 1 unset to have CA1 cause interrupt on
-  and #%11111110            ; falling edge
-  sta USRP_PCR
+;  lda USRP_PCR              ; Ensure bit 1 unset to have CA1 cause interrupt on
+;  and #%11111110            ; falling edge
+;  sta USRP_PCR
+
+  ; Should the stuff above be part of keyb_setup???
+
+  jsr keyb_setup
 
   LOAD_MSG start_msg
   jsr OSWRMSG
 
 .main_loop
-  lda #USRP_INT_CA1          ; Check CA1 flag
-  trb IRQ_REG                ; This tests and unsets the bit
-  bne keyb_getchar
-  jmp main_loop
+  jsr keyb_poll
+;  beq main_loop   ; If zero, no user port interrupt was set
+  bcc main_loop
+  jsr OSWRCH      ; If not zero, we got a character, so print it
 
-.keyb_getchar
-  lda USRP_PORTA
-  jsr OSWRCH
   jmp main_loop
 
 .prog_end
@@ -104,24 +100,7 @@ ORG USR_START
 \ ------------------------------------------------------------------------------
 \ ---  OPTIONAL LIBRARY FUNCTION FILES
 \ ------------------------------------------------------------------------------
-; INCLUDE "../../LIB/funcs_addr.asm"
-; INCLUDE "../../LIB/funcs_chk_char.asm"
-; INCLUDE "../../LIB/funcs_prng.asm"
-; INCLUDE "../../LIB/funcs_spi_rtc_common.asm"
-; INCLUDE "../../LIB/funcs_spi_rtc_alarm.asm"
-; INCLUDE "../../LIB/funcs_spi_rtc_date.asm"
-; INCLUDE "../../LIB/funcs_spi_rtc_time.asm"
-; INCLUDE "../../LIB/funcs_spi_sram.asm"
-; INCLUDE "../../LIB/math_uint8_div.asm"
-; INCLUDE "../../LIB/math_uint8_mult.asm"
-; INCLUDE "../../LIB/math_uint16_div_uint8.asm"
-; INCLUDE "../../LIB/math_uint16_div.asm"
-; INCLUDE "../../LIB/math_uint16_sub.asm"
-; INCLUDE "../../LIB/math_uint16_times10.asm"
-; INCLUDE "../../LIB/math_uint32_div8.asm"
-; INCLUDE "../../LIB/math_uint32_div16.asm"
-; INCLUDE "../../LIB/math_uint32_mult8.asm"
-; INCLUDE "../../LIB/math_uint32_mult32.asm"
+INCLUDE "../../LIB/funcs_keyb.asm"
 
 .endtag
   equs "EOF",0
