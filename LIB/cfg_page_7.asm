@@ -1,4 +1,5 @@
 ; Page 7 config - SPI, RTC, SD
+; If SPI isn't used by a program, this page can be used for other purposes.
 
 \\ *****************************************************************************
 \\ *****   SPI

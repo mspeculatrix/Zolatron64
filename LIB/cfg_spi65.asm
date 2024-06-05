@@ -11,7 +11,7 @@ SPI_DEV_RTC  = %01111111            ; Device select setting for RTC
 SPI_DEV_NONE = %11111111
 
 SPI_TC_FLAG   = %10000000
-SPU_BUSY_FLAG = %01000000
+SPI_BUSY_FLAG = %01000000
 
 \ ***** SERIAL RAM *****
 SRAM_PG_SZ       = $20              ; Page size = 32 bytes
@@ -30,7 +30,7 @@ SRAM_SEQU_MODE = %01000000
 
 MACRO SPI_COMM_START
   lda SPI_DATA_REG                  ; To clear TC flag, if set
-  lda SPI_CURR_DEV
+  lda SPI_CURR_DEV                  ; Set the current device
   sta SPI_DEV_SEL
 ENDMACRO
 

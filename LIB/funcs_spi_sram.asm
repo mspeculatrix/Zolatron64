@@ -11,7 +11,7 @@
 \ ------------------------------------------------------------------------------
 .sram_select
   lda #SPI_DEV_SRAM             ; Select the SRAM device
-  sta SPI_CURR_DEV
+  sta SPI_CURR_DEV              ; Store in register (defined in Page 7)
   lda #%00000000                ; Set SPI Mode 0 on 65SPI
   sta SPI_CTRL_REG
   rts
@@ -20,7 +20,6 @@
 \ ---  SRAM_READ_BYTE
 \ ------------------------------------------------------------------------------
 \ Assumes that SRAM has been put into SRAM_BYTE_MODE using sram_set_WR_mode
-\ Replicates: readByte()
 \ ON ENTRY: - TMP_ADDR_A/+1 contains byte address
 \ ON EXIT : - Byte value in A
 .sram_read_byte
@@ -51,7 +50,6 @@
 \ ---  SRAM_READ_PAGE
 \ ------------------------------------------------------------------------------
 \ Assumes that SRAM has been put into SRAM_PAGE_MODE using sram_set_WR_mode
-\ Replicates: readPage()
 \ ON ENTRY: - TMP_ADDR_A/+1 contains start address
 \ ON EXIT : - Memeory contents have been read into SPI_BUF_32 buffer
 .sram_read_page
