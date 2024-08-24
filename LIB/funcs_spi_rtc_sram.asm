@@ -25,7 +25,7 @@
   tax                   ; Put address value into X
   lda #RTC_RAMA_REG     ; Select the SRAM Address register
   jsr rtc_write_reg
-  plx                   ; Get the value to write back
+  plx                   ; Get back the value to write
   lda #RTC_RAMD_REG     ; Select the SRAM Data register
   jsr rtc_write_reg
   rts

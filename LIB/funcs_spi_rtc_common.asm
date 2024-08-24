@@ -62,7 +62,7 @@
   pla                       ; Get register number back
   ora #$80                  ; To select write version of register
   jsr OSSPIEXCH			        ; Select the reg, don't care what comes back in A
-  txa                       ; Put the value to write in A
+  txa                       ; Put the value to write back in A
   jsr OSSPIEXCH			        ; Send value
   lda #SPI_DEV_NONE         ; -- Comm End --
   sta SPI_DEV_SEL           ; --  "    "  --

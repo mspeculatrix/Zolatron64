@@ -1,6 +1,6 @@
 # Zolatron64
 
-Homebrew 65C02-based microcomputer.
+Homebrew 65C02 backplane-based microcomputer.
 
 This is a backplane design because that allows me to work, fix and improve various parts of the design.
 
@@ -22,7 +22,7 @@ Currently, the modules are:
   - Battery-backed Serial RAM (64KB).
   - SD card drive.
 
-Using Beebasm as the assembler.
+I'm using Beebasm as the assembler.
 
 Read all about it: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
 

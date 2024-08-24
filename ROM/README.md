@@ -2,7 +2,11 @@
 
 ## CHANGELOG
 
-### 5.1.0
+### 5.1.1
+
+- Added IRQ handling for User Port. IRQ_REG now holds flags relating to CA1, CA2, CB1, CB2, Timer 1 and Timer 2 interrupts.
+
+### 5.1.0 - committed
 
 - Fixed bug in date handling.
 - Added SD card init routine to ROM.

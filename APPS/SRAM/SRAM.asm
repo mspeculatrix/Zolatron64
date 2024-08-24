@@ -22,13 +22,7 @@ INCLUDE "../../LIB/cfg_page_7.asm"    ; SPI, RTC, SD addresses etc
 \ ------------------------------------------------------------------------------
 \ ---  OPTIONAL LIBRARY CONFIG FILES
 \ ------------------------------------------------------------------------------
-; INCLUDE "../../LIB/cfg_parallel.asm"
-; INCLUDE "../../LIB/cfg_prt.asm"
-; INCLUDE "../../LIB/cfg_user_port.asm"
-; INCLUDE "../../LIB/cfg_ZolaDOS.asm"
-; INCLUDE "../../LIB/cfg_chk_char.asm"
 INCLUDE "../../LIB/cfg_spi65.asm"
-; INCLUDE "../../LIB/cfg_spi_rtc_ds3234.asm"
 
 MEM_ADDR = $2000
 
@@ -166,11 +160,7 @@ ORG USR_START
 \ ------------------------------------------------------------------------------
 \ ---  OPTIONAL LIBRARY FUNCTION FILES
 \ ------------------------------------------------------------------------------
-; INCLUDE "../../LIB/math_uint8_mult.asm"
-; INCLUDE "../../LIB/funcs_rtc_ds3234.asm"
-;INCLUDE "../../LIB/funcs_spi65-dev.asm"
 INCLUDE "../../LIB/funcs_spi_sram.asm"
-
 
 
 .clear_buf_msg

@@ -31,7 +31,7 @@ SD_CMD58_READ_OCR       = 58
 SD_CMD58_ARG            = 0
 SD_CMD58_CRC            = $FD
 
-SD_IDLE_MAX_ATTEMPTS  = 5         ; How many attempts to when using CMD0
+SD_IDLE_MAX_ATTEMPTS  = 5         ; How many attempts when using CMD0
 SD_IDLE_DELAY         = 100       ; Pause between attempts
 SD_INIT_MAX_ATTEMPTS  = 5
 SD_INIT_DELAY         = 250
