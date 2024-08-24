@@ -22,7 +22,7 @@ Currently, the modules are:
   - Battery-backed Serial RAM (64KB).
   - SD card drive.
 
-Using Beebasm as the assembler.
+I'm using Beebasm as the assembler.
 
 Read all about it: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
 
