@@ -1,7 +1,7 @@
 \ Just for development. Not intended for use in final code
 
 \ This prints messages for the errors returned in an R1 response. This is
-\ really for development only, so might want to move this to a '-dev' lib.
+\ really for development only.
 .sd_print_R1_errors
   ldx #0
   lda SD_RESP_BUF

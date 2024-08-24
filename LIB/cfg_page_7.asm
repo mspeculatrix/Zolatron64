@@ -29,4 +29,4 @@ SD_CMD_PARAMS = RTC_DAT_BUF + 4							              ;          7
   SD_CMD_CRC     = SD_CMD_ARGS + 4 ; CRC value                      - 1 byte
   SD_CMD_RESP_SZ = SD_CMD_CRC + 1  ; No. bytes expected in response - 1 byte
 
-SD_RESP_BUF = SD_CMD_ARGS + 6      ; Resp. buffer = SD_RESP_BUF_SZ   5
+SD_RESP_BUF = SD_CMD_PARAMS + 7      ; Resp. buffer = SD_RESP_BUF_SZ   5
