@@ -2273,7 +2273,7 @@ End macro LED_OFF
      D11F   93 D2
      D121   A1 D2
      D123   B4 D2
-     D125   C7 D2
+     D125   18 00
      D127   DA D2
      D129   26 D2
      D12B   E9 D2
@@ -2355,7 +2355,7 @@ End macro LED_OFF
 .err_file_open
      D2B4   45 72 72 ...
      D2C6   00
-.err_delfile_fail
+.err_file_del
      D2C7   44 65 6C ...
      D2D9   00
 .err_filenotfound

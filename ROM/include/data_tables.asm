@@ -203,7 +203,7 @@ ALIGN &100                  ; Start on new page
   equw err_addr
   equw err_file_exists
   equw err_file_open
-  equw err_delfile_fail
+  equw ERR_FILE_DEL
   equw err_filenotfound
   equw err_file_bounds
 
@@ -268,7 +268,7 @@ ALIGN &100                  ; Start on new page
   equs "Error: File exists",0
 .err_file_open
   equs "Error opening file",0
-.err_delfile_fail
+.err_file_del
   equs "Delete file failed",0
 .err_filenotfound
   equs "File not found",0

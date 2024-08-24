@@ -1382,7 +1382,7 @@ End macro LOAD_MSG
      CA54   20 27 FF   JSR &FF27
      CA57   4C 35 CF   JMP &CF35
 .prt_success_msg
-     CA5A   4F 4B 
+     CA5A   4F 4B
      CA5C   0A
      CA5D   00
 .cmdprcRUN
@@ -1644,7 +1644,7 @@ End macro STR_BUF_TO_MSG_VEC
      CC28   53 54 44 ...
      CC2E   00
 .stat_msg_spacer
-     CC2F   20 20 
+     CC2F   20 20
      CC31   00
 .cmdprcTIME
      CC32   20 2B E4   JSR &E42B
@@ -2162,7 +2162,7 @@ End macro LED_OFF
      D07A   82
      D07B   00
 .cmd_tbl_ASCB
-     D07C   52 4B 
+     D07C   52 4B
      D07E   83
      D07F   00
 .cmd_tbl_ASCC
@@ -2172,79 +2172,79 @@ End macro LED_OFF
      D089   85
      D08A   00
 .cmd_tbl_ASCD
-     D08B   41 54 45 
+     D08B   41 54 45
      D08E   86
-     D08F   45 4C 
+     D08F   45 4C
      D091   87
-     D092   55 4D 50 
+     D092   55 4D 50
      D095   88
      D096   00
 .cmd_tbl_ASCH
-     D097   45 4C 50 
+     D097   45 4C 50
      D09A   89
      D09B   00
 .cmd_tbl_ASCJ
-     D09C   4D 50 
+     D09C   4D 50
      D09E   8A
      D09F   00
 .cmd_tbl_ASCL
-     D0A0   4D 
+     D0A0   4D
      D0A1   8B
-     D0A2   4F 41 44 
+     D0A2   4F 41 44
      D0A5   8C
-     D0A6   50 
+     D0A6   50
      D0A7   8D
-     D0A8   53 
+     D0A8   53
      D0A9   8E
      D0AA   00
 .cmd_tbl_ASCM
-     D0AB   56 
+     D0AB   56
      D0AC   8F
      D0AD   00
 .cmd_tbl_ASCO
-     D0AE   50 45 4E 
+     D0AE   50 45 4E
      D0B1   90
      D0B2   00
 .cmd_tbl_ASCP
      D0B3   44 55 4D ...
      D0B7   91
-     D0B8   45 45 4B 
+     D0B8   45 45 4B
      D0BB   92
-     D0BC   4F 4B 45 
+     D0BC   4F 4B 45
      D0BF   93
      D0C0   00
 .cmd_tbl_ASCR
-     D0C1   55 4E 
+     D0C1   55 4E
      D0C3   95
      D0C4   00
 .cmd_tbl_ASCS
-     D0C5   41 56 45 
+     D0C5   41 56 45
      D0C8   96
-     D0C9   54 41 54 
+     D0C9   54 41 54
      D0CC   97
      D0CD   00
 .cmd_tbl_ASCT
-     D0CE   49 4D 45 
+     D0CE   49 4D 45
      D0D1   98
      D0D2   00
 .cmd_tbl_ASCV
-     D0D3   45 52 53 
+     D0D3   45 52 53
      D0D6   99
      D0D7   00
 .cmd_tbl_ASCX
-     D0D8   43 4C 52 
+     D0D8   43 4C 52
      D0DB   9A
      D0DC   4C 4F 41 ...
      D0E0   9B
-     D0E1   4C 53 
+     D0E1   4C 53
      D0E3   9C
      D0E4   4F 50 45 ...
      D0E8   9D
-     D0E9   52 55 4E 
+     D0E9   52 55 4E
      D0EC   9E
      D0ED   53 41 56 ...
      D0F1   9F
-     D0F2   53 45 4C 
+     D0F2   53 45 4C
      D0F5   A0
      D0F6   00
 .err_ptrs
@@ -2353,7 +2353,7 @@ End macro LED_OFF
 .err_file_open
      D2B4   45 72 72 ...
      D2C6   00
-.err_delfile_fail
+.ERR_FILE_DEL
      D2C7   44 65 6C ...
      D2D9   00
 .err_filenotfound
@@ -2384,11 +2384,11 @@ End macro LED_OFF
      D365   42 44 45 ...
      D36A   00
 .help_table
-     D36B   3F 
+     D36B   3F
      D36C   00
-     D36D   21 
+     D36D   21
      D36E   00
-     D36F   42 52 4B 
+     D36F   42 52 4B
      D372   00
      D373   43 48 41 ...
      D378   00
@@ -2396,21 +2396,21 @@ End macro LED_OFF
      D37E   00
      D37F   44 41 54 ...
      D383   00
-     D384   44 45 4C 
+     D384   44 45 4C
      D387   00
      D388   44 55 4D ...
      D38C   00
      D38D   48 45 4C ...
      D391   00
-     D392   4A 4D 50 
+     D392   4A 4D 50
      D395   00
-     D396   4C 4D 
+     D396   4C 4D
      D398   00
      D399   4C 4F 41 ...
      D39D   00
-     D39E   4C 50 
+     D39E   4C 50
      D3A0   00
-     D3A1   4C 53 
+     D3A1   4C 53
      D3A3   00
      D3A4   28 4D 56 ...
      D3A8   00
@@ -2422,7 +2422,7 @@ End macro LED_OFF
      D3B8   00
      D3B9   50 4F 4B ...
      D3BD   00
-     D3BE   52 55 4E 
+     D3BE   52 55 4E
      D3C1   00
      D3C2   53 41 56 ...
      D3C6   00
@@ -2438,7 +2438,7 @@ End macro LED_OFF
      D3E1   00
      D3E2   58 4C 4F ...
      D3E7   00
-     D3E8   58 4C 53 
+     D3E8   58 4C 53
      D3EB   00
      D3EC   58 52 55 ...
      D3F0   00
@@ -2480,13 +2480,13 @@ End macro LED_OFF
      D4DB   00
 .prompt_msg
      D4DC   0A
-     D4DD   5A 3E 
+     D4DD   5A 3E
      D4DF   00
 .start_msg
      D4E0   5A 6F 6C ...
      D4EB   00
 .okay_msg
-     D4EC   4F 4B 
+     D4EC   4F 4B
      D4EE   0A
      D4EF   00
 .ready_msg
@@ -3205,7 +3205,7 @@ End macro ZD_SET_CR_OFF
      D9E3   53 61 76 ...
      D9EE   00
 .file_act_complete_msg
-     D9EF   4F 4B 
+     D9EF   4F 4B
      D9F1   00
 .byte_to_bin
      D9F2   48         PHA
