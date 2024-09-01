@@ -2,7 +2,11 @@
 
 ## CHANGELOG
 
-### 5.1.1
+### 5.1.2 - committed
+
+- Not sure if there are any changes, but it's been a while since I worked on this so burning a new version just in case.
+
+### 5.1.1 - committed
 
 - Added IRQ handling for User Port. IRQ_REG now holds flags relating to CA1, CA2, CB1, CB2, Timer 1 and Timer 2 interrupts.
 
