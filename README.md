@@ -38,3 +38,5 @@ The branches are:
 - $A000 - $BBFF - 7x I/O (8KB)
 - $BF00 - $BFFF - 8x I/O (32-byte)
 - $C000 - $FFFF - ROM 16KB
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B312WQJV)
