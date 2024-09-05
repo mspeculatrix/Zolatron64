@@ -5,6 +5,7 @@
 ### 5.1.2 - committed
 
 - Not sure if there are any changes, but it's been a while since I worked on this so burning a new version just in case.
+- Updated zapp util (not in this repo).
 
 ### 5.1.1 - committed
 
