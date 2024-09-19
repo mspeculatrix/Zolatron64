@@ -80,7 +80,7 @@ INCLUDE "include/os_call_vectors.asm"
 ;  lda #STR_SEL_SERIAL       ; not used yet
 ;  sta STREAM_SELECT_REG
 
-\ ----  SETUP LCD display & LEDs   ---------------------------------------------
+\ ----  SETUP LCD display & LEDs  ----------------------------------------------
   lda SYS_REG
   ora #%00100000     ; Sets bit 5 showing we're using 20x4 display
   sta SYS_REG
