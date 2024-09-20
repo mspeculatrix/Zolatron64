@@ -185,6 +185,28 @@
   rts
 
 \ ------------------------------------------------------------------------------
+\ ---  LCD_INIT
+\ ---  Implements: OSLCDINIT
+\ ------------------------------------------------------------------------------
+\ Initialise the LCD screen
+\ A - O     X - n/a     Y - n/a
+.lcd_init
+  lda SYS_REG
+  ora #%00100000     ; Sets bit 5 showing we're using 20x4 display
+  sta SYS_REG
+  lda #%11111111
+  sta LCDV_DDRB      ; Set all pins on port B to output - data for LCD
+  sta LCDV_DDRA      ; Set all pins on port A to output - signals for LCD & LEDs
+  lda #LCD_TYPE      ; Set 8-bit mode; 2-line display; 5x8 font
+  jsr lcd_cmd
+  lda #LCD_MODE                         ; Display on; cursor off; blink off
+  jsr lcd_cmd
+  lda #LCD_CLS                          ; Clear display, reset display memory
+  jsr lcd_cmd
+  jsr lcd_cls
+  rts
+
+\ ------------------------------------------------------------------------------
 \ ---  LCD_PRINT_BYTE
 \ ---  Implements: OSLCDB2HEX
 \ ------------------------------------------------------------------------------

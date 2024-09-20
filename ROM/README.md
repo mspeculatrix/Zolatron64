@@ -2,6 +2,10 @@
 
 ## CHANGELOG
 
+### 5.1.3
+
+- Added OSLCDINIT call.
+
 ### 5.1.2 - committed
 
 - Not sure if there are any changes, but it's been a while since I worked on this so burning a new version just in case.

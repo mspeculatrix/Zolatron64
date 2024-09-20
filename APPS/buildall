@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-APPS=("SETDATE" "SETTIME" "SRAM" "TS" "ZUMPUS")
+APPS=("KEYB" "SETDATE" "SETTIME" "SRAM" "TS" "ZUMPUS" "LCDRST")
 
-TARGET_HOST="imp"
+TARGET_HOST="zd0"
 
 # Process command line options
 while [ -n "$1" ]; do
