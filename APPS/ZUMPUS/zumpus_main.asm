@@ -142,7 +142,7 @@
   sta STDIN_STATUS_REG                    ; and re-save the register
   stz STDIN_IDX                           ; Want to read from first char in buf
 
-  ; We're expecting the first item to be 'I', 'M', 'S' or 'Q'
+  ; We're expecting the first item to be 'D', 'I', 'M', 'R', 'S' or 'Q'
   jsr OSRDCH
   lda FUNC_RESULT
   cmp #'I'

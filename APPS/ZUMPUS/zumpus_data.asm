@@ -36,6 +36,8 @@
   equs "***************************",10,10,0
 .version_msg
   equs "Version ",0
+.debug_msg
+  equs "Here",10,0
 
 .instructions
   equs "You know when Zumpus is in an adjacent room by the smell.",10

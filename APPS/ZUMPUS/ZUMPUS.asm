@@ -18,12 +18,18 @@ INCLUDE "../../LIB/cfg_page_4.asm"
 INCLUDE "../../LIB/cfg_user_port.asm"
 ;INCLUDE "../../LIB/cfg_uart_SC28L92.asm"
 
+MACRO DEBUG_MSG
+  LOAD_MSG debug_msg
+  jsr OSWRMSG
+ENDMACRO
+
 INCLUDE "zumpus_cfg.asm"
 
 ORG USR_START
 INCLUDE "./zumpus_main.asm"
 INCLUDE "./zumpus_funcs.asm"
 INCLUDE "./zumpus_data.asm"
+
 INCLUDE "../../LIB/math_uint8_div.asm"
 INCLUDE "../../LIB/funcs_prng.asm"
 INCLUDE "../../LIB/cfg_ZolaDOS.asm"

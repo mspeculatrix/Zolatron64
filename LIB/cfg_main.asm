@@ -146,7 +146,7 @@ EOTBL_MKR     = 255                   ; End of table marker
 CHR_LINEEND   = 10        ; ASCII code for line end - here we're using line feed
 CHR_SPACE     = 32
 
-EQUAL = 1
+EQUAL     = 1
 MORE_THAN = 2
 LESS_THAN = 0
 

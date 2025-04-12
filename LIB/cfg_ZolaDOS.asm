@@ -15,17 +15,18 @@ ZD_CTRL_DDR  = ZD_BASE_ADDR + $02     ; Port B Data Direction Register
 ZD_DATA_PORT = ZD_BASE_ADDR + $01     ; VIA Port A data/instruction register
 ZD_DATA_DDR  = ZD_BASE_ADDR + $03     ; Port A Data Direction Register
 
-ZD_T1CL  = ZD_BASE_ADDR + $04         ; Timer 1 counter low
-ZD_T1CH  = ZD_BASE_ADDR + $05	        ; Timer 1 counter high
-ZD_T2CL  = ZD_BASE_ADDR + $08         ; Timer 2 counter low
-ZD_T2CH  = ZD_BASE_ADDR + $09	        ; Timer 2 counter high
-ZD_ACR   = ZD_BASE_ADDR + $0B		      ; Auxiliary Control register
-ZD_IER   = ZD_BASE_ADDR + $0E 	      ; Interrupt Enable Register
-ZD_IFR   = ZD_BASE_ADDR + $0D		      ; Interrupt Flag Register
+ZD_T1CL  = ZD_CTRL_PORT + $04         ; Timer 1 counter low
+ZD_T1CH  = ZD_CTRL_PORT + $05	        ; Timer 1 counter high
+ZD_T2CL  = ZD_CTRL_PORT + $08         ; Timer 2 counter low
+ZD_T2CH  = ZD_CTRL_PORT + $09	        ; Timer 2 counter high
+ZD_ACR   = ZD_CTRL_PORT + $0B		      ; Auxiliary Control register
+ZD_IER   = ZD_CTRL_PORT + $0E 	      ; Interrupt Enable Register
+ZD_IFR   = ZD_CTRL_PORT + $0D		      ; Interrupt Flag Register
 
 ZD_TIMER_COUNT = $0600                ; Using page 6 as workspace memory for ZD
 ZD_CTRL_REG    = ZD_TIMER_COUNT + 2   ; Control register
-ZD_WKSPC       = ZD_CTRL_REG + 1      ; General workspace
+ZD_STATE_REG   = ZD_CTRL_REG + 1
+ZD_WKSPC       = ZD_STATE_REG + 1      ; General workspace
 ;ZD_FSTATE
 
 \ ZD_CTRL_REG
@@ -35,6 +36,12 @@ ZD_WKSPC       = ZD_CTRL_REG + 1      ; General workspace
 \ Bit 7   - 0 - Include allowance for extension in max filename length check
 \           1 - Don't include ext - use shorter filename check
 ZD_CTRL_EXCL_EXT = %1000000
+
+\ ZD_STATE_REG
+\ Keep track of various states.
+\ Bit 0   - 0 - timer has not finished
+\         - 1 - timer has finished
+ZD_TIMER_DONE = %00000001
 
 ;ZD_FSTATE_CLOSED    = 0               ; No file open
 ;ZD_FSTATE_OPENR     = 1               ; File has been opened for reading
