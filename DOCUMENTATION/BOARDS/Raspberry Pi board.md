@@ -1,12 +1,8 @@
 # RASPBERRY PI BOARD
 
-
-
-[Click to see larger version]
-
 This board provides both serial communication with the Zolatron and persistent storage.
 
-The Raspberry Pi Zero 2 has onboard wifi, which means I can SSH to it from anywhere. Its serial port is routed out to an edge connector (top-left in the picture) which I connect to the Zolatron's serial port via a three-strand cable.
+The Raspberry Pi Zero 2 has onboard wifi, which means I can SSH to it from anywhere. Its serial port is routed out to an edge connector which I connect to the Zolatron's primary serial port via a three-strand cable.
 
 The Pi runs the ZolaDOS program as a systemd unit. This provides persistent storage for the Zolatron, allowing me to load and save programs, dump memory contents, delete files and so on.
 

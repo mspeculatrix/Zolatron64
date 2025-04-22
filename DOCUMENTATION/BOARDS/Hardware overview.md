@@ -1,4 +1,8 @@
-# BACKPLANE
+# HARDWARE OVERVIEW
+
+The Zolatron 64 uses a backplane design where all the functionality, including the CPU itself, is provided by plug-in boards.
+
+## BACKPLANE
 
 Although the backplane itself is a relatively simple critter, it also involved some of the hardest decision-making.
 
@@ -8,7 +12,7 @@ In the end I settled on DIN 41612 64P AC connectors. These use two rows of 32 pi
 
 These connectors are very stable and quite tolerant of frequent plugging/unplugging. And I figured 64 pins should be enough. (Spoiler alert: I was right.)
 
-The big decision
+### The big decision
 
 But that wasn't the big decision. That came next.
 
@@ -28,10 +32,32 @@ And yes, the address and data signals are in a line, mostly because I couldn't m
 
 The bus as viewed on the backplane. Due to right-angle connections, the columns are swapped on the plug-in cards.
 
-No termination
+### No termination
 
 One thing you won't find on the backplane are termination resistors. The signal traces on the board are about 160mm long and this is a 1MHz system, so I figured transmission line echoes were unlikely to cause me grief.
 
 All signals are broken out to pins at the edges of the board.
 
 Apart from that, I added power input (not regulated, so a clean +5V input is required), a power LED, some capacitors for good measure (this is a four-layer board, so it also has ground and power planes), and two four-pin rows of header pins connected to ground to use when probing with a multimeter or oscilloscope (something I also add to all the plug-in boards).
+
+## PLUGIN BOARDS
+
+I chose a size of just a hair under 100x100mm for the boards in order to get the cheapest pricing for PCBs. I'm very happy with this decision.
+
+I also adopted a standard layout for the boards which includes four M3 mounting holes. This allows me to join the boards together with standoffs for greater rigidity.
+
+Selecting an I/O board's address is as simple as placing a jumper.
+
+Each I/O board (except for the SPI one) carries its own decoding, mostly in the form of a 74HCT1G00 single NAND gate and a 74HC138 three-to-eight line decoder. (The extended memory board is an exception – it uses a CPLD.) The outputs from the 138 go through a double row of header pins. Selecting the address for the board is a matter of placing one jumper.
+
+I could have done this once on the main CPU board and carried the chip enable signals from the 138 over the backplane (this is why the backplane connector has lines USR0-USR7). That would have saved me a bunch of ICs. But doing the decoding on each board allows me to easily change the address of an I/O interface, and I count this as one of my good decisions. (They are few, so I'll take the win where I can.)
+
+### Boards
+
+- **CPU board** - Carries the 6502 CPU, main ROM and RAM.
+- **Dual serial board** - provides two TTL-level serial ports.
+- **Parallel board** - uses a 6522 VIA to provide an 8-bit parallel port intended for connecting to a printer.
+- **65C22 VIA board** - has a VIA to provide two 8-bit I/O ports. One is used to drive the LCD panel and status LEDs. The other is available as GPIO pins.
+- **SPI board** – RTC, SD card and SRAM. SPI interface with real-time clock, SD card and battery-backed serial RAM, plis five connections for SPI devices.
+- **Raspberry Pi board** - The Pi's main purpose is to provide persistent storage and a serial terminal.
+- **Extended memory board** - Provides banked RAM and ROM.

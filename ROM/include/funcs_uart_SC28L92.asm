@@ -82,7 +82,7 @@
 \ ---  DUART_SND_STRBUF
 \ ---  Implements: OSWRSBUF
 \ ------------------------------------------------------------------------------
-\ ON ENTRY: Text to be send must be in STR_BUF and mul-terminated.
+\ ON ENTRY: Text to be send must be in STR_BUF and nul-terminated.
 \ A - P     X - n/a     Y - n/a
 .duart_snd_strbuf
   pha

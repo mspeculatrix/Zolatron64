@@ -1,6 +1,6 @@
 ; ZERO PAGE CONFIG -- cfg_page_0.asm -------------------------------------------
 
-MSG_VEC       = $50    	 		        ; $50 Message to print
+MSG_VEC       = $50    	 		    ; $50 Message to print
 FUNC_RES_L    = MSG_VEC + 2         ; $52 For 16-bit subroutine results. Must be
 FUNC_RES_H    = FUNC_RES_L + 1      ; $53 in zero page.
 FUNC_RESULT   = FUNC_RES_H + 1      ; $54 To hold the 8-bit result of a function

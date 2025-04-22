@@ -24,8 +24,6 @@ Currently, the modules are:
 
 I'm using Beebasm as the assembler.
 
-Read all about it: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
-
 The branches are:
 
 - _dev_: This is the version I'm working on at any given time. It's quite likely to be unstable and contain features that are incomplete and/or buggy.

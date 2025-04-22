@@ -12,6 +12,6 @@ Four of the signals – Error, Offline, Autofeed and Paper Out – are also buff
 
 The printer plugs in via a DB25 connector. Of course, it could be something other than a printer. The control signals are configured with printing in mind, but ultimately it's just a parallel port, so could find other uses. It's really all down to software.
 
-Optional extra
+## Optional extra
 
 The parallel board is not considered to be part of the Zolatron's basic spec. During boot-up, the OS tries writing a series of test values to one of the the VIA's registers (the Port A data direction register), and reads them back. If the read values are the same as the written values, the OS assumes the board is present and sets a flag in the SYS_REG register.

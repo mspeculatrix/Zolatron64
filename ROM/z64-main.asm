@@ -1,7 +1,6 @@
 \ ROM code for Zolatron 64 6502-based microcomputer.
 \
 \ GitHub: https://github.com/mspeculatrix/Zolatron64/
-\ Blog: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
 \
 \ Written for the Beebasm assembler. Assemble with:
 \     beebasm -v -i z64-main.asm -o z64-ROM.bin -S -VSTR="<version>"

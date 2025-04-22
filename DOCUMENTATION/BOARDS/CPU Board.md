@@ -11,5 +11,3 @@ A DS1813 IC provides for a smooth reset.
 I also included a 74HC1G00 single NAND gate to provide a base level of decoding for I/O boards. This signal also goes out over the backplane, but I haven't used it nearly as much as I thought I would.
 
 There's also a 1MHz oscillator can (I tried a 2MHz one – didn't go so well) and a reset button.
-
-The picture makes it look as though there are some edge connectors on the left. There aren't – those belong to the board behind.

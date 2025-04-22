@@ -2,7 +2,7 @@
 
 The 'V' in VIA stands for 'versatile', and the 65C22 certainly lives up to its name. (The other two letters stand for 'interface adapter', in case you were wondering.)
 
-The VIA is the heart of both the Raspberry Pi and parallel interface boards. But it can also server as a general-purpose interface – much along the lines of the GPIO pins on a Raspberry Pi or Arduino, or the User Port on a BBC Micro.
+The VIA is the heart of both the Raspberry Pi and parallel interface boards. But it can also serve as a general-purpose interface – much along the lines of the GPIO pins on a Raspberry Pi or Arduino, or the User Port on a BBC Micro.
 
 The 65C22 has two eight-bit ports, each of which is accompanied by two control pins that are used for clever things like interrupts and utilising built-in shift registers.
 

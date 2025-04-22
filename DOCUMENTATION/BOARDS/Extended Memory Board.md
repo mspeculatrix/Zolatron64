@@ -1,9 +1,5 @@
 # EXTENDED MEMORY BOARD
 
-[UPDATED: 08/10/2022]
-
-
-
 It's not that the Zolatron 64 is exactly short of memory: 16KB of ROM and 32KB of RAM is a lot more than you think, especially when you're writing all the code yourself in 6502 assembly.
 
 It's that there was this 8KB blank space in the memory map that I'd originally labelled as 'for future expansion' – which is another way of saying 'I can't think what to do with this'.
@@ -16,8 +12,10 @@ The decoding for all this chicanery is handled by a CPLD (an ATF1502AS). The cod
 
 The CPLD also decodes the address $BFE0. Writing to this address sets the latches. So, to select, say, bank 3, you simply write the value 3 to the address $BFE0 – something like:
 
-[code]lda #3
-sta $BFE0[/code]
+```asm
+lda #3
+sta $BFE0
+```
 
 Naturally, the CPLD decodes for the address $8000 in order to set the RAM's chip enable line. But in fact the CPLD has not one but five chip enable outputs. And this is because I decided to add four ROM sockets.
 
@@ -37,12 +35,10 @@ After much discussion on 6502.org, another possibly solution came up – making 
 
 ZolaDOS has a number of CLI commands to manage the extended memory, and it's easy to incorpporate into user code, too.
 
-The CUPL code is on GitHub.
-
-Optional extra
+## Optional extra
 
 The extended memory board is not regarded as standard equipment on the Zolatron. During boot-up, the Zolatron checks for the existence of the board by selecting a bank that is never configured as ROM, writing a sequence of values to $8000 and reading them back. If the read values are the same as the written ones, the machine assumes that the board is present and sets a flag in the SYS_REG register. It also prints a message to indicate whether the board is present.
 
-Boot ROM
+## Boot ROM
 
 Also on boot-up, the OS selects bank 0 and looks to see if there's a boot ROM present. It does this by examining address $8000 and looking for the value $4C (a JMP instruction). If it finds that, it examines address $8003, which is where the file type code lives. If it finds a 'B' (hex value $42), it assumes that this is a boot ROM and attempts to execute the code at $8000. If there isn't a boot ROM present, and those values existed by a pure fluke, the Zolatron is not going to have its best day.
