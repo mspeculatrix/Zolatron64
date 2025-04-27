@@ -24,8 +24,8 @@ echo "Assembling z64-main.asm..."
 OBJECT_FILE="bin/z64-ROM-${CODE_VERSION}.bin"
 OUTPUT_TEXT="output/output-${CODE_VERSION}.txt"
 
-echo "beebasm -v -i z64-main.asm -o ${OBJECT_FILE} -S VSTR=${CODE_VERSION} > ${OUTPUT_TEXT}"
-beebasm -v -i z64-main.asm -o ${OBJECT_FILE} -S VSTR=${CODE_VERSION} > ${OUTPUT_TEXT}
+echo "beebasm -v -i z64-main.asm -o ${OBJECT_FILE} -S VSTR=${CODE_VERSION} -d -labels output/labels.swift > ${OUTPUT_TEXT}"
+beebasm -v -i z64-main.asm -o ${OBJECT_FILE} -S VSTR=${CODE_VERSION} -d -labels output/labels.swift > ${OUTPUT_TEXT}
 
 # Get return code of last command
 result=$?
@@ -38,6 +38,7 @@ if [ $result -eq 0 ]; then
         echo "- minipro -p AT28C256 -w bin/z64-ROM-${CODE_VERSION}.bin"
         minipro -u -p AT28C256 -w bin/z64-ROM-${CODE_VERSION}.bin
     fi
+    output/labels.py
 else
     echo "*** ERROR *** Code failed to assemble. Huh."
     echo "Exit code: $result"

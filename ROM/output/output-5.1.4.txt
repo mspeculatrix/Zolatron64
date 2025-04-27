@@ -223,7 +223,7 @@
      C219   9C 00 A8   STZ &A800
      C21C   20 5C D6   JSR &D65C
      C21F   20 9D D5   JSR &D59D
-.main
+.MAIN
 Macro LED_ON:
      C222   48         PHA
      C223   AD 01 A0   LDA &A001
@@ -401,7 +401,7 @@ Macro NEWLINE:
      C34B   68         PLA
 End macro NEWLINE
      C34C   20 57 FF   JSR &FF57
-.soft_reset
+.SOFT_RESET
      C34F   78         SEI
 Macro LED_OFF:
      C350   48         PHA
@@ -480,7 +480,7 @@ Macro SERIAL_PROMPT:
      C3CE   85 51      STA &51
      C3D0   20 27 FF   JSR &FF27
 End macro SERIAL_PROMPT
-.mainloop
+.MAINLOOP
 .mainloop_chk_input
      C3D3   A5 64      LDA &64
      C3D5   29 01      AND #&01
@@ -4701,21 +4701,25 @@ End macro PRT_PULSE_DELAY
      E4AF   85 55      STA &55
 .rtc_select_done
      E4B1   60         RTS
-.NMI_handler
+.NMI_HANDLER
 .exit_nmi
      E500   40         RTI
-.os_call_jump_table
+.OS_CALL_JUMP_TABLE
      FF00   6C 00 02   JMP (&0200)
      FF03   6C 02 02   JMP (&0202)
+.OSRDASC_
      FF06   6C 04 02   JMP (&0204)
      FF09   6C 06 02   JMP (&0206)
+.OSRDCH_
      FF0C   6C 08 02   JMP (&0208)
      FF0F   6C 0A 02   JMP (&020A)
      FF12   6C 0C 02   JMP (&020C)
      FF15   6C 0E 02   JMP (&020E)
      FF18   6C 10 02   JMP (&0210)
      FF1B   6C 12 02   JMP (&0212)
+.OSWRBUF_
      FF1E   6C 14 02   JMP (&0214)
+.OSWRCH_
      FF21   6C 16 02   JMP (&0216)
      FF24   6C 18 02   JMP (&0218)
      FF27   6C 1A 02   JMP (&021A)

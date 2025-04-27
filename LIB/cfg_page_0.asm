@@ -1,5 +1,11 @@
 ; ZERO PAGE CONFIG -- cfg_page_0.asm -------------------------------------------
 
+; We're currently using memory from $0050 - $0066. Maybe think about moving
+; this to the top of Zero page?
+
+; With current needs, could start at $E9. Or we could start at $E0 and still
+; leave a few bytes free for later.
+
 MSG_VEC       = $50    	 		    ; $50 Message to print
 FUNC_RES_L    = MSG_VEC + 2         ; $52 For 16-bit subroutine results. Must be
 FUNC_RES_H    = FUNC_RES_L + 1      ; $53 in zero page.
