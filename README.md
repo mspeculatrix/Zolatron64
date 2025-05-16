@@ -31,10 +31,21 @@ The branches are:
 
 ## MEMORY MAP
 
-- $0000 - $7FFF - Main RAM 32KB
-- $8000 - $9FFF - Banked ROM/RAM 8x 8KB banks
-- $A000 - $BBFF - 7x I/O (8KB)
-- $BF00 - $BFFF - 8x I/O (32-byte)
 - $C000 - $FFFF - ROM 16KB
+- $BF00 - $BFFF - 8x I/O (32-byte)
+  - $BFE0 - $BFFF - Extended memory select
+  - $BF00 - $BF1F - 65SPI, RTC, SD card, SRAM
+- $A000 - $BBFF - 8x I/O (1KB)
+  - $BC00 - $BFFF (Used by 32K I/O)
+  - $B800 - $BBFF - not used
+  - $B400 - $B7FF - DUART - dual serial ports
+  - $B000 - $B3FF - not used
+  - $AC00 - $AFFF - VIA D - Parallel printer port
+  - $A800 - $ABFF - VIA C - User ports, user timer
+  - $A400 - $A7FF - VIA B - RPi, ZolaDOS
+  - $A000 - $A3FF - VIA A - LCD, Delay timer
+- $8000 - $9FFF - Banked ROM/RAM 8x 8KB banks
+- $0000 - $7FFF - Main RAM 32KB
+  - $00E0 - $00FF - Zero-page addresses used by OS
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B312WQJV)

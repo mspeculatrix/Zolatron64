@@ -8,19 +8,19 @@
      C00A   D8         CLD
      C00B   A2 FF      LDX #&FF
      C00D   9A         TXS
-     C00E   64 65      STZ &65
-     C010   64 66      STZ &66
+     C00E   64 F5      STZ &F5
+     C010   64 F6      STZ &F6
      C012   9C 00 04   STZ &0400
      C015   9C E0 BF   STZ &BFE0
-     C018   64 55      STZ &55
-     C01A   64 54      STZ &54
+     C018   64 E5      STZ &E5
+     C01A   64 E4      STZ &E4
      C01C   9C 02 06   STZ &0602
      C01F   A9 00      LDA #&00
-     C021   85 62      STA &62
-     C023   85 60      STA &60
+     C021   85 F2      STA &F2
+     C023   85 F0      STA &F0
      C025   A9 08      LDA #&08
-     C027   85 63      STA &63
-     C029   85 61      STA &61
+     C027   85 F3      STA &F3
+     C029   85 F1      STA &F1
 .OS_CALL_VECTORS
      C02B   A9 90      LDA #&90
      C02D   8D 00 02   STA &0200
@@ -265,18 +265,18 @@ End macro LED_ON
      C25C   20 21 FF   JSR &FF21
 Macro PRT_MSG:
      C25F   A9 E0      LDA #&E0
-     C261   85 50      STA &50
+     C261   85 E0      STA &E0
      C263   A9 D4      LDA #&D4
-     C265   85 51      STA &51
+     C265   85 E1      STA &E1
      C267   20 E7 D5   JSR &D5E7
 End macro PRT_MSG
      C26A   A9 0A      LDA #&0A
      C26C   20 21 FF   JSR &FF21
 Macro PRT_MSG:
      C26F   A9 03      LDA #&03
-     C271   85 50      STA &50
+     C271   85 E0      STA &E0
      C273   A9 C0      LDA #&C0
-     C275   85 51      STA &51
+     C275   85 E1      STA &E1
      C277   20 E7 D5   JSR &D5E7
 End macro PRT_MSG
      C27A   A9 0A      LDA #&0A
@@ -284,16 +284,16 @@ End macro PRT_MSG
      C27F   20 51 FF   JSR &FF51
 Macro PRT_MSG:
      C282   A9 E0      LDA #&E0
-     C284   85 50      STA &50
+     C284   85 E0      STA &E0
      C286   A9 D4      LDA #&D4
-     C288   85 51      STA &51
+     C288   85 E1      STA &E1
      C28A   20 A2 E0   JSR &E0A2
 End macro PRT_MSG
 Macro PRT_MSG:
      C28D   A9 03      LDA #&03
-     C28F   85 50      STA &50
+     C28F   85 E0      STA &E0
      C291   A9 C0      LDA #&C0
-     C293   85 51      STA &51
+     C293   85 E1      STA &E1
      C295   20 A2 E0   JSR &E0A2
 End macro PRT_MSG
      C298   20 7D E1   JSR &E17D
@@ -306,20 +306,20 @@ End macro PRT_MSG
      C2AB   C9 03      CMP #&03
      C2AD   F0 11      BEQ &C2C0
 .spi_chk_not_present
-     C2AF   A5 65      LDA &65
+     C2AF   A5 F5      LDA &F5
      C2B1   29 FB      AND #&FB
-     C2B3   85 65      STA &65
+     C2B3   85 F5      STA &F5
 Macro LOAD_MSG:
      C2B5   A9 B5      LDA #&B5
-     C2B7   85 50      STA &50
+     C2B7   85 E0      STA &E0
      C2B9   A9 D4      LDA #&D4
-     C2BB   85 51      STA &51
+     C2BB   85 E1      STA &E1
 End macro LOAD_MSG
      C2BD   4C DD C2   JMP &C2DD
 .spi_chk_present
-     C2C0   A5 65      LDA &65
+     C2C0   A5 F5      LDA &F5
      C2C2   09 04      ORA #&04
-     C2C4   85 65      STA &65
+     C2C4   85 F5      STA &F5
      C2C6   A9 FF      LDA #&FF
      C2C8   8D 02 BF   STA &BF02
      C2CB   A2 0A      LDX #&0A
@@ -330,9 +330,9 @@ End macro LOAD_MSG
      C2D3   D0 FA      BNE &C2CF
 Macro LOAD_MSG:
      C2D5   A9 A5      LDA #&A5
-     C2D7   85 50      STA &50
+     C2D7   85 E0      STA &E0
      C2D9   A9 D4      LDA #&D4
-     C2DB   85 51      STA &51
+     C2DB   85 E1      STA &E1
 End macro LOAD_MSG
 .spi_chk_done
      C2DD   20 27 FF   JSR &FF27
@@ -342,21 +342,21 @@ End macro LOAD_MSG
      C2E8   A9 04      LDA #&04
      C2EA   8D E0 BF   STA &BFE0
      C2ED   20 17 DF   JSR &DF17
-     C2F0   A5 55      LDA &55
+     C2F0   A5 E5      LDA &E5
      C2F2   D0 0B      BNE &C2FF
 Macro LOAD_MSG:
      C2F4   A9 57      LDA #&57
-     C2F6   85 50      STA &50
+     C2F6   85 E0      STA &E0
      C2F8   A9 D4      LDA #&D4
-     C2FA   85 51      STA &51
+     C2FA   85 E1      STA &E1
 End macro LOAD_MSG
      C2FC   4C 07 C3   JMP &C307
 .boot_exmem_err
 Macro LOAD_MSG:
      C2FF   A9 69      LDA #&69
-     C301   85 50      STA &50
+     C301   85 E0      STA &E0
      C303   A9 D4      LDA #&D4
-     C305   85 51      STA &51
+     C305   85 E1      STA &E1
 End macro LOAD_MSG
 .boot_exmem_def
      C307   A9 0A      LDA #&0A
@@ -375,22 +375,22 @@ End macro NEWLINE
      C321   8D 49 04   STA &0449
      C324   A9 01      LDA #&01
      C326   8D 4A 04   STA &044A
-     C329   A5 65      LDA &65
+     C329   A5 F5      LDA &F5
      C32B   29 02      AND #&02
      C32D   D0 0B      BNE &C33A
 Macro LOAD_MSG:
      C32F   A9 93      LDA #&93
-     C331   85 50      STA &50
+     C331   85 E0      STA &E0
      C333   A9 D4      LDA #&D4
-     C335   85 51      STA &51
+     C335   85 E1      STA &E1
 End macro LOAD_MSG
      C337   4C 42 C3   JMP &C342
 .parallel_ok
 Macro LOAD_MSG:
      C33A   A9 7E      LDA #&7E
-     C33C   85 50      STA &50
+     C33C   85 E0      STA &E0
      C33E   A9 D4      LDA #&D4
-     C340   85 51      STA &51
+     C340   85 E1      STA &E1
 End macro LOAD_MSG
 .parallel_msg
      C342   20 27 FF   JSR &FF27
@@ -446,7 +446,7 @@ End macro LED_ON
      C38D   9C 7F 03   STZ &037F
      C390   9C 80 03   STZ &0380
      C393   9C FF 03   STZ &03FF
-     C396   64 64      STZ &64
+     C396   64 F4      STZ &F4
      C398   A9 7F      LDA #&7F
      C39A   8D 0E A8   STA &A80E
      C39D   8D 0D A8   STA &A80D
@@ -456,7 +456,7 @@ End macro LED_ON
      C3A7   8D 59 02   STA &0259
      C3AA   58         CLI
 Macro CHK_EXTMEM_PRESENT:
-     C3AB   A5 65      LDA &65
+     C3AB   A5 F5      LDA &F5
      C3AD   6A         ROR A
 End macro CHK_EXTMEM_PRESENT
      C3AE   90 0A      BCC &C3BA
@@ -467,22 +467,22 @@ End macro CHK_EXTMEM_PRESENT
 .ready
 Macro LOAD_MSG:
      C3BA   A9 F0      LDA #&F0
-     C3BC   85 50      STA &50
+     C3BC   85 E0      STA &E0
      C3BE   A9 D4      LDA #&D4
-     C3C0   85 51      STA &51
+     C3C0   85 E1      STA &E1
 End macro LOAD_MSG
      C3C2   20 27 FF   JSR &FF27
      C3C5   20 57 FF   JSR &FF57
 Macro SERIAL_PROMPT:
      C3C8   A9 DC      LDA #&DC
-     C3CA   85 50      STA &50
+     C3CA   85 E0      STA &E0
      C3CC   A9 D4      LDA #&D4
-     C3CE   85 51      STA &51
+     C3CE   85 E1      STA &E1
      C3D0   20 27 FF   JSR &FF27
 End macro SERIAL_PROMPT
 .MAINLOOP
 .mainloop_chk_input
-     C3D3   A5 64      LDA &64
+     C3D3   A5 F4      LDA &F4
      C3D5   29 01      AND #&01
      C3D7   D0 0A      BNE &C3E3
      C3D9   AE 7F 03   LDX &037F
@@ -529,11 +529,11 @@ Macro LED_OFF:
      C419   8D 01 A0   STA &A001
      C41C   68         PLA
 End macro LED_OFF
-     C41D   A5 64      LDA &64
+     C41D   A5 F4      LDA &F4
      C41F   29 F0      AND #&F0
-     C421   85 64      STA &64
+     C421   85 F4      STA &F4
      C423   20 2B DB   JSR &DB2B
-     C426   A5 54      LDA &54
+     C426   A5 E4      LDA &E4
      C428   C9 00      CMP #&00
      C42A   F0 55      BEQ &C481
      C42C   C9 01      CMP #&01
@@ -545,10 +545,10 @@ End macro LED_OFF
      C437   0A         ASL A
      C438   A8         TAY
      C439   B9 00 D0   LDA &D000,Y
-     C43C   85 56      STA &56
+     C43C   85 E6      STA &E6
      C43E   B9 01 D0   LDA &D001,Y
-     C441   85 57      STA &57
-     C443   6C 56 00   JMP (&0056)
+     C441   85 E7      STA &E7
+     C443   6C E6 00   JMP (&00E6)
 .process_input_nomatch
 Macro LED_ON:
      C446   48         PHA
@@ -559,19 +559,19 @@ Macro LED_ON:
 End macro LED_ON
 Macro LOAD_MSG:
      C450   A9 EE      LDA #&EE
-     C452   85 50      STA &50
+     C452   85 E0      STA &E0
      C454   A9 D9      LDA #&D9
-     C456   85 51      STA &51
+     C456   85 E1      STA &E1
 End macro LOAD_MSG
      C458   20 27 FF   JSR &FF27
      C45B   20 57 FF   JSR &FF57
      C45E   9C 7F 03   STZ &037F
      C461   A9 00      LDA #&00
-     C463   85 5E      STA &5E
+     C463   85 EE      STA &EE
      C465   A9 08      LDA #&08
-     C467   85 5F      STA &5F
+     C467   85 EF      STA &EF
      C469   20 B9 D6   JSR &D6B9
-     C46C   A5 55      LDA &55
+     C46C   A5 E5      LDA &E5
      C46E   F0 2B      BEQ &C49B
 Macro LED_ON:
      C470   48         PHA
@@ -581,14 +581,14 @@ Macro LED_ON:
      C479   68         PLA
 End macro LED_ON
      C47A   A9 04      LDA #&04
-     C47C   85 55      STA &55
+     C47C   85 E5      STA &E5
      C47E   20 D4 DE   JSR &DED4
 .process_input_null
 Macro SERIAL_PROMPT:
      C481   A9 DC      LDA #&DC
-     C483   85 50      STA &50
+     C483   85 E0      STA &E0
      C485   A9 D4      LDA #&D4
-     C487   85 51      STA &51
+     C487   85 E1      STA &E1
      C489   20 27 FF   JSR &FF27
 End macro SERIAL_PROMPT
 Macro LED_OFF:
@@ -619,33 +619,33 @@ End macro LED_OFF
      C4B8   4C 43 CF   JMP &CF43
 .cmdprcBANG
      C4BB   20 5F DE   JSR &DE5F
-     C4BE   A5 55      LDA &55
+     C4BE   A5 E5      LDA &E5
      C4C0   D0 37      BNE &C4F9
      C4C2   A0 00      LDY #&00
 .cmdprcBANG_loop
      C4C4   20 97 DE   JSR &DE97
-     C4C7   A5 55      LDA &55
+     C4C7   A5 E5      LDA &E5
      C4C9   D0 2E      BNE &C4F9
-     C4CB   A5 54      LDA &54
-     C4CD   92 52      STA (&52)
+     C4CB   A5 E4      LDA &E4
+     C4CD   92 E2      STA (&E2)
      C4CF   AE 7F 03   LDX &037F
      C4D2   BD 00 03   LDA &0300,X
      C4D5   F0 0E      BEQ &C4E5
      C4D7   C8         INY
      C4D8   C0 10      CPY #&10
      C4DA   F0 09      BEQ &C4E5
-     C4DC   E6 52      INC &52
+     C4DC   E6 E2      INC &E2
      C4DE   D0 E4      BNE &C4C4
-     C4E0   E6 53      INC &53
+     C4E0   E6 E3      INC &E3
      C4E2   4C C4 C4   JMP &C4C4
 .cmdprcBANG_success
      C4E5   9C 7F 03   STZ &037F
      C4E8   9C 00 03   STZ &0300
 Macro LOAD_MSG:
      C4EB   A9 EC      LDA #&EC
-     C4ED   85 50      STA &50
+     C4ED   85 E0      STA &E0
      C4EF   A9 D4      LDA #&D4
-     C4F1   85 51      STA &51
+     C4F1   85 E1      STA &E1
 End macro LOAD_MSG
      C4F3   20 27 FF   JSR &FF27
      C4F6   4C 29 CF   JMP &CF29
@@ -655,18 +655,18 @@ End macro LOAD_MSG
      C4FF   4C 36 CF   JMP &CF36
 .cmdprcQUERY
      C502   20 5F DE   JSR &DE5F
-     C505   A5 55      LDA &55
+     C505   A5 E5      LDA &E5
      C507   D0 13      BNE &C51C
      C509   AE 7F 03   LDX &037F
      C50C   BD 00 03   LDA &0300,X
      C50F   D0 0B      BNE &C51C
-     C511   B2 52      LDA (&52)
+     C511   B2 E2      LDA (&E2)
      C513   20 2F DA   JSR &DA2F
      C516   20 03 D6   JSR &D603
      C519   4C 29 CF   JMP &CF29
 .cmdprcQUERY_fail
      C51C   A9 06      LDA #&06
-     C51E   85 55      STA &55
+     C51E   85 E5      STA &E5
      C520   4C 36 CF   JMP &CF36
 .cmdprcBRK
      C523   BD 00 03   LDA &0300,X
@@ -703,7 +703,7 @@ Macro LED_OFF:
      C558   8D 01 A0   STA &A001
      C55B   68         PLA
 End macro LED_OFF
-     C55C   A5 55      LDA &55
+     C55C   A5 E5      LDA &E5
      C55E   D0 0D      BNE &C56D
      C560   20 95 D6   JSR &D695
 Macro NEWLINE:
@@ -730,16 +730,16 @@ End macro LED_ON
      C580   E0 10      CPX #&10
      C582   D0 F8      BNE &C57C
      C584   A9 00      LDA #&00
-     C586   85 62      STA &62
-     C588   85 60      STA &60
+     C586   85 F2      STA &F2
+     C588   85 F0      STA &F0
      C58A   A9 08      LDA #&08
-     C58C   85 63      STA &63
-     C58E   85 61      STA &61
+     C58C   85 F3      STA &F3
+     C58E   85 F1      STA &F1
 Macro LOAD_MSG:
      C590   A9 A8      LDA #&A8
-     C592   85 50      STA &50
+     C592   85 E0      STA &E0
      C594   A9 C5      LDA #&C5
-     C596   85 51      STA &51
+     C596   85 E1      STA &E1
 End macro LOAD_MSG
      C598   20 27 FF   JSR &FF27
 Macro NEWLINE:
@@ -755,7 +755,7 @@ End macro NEWLINE
      C5B7   00
 .cmdprcDATE
      C5B8   20 F7 E3   JSR &E3F7
-     C5BB   A5 55      LDA &55
+     C5BB   A5 E5      LDA &E5
      C5BD   F0 03      BEQ &C5C2
      C5BF   4C 36 CF   JMP &CF36
 .cmdprcDATE_display
@@ -770,7 +770,7 @@ End macro NEWLINE
 .cmdprcDATE_get_next
      C5D2   BD 25 07   LDA &0725,X
      C5D5   20 3C FF   JSR &FF3C
-     C5D8   C6 54      DEC &54
+     C5D8   C6 E4      DEC &E4
      C5DA   D0 05      BNE &C5E1
      C5DC   A9 30      LDA #&30
      C5DE   20 21 FF   JSR &FF21
@@ -794,23 +794,23 @@ Macro LED_ON:
 End macro LED_ON
 Macro LOAD_MSG:
      C5FE   A9 D3      LDA #&D3
-     C600   85 50      STA &50
+     C600   85 E0      STA &E0
      C602   A9 D9      LDA #&D9
-     C604   85 51      STA &51
+     C604   85 E1      STA &E1
 End macro LOAD_MSG
      C606   20 27 FF   JSR &FF27
      C609   20 57 FF   JSR &FF57
      C60C   20 84 DD   JSR &DD84
-     C60F   A5 55      LDA &55
+     C60F   A5 E5      LDA &E5
      C611   D0 18      BNE &C62B
      C613   20 26 D7   JSR &D726
-     C616   A5 55      LDA &55
+     C616   A5 E5      LDA &E5
      C618   D0 11      BNE &C62B
 Macro LOAD_MSG:
      C61A   A9 09      LDA #&09
-     C61C   85 50      STA &50
+     C61C   85 E0      STA &E0
      C61E   A9 DA      LDA #&DA
-     C620   85 51      STA &51
+     C620   85 E1      STA &E1
 End macro LOAD_MSG
      C622   20 27 FF   JSR &FF27
      C625   20 57 FF   JSR &FF57
@@ -837,40 +837,40 @@ Macro LED_ON:
 End macro LED_ON
 Macro LOAD_MSG:
      C647   A9 BA      LDA #&BA
-     C649   85 50      STA &50
+     C649   85 E0      STA &E0
      C64B   A9 C6      LDA #&C6
-     C64D   85 51      STA &51
+     C64D   85 E1      STA &E1
 End macro LOAD_MSG
      C64F   20 27 FF   JSR &FF27
      C652   20 57 FF   JSR &FF57
      C655   20 7A DE   JSR &DE7A
-     C658   A5 55      LDA &55
+     C658   A5 E5      LDA &E5
      C65A   D0 32      BNE &C68E
      C65C   20 F6 D4   JSR &D4F6
-     C65F   A5 54      LDA &54
+     C65F   A5 E4      LDA &E4
      C661   D0 27      BNE &C68A
 Macro SET_EXCL_EXT_FLAG:
      C663   A9 40      LDA #&40
      C665   8D 02 06   STA &0602
 End macro SET_EXCL_EXT_FLAG
      C668   20 84 DD   JSR &DD84
-     C66B   A5 55      LDA &55
+     C66B   A5 E5      LDA &E5
      C66D   D0 1F      BNE &C68E
      C66F   AE 7F 03   LDX &037F
      C672   BD 00 03   LDA &0300,X
      C675   D0 0C      BNE &C683
      C677   A9 80      LDA #&80
      C679   20 C6 D7   JSR &D7C6
-     C67C   A5 55      LDA &55
+     C67C   A5 E5      LDA &E5
      C67E   D0 0E      BNE &C68E
      C680   4C 9D C6   JMP &C69D
 .cmdprcDUMP_synerr
      C683   A9 06      LDA #&06
-     C685   85 55      STA &55
+     C685   85 E5      STA &E5
      C687   4C 8E C6   JMP &C68E
 .cmdprcDUMP_addr_err
      C68A   A9 15      LDA #&15
-     C68C   85 55      STA &55
+     C68C   85 E5      STA &E5
 .cmdprcDUMP_err
 Macro LED_OFF:
      C68E   48         PHA
@@ -892,9 +892,9 @@ Macro LED_OFF:
 End macro LED_OFF
 Macro LOAD_MSG:
      C6A9   A9 09      LDA #&09
-     C6AB   85 50      STA &50
+     C6AB   85 E0      STA &E0
      C6AD   A9 DA      LDA #&DA
-     C6AF   85 51      STA &51
+     C6AF   85 E1      STA &E1
 End macro LOAD_MSG
      C6B1   20 27 FF   JSR &FF27
      C6B4   20 57 FF   JSR &FF57
@@ -943,31 +943,31 @@ End macro LOAD_MSG
 .cmdprcJMP
 Macro LOAD_MSG:
      C714   A9 7B      LDA #&7B
-     C716   85 50      STA &50
+     C716   85 E0      STA &E0
      C718   A9 C7      LDA #&C7
-     C71A   85 51      STA &51
+     C71A   85 E1      STA &E1
 End macro LOAD_MSG
      C71C   20 F9 DE   JSR &DEF9
      C71F   20 5F DE   JSR &DE5F
-     C722   A5 55      LDA &55
+     C722   A5 E5      LDA &E5
      C724   D0 3C      BNE &C762
-     C726   A5 52      LDA &52
-     C728   85 58      STA &58
-     C72A   A5 53      LDA &53
-     C72C   85 59      STA &59
+     C726   A5 E2      LDA &E2
+     C728   85 E8      STA &E8
+     C72A   A5 E3      LDA &E3
+     C72C   85 E9      STA &E9
      C72E   20 CD DA   JSR &DACD
 Macro STR_BUF_TO_MSG_VEC:
      C731   A9 0B      LDA #&0B
-     C733   85 50      STA &50
+     C733   85 E0      STA &E0
      C735   A9 04      LDA #&04
-     C737   85 51      STA &51
+     C737   85 E1      STA &E1
 End macro STR_BUF_TO_MSG_VEC
      C739   20 F9 DE   JSR &DEF9
 Macro STDOUT_TO_MSG_VEC:
      C73C   A9 80      LDA #&80
-     C73E   85 50      STA &50
+     C73E   85 E0      STA &E0
      C740   A9 03      LDA #&03
-     C742   85 51      STA &51
+     C742   85 E1      STA &E1
 End macro STDOUT_TO_MSG_VEC
      C744   20 57 FF   JSR &FF57
      C747   A2 FF      LDX #&FF
@@ -983,20 +983,20 @@ Macro LED_OFF:
      C75B   8D 01 A0   STA &A001
      C75E   68         PLA
 End macro LED_OFF
-     C75F   6C 52 00   JMP (&0052)
+     C75F   6C E2 00   JMP (&00E2)
 .cmdprcJMP_fail
 Macro LOAD_MSG:
      C762   A9 81      LDA #&81
-     C764   85 50      STA &50
+     C764   85 E0      STA &E0
      C766   A9 C7      LDA #&C7
-     C768   85 51      STA &51
+     C768   85 E1      STA &E1
 End macro LOAD_MSG
      C76A   20 F9 DE   JSR &DEF9
 Macro LOAD_MSG:
      C76D   A9 80      LDA #&80
-     C76F   85 50      STA &50
+     C76F   85 E0      STA &E0
      C771   A9 03      LDA #&03
-     C773   85 51      STA &51
+     C773   85 E1      STA &E1
 End macro LOAD_MSG
      C775   20 57 FF   JSR &FF57
      C778   4C 36 CF   JMP &CF36
@@ -1007,22 +1007,22 @@ End macro LOAD_MSG
      C781   45 72 72 ...
      C786   00
 .cmdprcLM
-     C787   64 55      STZ &55
+     C787   64 E5      STZ &E5
      C789   20 7A DE   JSR &DE7A
-     C78C   A5 55      LDA &55
+     C78C   A5 E5      LDA &E5
      C78E   D0 0A      BNE &C79A
 .cmdprcLM_check
      C790   20 F6 D4   JSR &D4F6
-     C793   A5 54      LDA &54
+     C793   A5 E4      LDA &E4
      C795   D0 03      BNE &C79A
      C797   4C A8 C7   JMP &C7A8
 .cmdprcLM_addr_fail
      C79A   A9 15      LDA #&15
-     C79C   85 55      STA &55
+     C79C   85 E5      STA &E5
      C79E   4C 36 CF   JMP &CF36
 .cmdprcLM_chk_fail
      C7A1   A9 06      LDA #&06
-     C7A3   85 55      STA &55
+     C7A3   85 E5      STA &E5
      C7A5   4C 36 CF   JMP &CF36
 .cmdprcLM_chk_null
      C7A8   AE 7F 03   LDX &037F
@@ -1039,11 +1039,11 @@ Macro LED_ON:
      C7BF   68         PLA
 End macro LED_ON
      C7C0   A9 00      LDA #&00
-     C7C2   85 5E      STA &5E
+     C7C2   85 EE      STA &EE
      C7C4   A9 08      LDA #&08
-     C7C6   85 5F      STA &5F
+     C7C6   85 EF      STA &EF
      C7C8   20 B9 D6   JSR &D6B9
-     C7CB   A5 55      LDA &55
+     C7CB   A5 E5      LDA &E5
      C7CD   D0 12      BNE &C7E1
      C7CF   20 95 D6   JSR &D695
 Macro LED_OFF:
@@ -1074,23 +1074,23 @@ End macro LED_ON
      C7F7   4C 36 CF   JMP &CF36
 .cmdprcLP
      C7FA   20 97 DE   JSR &DE97
-     C7FD   A5 55      LDA &55
+     C7FD   A5 E5      LDA &E5
      C7FF   D0 1A      BNE &C81B
 .cmdprcLP_chk_null
      C801   AE 7F 03   LDX &037F
      C804   BD 00 03   LDA &0300,X
      C807   D0 12      BNE &C81B
-     C809   A5 54      LDA &54
-     C80B   85 59      STA &59
-     C80D   85 5B      STA &5B
-     C80F   64 58      STZ &58
+     C809   A5 E4      LDA &E4
+     C80B   85 E9      STA &E9
+     C80D   85 EB      STA &EB
+     C80F   64 E8      STZ &E8
      C811   A9 FF      LDA #&FF
-     C813   85 5A      STA &5A
+     C813   85 EA      STA &EA
      C815   20 AA DB   JSR &DBAA
      C818   4C 29 CF   JMP &CF29
 .cmdprcLP_fail
      C81B   A9 06      LDA #&06
-     C81D   85 55      STA &55
+     C81D   85 E5      STA &E5
      C81F   4C 36 CF   JMP &CF36
 .cmdprcLS
 Macro LED_ON:
@@ -1102,14 +1102,14 @@ Macro LED_ON:
 End macro LED_ON
 Macro LOAD_MSG:
      C82C   A9 D1      LDA #&D1
-     C82E   85 50      STA &50
+     C82E   85 E0      STA &E0
      C830   A9 C8      LDA #&C8
-     C832   85 51      STA &51
+     C832   85 E1      STA &E1
 End macro LOAD_MSG
      C834   20 57 FF   JSR &FF57
      C837   A9 08      LDA #&08
      C839   20 EA D6   JSR &D6EA
-     C83C   A5 55      LDA &55
+     C83C   A5 E5      LDA &E5
      C83E   F0 03      BEQ &C843
      C840   4C C2 C8   JMP &C8C2
 .cmdprcLS_rcv_data
@@ -1121,11 +1121,11 @@ Macro ZD_SET_DATADIR_INPUT:
      C84D   8D 00 A4   STA &A400
 End macro ZD_SET_DATADIR_INPUT
      C850   A9 04      LDA #&04
-     C852   85 5E      STA &5E
+     C852   85 EE      STA &EE
      C854   A9 06      LDA #&06
-     C856   85 5F      STA &5F
+     C856   85 EF      STA &EF
      C858   20 86 D7   JSR &D786
-     C85B   A5 55      LDA &55
+     C85B   A5 E5      LDA &E5
      C85D   F0 03      BEQ &C862
 .cmdprcLS_err
      C85F   4C C2 C8   JMP &C8C2
@@ -1133,20 +1133,20 @@ End macro ZD_SET_DATADIR_INPUT
      C862   A2 00      LDX #&00
      C864   A0 00      LDY #&00
      C866   A9 04      LDA #&04
-     C868   85 58      STA &58
+     C868   85 E8      STA &E8
      C86A   A9 06      LDA #&06
-     C86C   85 59      STA &59
+     C86C   85 E9      STA &E9
 .cmdprcLS_show_loop
-     C86E   B2 58      LDA (&58)
+     C86E   B2 E8      LDA (&E8)
      C870   F0 11      BEQ &C883
      C872   C9 FF      CMP #&FF
      C874   F0 30      BEQ &C8A6
      C876   20 21 FF   JSR &FF21
      C879   C8         INY
 .cmdprcLS_show_loopback
-     C87A   E6 58      INC &58
+     C87A   E6 E8      INC &E8
      C87C   D0 02      BNE &C880
-     C87E   E6 59      INC &59
+     C87E   E6 E9      INC &E9
 .cmdprcLS_show_loopback_contd
      C880   4C 6E C8   JMP &C86E
 .cmdprcLS_show_pad
@@ -1200,7 +1200,7 @@ End macro LED_OFF
      C8E5   00
 .cmdprcMV
      C8E6   20 84 DD   JSR &DD84
-     C8E9   A5 55      LDA &55
+     C8E9   A5 E5      LDA &E5
      C8EB   D0 03      BNE &C8F0
      C8ED   4C F3 C8   JMP &C8F3
 .cmdprcMV_fail
@@ -1217,22 +1217,22 @@ Macro LED_ON:
 End macro LED_ON
 Macro LOAD_MSG:
      C900   A9 E1      LDA #&E1
-     C902   85 50      STA &50
+     C902   85 E0      STA &E0
      C904   A9 D9      LDA #&D9
-     C906   85 51      STA &51
+     C906   85 E1      STA &E1
 End macro LOAD_MSG
      C908   20 27 FF   JSR &FF27
      C90B   20 57 FF   JSR &FF57
      C90E   20 84 DD   JSR &DD84
-     C911   A5 55      LDA &55
+     C911   A5 E5      LDA &E5
      C913   D0 27      BNE &C93C
      C915   20 5F DE   JSR &DE5F
-     C918   A5 55      LDA &55
+     C918   A5 E5      LDA &E5
      C91A   D0 20      BNE &C93C
-     C91C   A5 52      LDA &52
-     C91E   85 5E      STA &5E
-     C920   A5 53      LDA &53
-     C922   85 5F      STA &5F
+     C91C   A5 E2      LDA &E2
+     C91E   85 EE      STA &EE
+     C920   A5 E3      LDA &E3
+     C922   85 EF      STA &EF
      C924   A9 03      LDA #&03
      C926   20 4F D7   JSR &D74F
 Macro LED_OFF:
@@ -1243,7 +1243,7 @@ Macro LED_OFF:
      C931   8D 01 A0   STA &A001
      C934   68         PLA
 End macro LED_OFF
-     C935   A5 55      LDA &55
+     C935   A5 E5      LDA &E5
      C937   D0 03      BNE &C93C
      C939   4C 49 C9   JMP &C949
 .cmdprcOPEN_err
@@ -1260,22 +1260,22 @@ End macro LED_ON
      C94C   4C 29 CF   JMP &CF29
 .cmdprcPDUMP
      C94F   20 68 CA   JSR &CA68
-     C952   A5 55      LDA &55
+     C952   A5 E5      LDA &E5
      C954   D0 29      BNE &C97F
      C956   A9 00      LDA #&00
-     C958   85 58      STA &58
+     C958   85 E8      STA &E8
      C95A   A9 08      LDA #&08
-     C95C   85 59      STA &59
+     C95C   85 E9      STA &E9
      C95E   AD 08 08   LDA &0808
      C961   3A         DEC A
-     C962   85 5A      STA &5A
+     C962   85 EA      STA &EA
      C964   AD 09 08   LDA &0809
-     C967   85 5B      STA &5B
+     C967   85 EB      STA &EB
 Macro LOAD_MSG:
      C969   A9 82      LDA #&82
-     C96B   85 50      STA &50
+     C96B   85 E0      STA &E0
      C96D   A9 C9      LDA #&C9
-     C96F   85 51      STA &51
+     C96F   85 E1      STA &E1
 End macro LOAD_MSG
      C971   20 27 FF   JSR &FF27
      C974   20 AA DB   JSR &DBAA
@@ -1290,47 +1290,47 @@ End macro LOAD_MSG
      C99C   00
 .cmdprcPEEK
      C99D   20 5F DE   JSR &DE5F
-     C9A0   A5 55      LDA &55
+     C9A0   A5 E5      LDA &E5
      C9A2   D0 37      BNE &C9DB
 .cmdprcPEEK_loop
-     C9A4   A5 52      LDA &52
-     C9A6   85 58      STA &58
-     C9A8   A5 53      LDA &53
-     C9AA   85 59      STA &59
+     C9A4   A5 E2      LDA &E2
+     C9A6   85 E8      STA &E8
+     C9A8   A5 E3      LDA &E3
+     C9AA   85 E9      STA &E9
      C9AC   20 42 FF   JSR &FF42
      C9AF   20 2D FF   JSR &FF2D
      C9B2   A9 20      LDA #&20
      C9B4   20 21 FF   JSR &FF21
-     C9B7   B2 52      LDA (&52)
+     C9B7   B2 E2      LDA (&E2)
      C9B9   20 2F DA   JSR &DA2F
      C9BC   20 2D FF   JSR &FF2D
      C9BF   A9 20      LDA #&20
      C9C1   20 21 FF   JSR &FF21
 .cmdprcPEEK_getkey
      C9C4   20 90 DC   JSR &DC90
-     C9C7   A5 54      LDA &54
+     C9C7   A5 E4      LDA &E4
      C9C9   C9 51      CMP #&51
      C9CB   F0 0B      BEQ &C9D8
-     C9CD   E6 52      INC &52
+     C9CD   E6 E2      INC &E2
      C9CF   D0 D3      BNE &C9A4
-     C9D1   E6 53      INC &53
+     C9D1   E6 E3      INC &E3
      C9D3   F0 03      BEQ &C9D8
      C9D5   4C A4 C9   JMP &C9A4
 .cmdprcPEEK_done
      C9D8   4C 29 CF   JMP &CF29
 .cmdprcPEEK_fail
      C9DB   A9 06      LDA #&06
-     C9DD   85 55      STA &55
+     C9DD   85 E5      STA &E5
      C9DF   4C 36 CF   JMP &CF36
 .cmdprcPOKE
      C9E2   20 5F DE   JSR &DE5F
-     C9E5   A5 55      LDA &55
+     C9E5   A5 E5      LDA &E5
      C9E7   D0 32      BNE &CA1B
 .cmdprcPOKE_loop
-     C9E9   A5 52      LDA &52
-     C9EB   85 58      STA &58
-     C9ED   A5 53      LDA &53
-     C9EF   85 59      STA &59
+     C9E9   A5 E2      LDA &E2
+     C9EB   85 E8      STA &E8
+     C9ED   A5 E3      LDA &E3
+     C9EF   85 E9      STA &E9
      C9F1   20 CD DA   JSR &DACD
      C9F4   20 2D FF   JSR &FF2D
      C9F7   A9 20      LDA #&20
@@ -1340,16 +1340,16 @@ End macro LOAD_MSG
      CA01   20 6D DC   JSR &DC6D
      CA04   9C 7F 03   STZ &037F
      CA07   20 97 DE   JSR &DE97
-     CA0A   A5 55      LDA &55
+     CA0A   A5 E5      LDA &E5
      CA0C   D0 0D      BNE &CA1B
-     CA0E   A5 54      LDA &54
-     CA10   92 52      STA (&52)
-     CA12   E6 52      INC &52
+     CA0E   A5 E4      LDA &E4
+     CA10   92 E2      STA (&E2)
+     CA12   E6 E2      INC &E2
      CA14   D0 D3      BNE &C9E9
-     CA16   E6 53      INC &53
+     CA16   E6 E3      INC &E3
      CA18   4C E9 C9   JMP &C9E9
 .cmdprcPOKE_fail
-     CA1B   A5 55      LDA &55
+     CA1B   A5 E5      LDA &E5
      CA1D   C9 02      CMP #&02
      CA1F   F0 03      BEQ &CA24
      CA21   4C 36 CF   JMP &CF36
@@ -1357,10 +1357,10 @@ End macro LOAD_MSG
      CA24   4C 29 CF   JMP &CF29
 .cmdprcPRT
      CA27   20 6C FF   JSR &FF6C
-     CA2A   A5 55      LDA &55
+     CA2A   A5 E5      LDA &E5
      CA2C   D0 0F      BNE &CA3D
      CA2E   20 84 DD   JSR &DD84
-     CA31   A5 55      LDA &55
+     CA31   A5 E5      LDA &E5
      CA33   D0 08      BNE &CA3D
      CA35   A9 0A      LDA #&0A
      CA37   20 7E D7   JSR &D77E
@@ -1370,9 +1370,9 @@ End macro LOAD_MSG
 .cmdprcPRT_success
 Macro LOAD_MSG:
      CA40   A9 4E      LDA #&4E
-     CA42   85 50      STA &50
+     CA42   85 E0      STA &E0
      CA44   A9 CA      LDA #&CA
-     CA46   85 51      STA &51
+     CA46   85 E1      STA &E1
 End macro LOAD_MSG
      CA48   20 27 FF   JSR &FF27
      CA4B   4C 29 CF   JMP &CF29
@@ -1382,7 +1382,7 @@ End macro LOAD_MSG
      CA51   00
 .cmdprcRUN
      CA52   20 68 CA   JSR &CA68
-     CA55   A5 55      LDA &55
+     CA55   A5 E5      LDA &E5
      CA57   D0 0C      BNE &CA65
      CA59   9C 00 03   STZ &0300
      CA5C   9C 7F 03   STZ &037F
@@ -1391,7 +1391,7 @@ End macro LOAD_MSG
 .cmdprcRUN_err
      CA65   4C 36 CF   JMP &CF36
 .check_exec
-     CA68   64 55      STZ &55
+     CA68   64 E5      STZ &E5
      CA6A   AD 00 08   LDA &0800
      CA6D   C9 4C      CMP #&4C
      CA6F   D0 0A      BNE &CA7B
@@ -1401,19 +1401,19 @@ End macro LOAD_MSG
      CA78   4C 7F CA   JMP &CA7F
 .cmdprocRUN_err
      CA7B   A9 1C      LDA #&1C
-     CA7D   85 55      STA &55
+     CA7D   85 E5      STA &E5
 .cmdprocRUN_end
      CA7F   60         RTS
 .cmdprcSAVE
      CA80   20 68 CA   JSR &CA68
-     CA83   A5 55      LDA &55
+     CA83   A5 E5      LDA &E5
      CA85   D0 5F      BNE &CAE6
 Macro SET_EXCL_EXT_FLAG:
      CA87   A9 40      LDA #&40
      CA89   8D 02 06   STA &0602
 End macro SET_EXCL_EXT_FLAG
      CA8C   20 84 DD   JSR &DD84
-     CA8F   A5 55      LDA &55
+     CA8F   A5 E5      LDA &E5
      CA91   D0 53      BNE &CAE6
      CA93   AE 7F 03   LDX &037F
      CA96   BD 00 03   LDA &0300,X
@@ -1427,20 +1427,20 @@ Macro LED_ON:
 End macro LED_ON
 Macro LOAD_MSG:
      CAA5   A9 FD      LDA #&FD
-     CAA7   85 50      STA &50
+     CAA7   85 E0      STA &E0
      CAA9   A9 D9      LDA #&D9
-     CAAB   85 51      STA &51
+     CAAB   85 E1      STA &E1
 End macro LOAD_MSG
      CAAD   20 27 FF   JSR &FF27
      CAB0   20 57 FF   JSR &FF57
      CAB3   A9 00      LDA #&00
-     CAB5   85 58      STA &58
+     CAB5   85 E8      STA &E8
      CAB7   A9 08      LDA #&08
-     CAB9   85 59      STA &59
-     CABB   A5 60      LDA &60
-     CABD   85 5A      STA &5A
-     CABF   A5 61      LDA &61
-     CAC1   85 5B      STA &5B
+     CAB9   85 E9      STA &E9
+     CABB   A5 F0      LDA &F0
+     CABD   85 EA      STA &EA
+     CABF   A5 F1      LDA &F1
+     CAC1   85 EB      STA &EB
      CAC3   A9 8C      LDA #&8C
      CAC5   20 C6 D7   JSR &D7C6
 Macro LED_OFF:
@@ -1451,24 +1451,24 @@ Macro LED_OFF:
      CAD0   8D 01 A0   STA &A001
      CAD3   68         PLA
 End macro LED_OFF
-     CAD4   A5 55      LDA &55
+     CAD4   A5 E5      LDA &E5
      CAD6   F0 11      BEQ &CAE9
      CAD8   4C E6 CA   JMP &CAE6
 .cmdprcSAVE_synerr
      CADB   A9 06      LDA #&06
-     CADD   85 55      STA &55
+     CADD   85 E5      STA &E5
      CADF   4C E6 CA   JMP &CAE6
 .cmdprcSAVE_addr_err
      CAE2   A9 15      LDA #&15
-     CAE4   85 55      STA &55
+     CAE4   85 E5      STA &E5
 .cmdprcSAVE_err
      CAE6   4C 36 CF   JMP &CF36
 .cmdprcSAVE_success
 Macro LOAD_MSG:
      CAE9   A9 09      LDA #&09
-     CAEB   85 50      STA &50
+     CAEB   85 E0      STA &E0
      CAED   A9 DA      LDA #&DA
-     CAEF   85 51      STA &51
+     CAEF   85 E1      STA &E1
 End macro LOAD_MSG
      CAF1   20 27 FF   JSR &FF27
      CAF4   20 57 FF   JSR &FF57
@@ -1477,44 +1477,44 @@ End macro LOAD_MSG
      CAFA   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
      CAFD   A9 00      LDA #&00
-     CAFF   85 50      STA &50
+     CAFF   85 E0      STA &E0
      CB01   A9 CC      LDA #&CC
-     CB03   85 51      STA &51
+     CB03   85 E1      STA &E1
 End macro LOAD_MSG
      CB05   20 30 FF   JSR &FF30
-     CB08   A5 60      LDA &60
-     CB0A   85 58      STA &58
-     CB0C   A5 61      LDA &61
-     CB0E   85 59      STA &59
+     CB08   A5 F0      LDA &F0
+     CB0A   85 E8      STA &E8
+     CB0C   A5 F1      LDA &F1
+     CB0E   85 E9      STA &E9
      CB10   20 CD DA   JSR &DACD
 Macro STR_BUF_TO_MSG_VEC:
      CB13   A9 0B      LDA #&0B
-     CB15   85 50      STA &50
+     CB15   85 E0      STA &E0
      CB17   A9 04      LDA #&04
-     CB19   85 51      STA &51
+     CB19   85 E1      STA &E1
 End macro STR_BUF_TO_MSG_VEC
      CB1B   20 30 FF   JSR &FF30
 Macro LOAD_MSG:
      CB1E   A9 23      LDA #&23
-     CB20   85 50      STA &50
+     CB20   85 E0      STA &E0
      CB22   A9 CC      LDA #&CC
-     CB24   85 51      STA &51
+     CB24   85 E1      STA &E1
 End macro LOAD_MSG
      CB26   20 30 FF   JSR &FF30
 Macro LOAD_MSG:
      CB29   A9 07      LDA #&07
-     CB2B   85 50      STA &50
+     CB2B   85 E0      STA &E0
      CB2D   A9 CC      LDA #&CC
-     CB2F   85 51      STA &51
+     CB2F   85 E1      STA &E1
 End macro LOAD_MSG
      CB31   20 30 FF   JSR &FF30
      CB34   AD 00 04   LDA &0400
      CB37   20 3C FF   JSR &FF3C
 Macro STR_BUF_TO_MSG_VEC:
      CB3A   A9 0B      LDA #&0B
-     CB3C   85 50      STA &50
+     CB3C   85 E0      STA &E0
      CB3E   A9 04      LDA #&04
-     CB40   85 51      STA &51
+     CB40   85 E1      STA &E1
 End macro STR_BUF_TO_MSG_VEC
      CB42   20 30 FF   JSR &FF30
      CB45   20 1E FF   JSR &FF1E
@@ -1528,35 +1528,35 @@ End macro NEWLINE
      CB52   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
      CB55   A9 F9      LDA #&F9
-     CB57   85 50      STA &50
+     CB57   85 E0      STA &E0
      CB59   A9 CB      LDA #&CB
-     CB5B   85 51      STA &51
+     CB5B   85 E1      STA &E1
 End macro LOAD_MSG
      CB5D   20 30 FF   JSR &FF30
-     CB60   A5 62      LDA &62
-     CB62   85 58      STA &58
-     CB64   A5 63      LDA &63
-     CB66   85 59      STA &59
+     CB60   A5 F2      LDA &F2
+     CB62   85 E8      STA &E8
+     CB64   A5 F3      LDA &F3
+     CB66   85 E9      STA &E9
      CB68   20 CD DA   JSR &DACD
 Macro STR_BUF_TO_MSG_VEC:
      CB6B   A9 0B      LDA #&0B
-     CB6D   85 50      STA &50
+     CB6D   85 E0      STA &E0
      CB6F   A9 04      LDA #&04
-     CB71   85 51      STA &51
+     CB71   85 E1      STA &E1
 End macro STR_BUF_TO_MSG_VEC
      CB73   20 30 FF   JSR &FF30
 Macro LOAD_MSG:
      CB76   A9 23      LDA #&23
-     CB78   85 50      STA &50
+     CB78   85 E0      STA &E0
      CB7A   A9 CC      LDA #&CC
-     CB7C   85 51      STA &51
+     CB7C   85 E1      STA &E1
 End macro LOAD_MSG
      CB7E   20 30 FF   JSR &FF30
 Macro LOAD_MSG:
      CB81   A9 0E      LDA #&0E
-     CB83   85 50      STA &50
+     CB83   85 E0      STA &E0
      CB85   A9 CC      LDA #&CC
-     CB87   85 51      STA &51
+     CB87   85 E1      STA &E1
 End macro LOAD_MSG
      CB89   20 30 FF   JSR &FF30
      CB8C   AD 45 04   LDA &0445
@@ -1572,12 +1572,12 @@ End macro NEWLINE
      CB9F   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
      CBA2   A9 15      LDA #&15
-     CBA4   85 50      STA &50
+     CBA4   85 E0      STA &E0
      CBA6   A9 CC      LDA #&CC
-     CBA8   85 51      STA &51
+     CBA8   85 E1      STA &E1
 End macro LOAD_MSG
      CBAA   20 30 FF   JSR &FF30
-     CBAD   A5 65      LDA &65
+     CBAD   A5 F5      LDA &F5
      CBAF   20 DB CB   JSR &CBDB
      CBB2   20 1E FF   JSR &FF1E
 Macro NEWLINE:
@@ -1590,12 +1590,12 @@ End macro NEWLINE
      CBBF   9C FF 03   STZ &03FF
 Macro LOAD_MSG:
      CBC2   A9 1C      LDA #&1C
-     CBC4   85 50      STA &50
+     CBC4   85 E0      STA &E0
      CBC6   A9 CC      LDA #&CC
-     CBC8   85 51      STA &51
+     CBC8   85 E1      STA &E1
 End macro LOAD_MSG
      CBCA   20 30 FF   JSR &FF30
-     CBCD   A5 64      LDA &64
+     CBCD   A5 F4      LDA &F4
      CBCF   20 DB CB   JSR &CBDB
      CBD2   20 1E FF   JSR &FF1E
      CBD5   20 63 FF   JSR &FF63
@@ -1604,9 +1604,9 @@ End macro LOAD_MSG
      CBDB   20 36 FF   JSR &FF36
 Macro STR_BUF_TO_MSG_VEC:
      CBDE   A9 0B      LDA #&0B
-     CBE0   85 50      STA &50
+     CBE0   85 E0      STA &E0
      CBE2   A9 04      LDA #&04
-     CBE4   85 51      STA &51
+     CBE4   85 E1      STA &E1
 End macro STR_BUF_TO_MSG_VEC
      CBE6   20 30 FF   JSR &FF30
      CBE9   60         RTS
@@ -1614,9 +1614,9 @@ End macro STR_BUF_TO_MSG_VEC
      CBEA   20 39 FF   JSR &FF39
 Macro STR_BUF_TO_MSG_VEC:
      CBED   A9 0B      LDA #&0B
-     CBEF   85 50      STA &50
+     CBEF   85 E0      STA &E0
      CBF1   A9 04      LDA #&04
-     CBF3   85 51      STA &51
+     CBF3   85 E1      STA &E1
 End macro STR_BUF_TO_MSG_VEC
      CBF5   20 30 FF   JSR &FF30
      CBF8   60         RTS
@@ -1643,7 +1643,7 @@ End macro STR_BUF_TO_MSG_VEC
      CC25   00
 .cmdprcTIME
      CC26   20 37 E4   JSR &E437
-     CC29   A5 55      LDA &55
+     CC29   A5 E5      LDA &E5
      CC2B   F0 03      BEQ &CC30
      CC2D   4C 36 CF   JMP &CF36
 .cmdprcTIME_display
@@ -1651,7 +1651,7 @@ End macro STR_BUF_TO_MSG_VEC
 .cmdprcTIME_loop
      CC32   BD 22 07   LDA &0722,X
      CC35   20 3C FF   JSR &FF3C
-     CC38   C6 54      DEC &54
+     CC38   C6 E4      DEC &E4
      CC3A   D0 05      BNE &CC41
      CC3C   A9 30      LDA #&30
      CC3E   20 21 FF   JSR &FF21
@@ -1668,9 +1668,9 @@ End macro STR_BUF_TO_MSG_VEC
 .cmdprcVERS
 Macro LOAD_MSG:
      CC54   A9 03      LDA #&03
-     CC56   85 50      STA &50
+     CC56   85 E0      STA &E0
      CC58   A9 C0      LDA #&C0
-     CC5A   85 51      STA &51
+     CC5A   85 E1      STA &E1
 End macro LOAD_MSG
      CC5C   20 27 FF   JSR &FF27
      CC5F   20 57 FF   JSR &FF57
@@ -1679,7 +1679,7 @@ End macro LOAD_MSG
      CC65   AD 00 04   LDA &0400
      CC68   48         PHA
      CC69   20 48 DF   JSR &DF48
-     CC6C   A5 55      LDA &55
+     CC6C   A5 E5      LDA &E5
      CC6E   D0 3A      BNE &CCAA
      CC70   A2 10      LDX #&10
 .cmdprcXCLR_loop
@@ -1691,18 +1691,18 @@ End macro LOAD_MSG
      CC7B   9C 80 03   STZ &0380
 Macro LOAD_MSG:
      CC7E   A9 EE      LDA #&EE
-     CC80   85 50      STA &50
+     CC80   85 E0      STA &E0
      CC82   A9 CE      LDA #&CE
-     CC84   85 51      STA &51
+     CC84   85 E1      STA &E1
 End macro LOAD_MSG
      CC86   20 30 FF   JSR &FF30
      CC89   AD 00 04   LDA &0400
      CC8C   20 3C FF   JSR &FF3C
 Macro STR_BUF_TO_MSG_VEC:
      CC8F   A9 0B      LDA #&0B
-     CC91   85 50      STA &50
+     CC91   85 E0      STA &E0
      CC93   A9 04      LDA #&04
-     CC95   85 51      STA &51
+     CC95   85 E1      STA &E1
 End macro STR_BUF_TO_MSG_VEC
      CC97   20 30 FF   JSR &FF30
      CC9A   20 1E FF   JSR &FF1E
@@ -1831,18 +1831,18 @@ End macro LED_OFF
 .cmdprcXLS_data_label
 Macro LOAD_MSG:
      CD7F   A9 0D      LDA #&0D
-     CD81   85 50      STA &50
+     CD81   85 E0      STA &E0
      CD83   A9 CF      LDA #&CF
-     CD85   85 51      STA &51
+     CD85   85 E1      STA &E1
 End macro LOAD_MSG
      CD87   20 27 FF   JSR &FF27
      CD8A   4C 98 CD   JMP &CD98
 .cmdprcXLS_overlay_label
 Macro LOAD_MSG:
      CD8D   A9 1B      LDA #&1B
-     CD8F   85 50      STA &50
+     CD8F   85 E0      STA &E0
      CD91   A9 CF      LDA #&CF
-     CD93   85 51      STA &51
+     CD93   85 E1      STA &E1
 End macro LOAD_MSG
      CD95   20 27 FF   JSR &FF27
 .cmdprcXLS_name_loop_done
@@ -1853,7 +1853,7 @@ End macro LOAD_MSG
 .cmdprcXLOAD
      CD9F   A9 04      LDA #&04
      CDA1   20 BA CD   JSR &CDBA
-     CDA4   A5 55      LDA &55
+     CDA4   A5 E5      LDA &E5
      CDA6   F0 03      BEQ &CDAB
      CDA8   4C 36 CF   JMP &CF36
 .cmdprcXLOAD_success
@@ -1861,24 +1861,24 @@ End macro LOAD_MSG
 .cmdprcXOPEN
      CDAE   A9 03      LDA #&03
      CDB0   20 BA CD   JSR &CDBA
-     CDB3   A5 55      LDA &55
+     CDB3   A5 E5      LDA &E5
      CDB5   F0 F4      BEQ &CDAB
      CDB7   4C 36 CF   JMP &CF36
 .xload_file
      CDBA   48         PHA
      CDBB   20 84 DD   JSR &DD84
-     CDBE   A5 55      LDA &55
+     CDBE   A5 E5      LDA &E5
      CDC0   D0 54      BNE &CE16
      CDC2   20 48 DF   JSR &DF48
-     CDC5   A5 55      LDA &55
+     CDC5   A5 E5      LDA &E5
      CDC7   D0 4D      BNE &CE16
      CDC9   20 17 DF   JSR &DF17
-     CDCC   A5 55      LDA &55
+     CDCC   A5 E5      LDA &E5
      CDCE   D0 46      BNE &CE16
      CDD0   4C DA CD   JMP &CDDA
 .xload_file_bank_chk_err
      CDD3   A9 12      LDA #&12
-     CDD5   85 55      STA &55
+     CDD5   85 E5      STA &E5
      CDD7   4C 16 CE   JMP &CE16
 .xload_file_loadfile
 Macro LED_ON:
@@ -1890,25 +1890,25 @@ Macro LED_ON:
 End macro LED_ON
 Macro LOAD_MSG:
      CDE4   A9 E1      LDA #&E1
-     CDE6   85 50      STA &50
+     CDE6   85 E0      STA &E0
      CDE8   A9 D9      LDA #&D9
-     CDEA   85 51      STA &51
+     CDEA   85 E1      STA &E1
 End macro LOAD_MSG
      CDEC   20 27 FF   JSR &FF27
      CDEF   20 57 FF   JSR &FF57
      CDF2   A9 00      LDA #&00
-     CDF4   85 5E      STA &5E
+     CDF4   85 EE      STA &EE
      CDF6   A9 80      LDA #&80
-     CDF8   85 5F      STA &5F
+     CDF8   85 EF      STA &EF
      CDFA   68         PLA
      CDFB   20 7B FF   JSR &FF7B
-     CDFE   A5 55      LDA &55
+     CDFE   A5 E5      LDA &E5
      CE00   D0 14      BNE &CE16
 Macro LOAD_MSG:
      CE02   A9 09      LDA #&09
-     CE04   85 50      STA &50
+     CE04   85 E0      STA &E0
      CE06   A9 DA      LDA #&DA
-     CE08   85 51      STA &51
+     CE08   85 E1      STA &E1
 End macro LOAD_MSG
      CE0A   20 27 FF   JSR &FF27
      CE0D   20 57 FF   JSR &FF57
@@ -1942,18 +1942,18 @@ End macro LED_OFF
      CE3F   4C 00 80   JMP &8000
 .cmdprcXRUN_err
      CE42   A9 14      LDA #&14
-     CE44   85 55      STA &55
+     CE44   85 E5      STA &E5
      CE46   4C 36 CF   JMP &CF36
 .cmdprcXSAVE
      CE49   20 48 DF   JSR &DF48
-     CE4C   A5 55      LDA &55
+     CE4C   A5 E5      LDA &E5
      CE4E   D0 66      BNE &CEB6
 Macro SET_EXCL_EXT_FLAG:
      CE50   A9 40      LDA #&40
      CE52   8D 02 06   STA &0602
 End macro SET_EXCL_EXT_FLAG
      CE55   20 84 DD   JSR &DD84
-     CE58   A5 55      LDA &55
+     CE58   A5 E5      LDA &E5
      CE5A   D0 5A      BNE &CEB6
      CE5C   AE 7F 03   LDX &037F
      CE5F   BD 00 03   LDA &0300,X
@@ -1967,20 +1967,20 @@ Macro LED_ON:
 End macro LED_ON
 Macro LOAD_MSG:
      CE6E   A9 FD      LDA #&FD
-     CE70   85 50      STA &50
+     CE70   85 E0      STA &E0
      CE72   A9 D9      LDA #&D9
-     CE74   85 51      STA &51
+     CE74   85 E1      STA &E1
 End macro LOAD_MSG
      CE76   20 27 FF   JSR &FF27
      CE79   20 57 FF   JSR &FF57
      CE7C   A9 00      LDA #&00
-     CE7E   85 58      STA &58
+     CE7E   85 E8      STA &E8
      CE80   A9 80      LDA #&80
-     CE82   85 59      STA &59
+     CE82   85 E9      STA &E9
      CE84   A9 FF      LDA #&FF
-     CE86   85 5A      STA &5A
+     CE86   85 EA      STA &EA
      CE88   A9 9F      LDA #&9F
-     CE8A   85 5B      STA &5B
+     CE8A   85 EB      STA &EB
      CE8C   A9 87      LDA #&87
      CE8E   20 C6 D7   JSR &D7C6
 Macro LED_OFF:
@@ -1991,25 +1991,25 @@ Macro LED_OFF:
      CE99   8D 01 A0   STA &A001
      CE9C   68         PLA
 End macro LED_OFF
-     CE9D   A5 55      LDA &55
+     CE9D   A5 E5      LDA &E5
      CE9F   D0 15      BNE &CEB6
 Macro LOAD_MSG:
      CEA1   A9 09      LDA #&09
-     CEA3   85 50      STA &50
+     CEA3   85 E0      STA &E0
      CEA5   A9 DA      LDA #&DA
-     CEA7   85 51      STA &51
+     CEA7   85 E1      STA &E1
 End macro LOAD_MSG
      CEA9   20 27 FF   JSR &FF27
      CEAC   20 57 FF   JSR &FF57
      CEAF   4C 29 CF   JMP &CF29
 .cmdprcXSAVE_synerr
      CEB2   A9 06      LDA #&06
-     CEB4   85 55      STA &55
+     CEB4   85 E5      STA &E5
 .cmdprcXSAVE_fail
      CEB6   4C 36 CF   JMP &CF36
 .cmdprcXSEL
      CEB9   20 48 DF   JSR &DF48
-     CEBC   A5 55      LDA &55
+     CEBC   A5 E5      LDA &E5
      CEBE   F0 03      BEQ &CEC3
      CEC0   4C 36 CF   JMP &CF36
 .cmdprcXSEL_success
@@ -2017,18 +2017,18 @@ End macro LOAD_MSG
      CEC6   9C 80 03   STZ &0380
 Macro LOAD_MSG:
      CEC9   A9 FD      LDA #&FD
-     CECB   85 50      STA &50
+     CECB   85 E0      STA &E0
      CECD   A9 CE      LDA #&CE
-     CECF   85 51      STA &51
+     CECF   85 E1      STA &E1
 End macro LOAD_MSG
      CED1   20 30 FF   JSR &FF30
      CED4   AD 00 04   LDA &0400
      CED7   20 3C FF   JSR &FF3C
 Macro STR_BUF_TO_MSG_VEC:
      CEDA   A9 0B      LDA #&0B
-     CEDC   85 50      STA &50
+     CEDC   85 E0      STA &E0
      CEDE   A9 04      LDA #&04
-     CEE0   85 51      STA &51
+     CEE0   85 E1      STA &E1
 End macro STR_BUF_TO_MSG_VEC
      CEE2   20 30 FF   JSR &FF30
      CEE5   20 1E FF   JSR &FF1E
@@ -2067,9 +2067,9 @@ End macro LED_ON
 .cmdprc_end
 Macro SERIAL_PROMPT:
      CF43   A9 DC      LDA #&DC
-     CF45   85 50      STA &50
+     CF45   85 E0      STA &E0
      CF47   A9 D4      LDA #&D4
-     CF49   85 51      STA &51
+     CF49   85 E1      STA &E1
      CF4B   20 27 FF   JSR &FF27
 End macro SERIAL_PROMPT
 .process_input_done
@@ -2488,12 +2488,12 @@ End macro LED_OFF
      D4F0   52 65 61 ...
      D4F5   00
 .compare_addr
-     D4F6   A5 59      LDA &59
-     D4F8   C5 5B      CMP &5B
+     D4F6   A5 E9      LDA &E9
+     D4F8   C5 EB      CMP &EB
      D4FA   90 0F      BCC &D50B
      D4FC   D0 12      BNE &D510
-     D4FE   A5 58      LDA &58
-     D500   C5 5A      CMP &5A
+     D4FE   A5 E8      LDA &E8
+     D500   C5 EA      CMP &EA
      D502   90 07      BCC &D50B
      D504   D0 0A      BNE &D510
      D506   A9 01      LDA #&01
@@ -2504,13 +2504,13 @@ End macro LED_OFF
 .compare_addr_more
      D510   A9 02      LDA #&02
 .compare_addr_end
-     D512   85 54      STA &54
+     D512   85 E4      STA &E4
      D514   60         RTS
 .uint8_div
      D515   8E 02 04   STX &0402
      D518   A2 00      LDX #&00
 .uint8_div_loop
-     D51A   85 54      STA &54
+     D51A   85 E4      STA &E4
      D51C   38         SEC
      D51D   ED 02 04   SBC &0402
      D520   90 04      BCC &D526
@@ -2530,29 +2530,29 @@ End macro LED_OFF
      D537   6D 2E 04   ADC &042E
 .uint8_mult_L2
      D53A   6A         ROR A
-     D53B   66 52      ROR &52
+     D53B   66 E2      ROR &E2
      D53D   CA         DEX
      D53E   D0 F1      BNE &D531
-     D540   85 53      STA &53
+     D540   85 E3      STA &E3
      D542   60         RTS
 .uint16_div
-     D543   64 52      STZ &52
-     D545   64 53      STZ &53
+     D543   64 E2      STZ &E2
+     D545   64 E3      STZ &E3
      D547   A2 10      LDX #&10
 .uint16_div_loop
      D549   0E 2E 04   ASL &042E
      D54C   2E 2F 04   ROL &042F
-     D54F   26 52      ROL &52
-     D551   26 53      ROL &53
-     D553   A5 52      LDA &52
+     D54F   26 E2      ROL &E2
+     D551   26 E3      ROL &E3
+     D553   A5 E2      LDA &E2
      D555   38         SEC
      D556   ED 30 04   SBC &0430
      D559   A8         TAY
-     D55A   A5 53      LDA &53
+     D55A   A5 E3      LDA &E3
      D55C   ED 31 04   SBC &0431
      D55F   90 07      BCC &D568
-     D561   85 53      STA &53
-     D563   84 52      STY &52
+     D561   85 E3      STA &E3
+     D563   84 E2      STY &E2
      D565   EE 2E 04   INC &042E
 .uint16_div_nosub
      D568   CA         DEX
@@ -2560,28 +2560,28 @@ End macro LED_OFF
      D56B   60         RTS
 .uint16_times10
      D56C   48         PHA
-     D56D   64 55      STZ &55
+     D56D   64 E5      STZ &E5
      D56F   AD 2E 04   LDA &042E
-     D572   85 52      STA &52
+     D572   85 E2      STA &E2
      D574   AD 2F 04   LDA &042F
-     D577   85 53      STA &53
-     D579   06 52      ASL &52
-     D57B   26 53      ROL &53
-     D57D   06 52      ASL &52
-     D57F   26 53      ROL &53
+     D577   85 E3      STA &E3
+     D579   06 E2      ASL &E2
+     D57B   26 E3      ROL &E3
+     D57D   06 E2      ASL &E2
+     D57F   26 E3      ROL &E3
      D581   18         CLC
      D582   AD 2E 04   LDA &042E
-     D585   65 52      ADC &52
-     D587   85 52      STA &52
+     D585   65 E2      ADC &E2
+     D587   85 E2      STA &E2
      D589   AD 2F 04   LDA &042F
-     D58C   65 53      ADC &53
-     D58E   85 53      STA &53
+     D58C   65 E3      ADC &E3
+     D58E   85 E3      STA &E3
      D590   B0 07      BCS &D599
-     D592   06 52      ASL &52
-     D594   26 53      ROL &53
+     D592   06 E2      ASL &E2
+     D594   26 E3      ROL &E3
      D596   4C 9B D5   JMP &D59B
 .uint16_times10_err
-     D599   E6 55      INC &55
+     D599   E6 E5      INC &E5
 .uint16_times10_done
      D59B   68         PLA
      D59C   60         RTS
@@ -2626,7 +2626,7 @@ End macro LED_OFF
      D5E8   5A         PHY
      D5E9   A0 00      LDY #&00
 .duart_println_chr
-     D5EB   B1 50      LDA (&50),Y
+     D5EB   B1 E0      LDA (&E0),Y
      D5ED   F0 11      BEQ &D600
      D5EF   20 DD D5   JSR &D5DD
      D5F2   8D 03 B4   STA &B403
@@ -2634,7 +2634,7 @@ End macro LED_OFF
      D5F6   F0 03      BEQ &D5FB
      D5F8   4C EB D5   JMP &D5EB
 .duart_println_inc_addr
-     D5FB   E6 51      INC &51
+     D5FB   E6 E1      INC &E1
      D5FD   4C EB D5   JMP &D5EB
 .duart_println_end
      D600   7A         PLY
@@ -2643,9 +2643,9 @@ End macro LED_OFF
 .duart_snd_strbuf
      D603   48         PHA
      D604   A9 0B      LDA #&0B
-     D606   85 50      STA &50
+     D606   85 E0      STA &E0
      D608   A9 04      LDA #&04
-     D60A   85 51      STA &51
+     D60A   85 E1      STA &E1
      D60C   20 E7 D5   JSR &D5E7
      D60F   68         PLA
      D610   60         RTS
@@ -2691,7 +2691,7 @@ End macro LED_OFF
 .zd_read_blk
      D64F   A9 1E      LDA #&1E
      D651   20 EA D6   JSR &D6EA
-     D654   A5 55      LDA &55
+     D654   A5 E5      LDA &E5
      D656   D0 03      BNE &D65B
      D658   20 86 D7   JSR &D786
 .zd_read_blk_end
@@ -2728,23 +2728,23 @@ End macro ZD_SET_CR_OFF
 .zd_fileload_ok
 Macro LOAD_MSG:
      D695   A9 09      LDA #&09
-     D697   85 50      STA &50
+     D697   85 E0      STA &E0
      D699   A9 DA      LDA #&DA
-     D69B   85 51      STA &51
+     D69B   85 E1      STA &E1
 End macro LOAD_MSG
      D69D   20 27 FF   JSR &FF27
      D6A0   20 57 FF   JSR &FF57
      D6A3   AD 08 08   LDA &0808
-     D6A6   85 62      STA &62
+     D6A6   85 F2      STA &F2
      D6A8   AD 09 08   LDA &0809
-     D6AB   85 63      STA &63
-     D6AD   85 61      STA &61
-     D6AF   A5 62      LDA &62
+     D6AB   85 F3      STA &F3
+     D6AD   85 F1      STA &F1
+     D6AF   A5 F2      LDA &F2
      D6B1   D0 02      BNE &D6B5
-     D6B3   C6 61      DEC &61
+     D6B3   C6 F1      DEC &F1
 .zd_fileload_ok_cont
      D6B5   3A         DEC A
-     D6B6   85 60      STA &60
+     D6B6   85 F0      STA &F0
      D6B8   60         RTS
 .zd_getfile
 Macro LED_ON:
@@ -2755,13 +2755,13 @@ Macro LED_ON:
      D6C2   68         PLA
 End macro LED_ON
      D6C3   20 84 DD   JSR &DD84
-     D6C6   A5 55      LDA &55
+     D6C6   A5 E5      LDA &E5
      D6C8   D0 13      BNE &D6DD
 Macro LOAD_MSG:
      D6CA   A9 E1      LDA #&E1
-     D6CC   85 50      STA &50
+     D6CC   85 E0      STA &E0
      D6CE   A9 D9      LDA #&D9
-     D6D0   85 51      STA &51
+     D6D0   85 E1      STA &E1
 End macro LOAD_MSG
      D6D2   20 27 FF   JSR &FF27
      D6D5   20 57 FF   JSR &FF57
@@ -2814,13 +2814,13 @@ End macro ZD_SET_CA_OFF
      D728   20 2C D7   JSR &D72C
      D72B   60         RTS
 .zd_handshake
-     D72C   64 55      STZ &55
-     D72E   64 54      STZ &54
+     D72C   64 E5      STZ &E5
+     D72E   64 E4      STZ &E4
      D730   20 EA D6   JSR &D6EA
-     D733   A5 55      LDA &55
+     D733   A5 E5      LDA &E5
      D735   D0 17      BNE &D74E
      D737   20 48 D8   JSR &D848
-     D73A   A5 55      LDA &55
+     D73A   A5 E5      LDA &E5
      D73C   D0 10      BNE &D74E
 Macro ZD_SET_DATADIR_INPUT:
      D73E   A9 00      LDA #&00
@@ -2834,11 +2834,11 @@ End macro ZD_SET_DATADIR_INPUT
      D74E   60         RTS
 .zd_loadfile
      D74F   20 2C D7   JSR &D72C
-     D752   A5 55      LDA &55
+     D752   A5 E5      LDA &E5
      D754   D0 0A      BNE &D760
 .zd_loadf_rcv_data
      D756   20 76 D9   JSR &D976
-     D759   A5 55      LDA &55
+     D759   A5 E5      LDA &E5
      D75B   D0 03      BNE &D760
      D75D   20 86 D7   JSR &D786
 .zd_loadf_end
@@ -2862,23 +2862,23 @@ End macro ZD_SET_DATADIR_OUTPUT
      D77D   60         RTS
 .zd_open_file
      D77E   20 2C D7   JSR &D72C
-     D781   A5 55      LDA &55
+     D781   A5 E5      LDA &E5
      D783   D0 00      BNE &D785
 .zd_openf_end
      D785   60         RTS
 .zd_rcv_data
      D786   20 57 D9   JSR &D957
-     D789   A5 55      LDA &55
+     D789   A5 E5      LDA &E5
      D78B   D0 38      BNE &D7C5
 .zd_rcv_data_loop
      D78D   20 95 D9   JSR &D995
-     D790   A5 55      LDA &55
+     D790   A5 E5      LDA &E5
      D792   D0 2B      BNE &D7BF
      D794   AD 01 A4   LDA &A401
-     D797   92 5E      STA (&5E)
-     D799   E6 5E      INC &5E
+     D797   92 EE      STA (&EE)
+     D799   E6 EE      INC &EE
      D79B   D0 02      BNE &D79F
-     D79D   E6 5F      INC &5F
+     D79D   E6 EF      INC &EF
 .zd_rcv_data_loop_cont
      D79F   20 B4 D9   JSR &D9B4
 Macro ZD_SET_CR_ON:
@@ -2903,10 +2903,10 @@ End macro ZD_SET_CR_OFF
      D7C5   60         RTS
 .zd_save_data
      D7C6   20 2C D7   JSR &D72C
-     D7C9   A5 55      LDA &55
+     D7C9   A5 E5      LDA &E5
      D7CB   D0 0D      BNE &D7DA
      D7CD   20 76 D9   JSR &D976
-     D7D0   A5 55      LDA &55
+     D7D0   A5 E5      LDA &E5
      D7D2   D0 06      BNE &D7DA
      D7D4   20 AB D8   JSR &D8AB
      D7D7   20 DB D7   JSR &D7DB
@@ -2931,10 +2931,10 @@ Macro ZD_SET_CA_ON:
      D7F5   8D 00 A4   STA &A400
 End macro ZD_SET_CA_ON
      D7F8   20 B4 D9   JSR &D9B4
-     D7FB   A5 55      LDA &55
+     D7FB   A5 E5      LDA &E5
      D7FD   D0 40      BNE &D83F
 .zd_send_data_loop
-     D7FF   B2 58      LDA (&58)
+     D7FF   B2 E8      LDA (&E8)
      D801   8D 01 A4   STA &A401
 Macro ZD_SET_CR_ON:
      D804   AD 00 A4   LDA &A400
@@ -2948,25 +2948,25 @@ Macro ZD_SET_CR_OFF:
      D814   8D 00 A4   STA &A400
 End macro ZD_SET_CR_OFF
      D817   20 95 D9   JSR &D995
-     D81A   A5 55      LDA &55
+     D81A   A5 E5      LDA &E5
      D81C   D0 21      BNE &D83F
      D81E   20 B4 D9   JSR &D9B4
-     D821   A5 55      LDA &55
+     D821   A5 E5      LDA &E5
      D823   D0 1A      BNE &D83F
      D825   20 F6 D4   JSR &D4F6
-     D828   A5 54      LDA &54
+     D828   A5 E4      LDA &E4
      D82A   C9 01      CMP #&01
      D82C   F0 11      BEQ &D83F
      D82E   C9 02      CMP #&02
      D830   F0 09      BEQ &D83B
-     D832   E6 58      INC &58
+     D832   E6 E8      INC &E8
      D834   D0 02      BNE &D838
-     D836   E6 59      INC &59
+     D836   E6 E9      INC &E9
 .zd_send_data_next
      D838   4C FF D7   JMP &D7FF
 .zd_send_data_bounds_err
      D83B   A9 1A      LDA #&1A
-     D83D   85 55      STA &55
+     D83D   85 E5      STA &E5
 .zd_send_data_end
 Macro ZD_SET_CA_OFF:
      D83F   AD 00 A4   LDA &A400
@@ -2981,10 +2981,10 @@ Macro ZD_SET_CA_ON:
      D84D   29 FE      AND #&FE
      D84F   8D 00 A4   STA &A400
 End macro ZD_SET_CA_ON
-     D852   64 55      STZ &55
+     D852   64 E5      STZ &E5
 .zd_sendstrbuf_next_chr
      D854   20 B4 D9   JSR &D9B4
-     D857   A5 55      LDA &55
+     D857   A5 E5      LDA &E5
      D859   D0 26      BNE &D881
      D85B   BD 0B 04   LDA &040B,X
      D85E   F0 21      BEQ &D881
@@ -2997,7 +2997,7 @@ Macro ZD_SET_CR_ON:
 End macro ZD_SET_CR_ON
      D86C   20 8A D8   JSR &D88A
      D86F   20 95 D9   JSR &D995
-     D872   A5 55      LDA &55
+     D872   A5 E5      LDA &E5
      D874   D0 0B      BNE &D881
 Macro ZD_SET_CR_OFF:
      D876   AD 00 A4   LDA &A400
@@ -3054,7 +3054,7 @@ End macro ZD_SET_CA_OFF
      D8DB   A2 80      LDX #&80
 .zd_svr_resp_SA_waitloop
      D8DD   20 57 D9   JSR &D957
-     D8E0   A5 55      LDA &55
+     D8E0   A5 E5      LDA &E5
      D8E2   F0 06      BEQ &D8EA
      D8E4   CA         DEX
      D8E5   D0 F6      BNE &D8DD
@@ -3066,7 +3066,7 @@ Macro ZD_SET_CR_ON:
      D8EF   8D 00 A4   STA &A400
 End macro ZD_SET_CR_ON
      D8F2   20 95 D9   JSR &D995
-     D8F5   A5 55      LDA &55
+     D8F5   A5 E5      LDA &E5
      D8F7   D0 12      BNE &D90B
      D8F9   AD 01 A4   LDA &A401
      D8FC   D0 0B      BNE &D909
@@ -3077,7 +3077,7 @@ Macro ZD_SET_CR_OFF:
 End macro ZD_SET_CR_OFF
      D906   4C 0B D9   JMP &D90B
 .zd_svr_resp_resp_err
-     D909   85 55      STA &55
+     D909   85 E5      STA &E5
 .zd_svr_resp_svr_end
      D90B   60         RTS
 .zd_chk_timer
@@ -3099,7 +3099,7 @@ End macro ZD_SET_CR_OFF
 .zd_chk_timer_more_than
      D92A   A9 02      LDA #&02
 .zd_chk_timer_end
-     D92C   85 54      STA &54
+     D92C   85 E4      STA &E4
      D92E   68         PLA
      D92F   58         CLI
      D930   60         RTS
@@ -3131,11 +3131,11 @@ End macro ZD_SET_CR_OFF
      D961   29 20      AND #&20
      D963   F0 09      BEQ &D96E
      D965   20 0C D9   JSR &D90C
-     D968   A5 54      LDA &54
+     D968   A5 E4      LDA &E4
      D96A   F0 F2      BEQ &D95E
      D96C   A2 09      LDX #&09
 .zd_waitForSA_end
-     D96E   86 55      STX &55
+     D96E   86 E5      STX &E5
      D970   20 31 D9   JSR &D931
      D973   FA         PLX
      D974   68         PLA
@@ -3150,11 +3150,11 @@ End macro ZD_SET_CR_OFF
      D980   29 20      AND #&20
      D982   D0 09      BNE &D98D
      D984   20 0C D9   JSR &D90C
-     D987   A5 54      LDA &54
+     D987   A5 E4      LDA &E4
      D989   F0 F2      BEQ &D97D
      D98B   A2 0B      LDX #&0B
 .zd_waitForSAoff_end
-     D98D   86 55      STX &55
+     D98D   86 E5      STX &E5
      D98F   20 31 D9   JSR &D931
      D992   FA         PLX
      D993   68         PLA
@@ -3169,11 +3169,11 @@ End macro ZD_SET_CR_OFF
      D99F   29 10      AND #&10
      D9A1   F0 09      BEQ &D9AC
      D9A3   20 0C D9   JSR &D90C
-     D9A6   A5 54      LDA &54
+     D9A6   A5 E4      LDA &E4
      D9A8   F0 F2      BEQ &D99C
      D9AA   A2 08      LDX #&08
 .zd_waitForSR_end
-     D9AC   86 55      STX &55
+     D9AC   86 E5      STX &E5
      D9AE   20 31 D9   JSR &D931
      D9B1   FA         PLX
      D9B2   68         PLA
@@ -3188,11 +3188,11 @@ End macro ZD_SET_CR_OFF
      D9BE   29 10      AND #&10
      D9C0   D0 EA      BNE &D9AC
      D9C2   20 0C D9   JSR &D90C
-     D9C5   A5 54      LDA &54
+     D9C5   A5 E4      LDA &E4
      D9C7   F0 F2      BEQ &D9BB
      D9C9   A2 0A      LDX #&0A
 .zd_waitForSRoff_end
-     D9CB   86 55      STX &55
+     D9CB   86 E5      STX &E5
      D9CD   20 31 D9   JSR &D931
      D9D0   FA         PLX
      D9D1   68         PLA
@@ -3278,7 +3278,7 @@ End macro ZD_SET_CR_OFF
      DA6C   4C 61 DA   JMP &DA61
 .byte_to_int_str_add_loop_done
      DA6F   EE 03 04   INC &0403
-     DA72   A5 54      LDA &54
+     DA72   A5 E4      LDA &E4
      DA74   18         CLC
      DA75   69 30      ADC #&30
      DA77   8D 0B 04   STA &040B
@@ -3288,7 +3288,7 @@ End macro ZD_SET_CR_OFF
      DA7F   4C 57 DA   JMP &DA57
 .byte_to_int_str_done
      DA82   AD 03 04   LDA &0403
-     DA85   85 54      STA &54
+     DA85   85 E4      STA &E4
      DA87   7A         PLY
      DA88   FA         PLX
      DA89   68         PLA
@@ -3296,33 +3296,33 @@ End macro ZD_SET_CR_OFF
 .hex_str_to_byte
      DA8B   48         PHA
      DA8C   DA         PHX
-     DA8D   64 55      STZ &55
-     DA8F   64 54      STZ &54
+     DA8D   64 E5      STZ &E5
+     DA8F   64 E4      STZ &E4
      DA91   AD 0A 04   LDA &040A
      DA94   20 B7 DA   JSR &DAB7
-     DA97   A6 55      LDX &55
+     DA97   A6 E5      LDX &E5
      DA99   D0 17      BNE &DAB2
      DA9B   0A         ASL A
      DA9C   0A         ASL A
      DA9D   0A         ASL A
      DA9E   0A         ASL A
-     DA9F   85 54      STA &54
+     DA9F   85 E4      STA &E4
      DAA1   AD 09 04   LDA &0409
      DAA4   20 B7 DA   JSR &DAB7
-     DAA7   A6 55      LDX &55
+     DAA7   A6 E5      LDX &E5
      DAA9   D0 07      BNE &DAB2
-     DAAB   05 54      ORA &54
-     DAAD   85 54      STA &54
+     DAAB   05 E4      ORA &E4
+     DAAD   85 E4      STA &E4
      DAAF   4C B4 DA   JMP &DAB4
 .hex_str_to_byte_err
-     DAB2   64 54      STZ &54
+     DAB2   64 E4      STZ &E4
 .hex_str_to_byte_end
      DAB4   FA         PLX
      DAB5   68         PLA
      DAB6   60         RTS
 .asc_hex_to_dec
      DAB7   DA         PHX
-     DAB8   64 55      STZ &55
+     DAB8   64 E5      STZ &E5
      DABA   38         SEC
      DABB   E9 30      SBC #&30
      DABD   C9 0A      CMP #&0A
@@ -3332,19 +3332,19 @@ End macro ZD_SET_CR_OFF
      DAC5   90 04      BCC &DACB
 .asc_hex_to_dec_err
      DAC7   A2 03      LDX #&03
-     DAC9   86 55      STX &55
+     DAC9   86 E5      STX &E5
 .asc_hex_to_dec_end
      DACB   FA         PLX
      DACC   60         RTS
 .uint16_to_hex_str
      DACD   48         PHA
-     DACE   A5 58      LDA &58
+     DACE   A5 E8      LDA &E8
      DAD0   20 2F DA   JSR &DA2F
      DAD3   AD 0B 04   LDA &040B
      DAD6   8D 05 04   STA &0405
      DAD9   AD 0C 04   LDA &040C
      DADC   8D 06 04   STA &0406
-     DADF   A5 59      LDA &59
+     DADF   A5 E9      LDA &E9
      DAE1   20 2F DA   JSR &DA2F
      DAE4   AD 05 04   LDA &0405
      DAE7   8D 0D 04   STA &040D
@@ -3364,7 +3364,7 @@ End macro ZD_SET_CR_OFF
 .uint16_intstr_loop
      DB03   20 43 D5   JSR &D543
 .uint16_intstr_next
-     DB06   A5 52      LDA &52
+     DB06   A5 E2      LDA &E2
      DB08   18         CLC
      DB09   69 30      ADC #&30
      DB0B   48         PHA
@@ -3390,7 +3390,7 @@ End macro ZD_SET_CR_OFF
      DB2A   60         RTS
 .parse_input
      DB2B   A9 01      LDA #&01
-     DB2D   85 54      STA &54
+     DB2D   85 E4      STA &E4
      DB2F   A2 00      LDX #&00
      DB31   AD 00 03   LDA &0300
      DB34   F0 13      BEQ &DB49
@@ -3405,7 +3405,7 @@ End macro ZD_SET_CR_OFF
      DB46   4C 39 DB   JMP &DB39
 .parse_cmd_null
      DB49   A9 00      LDA #&00
-     DB4B   85 54      STA &54
+     DB4B   85 E4      STA &E4
      DB4D   4C A6 DB   JMP &DBA6
 .parse_1st_char_fail
      DB50   4C A2 DB   JMP &DBA2
@@ -3414,15 +3414,15 @@ End macro ZD_SET_CR_OFF
      DB54   0A         ASL A
      DB55   AA         TAX
      DB56   BD 54 D0   LDA &D054,X
-     DB59   85 56      STA &56
+     DB59   85 E6      STA &E6
      DB5B   BD 55 D0   LDA &D055,X
-     DB5E   85 57      STA &57
+     DB5E   85 E7      STA &E7
      DB60   A0 00      LDY #&00
      DB62   A2 01      LDX #&01
 .parse_next_chr
      DB64   BD 00 03   LDA &0300,X
      DB67   8D 01 04   STA &0401
-     DB6A   B1 56      LDA (&56),Y
+     DB6A   B1 E6      LDA (&E6),Y
      DB6C   30 0E      BMI &DB7C
      DB6E   C9 00      CMP #&00
      DB70   F0 30      BEQ &DBA2
@@ -3442,13 +3442,13 @@ End macro ZD_SET_CR_OFF
      DB88   F0 03      BEQ &DB8D
      DB8A   4C A2 DB   JMP &DBA2
 .parse_token_ok
-     DB8D   85 54      STA &54
+     DB8D   85 E4      STA &E4
      DB8F   4C A6 DB   JMP &DBA6
 .parse_next_cmd
      DB92   A2 01      LDX #&01
 .parse_fast_forward
      DB94   C8         INY
-     DB95   B1 56      LDA (&56),Y
+     DB95   B1 E6      LDA (&E6),Y
      DB97   C9 80      CMP #&80
      DB99   B0 03      BCS &DB9E
      DB9B   4C 94 DB   JMP &DB94
@@ -3457,16 +3457,16 @@ End macro ZD_SET_CR_OFF
      DB9F   4C 64 DB   JMP &DB64
 .parse_fail
      DBA2   A9 04      LDA #&04
-     DBA4   85 54      STA &54
+     DBA4   85 E4      STA &E4
 .parse_end
      DBA6   8E 7F 03   STX &037F
      DBA9   60         RTS
 .display_memory
 Macro LOAD_MSG:
      DBAA   A9 0D      LDA #&0D
-     DBAC   85 50      STA &50
+     DBAC   85 E0      STA &E0
      DBAE   A9 D4      LDA #&D4
-     DBB0   85 51      STA &51
+     DBB0   85 E1      STA &E1
 End macro LOAD_MSG
      DBB2   20 27 FF   JSR &FF27
      DBB5   9C 04 04   STZ &0404
@@ -3479,7 +3479,7 @@ End macro LOAD_MSG
      DBC6   20 2D FF   JSR &FF2D
 .display_mem_next_addr
      DBC9   A2 00      LDX #&00
-     DBCB   B2 58      LDA (&58)
+     DBCB   B2 E8      LDA (&E8)
      DBCD   20 2F DA   JSR &DA2F
      DBD0   20 2D FF   JSR &FF2D
      DBD3   A9 20      LDA #&20
@@ -3495,23 +3495,23 @@ End macro LOAD_MSG
      DBEA   20 21 FF   JSR &FF21
      DBED   9C 04 04   STZ &0404
 .display_mem_chk_MSB
-     DBF0   A5 59      LDA &59
-     DBF2   C5 5B      CMP &5B
+     DBF0   A5 E9      LDA &E9
+     DBF2   C5 EB      CMP &EB
      DBF4   F0 03      BEQ &DBF9
      DBF6   4C 0A DC   JMP &DC0A
 .display_mem_chk_LSB
-     DBF9   A5 58      LDA &58
-     DBFB   C5 5A      CMP &5A
+     DBF9   A5 E8      LDA &E8
+     DBFB   C5 EA      CMP &EA
      DBFD   D0 0B      BNE &DC0A
      DBFF   AD 04 04   LDA &0404
      DC02   F0 16      BEQ &DC1A
      DC04   20 24 DC   JSR &DC24
      DC07   4C 1A DC   JMP &DC1A
 .display_mem_inc_LSB
-     DC0A   E6 58      INC &58
-     DC0C   A5 58      LDA &58
+     DC0A   E6 E8      INC &E8
+     DC0C   A5 E8      LDA &E8
      DC0E   D0 02      BNE &DC12
-     DC10   E6 59      INC &59
+     DC10   E6 E9      INC &E9
 .display_mem_loopback
      DC12   AD 04 04   LDA &0404
      DC15   F0 A1      BEQ &DBB8
@@ -3519,10 +3519,10 @@ End macro LOAD_MSG
 .display_mem_output_end
      DC1A   60         RTS
 .display_mem_copy_addr
-     DC1B   A5 58      LDA &58
-     DC1D   85 5C      STA &5C
-     DC1F   A5 59      LDA &59
-     DC21   85 5D      STA &5D
+     DC1B   A5 E8      LDA &E8
+     DC1D   85 EC      STA &EC
+     DC1F   A5 E9      LDA &E9
+     DC21   85 ED      STA &ED
      DC23   60         RTS
 .display_mem_ascii
      DC24   AD 04 04   LDA &0404
@@ -3545,7 +3545,7 @@ End macro LOAD_MSG
      DC43   20 61 DC   JSR &DC61
      DC46   A0 00      LDY #&00
 .display_mem_ascii_loop
-     DC48   B1 5C      LDA (&5C),Y
+     DC48   B1 EC      LDA (&EC),Y
      DC4A   C9 20      CMP #&20
      DC4C   90 07      BCC &DC55
      DC4E   C9 7E      CMP #&7E
@@ -3568,11 +3568,11 @@ End macro LOAD_MSG
 .get_input
      DC6D   9C 7F 03   STZ &037F
      DC70   9C 00 03   STZ &0300
-     DC73   A5 64      LDA &64
+     DC73   A5 F4      LDA &F4
      DC75   29 F0      AND #&F0
-     DC77   85 64      STA &64
+     DC77   85 F4      STA &F4
 .get_input_loop
-     DC79   A5 64      LDA &64
+     DC79   A5 F4      LDA &F4
      DC7B   29 01      AND #&01
      DC7D   D0 0A      BNE &DC89
      DC7F   AE 7F 03   LDX &037F
@@ -3580,31 +3580,31 @@ End macro LOAD_MSG
      DC84   B0 03      BCS &DC89
      DC86   4C 79 DC   JMP &DC79
 .get_input_done
-     DC89   A5 64      LDA &64
+     DC89   A5 F4      LDA &F4
      DC8B   29 F0      AND #&F0
-     DC8D   85 64      STA &64
+     DC8D   85 F4      STA &F4
      DC8F   60         RTS
 .getkey
-     DC90   64 54      STZ &54
+     DC90   64 E4      STZ &E4
      DC92   9C 7F 03   STZ &037F
      DC95   9C 00 03   STZ &0300
 .getkey_loop
-     DC98   A5 64      LDA &64
+     DC98   A5 F4      LDA &F4
      DC9A   29 01      AND #&01
      DC9C   F0 FA      BEQ &DC98
      DC9E   AD 00 03   LDA &0300
-     DCA1   85 54      STA &54
-     DCA3   A5 64      LDA &64
+     DCA1   85 E4      STA &E4
+     DCA3   A5 F4      LDA &F4
      DCA5   29 F0      AND #&F0
-     DCA7   85 64      STA &64
+     DCA7   85 F4      STA &F4
      DCA9   9C 7F 03   STZ &037F
      DCAC   9C 00 03   STZ &0300
      DCAF   60         RTS
 .read_ascii
      DCB0   20 C2 DC   JSR &DCC2
-     DCB3   A5 55      LDA &55
+     DCB3   A5 E5      LDA &E5
      DCB5   D0 0A      BNE &DCC1
-     DCB7   A5 54      LDA &54
+     DCB7   A5 E4      LDA &E4
      DCB9   C9 20      CMP #&20
      DCBB   90 F3      BCC &DCB0
      DCBD   C9 7E      CMP #&7E
@@ -3612,31 +3612,31 @@ End macro LOAD_MSG
 .read_ascii_end
      DCC1   60         RTS
 .read_byte
-     DCC2   64 54      STZ &54
-     DCC4   64 55      STZ &55
+     DCC2   64 E4      STZ &E4
+     DCC4   64 E5      STZ &E5
      DCC6   AE 7F 03   LDX &037F
 .read_byte_next
      DCC9   BD 00 03   LDA &0300,X
      DCCC   F0 09      BEQ &DCD7
-     DCCE   85 54      STA &54
+     DCCE   85 E4      STA &E4
      DCD0   E8         INX
      DCD1   8E 7F 03   STX &037F
      DCD4   4C E7 DC   JMP &DCE7
 .read_byte_EOB
      DCD7   A9 10      LDA #&10
-     DCD9   85 55      STA &55
-     DCDB   A5 64      LDA &64
+     DCD9   85 E5      STA &E5
+     DCDB   A5 F4      LDA &F4
      DCDD   29 F0      AND #&F0
-     DCDF   85 64      STA &64
+     DCDF   85 F4      STA &F4
      DCE1   9C 7F 03   STZ &037F
      DCE4   9C 00 03   STZ &0300
 .read_byte_end
      DCE7   60         RTS
 .read_char
      DCE8   20 C2 DC   JSR &DCC2
-     DCEB   A5 55      LDA &55
+     DCEB   A5 E5      LDA &E5
      DCED   D0 0A      BNE &DCF9
-     DCEF   A5 54      LDA &54
+     DCEF   A5 E4      LDA &E4
      DCF1   C9 21      CMP #&21
      DCF3   90 F3      BCC &DCE8
      DCF5   C9 7E      CMP #&7E
@@ -3647,9 +3647,9 @@ End macro LOAD_MSG
      DCFA   48         PHA
      DCFB   DA         PHX
      DCFC   5A         PHY
-     DCFD   64 55      STZ &55
-     DCFF   64 52      STZ &52
-     DD01   64 53      STZ &53
+     DCFD   64 E5      STZ &E5
+     DCFF   64 E2      STZ &E2
+     DD01   64 E3      STZ &E3
      DD03   9C 2E 04   STZ &042E
      DD06   9C 2F 04   STZ &042F
      DD09   9C 02 04   STZ &0402
@@ -3692,25 +3692,25 @@ End macro LOAD_MSG
      DD51   C9 3A      CMP #&3A
      DD53   B0 11      BCS &DD66
      DD55   20 6C D5   JSR &D56C
-     DD58   A5 52      LDA &52
+     DD58   A5 E2      LDA &E2
      DD5A   8D 2E 04   STA &042E
-     DD5D   A5 53      LDA &53
+     DD5D   A5 E3      LDA &E3
      DD5F   8D 2F 04   STA &042F
 .read_int_next
      DD62   E8         INX
      DD63   4C 0F DD   JMP &DD0F
 .read_int_error
      DD66   A9 11      LDA #&11
-     DD68   85 55      STA &55
+     DD68   85 E5      STA &E5
      DD6A   4C 7C DD   JMP &DD7C
 .read_int_done
      DD6D   AD 02 04   LDA &0402
      DD70   F0 F4      BEQ &DD66
 .read_int_store
      DD72   AD 2E 04   LDA &042E
-     DD75   85 52      STA &52
+     DD75   85 E2      STA &E2
      DD77   AD 2F 04   LDA &042F
-     DD7A   85 53      STA &53
+     DD7A   85 E3      STA &E3
 .read_int_end
      DD7C   E8         INX
      DD7D   8E 7F 03   STX &037F
@@ -3722,7 +3722,7 @@ End macro LOAD_MSG
      DD84   48         PHA
      DD85   DA         PHX
      DD86   5A         PHY
-     DD87   64 55      STZ &55
+     DD87   64 E5      STZ &E5
      DD89   A0 00      LDY #&00
      DD8B   AE 7F 03   LDX &037F
 .read_filename_next_char
@@ -3759,7 +3759,7 @@ End macro LOAD_MSG
      DDC4   4C CE DD   JMP &DDCE
 .read_filename_fail
      DDC7   A9 0E      LDA #&0E
-     DDC9   85 55      STA &55
+     DDC9   85 E5      STA &E5
      DDCB   4C F4 DD   JMP &DDF4
 .read_filename_check
      DDCE   A9 00      LDA #&00
@@ -3780,7 +3780,7 @@ End macro LOAD_MSG
      DDEE   90 04      BCC &DDF4
 .read_filename_err
      DDF0   A9 0F      LDA #&0F
-     DDF2   85 55      STA &55
+     DDF2   85 E5      STA &E5
 .read_filename_end
      DDF4   8E 7F 03   STX &037F
      DDF7   A9 01      LDA #&01
@@ -3793,7 +3793,7 @@ End macro LOAD_MSG
      DE00   48         PHA
      DE01   DA         PHX
      DE02   5A         PHY
-     DE03   64 55      STZ &55
+     DE03   64 E5      STZ &E5
      DE05   A0 00      LDY #&00
      DE07   AE 7F 03   LDX &037F
      DE0A   9C 02 04   STZ &0402
@@ -3829,7 +3829,7 @@ End macro LOAD_MSG
      DE42   4C 4C DE   JMP &DE4C
 .read_string_fail
      DE45   A9 0E      LDA #&0E
-     DE47   85 55      STA &55
+     DE47   85 E5      STA &E5
      DE49   4C 58 DE   JMP &DE58
 .read_string_check
      DE4C   A9 00      LDA #&00
@@ -3837,7 +3837,7 @@ End macro LOAD_MSG
      DE51   4C 58 DE   JMP &DE58
 .read_string_err
      DE54   A9 0F      LDA #&0F
-     DE56   85 55      STA &55
+     DE56   85 E5      STA &E5
 .read_string_end
      DE58   8E 7F 03   STX &037F
      DE5B   7A         PLY
@@ -3850,10 +3850,10 @@ End macro LOAD_MSG
      DE61   A0 01      LDY #&01
 .read_hex_addr_next_byte
      DE63   20 97 DE   JSR &DE97
-     DE66   A5 55      LDA &55
+     DE66   A5 E5      LDA &E5
      DE68   D0 0D      BNE &DE77
-     DE6A   A5 54      LDA &54
-     DE6C   99 52 00   STA &0052,Y
+     DE6A   A5 E4      LDA &E4
+     DE6C   99 E2 00   STA &00E2,Y
      DE6F   C0 00      CPY #&00
      DE71   F0 04      BEQ &DE77
      DE73   88         DEY
@@ -3866,13 +3866,13 @@ End macro LOAD_MSG
      DE7A   A0 00      LDY #&00
 .read_hex_addr_pair_next
      DE7C   20 5F DE   JSR &DE5F
-     DE7F   A5 55      LDA &55
+     DE7F   A5 E5      LDA &E5
      DE81   D0 13      BNE &DE96
-     DE83   A5 52      LDA &52
-     DE85   99 58 00   STA &0058,Y
+     DE83   A5 E2      LDA &E2
+     DE85   99 E8 00   STA &00E8,Y
      DE88   C8         INY
-     DE89   A5 53      LDA &53
-     DE8B   99 58 00   STA &0058,Y
+     DE89   A5 E3      LDA &E3
+     DE8B   99 E8 00   STA &00E8,Y
      DE8E   C0 03      CPY #&03
      DE90   F0 04      BEQ &DE96
      DE92   C8         INY
@@ -3883,7 +3883,7 @@ End macro LOAD_MSG
      DE97   48         PHA
      DE98   DA         PHX
      DE99   5A         PHY
-     DE9A   64 55      STZ &55
+     DE9A   64 E5      STZ &E5
      DE9C   A0 01      LDY #&01
      DE9E   AE 7F 03   LDX &037F
 .read_hexbyte_next_char
@@ -3898,18 +3898,18 @@ End macro LOAD_MSG
      DEB1   4C A1 DE   JMP &DEA1
 .read_hexbyte_conv
      DEB4   20 8B DA   JSR &DA8B
-     DEB7   A5 55      LDA &55
+     DEB7   A5 E5      LDA &E5
      DEB9   D0 03      BNE &DEBE
      DEBB   4C CD DE   JMP &DECD
 .read_hexbyte_fail
      DEBE   C0 01      CPY #&01
      DEC0   F0 07      BEQ &DEC9
      DEC2   A9 05      LDA #&05
-     DEC4   85 55      STA &55
+     DEC4   85 E5      STA &E5
      DEC6   4C CD DE   JMP &DECD
 .read_hexbyte_null
      DEC9   A9 02      LDA #&02
-     DECB   85 55      STA &55
+     DECB   85 E5      STA &E5
 .read_hexbyte_end
      DECD   8E 7F 03   STX &037F
      DED0   7A         PLY
@@ -3917,20 +3917,20 @@ End macro LOAD_MSG
      DED2   68         PLA
      DED3   60         RTS
 .os_print_error
-     DED4   A5 55      LDA &55
+     DED4   A5 E5      LDA &E5
      DED6   3A         DEC A
      DED7   0A         ASL A
      DED8   AA         TAX
      DED9   BD F7 D0   LDA &D0F7,X
-     DEDC   85 50      STA &50
+     DEDC   85 E0      STA &E0
      DEDE   BD F8 D0   LDA &D0F8,X
-     DEE1   85 51      STA &51
+     DEE1   85 E1      STA &E1
      DEE3   20 27 FF   JSR &FF27
      DEE6   20 57 FF   JSR &FF57
      DEE9   60         RTS
 .stdout_add_char
      DEEA   DA         PHX
-     DEEB   64 55      STZ &55
+     DEEB   64 E5      STZ &E5
      DEED   AE FF 03   LDX &03FF
      DEF0   9D 80 03   STA &0380,X
      DEF3   E8         INX
@@ -3940,12 +3940,12 @@ End macro LOAD_MSG
 .stdout_append
      DEF9   DA         PHX
      DEFA   5A         PHY
-     DEFB   64 55      STZ &55
+     DEFB   64 E5      STZ &E5
 .stdout_append_copy
      DEFD   A0 00      LDY #&00
      DEFF   AE FF 03   LDX &03FF
 .stdout_append_copy_loop
-     DF02   B1 50      LDA (&50),Y
+     DF02   B1 E0      LDA (&E0),Y
      DF04   F0 08      BEQ &DF0E
      DF06   9D 80 03   STA &0380,X
      DF09   E8         INX
@@ -3958,7 +3958,7 @@ End macro LOAD_MSG
      DF15   FA         PLX
      DF16   60         RTS
 .extmem_ram_chk
-     DF17   64 55      STZ &55
+     DF17   64 E5      STZ &E5
      DF19   AD 00 80   LDA &8000
      DF1C   48         PHA
      DF1D   A2 00      LDX #&00
@@ -3973,25 +3973,25 @@ End macro LOAD_MSG
      DF2D   4C 1F DF   JMP &DF1F
 .extmem_ram_chk_err
      DF30   A9 12      LDA #&12
-     DF32   85 55      STA &55
-     DF34   A5 65      LDA &65
+     DF32   85 E5      STA &E5
+     DF34   A5 F5      LDA &F5
      DF36   29 FE      AND #&FE
-     DF38   85 65      STA &65
+     DF38   85 F5      STA &F5
      DF3A   4C 43 DF   JMP &DF43
 .extmem_ram_chk_ok
-     DF3D   A5 65      LDA &65
+     DF3D   A5 F5      LDA &F5
      DF3F   09 01      ORA #&01
-     DF41   85 65      STA &65
+     DF41   85 F5      STA &F5
 .extmem_ram_chk_done
      DF43   68         PLA
      DF44   8D 00 80   STA &8000
      DF47   60         RTS
 .extmem_readset_bank
-     DF48   64 55      STZ &55
+     DF48   64 E5      STZ &E5
      DF4A   20 15 FF   JSR &FF15
-     DF4D   A5 55      LDA &55
+     DF4D   A5 E5      LDA &E5
      DF4F   D0 13      BNE &DF64
-     DF51   A5 52      LDA &52
+     DF51   A5 E2      LDA &E2
      DF53   C9 10      CMP #&10
      DF55   B0 09      BCS &DF60
      DF57   8D 00 04   STA &0400
@@ -3999,7 +3999,7 @@ End macro LOAD_MSG
      DF5D   4C 64 DF   JMP &DF64
 .extmem_readset_bank_num_err
      DF60   A9 13      LDA #&13
-     DF62   85 55      STA &55
+     DF62   85 E5      STA &E5
 .extmem_readset_bank_end
      DF64   60         RTS
 .delay
@@ -4022,14 +4022,14 @@ End macro LOAD_MSG
      DF86   3A         DEC A
      DF87   D0 FC      BNE &DF85
      DF89   20 9E DF   JSR &DF9E
-     DF8C   A5 54      LDA &54
+     DF8C   A5 E4      LDA &E4
      DF8E   C9 00      CMP #&00
      DF90   F0 F1      BEQ &DF83
      DF92   AD 0E A0   LDA &A00E
      DF95   29 7F      AND #&7F
      DF97   8D 0E A0   STA &A00E
      DF9A   68         PLA
-     DF9B   64 54      STZ &54
+     DF9B   64 E4      STZ &E4
      DF9D   60         RTS
 .delay_timer_chk
      DF9E   78         SEI
@@ -4049,7 +4049,7 @@ End macro LOAD_MSG
 .delay_timer_chk_more_than
      DFBD   A9 02      LDA #&02
 .delay_timer_chk_end
-     DFBF   85 54      STA &54
+     DFBF   85 E4      STA &E4
      DFC1   58         CLI
      DFC2   60         RTS
 .lcd_clear_buf
@@ -4143,9 +4143,9 @@ End macro LCD_SET_CTL
      E051   20 DB DF   JSR &DFDB
      E054   60         RTS
 .lcd_init
-     E055   A5 65      LDA &65
+     E055   A5 F5      LDA &F5
      E057   09 20      ORA #&20
-     E059   85 65      STA &65
+     E059   85 F5      STA &F5
      E05B   A9 FF      LDA #&FF
      E05D   8D 02 A0   STA &A002
      E060   8D 03 A0   STA &A003
@@ -4167,18 +4167,18 @@ End macro LCD_SET_CTL
 .lcd_prt_buf
      E086   48         PHA
      E087   A9 80      LDA #&80
-     E089   85 50      STA &50
+     E089   85 E0      STA &E0
      E08B   A9 03      LDA #&03
-     E08D   85 51      STA &51
+     E08D   85 E1      STA &E1
      E08F   20 A2 E0   JSR &E0A2
      E092   68         PLA
      E093   60         RTS
 .lcd_prt_sbuf
      E094   48         PHA
      E095   A9 0B      LDA #&0B
-     E097   85 50      STA &50
+     E097   85 E0      STA &E0
      E099   A9 04      LDA #&04
-     E09B   85 51      STA &51
+     E09B   85 E1      STA &E1
      E09D   20 A2 E0   JSR &E0A2
      E0A0   68         PLA
      E0A1   60         RTS
@@ -4192,7 +4192,7 @@ End macro LCD_SET_CTL
      E0A9   AA         TAX
      E0AA   A0 00      LDY #&00
 .lcd_println_new_txt
-     E0AC   B1 50      LDA (&50),Y
+     E0AC   B1 E0      LDA (&E0),Y
      E0AE   F0 1E      BEQ &E0CE
      E0B0   C9 0A      CMP #&0A
      E0B2   F0 0C      BEQ &E0C0
@@ -4276,14 +4276,14 @@ End macro LCD_SET_CTL
      E12E   68         PLA
      E12F   60         RTS
 .lcd_prt_err
-     E130   A5 55      LDA &55
+     E130   A5 E5      LDA &E5
      E132   3A         DEC A
      E133   0A         ASL A
      E134   AA         TAX
      E135   BD F7 D0   LDA &D0F7,X
-     E138   85 50      STA &50
+     E138   85 E0      STA &E0
      E13A   BD F8 D0   LDA &D0F8,X
-     E13D   85 51      STA &51
+     E13D   85 E1      STA &E1
      E13F   20 A2 E0   JSR &E0A2
      E142   60         RTS
 .lcd_set_cursor
@@ -4328,7 +4328,7 @@ End macro LED_OFF
      E17D   48         PHA
      E17E   DA         PHX
      E17F   5A         PHY
-     E180   64 55      STZ &55
+     E180   64 E5      STZ &E5
      E182   AD 03 AC   LDA &AC03
      E185   8D 02 04   STA &0402
      E188   A2 00      LDX #&00
@@ -4344,15 +4344,15 @@ End macro LED_OFF
      E19E   4C 8A E1   JMP &E18A
 .prt_check_present_fail
      E1A1   A9 20      LDA #&20
-     E1A3   85 55      STA &55
-     E1A5   A5 65      LDA &65
+     E1A3   85 E5      STA &E5
+     E1A5   A5 F5      LDA &F5
      E1A7   29 FD      AND #&FD
      E1A9   4C B0 E1   JMP &E1B0
 .prt_check_present_loop_done
-     E1AC   A5 65      LDA &65
+     E1AC   A5 F5      LDA &F5
      E1AE   09 02      ORA #&02
 .prt_check_present_done
-     E1B0   85 65      STA &65
+     E1B0   85 F5      STA &F5
      E1B2   7A         PLY
      E1B3   FA         PLX
      E1B4   68         PLA
@@ -4366,7 +4366,7 @@ End macro LED_OFF
      E1BB   00
 .prt_check_state
      E1BC   5A         PHY
-     E1BD   64 55      STZ &55
+     E1BD   64 E5      STZ &E5
      E1BF   AD 00 AC   LDA &AC00
      E1C2   A8         TAY
      E1C3   29 01      AND #&01
@@ -4378,15 +4378,15 @@ End macro LED_OFF
      E1CD   29 20      AND #&20
      E1CF   D0 12      BNE &E1E3
      E1D1   A9 1F      LDA #&1F
-     E1D3   85 55      STA &55
+     E1D3   85 E5      STA &E5
      E1D5   4C E3 E1   JMP &E1E3
 .prt_chk_state_offline
      E1D8   A9 1D      LDA #&1D
-     E1DA   85 55      STA &55
+     E1DA   85 E5      STA &E5
      E1DC   4C E3 E1   JMP &E1E3
 .prt_chk_state_paperout
      E1DF   A9 1E      LDA #&1E
-     E1E1   85 55      STA &55
+     E1E1   85 E5      STA &E5
 .prt_chk_state_end
      E1E3   7A         PLY
      E1E4   60         RTS
@@ -4416,7 +4416,7 @@ End macro PRT_PULSE_DELAY
      E211   A0 80      LDY #&80
 .prt_msg_chk
      E213   20 BC E1   JSR &E1BC
-     E216   A5 54      LDA &54
+     E216   A5 E4      LDA &E4
      E218   F0 11      BEQ &E22B
      E21A   88         DEY
      E21B   F0 26      BEQ &E243
@@ -4431,30 +4431,30 @@ End macro PRT_PULSE_DELAY
      E22B   A0 00      LDY #&00
 .prt_msg_loop
      E22D   20 BC E1   JSR &E1BC
-     E230   A5 54      LDA &54
+     E230   A5 E4      LDA &E4
      E232   D0 0F      BNE &E243
-     E234   B1 50      LDA (&50),Y
+     E234   B1 E0      LDA (&E0),Y
      E236   F0 09      BEQ &E241
      E238   20 57 E1   JSR &E157
      E23B   C8         INY
      E23C   F0 05      BEQ &E243
      E23E   4C 2D E2   JMP &E22D
 .prt_msg_ok
-     E241   64 54      STZ &54
+     E241   64 E4      STZ &E4
 .prt_msg_end
      E243   60         RTS
 .prt_stdout_buf
      E244   A9 80      LDA #&80
-     E246   85 50      STA &50
+     E246   85 E0      STA &E0
      E248   A9 03      LDA #&03
-     E24A   85 51      STA &51
+     E24A   85 E1      STA &E1
      E24C   20 11 E2   JSR &E211
      E24F   60         RTS
 .prt_str_buf
      E250   A9 0B      LDA #&0B
-     E252   85 50      STA &50
+     E252   85 E0      STA &E0
      E254   A9 04      LDA #&04
-     E256   85 51      STA &51
+     E256   85 E1      STA &E1
      E258   20 11 E2   JSR &E211
      E25B   60         RTS
 .prt_check_busy
@@ -4513,15 +4513,15 @@ End macro PRT_PULSE_DELAY
 .isr_chk_usrp
      E33B   AD 0D A8   LDA &A80D
      E33E   F0 0C      BEQ &E34C
-     E340   05 66      ORA &66
-     E342   85 66      STA &66
+     E340   05 F6      ORA &F6
+     E342   85 F6      STA &F6
      E344   A9 7F      LDA #&7F
      E346   8D 0D A8   STA &A80D
      E349   4C E7 E3   JMP &E3E7
 .isr_chk_usrp_next
 .isr_chk_rtc
      E34C   4C 96 E3   JMP &E396
-     E34F   A5 65      LDA &65
+     E34F   A5 F5      LDA &F5
      E351   29 04      AND #&04
      E353   F0 41      BEQ &E396
      E355   A9 7F      LDA #&7F
@@ -4536,9 +4536,9 @@ End macro PRT_PULSE_DELAY
      E36E   A8         TAY
      E36F   29 01      AND #&01
      E371   F0 23      BEQ &E396
-     E373   A5 66      LDA &66
+     E373   A5 F6      LDA &F6
      E375   09 04      ORA #&04
-     E377   85 66      STA &66
+     E377   85 F6      STA &F6
      E379   98         TYA
      E37A   29 FC      AND #&FC
      E37C   AA         TAX
@@ -4565,17 +4565,17 @@ End macro PRT_PULSE_DELAY
      E3A3   AD 03 B4   LDA &B403
      E3A6   9D 00 03   STA &0300,X
      E3A9   D0 19      BNE &E3C4
-     E3AB   A5 64      LDA &64
+     E3AB   A5 F4      LDA &F4
      E3AD   09 01      ORA #&01
-     E3AF   85 64      STA &64
+     E3AF   85 F4      STA &F4
      E3B1   4C C4 E3   JMP &E3C4
 .isr_SC28L92_buf_full
      E3B4   AD 01 B4   LDA &B401
      E3B7   29 01      AND #&01
      E3B9   D0 F9      BNE &E3B4
-     E3BB   A5 64      LDA &64
+     E3BB   A5 F4      LDA &F4
      E3BD   09 04      ORA #&04
-     E3BF   85 64      STA &64
+     E3BF   85 F4      STA &F4
      E3C1   4C DE E3   JMP &E3DE
 .isr_SC28L92_cont
      E3C4   BD 00 03   LDA &0300,X
@@ -4595,9 +4595,9 @@ End macro PRT_PULSE_DELAY
      E3DC   D0 C1      BNE &E39F
 .isr_SC28L92_end
      E3DE   8E 7F 03   STX &037F
-     E3E1   A5 64      LDA &64
+     E3E1   A5 F4      LDA &F4
      E3E3   09 02      ORA #&02
-     E3E5   85 64      STA &64
+     E3E5   85 F4      STA &F4
 .isr_exit
      E3E7   7A         PLY
      E3E8   FA         PLX
@@ -4612,7 +4612,7 @@ End macro PRT_PULSE_DELAY
      E3F6   60         RTS
 .rtc_read_date
      E3F7   20 98 E4   JSR &E498
-     E3FA   A5 55      LDA &55
+     E3FA   A5 E5      LDA &E5
      E3FC   D0 38      BNE &E436
      E3FE   A9 06      LDA #&06
      E400   20 84 E4   JSR &E484
@@ -4639,7 +4639,7 @@ End macro PRT_PULSE_DELAY
      E436   60         RTS
 .rtc_read_time
      E437   20 98 E4   JSR &E498
-     E43A   A5 55      LDA &55
+     E43A   A5 E5      LDA &E5
      E43C   D0 30      BNE &E46E
      E43E   A9 02      LDA #&02
      E440   20 84 E4   JSR &E484
@@ -4674,7 +4674,7 @@ End macro PRT_PULSE_DELAY
      E47D   68         PLA
      E47E   29 0F      AND #&0F
      E480   18         CLC
-     E481   65 52      ADC &52
+     E481   65 E2      ADC &E2
      E483   60         RTS
 .rtc_read_reg
      E484   48         PHA
@@ -4687,8 +4687,8 @@ End macro PRT_PULSE_DELAY
      E494   8E 02 BF   STX &BF02
      E497   60         RTS
 .rtc_select
-     E498   64 55      STZ &55
-     E49A   A5 65      LDA &65
+     E498   64 E5      STZ &E5
+     E49A   A5 F5      LDA &F5
      E49C   29 04      AND #&04
      E49E   F0 0D      BEQ &E4AD
      E4A0   A9 7F      LDA #&7F
@@ -4698,7 +4698,7 @@ End macro PRT_PULSE_DELAY
      E4AA   4C B1 E4   JMP &E4B1
 .rtc_select_error
      E4AD   A9 21      LDA #&21
-     E4AF   85 55      STA &55
+     E4AF   85 E5      STA &E5
 .rtc_select_done
      E4B1   60         RTS
 .NMI_HANDLER
