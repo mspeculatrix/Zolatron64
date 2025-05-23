@@ -16,6 +16,9 @@ ALIGN &100                ; start on new page
   bne isr_zd_timer_end
   inc ZD_TIMER_COUNT + 1	  ; Previous byte rolled over
 .isr_zd_timer_end
+  lda ZD_STATE_REG          ; Set 'timer done' flag in state register
+  ora #ZD_TIMER_DONE
+  sta ZD_STATE_REG
   jmp isr_exit
 .isr_zd_timer_next
 
@@ -104,8 +107,13 @@ ALIGN &100                ; start on new page
 .isr_chk_rtc_next
 
 ; --- USER ISR -----------------------------------------------------------------
-; --- This needs to be the last of the checks.
+; --- This MUST be the last of the checks.
+; By default, and after a soft reset, The address at OSUSRINT_VEC points here,
+; to isr_usrint_rtn. Programs can change this to point to their own interrupt
+; routines, but must also set the address back if things like serial are going
+; to work.
   jmp (OSUSRINT_VEC)
+; The address at OSUSRINTRTN_VEC always points here, to isr_usrint_rtn
 .isr_usrint_rtn                 ; Label for return address - this is important
 
 ; --- END OF CHECKS ------------------------------------------------------------

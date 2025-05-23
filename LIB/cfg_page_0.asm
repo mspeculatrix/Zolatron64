@@ -1,29 +1,29 @@
 ; ZERO PAGE CONFIG -- cfg_page_0.asm -------------------------------------------
 
-MSG_VEC       = $50    	 		        ; $50 Message to print
-FUNC_RES_L    = MSG_VEC + 2         ; $52 For 16-bit subroutine results. Must be
-FUNC_RES_H    = FUNC_RES_L + 1      ; $53 in zero page.
-FUNC_RESULT   = FUNC_RES_H + 1      ; $54 To hold the 8-bit result of a function
-FUNC_ERR      = FUNC_RESULT + 1	    ; $55 Store an error code for functions
+MSG_VEC       = $E0    	 		    ; $E0 Message to print
+FUNC_RES_L    = MSG_VEC + 2         ; $E2 For 16-bit subroutine results. Must be
+FUNC_RES_H    = FUNC_RES_L + 1      ; $E3 in zero page.
+FUNC_RESULT   = FUNC_RES_H + 1      ; $E4 To hold the 8-bit result of a function
+FUNC_ERR      = FUNC_RESULT + 1	    ; $E5 Store an error code for functions
 
-TBL_VEC_L     = FUNC_ERR + 1        ; $56 Table vector - for searching tables
-TBL_VEC_H     = TBL_VEC_L + 1       ; $57
-TMP_ADDR_A    = TBL_VEC_H + 1       ; $58 Temp 2-byte vector/store for address
-TMP_ADDR_A_L  = TMP_ADDR_A	        ; $58 - Alias -
-TMP_ADDR_A_H  = TMP_ADDR_A + 1      ; $59
-TMP_ADDR_B    = TMP_ADDR_A_H + 1    ; $5A Temp 2-byte vector/store for address
-TMP_ADDR_B_L  = TMP_ADDR_B	        ; $5A - Alias -
-TMP_ADDR_B_H  = TMP_ADDR_B + 1      ; $5B
-TMP_ADDR_C    = TMP_ADDR_B_H + 1    ; $5C
-TMP_ADDR_C_L  = TMP_ADDR_C	        ; $5C - Alias -
-TMP_ADDR_C_H  = TMP_ADDR_C_L + 1	  ; $5D
+TBL_VEC_L     = FUNC_ERR + 1        ; $E6 Table vector - for searching tables
+TBL_VEC_H     = TBL_VEC_L + 1       ; $E7
+TMP_ADDR_A    = TBL_VEC_H + 1       ; $E8 Temp 2-byte vector/store for address
+TMP_ADDR_A_L  = TMP_ADDR_A	        ; $E8 - Alias -
+TMP_ADDR_A_H  = TMP_ADDR_A + 1      ; $E9
+TMP_ADDR_B    = TMP_ADDR_A_H + 1    ; $EA Temp 2-byte vector/store for address
+TMP_ADDR_B_L  = TMP_ADDR_B	        ; $EA - Alias -
+TMP_ADDR_B_H  = TMP_ADDR_B + 1      ; $EB
+TMP_ADDR_C    = TMP_ADDR_B_H + 1    ; $EC
+TMP_ADDR_C_L  = TMP_ADDR_C	        ; $EC - Alias -
+TMP_ADDR_C_H  = TMP_ADDR_C_L + 1	; $ED
 
-FILE_ADDR     = TMP_ADDR_C_H + 1    ; $5E
-PROG_END      = FILE_ADDR + 2       ; $60 Last byte of user program
-LOMEM         = PROG_END + 2        ; $62 First available byte after user prog
+FILE_ADDR     = TMP_ADDR_C_H + 1    ; $EE
+PROG_END      = FILE_ADDR + 2       ; $F0 Last byte of user program
+LOMEM         = PROG_END + 2        ; $F2 First available byte after user prog
 
-STDIN_STATUS_REG = LOMEM + 2	      ; $64 STDIN flags - see: cfg_main.asm
-SYS_REG = STDIN_STATUS_REG + 1      ; $65 System Register
+STDIN_STATUS_REG = LOMEM + 2	    ; $F4 STDIN flags - see: cfg_main.asm
+SYS_REG = STDIN_STATUS_REG + 1      ; $F5 System Register
 ; SYSTEM REGISTER
 ; The SYS_EXMEM and SYS_PARALELL must be in bits 0 and 1.
 ; Bit     Flag name            Function
@@ -43,7 +43,7 @@ SYS_PARALLEL_NO   = %11111101   ; AND with reg to unset flag
 SYS_SPI           = %00000100   ; ORA with reg to set or AND to test flag
 SYS_SPI_NO        = %11111011   ; AND with reg to unset flag
 
-IRQ_REG   = SYS_REG + 1			    ; $66 - IRQ register
+IRQ_REG   = SYS_REG + 1         ; $F6 - IRQ register
 ; BIT MASKS FOR IRQ_REG
 USRP_INT_CA2 = %00000001
 USRP_INT_CA1 = %00000010

@@ -82,7 +82,8 @@ OSU16HEX    = OSHEX2B + 3
 OSU16ISTR   = OSU16HEX + 3
 OSHEX2DEC   = OSU16ISTR + 3
 ; LCD
-OSLCDCH     = OSHEX2DEC + 3
+OSLCDINIT   = OSHEX2DEC + 3
+OSLCDCH     = OSLCDINIT + 3
 OSLCDCLS    = OSLCDCH + 3
 OSLCDERR    = OSLCDCLS + 3
 OSLCDMSG    = OSLCDERR + 3
@@ -145,7 +146,7 @@ EOTBL_MKR     = 255                   ; End of table marker
 CHR_LINEEND   = 10        ; ASCII code for line end - here we're using line feed
 CHR_SPACE     = 32
 
-EQUAL = 1
+EQUAL     = 1
 MORE_THAN = 2
 LESS_THAN = 0
 

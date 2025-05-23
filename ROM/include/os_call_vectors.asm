@@ -114,6 +114,10 @@
   lda #>asc_hex_to_dec
   sta OSHEX2DEC_VEC + 1
 \ --- LCD ----------------------------------------------------------------------
+  lda #<lcd_init                      ; OSLCDINIT
+  sta OSLCDINIT_VEC
+  lda #>lcd_init
+  sta OSLCDINIT_VEC + 1
   lda #<lcd_prt_chr                   ; OSLCDCH
   sta OSLCDCH_VEC
   lda #>lcd_prt_chr

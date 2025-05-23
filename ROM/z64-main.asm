@@ -1,7 +1,6 @@
 \ ROM code for Zolatron 64 6502-based microcomputer.
 \
 \ GitHub: https://github.com/mspeculatrix/Zolatron64/
-\ Blog: https://mansfield-devine.com/speculatrix/category/projects/zolatron/
 \
 \ Written for the Beebasm assembler. Assemble with:
 \     beebasm -v -i z64-main.asm -o z64-ROM.bin -S -VSTR="<version>"
@@ -81,18 +80,8 @@ INCLUDE "include/os_call_vectors.asm"
 ;  sta STREAM_SELECT_REG
 
 \ ----  SETUP LCD display & LEDs  ----------------------------------------------
-  lda SYS_REG
-  ora #%00100000     ; Sets bit 5 showing we're using 20x4 display
-  sta SYS_REG
-  lda #%11111111
-  sta LCDV_DDRB      ; Set all pins on port B to output - data for LCD
-  sta LCDV_DDRA      ; Set all pins on port A to output - signals for LCD & LEDs
-  lda #LCD_TYPE      ; Set 8-bit mode; 2-line display; 5x8 font
-  jsr lcd_cmd
-  lda #LCD_MODE                         ; Display on; cursor off; blink off
-  jsr lcd_cmd
-  lda #LCD_CLS                          ; Clear display, reset display memory
-  jsr lcd_cmd
+  jsr OSLCDINIT
+
 
 \ ----  SETUP USER PORT  -------------------------------------------------------
   lda #$FF
@@ -110,7 +99,7 @@ INCLUDE "include/os_call_vectors.asm"
 \ ------------------------------------------------------------------------------
 \ ----     MAIN PROGRAM                                                     ----
 \ ------------------------------------------------------------------------------
-.main
+.MAIN
   LED_ON LED_ERR                        ; Turn on all the LEDs for a light show
   LED_ON LED_BUSY
   LED_ON LED_OK
@@ -220,7 +209,7 @@ INCLUDE "include/os_call_vectors.asm"
 \ ------------------------------------------------------------------------------
 \ -----  SOFT RESET
 \ ------------------------------------------------------------------------------
-.soft_reset                               ; OSSFTRST
+.SOFT_RESET                               ; OSSFTRST
   sei
   LED_OFF LED_ERR                         ; Turn off the LEDs
   LED_OFF LED_BUSY
@@ -264,7 +253,7 @@ INCLUDE "include/os_call_vectors.asm"
 \ ------------------------------------------------------------------------------
 \ ----- MAIN LOOP
 \ ------------------------------------------------------------------------------
-.mainloop                               ;
+.MAINLOOP                               ;
   ; SHOULD CHECK IRQ_REG here?
   ; lda IRQ_REG                         ; Load the IRQ register
   ; beq mainloop_chk_input              ; If zero, nothing to worry about
@@ -282,7 +271,7 @@ INCLUDE "include/os_call_vectors.asm"
 ;  lda FUNC_RESULT
 ;  cmp #LESS_THAN
 ;  beq mainloop
-  jmp mainloop                          ; Loop
+  jmp MAINLOOP                          ; Loop
 \ --------- end of main loop ---------------------------------------------------
 
 .process_input
@@ -380,7 +369,7 @@ INCLUDE "include/cmds_X.asm"
   stz STDIN_BUF
   LED_OFF LED_BUSY
   LED_OFF LED_FILE_ACT
-  jmp mainloop                                    ; Go around again
+  jmp MAINLOOP                                    ; Go around again
 
 
 INCLUDE "include/data_tables.asm"
@@ -404,7 +393,7 @@ INCLUDE "include/funcs_rtc_core.asm"
 \ ---  NMI HANDLER
 \-------------------------------------------------------------------------------
 ALIGN &100                                        ; Start on new page
-.NMI_handler                                      ; For future development
+.NMI_HANDLER                                      ; For future development
 .exit_nmi
   rti
 
@@ -418,11 +407,13 @@ ALIGN &100                                        ; Start on new page
 \ Table in cfg_main.asm and the Vector Location Table in cfg_page_2.asm.
 \-------------------------------------------------------------------------------
 ORG $FF00                     ; Must match address at start of OS Function
-.os_call_jump_table           ; Address Table in cfg_main.asm
+.OS_CALL_JUMP_TABLE           ; Address Table in cfg_main.asm
   jmp (OSGETKEY_VEC)
   jmp (OSGETINP_VEC)
+.OSRDASC_
   jmp (OSRDASC_VEC)
   jmp (OSRDBYTE_VEC)
+.OSRDCH_
   jmp (OSRDCH_VEC)
   jmp (OSRDHBYTE_VEC)
   jmp (OSRDHADDR_VEC)
@@ -430,7 +421,9 @@ ORG $FF00                     ; Must match address at start of OS Function
   jmp (OSRDFNAME_VEC)
   jmp (OSRDSTR_VEC)
 
+.OSWRBUF_
   jmp (OSWRBUF_VEC)
+.OSWRCH_
   jmp (OSWRCH_VEC)
   jmp (OSWRERR_VEC)
   jmp (OSWRMSG_VEC)
@@ -447,6 +440,7 @@ ORG $FF00                     ; Must match address at start of OS Function
   jmp (OSU16ISTR_VEC)
   jmp (OSHEX2DEC_VEC)
 
+  jmp (OSLCDINIT_VEC)
   jmp (OSLCDCH_VEC)
   jmp (OSLCDCLS_VEC)
   jmp (OSLCDERR_VEC)
@@ -483,10 +477,10 @@ ORG $FF00                     ; Must match address at start of OS Function
 
 ORG $FFF4
 .reset
-  jmp soft_reset                      ; Print prompt and go to start of mainloop
-  jmp main                            ; Harder reset - go to start of ROM code
+  jmp SOFT_RESET                      ; Print prompt and go to start of mainloop
+  jmp MAIN                            ; Harder reset - go to start of ROM code
 .boot
-  equw NMI_handler                          ; Vector for NMI
+  equw NMI_HANDLER                          ; Vector for NMI
   equw startcode                            ; Reset vector to start of ROM code
   equw IRQ_handler                          ; Vector for ISR
 

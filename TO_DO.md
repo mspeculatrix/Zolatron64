@@ -1,6 +1,6 @@
 # ZOLATRON 64 - TO DO
 
-- Create time/data programmes:
+- Create time/date programs:
 
   - SETALARM - we'll just use Alarm 1
     - Should include an option to remove an alarm

@@ -409,7 +409,7 @@ Macro NEWLINE:
 End macro NEWLINE
      C35C   20 54 FF   JSR &FF54
      C35F   58         CLI
-.soft_reset
+.SOFT_RESET
 Macro LED_OFF:
      C360   48         PHA
      C361   A9 FF      LDA #&FF
@@ -4677,10 +4677,10 @@ End macro PRT_PULSE_DELAY
      E4A3   85 55      STA &55
 .rtc_select_done
      E4A5   60         RTS
-.NMI_handler
+.NMI_HANDLER
 .exit_nmi
      E500   40         RTI
-.os_call_jump_table
+.OS_CALL_JUMP_TABLE
      FF00   6C 00 02   JMP (&0200)
      FF03   6C 02 02   JMP (&0202)
      FF06   6C 04 02   JMP (&0204)

@@ -66,18 +66,7 @@ ORG USR_START
   LOAD_MSG run_msg
   jsr OSWRMSG
 
-  lda SYS_REG
-  ora #%00100000     ; Sets bit 5 showing we're using 20x4 display
-  sta SYS_REG
-  lda #%11111111
-  sta LCDV_DDRB      ; Set all pins on port B to output - data for LCD
-  sta LCDV_DDRA      ; Set all pins on port A to output - signals for LCD & LEDs
-  lda #LCD_TYPE      ; Set 8-bit mode; 2-line display; 5x8 font
-  jsr lcd_cmd
-  lda #LCD_MODE                         ; Display on; cursor off; blink off
-  jsr lcd_cmd
-  lda #LCD_CLS                          ; Clear display, reset display memory
-  jsr lcd_cmd
+  jsr OSLCDINIT
 
   LOAD_MSG end_msg
   jsr OSWRMSG
@@ -90,9 +79,9 @@ ORG USR_START
 \ ---  DATA
 \ ------------------------------------------------------------------------------
 .run_msg
-  equs "Resetting LCD...",10,0
+  equs "Resetting LCD...",0
 .end_msg
-  equs "LCD reset",10,0
+  equs "LCD reset",0
 
 \ ------------------------------------------------------------------------------
 \ ---  OPTIONAL LIBRARY FUNCTION FILES
@@ -102,43 +91,6 @@ ORG USR_START
 ;INCLUDE "../../LIB/funcs_spi_rtc_common.asm"
 ;INCLUDE "../../LIB/funcs_spi_rtc_date.asm"
 ;INCLUDE "../../LIB/funcs_spi_rtc_time.asm"
-.lcd_cmd
-  jsr lcd_wait                      ; Check LCD is ready to receive
-  sta LCDV_PORTB                    ; Assumes command byte is in A
-  jsr lcd_clear_sig                 ; Clear RS/RW/E bits. Writing to instr reg
-  LCD_SET_CTL LCD_EX                ; Set E bit to send instruction
-  jsr lcd_clear_sig
-  rts
-
-\ ------------------------------------------------------------------------------
-\ ---  LCD_WAIT
-\ ------------------------------------------------------------------------------
-\ Wait until LCD is ready to receive next byte. Blocking!
-\ A - P     X - n/a     Y - n/a
-.lcd_wait                   ; Check to see if LCD is ready to receive next byte
-  pha                       ; Save contents of A in stack, so it isn't corrupted
-  lda #%00000000            ; Set Port B as input
-  sta LCDV_DDRB
-.lcd_busy
-  LCD_SET_CTL LCD_RW
-  ora #(LCD_RW OR LCD_EX)
-  sta LCDV_PORTA
-  lda LCDV_PORTB
-  and #LCD_BUSY_FLAG        ; Sets zero flag - non-0 if LCD busy flag set
-  bne lcd_busy              ; If result was non-0, keep looping
-  LCD_SET_CTL LCD_RW
-  lda #%11111111            ; Set Port B as output
-  sta LCDV_DDRB
-  pla                       ; pull previous A contents back from stack
-  rts
-
-.lcd_clear_sig
-  pha
-  lda LCDV_PORTA
-  and #%00011111
-  sta LCDV_PORTA
-  pla
-  rts
 
 .endtag
   equs "EOF",0

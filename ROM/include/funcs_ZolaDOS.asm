@@ -63,10 +63,11 @@
   sta ZD_DATA_DDR
   stz ZD_DATA_PORT
   ; Initialise timeout & delay timer - using Timer 1
-  lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
+  lda #%11000000                    ; Setting bit 6 enables Timer 1
   ZD_SET_CO_ON                      ; Signal to server that Z64 is online.
   sta ZD_IER
-  lda #%00000000                    ; Set timer to one-shot mode
+  LDA ZD_ACR
+  AND #%00111111                    ; Set timer to one-shot mode
   sta ZD_ACR
   stz ZD_TIMER_COUNT		            ; Zero-out counter
   stz ZD_TIMER_COUNT + 1            ; "
@@ -315,15 +316,15 @@
   lda (TMP_ADDR_A)            ; Put byte on data bus
   sta ZD_DATA_PORT
   ZD_SET_CR_ON                ; Signal that it's ready
-  jsr zd_strobeDelay
-  ZD_SET_CR_OFF
+  jsr zd_strobeDelay          ;
+  ZD_SET_CR_OFF               ;
   jsr zd_waitForSR            ; Wait for server response
   lda FUNC_ERR
   bne zd_send_data_end
   jsr zd_waitForSRoff         ; Wait for server response to end
   lda FUNC_ERR
   bne zd_send_data_end
-  jsr compare_addr        ; Check if we've reached the end
+  jsr compare_addr            ; Check if we've reached the end
   lda FUNC_RESULT
   cmp #EQUAL
   beq zd_send_data_end        ; If equal, we're done
@@ -383,7 +384,8 @@
 .zd_signalDelay
   lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
   sta ZD_IER
-  lda #%00000000                    ; set timer to one-shot mode
+  LDA ZD_ACR
+  LDA #%00111111                    ; set timer to one-shot mode
   sta ZD_ACR
   lda #<ZD_SIGNALDELAY              ; Set timer delay
   sta ZD_T1CL
@@ -429,9 +431,13 @@
 \ ------------------------------------------------------------------------------
 \ A - O     X - n/a     Y - n/a
 .zd_strobeDelay
-  lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
+  lda ZD_STATE_REG                  ; Ensure 'timer done' flag is zeroed
+  and #($FF - ZD_TIMER_DONE)
+  sta ZD_STATE_REG
+  lda #%11000000		                ; Setting bit 6 enables Timer 1
   sta ZD_IER
-  lda #%00000000                    ; Set timer to one-shot mode
+  LDA ZD_ACR
+  AND #%00111111                    ; Set timer to one-shot mode
   sta ZD_ACR
   lda #<ZD_STROBETIME               ; Set timer delay
   sta ZD_T1CL
@@ -439,9 +445,13 @@
   sta ZD_T1CH		                    ; Starts timer
 .zd_strobeDelay_loop
   nop
-  bit ZD_IFR                        ; Bit 6 copied to overflow flag
-  bvc zd_strobeDelay_loop           ; If clear, interrupt bit not set, so loop
-  lda ZD_T1CL                       ; Clears interrupt flag
+  lda ZD_STATE_REG                  ; Test flag in state register
+  and #ZD_TIMER_DONE
+  beq zd_strobeDelay_loop
+
+  lda ZD_STATE_REG                  ; Reset flag in state register
+  and #($FF - ZD_TIMER_DONE)
+  sta ZD_STATE_REG
   rts
 
 \ ------------------------------------------------------------------------------
@@ -480,7 +490,7 @@
 \ ------------------------------------------------------------------------------
 \ ---  TIMER FUNCTIONS
 \ ------------------------------------------------------------------------------
-\ Check to see if the counter has incremented
+\ Check to see if the counter has reached a timeout limit
 \ A - P     X - n/a     Y - n/a
 .zd_chk_timer
   sei                           ; to the same value as the set limit. This is
@@ -509,8 +519,7 @@
 \ Stop timer running
 \ A - O     X - n/a     Y - n/a
 .zd_timer1_stop
-  lda ZD_IER
-  and #%10111111	; Setting bit 7 enables interrupts and bit 6 disables Timer 1
+  LDA #%01000000  ; This unsets bit 6, leaves others unaffected
   sta ZD_IER
   rts
 
@@ -519,9 +528,11 @@
 .zd_timeout_timer_start
   stz ZD_TIMER_COUNT
   stz ZD_TIMER_COUNT + 1
-  lda #%11000000		; setting bit 7 enables interrupts and bit 6 enables Timer 1
+  lda #%11000000		                ; Bit 6 enables Timer 1
   sta ZD_IER
-  lda #%01000000                    ; set timer to free-run mode
+  LDA ZD_ACR
+  AND #%01111111                    ; set timer to free-run mode
+  ORA #%01000000
   sta ZD_ACR
   lda #>ZD_TIMEOUT_INTVL
   sta ZD_T1CL
