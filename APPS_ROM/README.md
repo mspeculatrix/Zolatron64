@@ -20,7 +20,7 @@ ORG $8000
   equs "1.0",0              ; Version string - null terminated
 
 .startprog or .startdata
-.reset						; Sometimes this may be different from startprog
+.reset ; Sometimes this may be different from startprog
 ```
 
 The jump at the start must always be there, even if it's just data. In the

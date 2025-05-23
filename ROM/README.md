@@ -2,7 +2,7 @@
 
 ## CHANGELOG
 
-### In progress
+### 5.2.0 In progress
 
 - Moved stuff in zero page to the high part of the page, starting at $E0.
 
