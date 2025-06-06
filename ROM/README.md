@@ -91,4 +91,12 @@ Communication with the Zolatron is via serial at 9600 baud 8N1. As we're not usi
 
 The output-nn.txt files in the _output_ folder are the output from Beebasm when the code is assembled. Just in case.
 
-_build_ is just a small Bash script I use to save typing (and remembering) the commands to assemble the code and write it to the EEPROM. Documentation is in the script itself.
+_\_build_ is just a small Bash script I use to save typing (and remembering) the commands to assemble the code and write it to the EEPROM. Documentation is in the script itself, but buse is:
+
+- `./build` to just asssemble the code.
+- `./_build -w` to assemble and burn to EEPROM.
+
+The assembled code is saved as `z64-ROM-<version>.bin` in the `bin` folder. Then two copies are made:
+
+- `bin/ROM.bin` - so we always have the latest version in a file that I might want to use in scripts.
+- `~/NasSync/DEV/Dev-C/Zem/Zem/ROM/ROM.bin` - for use with my Zolatron emulator, Zem.
