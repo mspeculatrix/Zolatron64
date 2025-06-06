@@ -5,6 +5,7 @@
 ### 5.2.0 In progress
 
 - Moved stuff in zero page to the high part of the page, starting at $E0.
+- Added OS labels in code & Python script to output lists.
 
 ### 5.1.3
 

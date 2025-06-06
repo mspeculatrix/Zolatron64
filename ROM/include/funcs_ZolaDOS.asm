@@ -164,6 +164,7 @@
 \ ON ENTRY: STR_BUF must contain filename
 \ ON EXIT : FUNC_ERR contains error code - 0 for success
 \ A - O     X - n/a     Y - n/a
+._OSZDDEL
 .zd_delfile
   lda #ZD_OPCODE_DEL
   jsr zd_handshake
@@ -204,6 +205,7 @@
 \           - FILE_ADDR/+1 must contain address to which we wish to load file.
 \ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
 \ A - O     X - n/a     Y - n/a
+._OSZDLOAD
 .zd_loadfile
   jsr zd_handshake            ; ----- INITIATE ---------------------------------
   lda FUNC_ERR
@@ -288,6 +290,7 @@
 \           - STR_BUF must contain nul-terminated filename string
 \ ON EXIT : FUNC_ERR contains error code
 \ A - O     X - n/a     Y - n/a
+._OSZDSAVE
 .zd_save_data
   jsr zd_handshake
   lda FUNC_ERR

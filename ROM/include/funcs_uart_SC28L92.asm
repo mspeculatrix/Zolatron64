@@ -60,6 +60,7 @@
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: Vector address to message string must be in MSG_VEC, MSG_VEC+1
 \ A - P     X - n/a     Y - P
+._OSWRMSG
 .duart_println
   pha : phy
   ldy #0                          ; Set message offset to 0
@@ -84,6 +85,7 @@
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: Text to be send must be in STR_BUF and nul-terminated.
 \ A - P     X - n/a     Y - n/a
+._OSWRSBUF
 .duart_snd_strbuf
   pha
   lda #<STR_BUF                              ; LSB of message
@@ -101,6 +103,7 @@
 \ Sends contents of STDOUT_BUF buffer.
 \ ON ENTRY: Text to be send must be in STDOUT_BUF and nul-terminated.
 \ A - O     X - O     Y - n/a
+._OSWRBUF
 .duart_sendbuf
   ldx #0                           ; Offset index
  .duart_sendbuf_next_char
@@ -125,6 +128,7 @@
 \ Write a single character to out stream.
 \ ON ENTRY: Char must be in A.
 \ A - P     X - n/a     Y - n/a
+._OSWRCH
 .duart_sendchar
   jsr duart_wait_send_clr          ; Wait until DUART is ready for another byte
   sta SC28L92_TxFIFOA              ; Write to Data Reg. This sends the byte
@@ -140,6 +144,7 @@
 \ NB: The actual output from the port is the *complement* of the OPR. So if a
 \     bit in the OPR is HIGH, then the pin is set LOW, and vice versa.
 \ A - O     X - P     Y - n/a
+._OSWROP
 .duart_writeOP
   cmp #0
   beq duart_writeOP_zero

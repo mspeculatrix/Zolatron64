@@ -7,6 +7,7 @@
 \ ON ENTRY:
 \ ON EXIT :
 \ A - O     X - O     Y - n/a
+._OSRDDATE
 .rtc_read_date
   jsr rtc_select
   lda FUNC_ERR
@@ -51,6 +52,7 @@
 \ ON ENTRY:
 \ ON EXIT :
 \ A - ?     X - ?     Y - ?
+._OSRDTIME
 .rtc_read_time
   jsr rtc_select
   lda FUNC_ERR

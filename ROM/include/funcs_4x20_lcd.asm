@@ -18,6 +18,7 @@
 \             This number should be the length of the desired delay
 \             in milliseconds.
 \ A - P     X - n/a     Y - n/a
+._OSDELAY
 .delay
   pha
   stz LCDV_TIMER_COUNT		      ; Zero-out counter
@@ -178,6 +179,7 @@
 \ ------------------------------------------------------------------------------
 \ Clear the LCD screen
 \ A - O     X - n/a     Y - n/a
+._OSLCDCLS
 .lcd_cls
   jsr lcd_clear_buf                       ; Overwrite LCD_BUF with spaces
   lda #LCD_CLS                            ; Clear display, reset display memory
@@ -190,6 +192,7 @@
 \ ------------------------------------------------------------------------------
 \ Initialise the LCD screen
 \ A - O     X - n/a     Y - n/a
+._OSLCDINIT
 .lcd_init
   lda SYS_REG
   ora #%00100000     ; Sets bit 5 showing we're using 20x4 display
@@ -213,6 +216,7 @@
 \ Prints an 8-bit value as a 2-char hex string
 \ ON ENTRY: - A must contain value of byte to be printed.
 \ A - O     X - n/a     Y - n/a
+._OSLCDB2HEX
 .lcd_print_byte
   jsr byte_to_hex_str               ; Results in three bytes starting at STR_BUF
   lda STR_BUF
@@ -228,6 +232,7 @@
 \ Prints the contents of STDOUT_BUF to LCD
 \ ON ENTRY: - Expects a nul-terminated string in STDOUT_BUF
 \ A - P     X - n/a     Y - n/a
+._OSLCDWRBUF
 .lcd_prt_buf
   pha
   lda #<STDOUT_BUF
@@ -245,6 +250,7 @@
 \ Prints the contents of STR_BUF to LCD
 \ ON ENTRY: - Expects a nul-terminated string in STR_BUF
 \ A - P     X - n/a     Y - n/a
+._OSLCDSBUF
 .lcd_prt_sbuf
   pha
   lda #<STR_BUF
@@ -262,6 +268,7 @@
 \ Prints text to the LCD.
 \ ON ENTRY: - MSG_VEC should point to location of text.
 \ A - P     X - P     Y - P
+._OSLCDMSG
 .lcd_println
   pha : phx : phy
   ; We start by moving all the text in the buffer up one line, effectively
@@ -354,6 +361,7 @@
 \ Print a character to the LCD.
 \ ON ENTRY: - A must contain ASCII code for character.
 \ A - P     X - n/a     Y - n/a
+._OSLCDCH
 .lcd_prt_chr
   pha
   jsr lcd_wait                      ; Check LCD is ready to receive
@@ -371,6 +379,7 @@
 \ Print an error message to the LCD.
 \ ON ENTRY: - Assumes error code in FUNC_ERR
 \ A - O     X - O     Y - n/a
+._OSLCDERR
 .lcd_prt_err
   lda FUNC_ERR
   dec A                   ; To get offset for table
@@ -392,6 +401,7 @@
 \               - X should contain the X param in range 0-19.
 \               - Y should be 0-3.
 \ A - O     X - O     Y - n/a
+._OSLCDSC
 .lcd_set_cursor
   stx TMP_VAL
   lda lcd_ln_base_addr,Y          ; Base address for line, from lookup table

@@ -2621,6 +2621,7 @@ End macro LED_OFF
      D5E3   F0 F9      BEQ &D5DE
      D5E5   68         PLA
      D5E6   60         RTS
+._OSWRMSG
 .duart_println
      D5E7   48         PHA
      D5E8   5A         PHY
@@ -2640,6 +2641,7 @@ End macro LED_OFF
      D600   7A         PLY
      D601   68         PLA
      D602   60         RTS
+._OSWRSBUF
 .duart_snd_strbuf
      D603   48         PHA
      D604   A9 0B      LDA #&0B
@@ -2649,6 +2651,7 @@ End macro LED_OFF
      D60C   20 E7 D5   JSR &D5E7
      D60F   68         PLA
      D610   60         RTS
+._OSWRBUF
 .duart_sendbuf
      D611   A2 00      LDX #&00
 .duart_sendbuf_next_char
@@ -2664,10 +2667,12 @@ End macro LED_OFF
      D628   4C 13 D6   JMP &D613
 .duart_sendbuf_end
      D62B   60         RTS
+._OSWRCH
 .duart_sendchar
      D62C   20 DD D5   JSR &D5DD
      D62F   8D 03 B4   STA &B403
      D632   60         RTS
+._OSWROP
 .duart_writeOP
      D633   C9 00      CMP #&00
      D635   F0 07      BEQ &D63E
@@ -2809,6 +2814,7 @@ Macro ZD_SET_CA_OFF:
 End macro ZD_SET_CA_OFF
 .zd_svr_resp_init_end
      D725   60         RTS
+._OSZDDEL
 .zd_delfile
      D726   A9 48      LDA #&48
      D728   20 2C D7   JSR &D72C
@@ -2832,6 +2838,7 @@ End macro ZD_SET_DATADIR_INPUT
      D74B   20 DB D8   JSR &D8DB
 .zd_handshake_end
      D74E   60         RTS
+._OSZDLOAD
 .zd_loadfile
      D74F   20 2C D7   JSR &D72C
      D752   A5 E5      LDA &E5
@@ -2901,6 +2908,7 @@ End macro ZD_SET_CR_OFF
      D7C2   20 76 D9   JSR &D976
 .zd_rcv_data_end
      D7C5   60         RTS
+._OSZDSAVE
 .zd_save_data
      D7C6   20 2C D7   JSR &D72C
      D7C9   A5 E5      LDA &E5
@@ -3212,6 +3220,7 @@ End macro ZD_SET_CR_OFF
 .file_act_complete_msg
      DA09   4F 4B 
      DA0B   00
+._OSB2BIN
 .byte_to_bin
      DA0C   48         PHA
      DA0D   DA         PHX
@@ -3235,6 +3244,7 @@ End macro ZD_SET_CR_OFF
      DA2C   FA         PLX
      DA2D   68         PLA
      DA2E   60         RTS
+._OSB2HEX
 .byte_to_hex_str
      DA2F   DA         PHX
      DA30   5A         PHY
@@ -3256,6 +3266,7 @@ End macro ZD_SET_CR_OFF
      DA4B   7A         PLY
      DA4C   FA         PLX
      DA4D   60         RTS
+._OSB2ISTR
 .byte_to_int_str
      DA4E   48         PHA
      DA4F   DA         PHX
@@ -3293,6 +3304,7 @@ End macro ZD_SET_CR_OFF
      DA88   FA         PLX
      DA89   68         PLA
      DA8A   60         RTS
+._OSHEX2B
 .hex_str_to_byte
      DA8B   48         PHA
      DA8C   DA         PHX
@@ -3320,6 +3332,7 @@ End macro ZD_SET_CR_OFF
      DAB4   FA         PLX
      DAB5   68         PLA
      DAB6   60         RTS
+._OSHEX2DEC
 .asc_hex_to_dec
      DAB7   DA         PHX
      DAB8   64 E5      STZ &E5
@@ -3336,6 +3349,7 @@ End macro ZD_SET_CR_OFF
 .asc_hex_to_dec_end
      DACB   FA         PLX
      DACC   60         RTS
+._OSU16HEX
 .uint16_to_hex_str
      DACD   48         PHA
      DACE   A5 E8      LDA &E8
@@ -3353,6 +3367,7 @@ End macro ZD_SET_CR_OFF
      DAF0   9C 0F 04   STZ &040F
      DAF3   68         PLA
      DAF4   60         RTS
+._OSU16ISTR
 .uint16_intstr
      DAF5   48         PHA
      DAF6   DA         PHX
@@ -3565,6 +3580,7 @@ End macro LOAD_MSG
      DC66   20 21 FF   JSR &FF21
      DC69   20 21 FF   JSR &FF21
      DC6C   60         RTS
+._OSGETINP
 .get_input
      DC6D   9C 7F 03   STZ &037F
      DC70   9C 00 03   STZ &0300
@@ -3584,6 +3600,7 @@ End macro LOAD_MSG
      DC8B   29 F0      AND #&F0
      DC8D   85 F4      STA &F4
      DC8F   60         RTS
+._OSGETKEY
 .getkey
      DC90   64 E4      STZ &E4
      DC92   9C 7F 03   STZ &037F
@@ -3600,6 +3617,7 @@ End macro LOAD_MSG
      DCA9   9C 7F 03   STZ &037F
      DCAC   9C 00 03   STZ &0300
      DCAF   60         RTS
+._OSRDASC
 .read_ascii
      DCB0   20 C2 DC   JSR &DCC2
      DCB3   A5 E5      LDA &E5
@@ -3611,6 +3629,7 @@ End macro LOAD_MSG
      DCBF   B0 EF      BCS &DCB0
 .read_ascii_end
      DCC1   60         RTS
+._OSRDBYTE
 .read_byte
      DCC2   64 E4      STZ &E4
      DCC4   64 E5      STZ &E5
@@ -3632,6 +3651,7 @@ End macro LOAD_MSG
      DCE4   9C 00 03   STZ &0300
 .read_byte_end
      DCE7   60         RTS
+._OSRDCH
 .read_char
      DCE8   20 C2 DC   JSR &DCC2
      DCEB   A5 E5      LDA &E5
@@ -3643,6 +3663,7 @@ End macro LOAD_MSG
      DCF7   B0 EF      BCS &DCE8
 .read_char_end
      DCF9   60         RTS
+._OSRDINT16
 .read_int16
      DCFA   48         PHA
      DCFB   DA         PHX
@@ -3718,6 +3739,7 @@ End macro LOAD_MSG
      DD81   FA         PLX
      DD82   68         PLA
      DD83   60         RTS
+._OSRDFNAME
 .read_filename
      DD84   48         PHA
      DD85   DA         PHX
@@ -3789,6 +3811,7 @@ End macro LOAD_MSG
      DDFD   FA         PLX
      DDFE   68         PLA
      DDFF   60         RTS
+._OSRDSTR
 .read_string
      DE00   48         PHA
      DE01   DA         PHX
@@ -3844,6 +3867,7 @@ End macro LOAD_MSG
      DE5C   FA         PLX
      DE5D   68         PLA
      DE5E   60         RTS
+._OSRDHADDR
 .read_hex_addr
      DE5F   48         PHA
      DE60   5A         PHY
@@ -3879,6 +3903,7 @@ End macro LOAD_MSG
      DE93   4C 7C DE   JMP &DE7C
 .read_hex_addr_pair_end
      DE96   60         RTS
+._OSRDHBYTE
 .read_hex_byte
      DE97   48         PHA
      DE98   DA         PHX
@@ -3916,6 +3941,7 @@ End macro LOAD_MSG
      DED1   FA         PLX
      DED2   68         PLA
      DED3   60         RTS
+._OSWRERR
 .os_print_error
      DED4   A5 E5      LDA &E5
      DED6   3A         DEC A
@@ -3928,6 +3954,7 @@ End macro LOAD_MSG
      DEE3   20 27 FF   JSR &FF27
      DEE6   20 57 FF   JSR &FF57
      DEE9   60         RTS
+._OSSOCH
 .stdout_add_char
      DEEA   DA         PHX
      DEEB   64 E5      STZ &E5
@@ -3937,6 +3964,7 @@ End macro LOAD_MSG
      DEF4   8E FF 03   STX &03FF
      DEF7   FA         PLX
      DEF8   60         RTS
+._OSSOAPP
 .stdout_append
      DEF9   DA         PHX
      DEFA   5A         PHY
@@ -4002,6 +4030,7 @@ End macro LOAD_MSG
      DF62   85 E5      STA &E5
 .extmem_readset_bank_end
      DF64   60         RTS
+._OSDELAY
 .delay
      DF65   48         PHA
      DF66   9C 47 04   STZ &0447
@@ -4137,11 +4166,13 @@ End macro LCD_SET_CTL
      E047   8D 02 A0   STA &A002
      E04A   68         PLA
      E04B   60         RTS
+._OSLCDCLS
 .lcd_cls
      E04C   20 C3 DF   JSR &DFC3
      E04F   A9 01      LDA #&01
      E051   20 DB DF   JSR &DFDB
      E054   60         RTS
+._OSLCDINIT
 .lcd_init
      E055   A5 F5      LDA &F5
      E057   09 20      ORA #&20
@@ -4157,6 +4188,7 @@ End macro LCD_SET_CTL
      E06F   20 DB DF   JSR &DFDB
      E072   20 4C E0   JSR &E04C
      E075   60         RTS
+._OSLCDB2HEX
 .lcd_print_byte
      E076   20 2F DA   JSR &DA2F
      E079   AD 0B 04   LDA &040B
@@ -4164,6 +4196,7 @@ End macro LCD_SET_CTL
      E07F   AD 0C 04   LDA &040C
      E082   20 09 E1   JSR &E109
      E085   60         RTS
+._OSLCDWRBUF
 .lcd_prt_buf
      E086   48         PHA
      E087   A9 80      LDA #&80
@@ -4173,6 +4206,7 @@ End macro LCD_SET_CTL
      E08F   20 A2 E0   JSR &E0A2
      E092   68         PLA
      E093   60         RTS
+._OSLCDSBUF
 .lcd_prt_sbuf
      E094   48         PHA
      E095   A9 0B      LDA #&0B
@@ -4182,6 +4216,7 @@ End macro LCD_SET_CTL
      E09D   20 A2 E0   JSR &E0A2
      E0A0   68         PLA
      E0A1   60         RTS
+._OSLCDMSG
 .lcd_println
      E0A2   48         PHA
      E0A3   DA         PHX
@@ -4251,6 +4286,7 @@ End macro LCD_SET_CTL
      E104   E0 54      CPX #&54
      E106   D0 F4      BNE &E0FC
      E108   60         RTS
+._OSLCDCH
 .lcd_prt_chr
      E109   48         PHA
      E10A   20 1F E0   JSR &E01F
@@ -4275,6 +4311,7 @@ Macro LCD_SET_CTL:
 End macro LCD_SET_CTL
      E12E   68         PLA
      E12F   60         RTS
+._OSLCDERR
 .lcd_prt_err
      E130   A5 E5      LDA &E5
      E132   3A         DEC A
@@ -4286,6 +4323,7 @@ End macro LCD_SET_CTL
      E13D   85 E1      STA &E1
      E13F   20 A2 E0   JSR &E0A2
      E142   60         RTS
+._OSLCDSC
 .lcd_set_cursor
      E143   8E 02 04   STX &0402
      E146   B9 53 E1   LDA &E153,Y
@@ -4299,6 +4337,7 @@ End macro LCD_SET_CTL
      E154   40
      E155   14
      E156   54
+._OSPRTCH
 .prt_char
 Macro LED_ON:
      E157   48         PHA
@@ -4364,6 +4403,7 @@ End macro LED_OFF
      E1B9   F0
      E1BA   0F
      E1BB   00
+._OSPRTCHK
 .prt_check_state
      E1BC   5A         PHY
      E1BD   64 E5      STZ &E5
@@ -4390,6 +4430,7 @@ End macro LED_OFF
 .prt_chk_state_end
      E1E3   7A         PLY
      E1E4   60         RTS
+._OSPRTINIT
 .prt_init
      E1E5   A9 D0      LDA #&D0
      E1E7   8D 02 AC   STA &AC02
@@ -4443,6 +4484,7 @@ End macro PRT_PULSE_DELAY
      E241   64 E4      STZ &E4
 .prt_msg_end
      E243   60         RTS
+._OSPRTBUF
 .prt_stdout_buf
      E244   A9 80      LDA #&80
      E246   85 E0      STA &E0
@@ -4450,6 +4492,7 @@ End macro PRT_PULSE_DELAY
      E24A   85 E1      STA &E1
      E24C   20 11 E2   JSR &E211
      E24F   60         RTS
+._OSPRTSBUF
 .prt_str_buf
      E250   A9 0B      LDA #&0B
      E252   85 E0      STA &E0
@@ -4603,6 +4646,7 @@ End macro PRT_PULSE_DELAY
      E3E8   FA         PLX
      E3E9   68         PLA
      E3EA   40         RTI
+._OSSPIEXCH
 .spi_exchange_byte
      E3EB   8D 00 BF   STA &BF00
 .spi_wait_for_tc
@@ -4610,6 +4654,7 @@ End macro PRT_PULSE_DELAY
      E3F1   10 FB      BPL &E3EE
      E3F3   AD 00 BF   LDA &BF00
      E3F6   60         RTS
+._OSRDDATE
 .rtc_read_date
      E3F7   20 98 E4   JSR &E498
      E3FA   A5 E5      LDA &E5
@@ -4637,6 +4682,7 @@ End macro PRT_PULSE_DELAY
      E433   8D 28 07   STA &0728
 .rtc_read_date_done
      E436   60         RTS
+._OSRDTIME
 .rtc_read_time
      E437   20 98 E4   JSR &E498
      E43A   A5 E5      LDA &E5

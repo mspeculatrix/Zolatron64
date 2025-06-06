@@ -7,6 +7,7 @@
 \ ON ENTRY: Byte to send should be in A
 \ ON EXIT : Returned byte is in A
 \ A - O     X - n/a     Y - n/a
+._OSSPIEXCH
 .spi_exchange_byte	  ; Sends & receives a byte. Byte value should be in A
   sta SPI_DATA_REG		; Write to Data Reg
 .spi_wait_for_tc	  	; Wait for transfer
