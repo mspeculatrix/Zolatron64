@@ -50,7 +50,7 @@ XOPEN   XRUN    XSAVE   XSEL
 
 **POKE <hhhh>** - Enter a value for the given memory address. You'll be prompted for the value, which must be entered as a two-digit hex value. Press `<return>` to move to the next address. To quit, press `<return>` without entering a value.
 
-`**RUN**` - Jump to location `USR_START` and begin executing code from there.
+**`RUN`** - Jump to location `USR_START` and begin executing code from there.
 
 `**SAVE <filename>**` - Save the currently loaded program, starting at address `USR_START` to persistent storage. Useful if we want to save a copy of an executable under another name. Also might be useful for any programs that are self-modifying or which store data within the program space. The `.EXE` extension will be appended automatically.
 
