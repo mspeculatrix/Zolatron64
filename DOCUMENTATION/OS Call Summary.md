@@ -10,7 +10,7 @@ NB: These apply only to the top-level functions. Any sub-routines called from wi
 
 | --- | --- | --- | --- | --- | --- | --- |
 | **OS Function** | **Source file & function** | **On Entry** | **On Exit / Notes** | **A** | **X** | **Y** |
-| **Read** |
+| **Read** |     |     |     |     |     |     |
 | **OSGETINP**<br><br>Creates an input loop waiting for the null received flag to be set | funcs\_io.asm<br><br>get\_input | Resets STDIN\_IDX to 0.  <br>Sets first byte of STDIN\_BUF to 0. | Clears the null received flag. |     |     |     |
 | **OSGETKEY**<br><br>Get a single character from STDIN\_BUF | funcs\_io.asm<br><br>getkey | Resets STDIN\_IDX to 0. | Key ASCII code in FUNC\_RESULT.  <br> <br><br>0 means just <return> was entered.<br><br>STDIN\_IDX and STDIN\_BUF are reset. | **O** | –   | –   |
 | **OSRDASC**<br><br>Wrapper to OSRDBYTE. Reads next _printable_ char (including space) from STDIN\_BUF | funcs\_io.asm<br><br>read\_ascii | Uses STDIN\_IDX to get next char. | FUNC\_RESULT contains char code.<br><br>FUNC\_ERR contains error code.<br><br>STDIN\_IDX updated.<br><br>STDIN\_BUF not affected. | **O** | **O** | –   |
