@@ -55,7 +55,7 @@ ERR_SPI_NOT_PRESENT   = ERR_PRT_NOT_PRESENT + 1     ; 33 SPI I/F not fitted
 \-------------------------------------------------------------------------------
 ; First entry address ust match address at start of z64-main jump table
 ; READ
-OSGETKEY    = $FF00          ; Get char; waits for user to enter a key & return
+OSGETKEY    = $FF00          ; Get char, waits for user to enter a key & return
 OSGETINP    = OSGETKEY + 3   ; Create input loop
 OSRDASC     = OSGETINP + 3   ; Get next printable char from STDIN_BUF
 OSRDBYTE    = OSRDASC + 3    ; Read next byte from STDIN_BUF
@@ -67,55 +67,55 @@ OSRDFNAME   = OSRDINT16 + 3  ; Read string from STDIN_BUF; check valid filename
 OSRDSTR     = OSRDFNAME + 3  ; Read string from STDIN_BUF
 ; WRITE
 OSWRBUF     = OSRDSTR + 3    ; Write STDOUT_BUF to output stream
-OSWRCH      = OSWRBUF + 3    ;
-OSWRERR     = OSWRCH + 3     ;
-OSWRMSG     = OSWRERR + 3    ;
-OSWROP      = OSWRMSG + 3    ;
-OSWRSBUF    = OSWROP + 3     ;
-OSSOAPP     = OSWRSBUF + 3   ;
-OSSOCH      = OSSOAPP + 3    ;
+OSWRCH      = OSWRBUF + 3    ; Write single character to output stream
+OSWRERR     = OSWRCH + 3     ; Write OS error string to output stream
+OSWRMSG     = OSWRERR + 3    ; Write text pointed to by MSG_VEC to output stream
+OSWROP      = OSWRMSG + 3    ; Write to Output Port on DUART board
+OSWRSBUF    = OSWROP + 3     ; Write STR_BUF to output stream
+OSSOAPP     = OSWRSBUF + 3   ; Append string to STDOUT_BUF
+OSSOCH      = OSSOAPP + 3    ; Append character to STDOUT_BUF
 ; CONVERSIONS
-OSB2BIN     = OSSOCH + 3     ;
-OSB2HEX     = OSB2BIN + 3    ;
-OSB2ISTR    = OSB2HEX + 3    ;
-OSHEX2B     = OSB2ISTR + 3   ;
-OSU16HEX    = OSHEX2B + 3    ;
-OSU16ISTR   = OSU16HEX + 3   ;
-OSHEX2DEC   = OSU16ISTR + 3  ;
+OSB2BIN     = OSSOCH + 3     ; 1-byte integer value to a binary string
+OSB2HEX     = OSB2BIN + 3    ; 8-bit value to 2-char hex string
+OSB2ISTR    = OSB2HEX + 3    ; 8-bit value to decimal integer string
+OSHEX2B     = OSB2ISTR + 3   ; 2-char hex string to byte value
+OSU16HEX    = OSHEX2B + 3    ; 16-bit value to a 4-char hex string
+OSU16ISTR   = OSU16HEX + 3   ; 16-bit value to a decimal string
+OSHEX2DEC   = OSU16ISTR + 3  ; 1-byte char (ie, '0' to 'F') to int (0-15)
 ; LCD
-OSLCDINIT   = OSHEX2DEC + 3  ;
-OSLCDCH     = OSLCDINIT + 3  ;
-OSLCDCLS    = OSLCDCH + 3    ;
-OSLCDERR    = OSLCDCLS + 3   ;
-OSLCDMSG    = OSLCDERR + 3   ;
-OSLCDB2HEX  = OSLCDMSG + 3   ;
-OSLCDSBUF   = OSLCDB2HEX + 3 ;
-OSLCDSC     = OSLCDSBUF + 3
-OSLCDWRBUF  = OSLCDSC + 3
+OSLCDINIT   = OSHEX2DEC + 3  ; Initialise LCD
+OSLCDCH     = OSLCDINIT + 3  ; Write char
+OSLCDCLS    = OSLCDCH + 3    ; Clear screen
+OSLCDERR    = OSLCDCLS + 3   ; Write OS error string
+OSLCDMSG    = OSLCDERR + 3   ; Write text pointed to by MSG_VEC
+OSLCDB2HEX  = OSLCDMSG + 3   ; Print byte value as hex
+OSLCDSBUF   = OSLCDB2HEX + 3 ; Print contents of STR_BUF
+OSLCDSC     = OSLCDSBUF + 3  ; Set cursor
+OSLCDWRBUF  = OSLCDSC + 3    ; Write STDOUT_BUF
 ; PRINTER
-OSPRTBUF    = OSLCDWRBUF + 3
-OSPRTCH     = OSPRTBUF + 3
-OSPRTCHK    = OSPRTCH + 3
-OSPRTINIT   = OSPRTCHK + 3
-OSPRTMSG    = OSPRTINIT + 3
-OSPRTSBUF   = OSPRTMSG + 3
+OSPRTBUF    = OSLCDWRBUF + 3 ; Print contents of STDOUT_BUF
+OSPRTCH     = OSPRTBUF + 3   ; Print character
+OSPRTCHK    = OSPRTCH + 3    ; Check printer state, set flags
+OSPRTINIT   = OSPRTCHK + 3   ; Initialise the printer VIA
+OSPRTMSG    = OSPRTINIT + 3  ; Print string pointed to by MSG_VEC
+OSPRTSBUF   = OSPRTMSG + 3   ; Print contents of STR_BUF
 \OSPRTSTMSG = OSPRTSBUF + 3
 ; ZOLADOS
-OSZDDEL     = OSPRTSBUF + 3
-OSZDLOAD    = OSZDDEL + 3
-OSZDSAVE    = OSZDLOAD + 3
+OSZDDEL     = OSPRTSBUF + 3  ; Delete a file on the ZolaDOS server
+OSZDLOAD    = OSZDDEL + 3    ; Load a file from the ZolaDOS server
+OSZDSAVE    = OSZDLOAD + 3   ; Save a block of memory to a file
 ; MISC
-OSDELAY     = OSZDSAVE + 3
-OSUSRINT    = OSDELAY + 3
-OSUSRINTRTN = OSUSRINT + 3
+OSDELAY     = OSZDSAVE + 3   ; General-purpose delay function. Blocking
+OSUSRINT    = OSDELAY + 3    ; For vectoring user-program interrupts
+OSUSRINTRTN = OSUSRINT + 3   ;
 ; SPI
-OSSPIEXCH   = OSUSRINTRTN + 3
-OSRDDATE    = OSSPIEXCH + 3
-OSRDTIME    = OSRDDATE + 3
+OSSPIEXCH   = OSUSRINTRTN + 3 ; Perform an SPI byte exchange
+OSRDDATE    = OSSPIEXCH + 3   ; Read date from RTC
+OSRDTIME    = OSRDDATE + 3    ; Read time from RTC
 
 
-OSSFTRST   = $FFF4         ; Use direct JMP with these (not indirected/vectored)
-OSHRDRST   = $FFF7
+OSSFTRST   = $FFF4         ; Soft reset - use JMP (not JSR)
+OSHRDRST   = $FFF7         ; Hard reset - use JMP (not JSR)
 
 USR_START     = $0800      ; Address where user programs load
 USR_END       = $7FFF      ; Top of user memory
