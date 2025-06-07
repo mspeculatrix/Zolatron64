@@ -53,42 +53,43 @@ ERR_SPI_NOT_PRESENT   = ERR_PRT_NOT_PRESENT + 1     ; 33 SPI I/F not fitted
 \    - os_call_vectors.asm - map functions to vectors
 \    - cfg_page_2.asm - OS Indirection Table
 \-------------------------------------------------------------------------------
+; First entry address ust match address at start of z64-main jump table
 ; READ
-OSGETKEY    = $FF00         ; Must match address at start of z64-main jump table
-OSGETINP    = OSGETKEY + 3      ; FF03
-OSRDASC     = OSGETINP + 3      ; FF06
-OSRDBYTE    = OSRDASC + 3       ; FF09
-OSRDCH      = OSRDBYTE + 3      ; FF0C
-OSRDHBYTE   = OSRDCH + 3        ; FF0F
-OSRDHADDR   = OSRDHBYTE + 3     ; FF12
-OSRDINT16   = OSRDHADDR + 3     ; FF15
-OSRDFNAME   = OSRDINT16 + 3     ; FF18
-OSRDSTR     = OSRDFNAME + 3     ; FF1B
+OSGETKEY    = $FF00          ; Get char; waits for user to enter a key & return
+OSGETINP    = OSGETKEY + 3   ; Create input loop
+OSRDASC     = OSGETINP + 3   ; Get next printable char from STDIN_BUF
+OSRDBYTE    = OSRDASC + 3    ; Read next byte from STDIN_BUF
+OSRDCH      = OSRDBYTE + 3   ; Get next non-space printable char from STDIN_BUF
+OSRDHBYTE   = OSRDCH + 3     ; Read 2 hex chars, convert to 8-bit int
+OSRDHADDR   = OSRDHBYTE + 3  ; Read 4 hex chars, convert to 16-bit int
+OSRDINT16   = OSRDHADDR + 3  ; Read a 16-bit decimal ineteged from STDIN_BUF
+OSRDFNAME   = OSRDINT16 + 3  ; Read string from STDIN_BUF; check valid filename
+OSRDSTR     = OSRDFNAME + 3  ; Read string from STDIN_BUF
 ; WRITE
-OSWRBUF     = OSRDSTR + 3       ; FF1E
-OSWRCH      = OSWRBUF + 3       ; FF21
-OSWRERR     = OSWRCH + 3
-OSWRMSG     = OSWRERR + 3
-OSWROP      = OSWRMSG + 3
-OSWRSBUF    = OSWROP + 3
-OSSOAPP     = OSWRSBUF + 3
-OSSOCH      = OSSOAPP + 3
+OSWRBUF     = OSRDSTR + 3    ; Write STDOUT_BUF to output stream
+OSWRCH      = OSWRBUF + 3    ;
+OSWRERR     = OSWRCH + 3     ;
+OSWRMSG     = OSWRERR + 3    ;
+OSWROP      = OSWRMSG + 3    ;
+OSWRSBUF    = OSWROP + 3     ;
+OSSOAPP     = OSWRSBUF + 3   ;
+OSSOCH      = OSSOAPP + 3    ;
 ; CONVERSIONS
-OSB2BIN     = OSSOCH + 3
-OSB2HEX     = OSB2BIN + 3
-OSB2ISTR    = OSB2HEX + 3
-OSHEX2B     = OSB2ISTR + 3
-OSU16HEX    = OSHEX2B + 3
-OSU16ISTR   = OSU16HEX + 3
-OSHEX2DEC   = OSU16ISTR + 3
+OSB2BIN     = OSSOCH + 3     ;
+OSB2HEX     = OSB2BIN + 3    ;
+OSB2ISTR    = OSB2HEX + 3    ;
+OSHEX2B     = OSB2ISTR + 3   ;
+OSU16HEX    = OSHEX2B + 3    ;
+OSU16ISTR   = OSU16HEX + 3   ;
+OSHEX2DEC   = OSU16ISTR + 3  ;
 ; LCD
-OSLCDINIT   = OSHEX2DEC + 3
-OSLCDCH     = OSLCDINIT + 3
-OSLCDCLS    = OSLCDCH + 3
-OSLCDERR    = OSLCDCLS + 3
-OSLCDMSG    = OSLCDERR + 3
-OSLCDB2HEX  = OSLCDMSG + 3
-OSLCDSBUF   = OSLCDB2HEX + 3
+OSLCDINIT   = OSHEX2DEC + 3  ;
+OSLCDCH     = OSLCDINIT + 3  ;
+OSLCDCLS    = OSLCDCH + 3    ;
+OSLCDERR    = OSLCDCLS + 3   ;
+OSLCDMSG    = OSLCDERR + 3   ;
+OSLCDB2HEX  = OSLCDMSG + 3   ;
+OSLCDSBUF   = OSLCDB2HEX + 3 ;
 OSLCDSC     = OSLCDSBUF + 3
 OSLCDWRBUF  = OSLCDSC + 3
 ; PRINTER
