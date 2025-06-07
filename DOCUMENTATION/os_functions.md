@@ -4,110 +4,59 @@ JSR addresses are the locations of the jump instructions. To call an OS function
 
 FUNC ADDR addresses are the start addressed of the actual function code.
 
-|   |   |   |
-| --- | --- | --- |
+|  |  |  |
+| - | - | - |
 | OS FUNCTION | JSR | FUNC ADDR |
-| --- | --- | --- |
+| - | - | - |
 | OSB2BIN | FF36 | DA0C |
-| --- | --- | --- |
 | OSB2HEX | FF39 | DA2F |
-| --- | --- | --- |
 | OSB2ISTR | FF3C | DA4E |
-| --- | --- | --- |
 | OSDELAY | FF81 | DF65 |
-| --- | --- | --- |
 | OSGETINP | FF03 | DC6D |
-| --- | --- | --- |
 | OSGETKEY | FF00 | DC90 |
-| --- | --- | --- |
 | OSHEX2B | FF3F | DA8B |
-| --- | --- | --- |
 | OSHEX2DEC | FF48 | DAB7 |
-| --- | --- | --- |
 | OSHRDRST | FFF7 |  |
-| --- | --- | --- |
 | OSLCDB2HEX | FF5A | E076 |
-| --- | --- | --- |
 | OSLCDCH | FF4E | E109 |
-| --- | --- | --- |
 | OSLCDCLS | FF51 | E04C |
-| --- | --- | --- |
 | OSLCDERR | FF54 | E130 |
-| --- | --- | --- |
 | OSLCDINIT | FF4B | E055 |
-| --- | --- | --- |
 | OSLCDMSG | FF57 | E0A2 |
-| --- | --- | --- |
 | OSLCDSBUF | FF5D | E094 |
-| --- | --- | --- |
 | OSLCDSC | FF60 | E143 |
-| --- | --- | --- |
 | OSLCDWRBUF | FF63 | E086 |
-| --- | --- | --- |
 | OSPRTBUF | FF66 | E244 |
-| --- | --- | --- |
 | OSPRTCH | FF69 | E157 |
-| --- | --- | --- |
 | OSPRTCHK | FF6C | E1BC |
-| --- | --- | --- |
 | OSPRTINIT | FF6F | E1E5 |
-| --- | --- | --- |
 | OSPRTMSG | FF72 |  |
-| --- | --- | --- |
 | OSPRTSBUF | FF75 | E250 |
-| --- | --- | --- |
 | OSRDASC | FF06 | DCB0 |
-| --- | --- | --- |
 | OSRDBYTE | FF09 | DCC2 |
-| --- | --- | --- |
 | OSRDCH | FF0C | DCE8 |
-| --- | --- | --- |
 | OSRDDATE | FF8D | E3F7 |
-| --- | --- | --- |
 | OSRDFNAME | FF18 | DD84 |
-| --- | --- | --- |
 | OSRDHADDR | FF12 | DE5F |
-| --- | --- | --- |
 | OSRDHBYTE | FF0F | DE97 |
-| --- | --- | --- |
 | OSRDINT16 | FF15 | DCFA |
-| --- | --- | --- |
 | OSRDSTR | FF1B | DE00 |
-| --- | --- | --- |
 | OSRDTIME | FF90 | E437 |
-| --- | --- | --- |
 | OSSFTRST | FFF4 |  |
-| --- | --- | --- |
 | OSSOAPP | FF30 | DEF9 |
-| --- | --- | --- |
 | OSSOCH | FF33 | DEEA |
-| --- | --- | --- |
 | OSSPIEXCH | FF8A | E3EB |
-| --- | --- | --- |
 | OSU16HEX | FF42 | DACD |
-| --- | --- | --- |
 | OSU16ISTR | FF45 | DAF5 |
-| --- | --- | --- |
 | OSUSRINT | FF84 |  |
-| --- | --- | --- |
 | OSUSRINTRTN | FF87 |  |
-| --- | --- | --- |
 | OSWRBUF | FF1E | D611 |
-| --- | --- | --- |
 | OSWRCH | FF21 | D62C |
-| --- | --- | --- |
 | OSWRERR | FF24 | DED4 |
-| --- | --- | --- |
 | OSWRMSG | FF27 | D5E7 |
-| --- | --- | --- |
 | OSWROP | FF2A | D633 |
-| --- | --- | --- |
 | OSWRSBUF | FF2D | D603 |
-| --- | --- | --- |
 | OSZDDEL | FF78 | D726 |
-| --- | --- | --- |
 | OSZDLOAD | FF7B | D74F |
-| --- | --- | --- |
 | OSZDSAVE | FF7E | D7C6 |
-| --- | --- | --- |
-|   |   |   |
+|  |  |  |
