@@ -6,7 +6,7 @@ Notes:
 
 - `<addr>` means a 4-digit hex address - eg, 3FFF.
 - `<hh>` means a 2-digit hex number - eg, 0A.
-- `<filename>` is an ASCII filename with NO extension. ZolaDOS will assume a suirelevanttable extension.
+- `<filename>` is an ASCII filename with NO extension. ZolaDOS will assume a relevant extension.
 - `<filename.ext>` is an ASCII filename WITH extension.
 - `USR_START` is the start of user memory. It's where we load programs. Currently, it's at address $0800.
 - `EXTMEM_START` is the start of extended (paged) ROM/RAM memory - currently $8000.
