@@ -229,9 +229,9 @@ INCLUDE "include/os_call_vectors.asm"
   sta USRP_IFR                    ; and clear flag register
 
   lda #<isr_usrint_rtn            ; Reset user interrupt vector
-  sta OSUSRINT_VEC
+  sta USRINT_VEC
   lda #>isr_usrint_rtn
-  sta OSUSRINT_VEC + 1
+  sta USRINT_VEC + 1
   cli
 
 ; BOOT ROM
@@ -468,8 +468,6 @@ ORG $FF00                     ; Must match address at start of OS Function
   jmp (OSZDSAVE_VEC)
 
   jmp (OSDELAY_VEC)
-  ; jmp (OSUSRINT_VEC)
-  ; jmp (OSUSRINTRTN_VEC)
 
   jmp (OSSPIEXCH_VEC)
   jmp (OSRDDATE_VEC)

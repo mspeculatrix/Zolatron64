@@ -216,9 +216,9 @@
 
 ; OSUSRINT - This is configured by the soft reset routine and also by user s/w
   lda #<isr_usrint_rtn
-  sta OSUSRINTRTN_VEC
+  sta USRINTRTN_VEC
   lda #>isr_usrint_rtn
-  sta OSUSRINTRTN_VEC + 1
+  sta USRINTRTN_VEC + 1
 
 
 .os_call_vectors_end

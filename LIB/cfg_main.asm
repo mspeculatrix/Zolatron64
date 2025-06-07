@@ -106,8 +106,6 @@ OSZDLOAD    = OSZDDEL + 3    ; Load a file from the ZolaDOS server
 OSZDSAVE    = OSZDLOAD + 3   ; Save a block of memory to a file
 ; MISC
 OSDELAY     = OSZDSAVE + 3   ; General-purpose delay function. Blocking
-; OSUSRINT    = OSDELAY + 3    ; Not used
-; OSUSRINTRTN = OSUSRINT + 3   ; Not sure this is needed
 ; SPI
 OSSPIEXCH   = OSDELAY + 3     ; Perform an SPI byte exchange
 OSRDDATE    = OSSPIEXCH + 3   ; Read date from RTC

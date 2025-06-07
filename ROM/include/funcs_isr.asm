@@ -112,8 +112,8 @@ ALIGN &100                ; start on new page
 ; to isr_usrint_rtn. Programs can change this to point to their own interrupt
 ; routines, but must also set the address back if things like serial are going
 ; to work.
-  jmp (OSUSRINT_VEC)
-; The address at OSUSRINTRTN_VEC always points here, to isr_usrint_rtn
+  jmp (USRINT_VEC)
+; The address at USRINTRTN_VEC always points here, to isr_usrint_rtn
 .isr_usrint_rtn                 ; Label for return address - this is important
 
 ; --- END OF CHECKS ------------------------------------------------------------
