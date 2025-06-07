@@ -5,7 +5,7 @@ JSR addresses are the locations of the jump instructions. To call an OS function
 FUNC ADDR addresses are the start addressed of the actual function code.
 
 | OS FUNCTION | JSR | FUNC ADDR |
-|---|---|---|
+|---|:---:|:---:|
 | OSB2BIN | FF36 | DA0C |
 | OSB2HEX | FF39 | DA2F |
 | OSB2ISTR | FF3C | DA4E |
@@ -57,4 +57,3 @@ FUNC ADDR addresses are the start addressed of the actual function code.
 | OSZDDEL | FF78 | D726 |
 | OSZDLOAD | FF7B | D74F |
 | OSZDSAVE | FF7E | D7C6 |
-|  |  |  |
