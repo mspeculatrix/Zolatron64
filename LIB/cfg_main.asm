@@ -55,18 +55,18 @@ ERR_SPI_NOT_PRESENT   = ERR_PRT_NOT_PRESENT + 1     ; 33 SPI I/F not fitted
 \-------------------------------------------------------------------------------
 ; READ
 OSGETKEY    = $FF00         ; Must match address at start of z64-main jump table
-OSGETINP    = OSGETKEY + 3
-OSRDASC     = OSGETINP + 3
-OSRDBYTE    = OSRDASC + 3
-OSRDCH      = OSRDBYTE + 3
-OSRDHBYTE   = OSRDCH + 3
-OSRDHADDR   = OSRDHBYTE + 3
-OSRDINT16   = OSRDHADDR + 3
-OSRDFNAME   = OSRDINT16 + 3
-OSRDSTR     = OSRDFNAME + 3
+OSGETINP    = OSGETKEY + 3      ; FF03
+OSRDASC     = OSGETINP + 3      ; FF06
+OSRDBYTE    = OSRDASC + 3       ; FF09
+OSRDCH      = OSRDBYTE + 3      ; FF0C
+OSRDHBYTE   = OSRDCH + 3        ; FF0F
+OSRDHADDR   = OSRDHBYTE + 3     ; FF12
+OSRDINT16   = OSRDHADDR + 3     ; FF15
+OSRDFNAME   = OSRDINT16 + 3     ; FF18
+OSRDSTR     = OSRDFNAME + 3     ; FF1B
 ; WRITE
-OSWRBUF     = OSRDSTR + 3
-OSWRCH      = OSWRBUF + 3
+OSWRBUF     = OSRDSTR + 3       ; FF1E
+OSWRCH      = OSWRBUF + 3       ; FF21
 OSWRERR     = OSWRCH + 3
 OSWRMSG     = OSWRERR + 3
 OSWROP      = OSWRMSG + 3
