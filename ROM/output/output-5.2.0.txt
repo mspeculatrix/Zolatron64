@@ -198,22 +198,22 @@
      C1DB   8D 56 02   STA &0256
      C1DE   A9 DF      LDA #&DF
      C1E0   8D 57 02   STA &0257
-     C1E3   A9 99      LDA #&99
-     C1E5   8D 5A 02   STA &025A
+     C1E3   A9 EB      LDA #&EB
+     C1E5   8D 58 02   STA &0258
      C1E8   A9 E3      LDA #&E3
-     C1EA   8D 5B 02   STA &025B
-     C1ED   A9 EB      LDA #&EB
-     C1EF   8D 5C 02   STA &025C
+     C1EA   8D 59 02   STA &0259
+     C1ED   A9 F7      LDA #&F7
+     C1EF   8D 5A 02   STA &025A
      C1F2   A9 E3      LDA #&E3
-     C1F4   8D 5D 02   STA &025D
-     C1F7   A9 F7      LDA #&F7
-     C1F9   8D 5E 02   STA &025E
-     C1FC   A9 E3      LDA #&E3
-     C1FE   8D 5F 02   STA &025F
-     C201   A9 37      LDA #&37
-     C203   8D 60 02   STA &0260
-     C206   A9 E4      LDA #&E4
-     C208   8D 61 02   STA &0261
+     C1F4   8D 5B 02   STA &025B
+     C1F7   A9 37      LDA #&37
+     C1F9   8D 5C 02   STA &025C
+     C1FC   A9 E4      LDA #&E4
+     C1FE   8D 5D 02   STA &025D
+     C201   A9 99      LDA #&99
+     C203   8D 5E 02   STA &025E
+     C206   A9 E3      LDA #&E3
+     C208   8D 5F 02   STA &025F
 .os_call_vectors_end
      C20B   20 4B FF   JSR &FF4B
      C20E   A9 FF      LDA #&FF
@@ -325,7 +325,7 @@ End macro LOAD_MSG
      C2CB   A2 0A      LDX #&0A
      C2CD   A9 FF      LDA #&FF
 .spi_chk_sd_init_loop
-     C2CF   20 8A FF   JSR &FF8A
+     C2CF   20 84 FF   JSR &FF84
      C2D2   CA         DEX
      C2D3   D0 FA      BNE &C2CF
 Macro LOAD_MSG:
@@ -451,9 +451,9 @@ End macro LED_ON
      C39A   8D 0E A8   STA &A80E
      C39D   8D 0D A8   STA &A80D
      C3A0   A9 99      LDA #&99
-     C3A2   8D 58 02   STA &0258
+     C3A2   8D 5E 02   STA &025E
      C3A5   A9 E3      LDA #&E3
-     C3A7   8D 59 02   STA &0259
+     C3A7   8D 5F 02   STA &025F
      C3AA   58         CLI
 Macro CHK_EXTMEM_PRESENT:
      C3AB   A5 F5      LDA &F5
@@ -4596,7 +4596,7 @@ End macro PRT_PULSE_DELAY
      E391   A9 FF      LDA #&FF
      E393   8D 02 BF   STA &BF02
 .isr_chk_rtc_next
-     E396   6C 58 02   JMP (&0258)
+     E396   6C 60 02   JMP (&0260)
 .isr_usrint_rtn
 .isr_end_checks
      E399   4C E7 E3   JMP &E3E7
@@ -4727,8 +4727,8 @@ End macro PRT_PULSE_DELAY
      E485   AD 00 07   LDA &0700
      E488   8D 02 BF   STA &BF02
      E48B   68         PLA
-     E48C   20 8A FF   JSR &FF8A
-     E48F   20 8A FF   JSR &FF8A
+     E48C   20 84 FF   JSR &FF84
+     E48F   20 84 FF   JSR &FF84
      E492   A2 FF      LDX #&FF
      E494   8E 02 BF   STX &BF02
      E497   60         RTS
@@ -4802,8 +4802,6 @@ End macro PRT_PULSE_DELAY
      FF84   6C 58 02   JMP (&0258)
      FF87   6C 5A 02   JMP (&025A)
      FF8A   6C 5C 02   JMP (&025C)
-     FF8D   6C 5E 02   JMP (&025E)
-     FF90   6C 60 02   JMP (&0260)
 .reset
      FFF4   4C 4F C3   JMP &C34F
      FFF7   4C 22 C2   JMP &C222

@@ -198,12 +198,6 @@
   sta OSDELAY_VEC
   lda #>delay
   sta OSDELAY_VEC + 1
-; OSUSRINT - This is configured by the soft reset routine and also by user s/w
-
-  lda #<isr_usrint_rtn
-  sta OSUSRINTRTN_VEC
-  lda #>isr_usrint_rtn
-  sta OSUSRINTRTN_VEC + 1
 
   lda #<spi_exchange_byte
   sta OSSPIEXCH_VEC
@@ -219,6 +213,12 @@
   sta OSRDTIME_VEC
   lda #>rtc_read_time
   sta OSRDTIME_VEC + 1
+
+; OSUSRINT - This is configured by the soft reset routine and also by user s/w
+  lda #<isr_usrint_rtn
+  sta OSUSRINTRTN_VEC
+  lda #>isr_usrint_rtn
+  sta OSUSRINTRTN_VEC + 1
 
 
 .os_call_vectors_end

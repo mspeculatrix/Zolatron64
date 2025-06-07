@@ -468,8 +468,8 @@ ORG $FF00                     ; Must match address at start of OS Function
   jmp (OSZDSAVE_VEC)
 
   jmp (OSDELAY_VEC)
-  jmp (OSUSRINT_VEC)
-  jmp (OSUSRINTRTN_VEC)
+  ; jmp (OSUSRINT_VEC)
+  ; jmp (OSUSRINTRTN_VEC)
 
   jmp (OSSPIEXCH_VEC)
   jmp (OSRDDATE_VEC)

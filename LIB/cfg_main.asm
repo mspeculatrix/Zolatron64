@@ -51,7 +51,7 @@ ERR_SPI_NOT_PRESENT   = ERR_PRT_NOT_PRESENT + 1     ; 33 SPI I/F not fitted
 \ Requires corresponding entries in:
 \    - z64-main.asm   - OS Call Jump Table
 \    - os_call_vectors.asm - map functions to vectors
-\    - cfg_page_2.asm - OS Indirection Table
+\    - cfg_page_2.asm - OS Indirection Vector Table
 \-------------------------------------------------------------------------------
 ; First entry address ust match address at start of z64-main jump table
 ; READ
@@ -106,13 +106,12 @@ OSZDLOAD    = OSZDDEL + 3    ; Load a file from the ZolaDOS server
 OSZDSAVE    = OSZDLOAD + 3   ; Save a block of memory to a file
 ; MISC
 OSDELAY     = OSZDSAVE + 3   ; General-purpose delay function. Blocking
-OSUSRINT    = OSDELAY + 3    ; For vectoring user-program interrupts
-OSUSRINTRTN = OSUSRINT + 3   ;
+; OSUSRINT    = OSDELAY + 3    ; Not used
+; OSUSRINTRTN = OSUSRINT + 3   ; Not sure this is needed
 ; SPI
-OSSPIEXCH   = OSUSRINTRTN + 3 ; Perform an SPI byte exchange
+OSSPIEXCH   = OSDELAY + 3     ; Perform an SPI byte exchange
 OSRDDATE    = OSSPIEXCH + 3   ; Read date from RTC
 OSRDTIME    = OSRDDATE + 3    ; Read time from RTC
-
 
 OSSFTRST   = $FFF4         ; Soft reset - use JMP (not JSR)
 OSHRDRST   = $FFF7         ; Hard reset - use JMP (not JSR)

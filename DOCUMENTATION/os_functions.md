@@ -33,21 +33,19 @@ FUNC ADDR addresses are the start addressed of the actual function code.
 | OSRDASC | FF06 | DCB0 | Get next printable char from STDIN_BUF |
 | OSRDBYTE | FF09 | DCC2 | Read next byte from STDIN_BUF |
 | OSRDCH | FF0C | DCE8 | Get next non-space printable char from STDIN_BUF |
-| OSRDDATE | FF8D | E3F7 | Read date from RTC |
+| OSRDDATE | FF87 | E3F7 | Read date from RTC |
 | OSRDFNAME | FF18 | DD84 | Read string from STDIN_BUF |
 | OSRDHADDR | FF12 | DE5F | Read 4 hex chars, convert to 16-bit int |
 | OSRDHBYTE | FF0F | DE97 | Read 2 hex chars, convert to 8-bit int |
 | OSRDINT16 | FF15 | DCFA | Read a 16-bit decimal ineteged from STDIN_BUF |
 | OSRDSTR | FF1B | DE00 | Read string from STDIN_BUF |
-| OSRDTIME | FF90 | E437 | Read time from RTC |
+| OSRDTIME | FF8A | E437 | Read time from RTC |
 | OSSFTRST | FFF4 |  | Soft reset - use JMP (not JSR) |
 | OSSOAPP | FF30 | DEF9 | Append string to STDOUT_BUF |
 | OSSOCH | FF33 | DEEA | Append character to STDOUT_BUF |
-| OSSPIEXCH | FF8A | E3EB | Perform an SPI byte exchange |
+| OSSPIEXCH | FF84 | E3EB | Perform an SPI byte exchange |
 | OSU16HEX | FF42 | DACD | 16-bit value to a 4-char hex string |
 | OSU16ISTR | FF45 | DAF5 | 16-bit value to a decimal string |
-| OSUSRINT | FF84 |  | For vectoring user-program interrupts |
-| OSUSRINTRTN | FF87 |  |  |
 | OSWRBUF | FF1E | D611 | Write STDOUT_BUF to output stream |
 | OSWRCH | FF21 | D62C | Write single character to output stream |
 | OSWRERR | FF24 | DED4 | Write OS error string to output stream |

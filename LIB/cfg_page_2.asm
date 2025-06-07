@@ -61,8 +61,10 @@ OSZDLOAD_VEC    = OSZDDEL_VEC + 2
 OSZDSAVE_VEC    = OSZDLOAD_VEC + 2
 ; MISC
 OSDELAY_VEC     = OSZDSAVE_VEC + 2
-OSUSRINT_VEC    = OSDELAY_VEC + 2   ; Vector for user interrupt service routines
-OSUSRINTRTN_VEC = OSUSRINT_VEC + 2  ; and for returning from these routines
-OSSPIEXCH_VEC   = OSUSRINTRTN_VEC + 2	; SPI exchange byte
+OSSPIEXCH_VEC   = OSDELAY_VEC + 2	; SPI exchange byte
 OSRDDATE_VEC    = OSSPIEXCH_VEC + 2
 OSRDTIME_VEC    = OSRDDATE_VEC + 2
+
+; The following don't need corresponding OS Calls. We only need the vectors
+OSUSRINT_VEC    = OSRDTIME_VEC + 2   ; Vector for user interrupt service routines
+OSUSRINTRTN_VEC = OSUSRINT_VEC + 2  ; and for returning from these routines
