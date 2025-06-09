@@ -134,7 +134,7 @@
 \ ---  RTC_SELECT
 \ ------------------------------------------------------------------------------
 \ Select the device and SPI Mode.
-\ Checks to see if SPI board fitted. If not, returns
+\ Checks to see if SPI board fitted. If not, returns error
 .rtc_select
   stz FUNC_ERR                  ; Zero out error by default
   lda SYS_REG                   ; Load system register

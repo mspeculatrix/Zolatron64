@@ -321,6 +321,7 @@ ALIGN &100                  ; Start on new page
   equs "XCLR",0
   equs "XLOAD",0
   equs "XLS",0
+  equs "XOPEN",0
   equs "XRUN",0
   equs "XSAVE",0
   equs "XSEL",0
