@@ -6,6 +6,7 @@
 
 - Moved stuff in zero page to the high part of the page, starting at $E0.
 - Added OS labels in code & Python script to output lists.
+- Added system VIA constants: basically the same as constants for the LCD VIA, but these new ones are to be used for functions (such as the main timer) that are not specific to the LCD. I might phase out the LCD at some point.
 
 ### 5.1.3
 

@@ -73,14 +73,14 @@
 \ ------------------------------------------------------------------------------
 \ Usage: LP <page>
 \ Expects a two-character hex byte in the input buffer. It uses this as the
-\ high byte of an address and prints out the memory contents for that page (256
-\ bytes). EG: if you enter 'C0', it gives the memory contents for the range
-\ C000-C0FF.
+\ high byte of an address (the low byte being 00) and prints out the memory
+\ contents for that page (256 bytes). EG: if you enter 'C0', it gives the
+\ memory contents for the range C000-C0FF.
 .cmdprcLP
   jsr read_hex_byte         ; Read 2 hex chars from input: result in FUNC_RESULT
   lda FUNC_ERR              ; Check for error
   bne cmdprcLP_fail
-.cmdprcLP_chk_null           ; Check there's nothing left in the RX buffer
+.cmdprcLP_chk_null          ; Check there's nothing left in the RX buffer
   ldx STDIN_IDX
   lda STDIN_BUF,X           ; Should be null. Anything else is a mistake
   bne cmdprcLP_fail

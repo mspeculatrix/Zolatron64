@@ -3,21 +3,21 @@ OS FUNCTION       JSR    FUNC ADDR    Comment
 OSB2BIN          FF36      DA12       1-byte integer value to a binary string
 OSB2HEX          FF39      DA35       8-bit value to 2-char hex string
 OSB2ISTR         FF3C      DA54       8-bit value to decimal integer string
-OSDELAY          FF81      DF6B       General-purpose delay function. Blocking
+OSDELAY          FF81      E0FF       General-purpose delay function. Blocking
 OSGETINP         FF03      DC73       Create input loop
 OSGETKEY         FF00      DC96       Get char, waits for user to enter a key & return
 OSHEX2B          FF3F      DA91       2-char hex string to byte value
 OSHEX2DEC        FF48      DABD       1-byte char (ie, '0' to 'F') to int (0-15)
 OSHRDRST         FFF7                 Hard reset - use JMP (not JSR)
-OSLCDB2HEX       FF5A      E07C       Print byte value as hex
-OSLCDCH          FF4E      E10F       Write char
-OSLCDCLS         FF51      E052       Clear screen
-OSLCDERR         FF54      E136       Write OS error string
-OSLCDINIT        FF4B      E05B       Initialise LCD
-OSLCDMSG         FF57      E0A8       Write text pointed to by MSG_VEC
-OSLCDSBUF        FF5D      E09A       Print contents of STR_BUF
-OSLCDSC          FF60      E149       Set cursor
-OSLCDWRBUF       FF63      E08C       Write STDOUT_BUF
+OSLCDB2HEX       FF5A      E01E       Print byte value as hex
+OSLCDCH          FF4E      E0B1       Write char
+OSLCDCLS         FF51      DFF4       Clear screen
+OSLCDERR         FF54      E0D8       Write OS error string
+OSLCDINIT        FF4B      DFFD       Initialise LCD
+OSLCDMSG         FF57      E04A       Write text pointed to by MSG_VEC
+OSLCDSBUF        FF5D      E03C       Print contents of STR_BUF
+OSLCDSC          FF60      E0EB       Set cursor
+OSLCDWRBUF       FF63      E02E       Write STDOUT_BUF
 OSPRTBUF         FF66      E24A       Print contents of STDOUT_BUF
 OSPRTCH          FF69      E15D       Print character
 OSPRTCHK         FF6C      E1C2       Check printer state, set flags

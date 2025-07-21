@@ -51,7 +51,7 @@
 \ ------------------------------------------------------------------------------
 \ Assumes that SRAM has been put into SRAM_PAGE_MODE using sram_set_WR_mode
 \ ON ENTRY: - TMP_ADDR_A/+1 contains start address
-\ ON EXIT : - Memeory contents have been read into SPI_BUF_32 buffer
+\ ON EXIT : - Memory contents have been read into SPI_BUF_32 buffer
 .sram_read_page
   lda #SRAM_CMD_READ
   jsr sram_start_WR_op

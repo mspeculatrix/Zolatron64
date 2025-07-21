@@ -12,7 +12,7 @@ These extra pins are intended, I believe, for tasks like controlling modems. But
 
 The SC28L92 doesn't require much in the way of support: a crystal and three caps is all you need.
 
-I made one big mistake with this board, though. I added a pullup resistor to the RX line of port A. This was to prevent the line floating and possibly producing spurious 'inputs'. However, this is the line that I connect to the Raspberry Pi's TX pin. The Zolatron operates at 5V and the Pi at 3.3V. Yet I was effectively pulling up the Pi's TX pin to 5V all the time. Long story short, the UART on that particular Raspberry Pi no longer works.
+I made one big mistake with this board, though. I added a pullup resistor to the RX line of port A. This was to prevent the line floating and possibly producing spurious 'inputs'. However, this is the line that I connect to the Raspberry Pi's TX pin. The Zolatron operates at 5V and the Pi at 3.3V. Yes - I was pulling up the Pi's TX pin to 5V all the time. Long story short, the UART on that particular Raspberry Pi no longer works.
 
 I solved the problem by simply removing the pullup resistor. The Pi is always connected and holds that line high anyway. In future, I might be tempted to pull up that line to 3.3V on the Raspberry Pi board.
 

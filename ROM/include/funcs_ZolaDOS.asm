@@ -66,11 +66,11 @@
   lda #%11000000                    ; Setting bit 6 enables Timer 1
   ZD_SET_CO_ON                      ; Signal to server that Z64 is online.
   sta ZD_IER
-  LDA ZD_ACR
-  AND #%00111111                    ; Set timer to one-shot mode
+  lda ZD_ACR
+  and #%00111111                    ; Set timer to one-shot mode
   sta ZD_ACR
   stz ZD_TIMER_COUNT		            ; Zero-out counter
-  stz ZD_TIMER_COUNT + 1            ; "
+  stz ZD_TIMER_COUNT + 1            ;   "
   ; Initialise outputs
   ZD_SET_CA_OFF                     ; Takes line high
   ZD_SET_CR_OFF                     ; Takes line high

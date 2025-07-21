@@ -1,6 +1,6 @@
 # Zolatron64
 
-Homebrew 65C02 backplane-based microcomputer.
+Homebrew 65C02 microcomputer.
 
 This is a backplane design because that allows me to work, fix and improve various parts of the design.
 

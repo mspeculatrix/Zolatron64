@@ -40,7 +40,10 @@ PRG_EXIT_CODE = UINT32_RES + 2
 ; Stream Select Register
 STREAM_SELECT_REG = PRG_EXIT_CODE + 1
 
-LCDV_TIMER_COUNT = STREAM_SELECT_REG + 1  ; times timer interrupt has triggered
-LCDV_TIMER_INTVL = LCDV_TIMER_COUNT + 2   ; value for interval - 2 bytes
+;LCDV_TIMER_COUNT = STREAM_SELECT_REG + 1
+;LCDV_TIMER_INTVL = LCDV_TIMER_COUNT + 2
+; Synonyms for above
+SYS_TIMER_COUNT = STREAM_SELECT_REG + 1   ; times timer interrupt has triggered
+SYS_TIMER_INTVL = SYS_TIMER_COUNT + 2     ; value for interval - 2 bytes
 
-LCD_BUF  = LCDV_TIMER_INTVL + 2   ; next will be LCD_BUF + LCD_BUF_SZ + 1
+LCD_BUF  = SYS_TIMER_INTVL + 2   ; next will be LCD_BUF + LCD_BUF_SZ + 1

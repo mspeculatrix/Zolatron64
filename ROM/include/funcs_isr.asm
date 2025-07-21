@@ -11,7 +11,7 @@ ALIGN &100                ; start on new page
 .isr_zd_timer
   bit ZD_IFR                ; Bit 6 copied to overflow flag
   bvc isr_zd_timer_next     ; Overflow clear, so not this... on to next check
-  bit ZD_T1CL               ; Clears interrupt
+  bit ZD_T1CL               ; Clears 65C22 interrupt flag
   inc ZD_TIMER_COUNT
   bne isr_zd_timer_end
   inc ZD_TIMER_COUNT + 1	  ; Previous byte rolled over
@@ -22,14 +22,14 @@ ALIGN &100                ; start on new page
   jmp isr_exit
 .isr_zd_timer_next
 
-; --- CHECK LCD VIA TIMER ------------------------------------------------------
+; --- CHECK SYSTEM VIA TIMER ------------------------------------------------------
 .isr_lcdvia_timer
-  bit LCDV_IFR                 ; Bit 6 copied to overflow flag
+  bit SYSV_IFR                 ; Bit 6 copied to overflow flag
   bvc isr_lcdvia_timer_next    ; Overflow clear, so not this... on to next check
-  bit LCDV_T1CL		             ; Clears interrupt
-  inc LCDV_TIMER_COUNT
+  bit SYSV_T1CL		             ; Clears interrupt
+  inc SYS_TIMER_COUNT
   bne isr_lcdvia_timer_end
-  inc LCDV_TIMER_COUNT + 1	   ; Previous byte rolled over
+  inc SYS_TIMER_COUNT + 1	   ; Previous byte rolled over
 .isr_lcdvia_timer_end
   jmp isr_exit
 .isr_lcdvia_timer_next

@@ -122,39 +122,39 @@
      C11D   8D 30 02   STA &0230
      C120   A9 DA      LDA #&DA
      C122   8D 31 02   STA &0231
-     C125   A9 5B      LDA #&5B
+     C125   A9 FD      LDA #&FD
      C127   8D 32 02   STA &0232
-     C12A   A9 E0      LDA #&E0
+     C12A   A9 DF      LDA #&DF
      C12C   8D 33 02   STA &0233
-     C12F   A9 0F      LDA #&0F
+     C12F   A9 B1      LDA #&B1
      C131   8D 34 02   STA &0234
-     C134   A9 E1      LDA #&E1
+     C134   A9 E0      LDA #&E0
      C136   8D 35 02   STA &0235
-     C139   A9 52      LDA #&52
+     C139   A9 F4      LDA #&F4
      C13B   8D 36 02   STA &0236
-     C13E   A9 E0      LDA #&E0
+     C13E   A9 DF      LDA #&DF
      C140   8D 37 02   STA &0237
-     C143   A9 36      LDA #&36
+     C143   A9 D8      LDA #&D8
      C145   8D 38 02   STA &0238
-     C148   A9 E1      LDA #&E1
+     C148   A9 E0      LDA #&E0
      C14A   8D 39 02   STA &0239
-     C14D   A9 A8      LDA #&A8
+     C14D   A9 4A      LDA #&4A
      C14F   8D 3A 02   STA &023A
      C152   A9 E0      LDA #&E0
      C154   8D 3B 02   STA &023B
-     C157   A9 7C      LDA #&7C
+     C157   A9 1E      LDA #&1E
      C159   8D 5A FF   STA &FF5A
      C15C   A9 E0      LDA #&E0
      C15E   8D 5B FF   STA &FF5B
-     C161   A9 9A      LDA #&9A
+     C161   A9 3C      LDA #&3C
      C163   8D 3E 02   STA &023E
      C166   A9 E0      LDA #&E0
      C168   8D 3F 02   STA &023F
-     C16B   A9 49      LDA #&49
+     C16B   A9 EB      LDA #&EB
      C16D   8D 40 02   STA &0240
-     C170   A9 E1      LDA #&E1
+     C170   A9 E0      LDA #&E0
      C172   8D 41 02   STA &0241
-     C175   A9 8C      LDA #&8C
+     C175   A9 2E      LDA #&2E
      C177   8D 42 02   STA &0242
      C17A   A9 E0      LDA #&E0
      C17C   8D 43 02   STA &0243
@@ -194,9 +194,9 @@
      C1D1   8D 54 02   STA &0254
      C1D4   A9 D7      LDA #&D7
      C1D6   8D 55 02   STA &0255
-     C1D9   A9 6B      LDA #&6B
+     C1D9   A9 FF      LDA #&FF
      C1DB   8D 56 02   STA &0256
-     C1DE   A9 DF      LDA #&DF
+     C1DE   A9 E0      LDA #&E0
      C1E0   8D 57 02   STA &0257
      C1E3   A9 EB      LDA #&EB
      C1E5   8D 58 02   STA &0258
@@ -287,14 +287,14 @@ Macro PRT_MSG:
      C282   85 E0      STA &E0
      C284   A9 D4      LDA #&D4
      C286   85 E1      STA &E1
-     C288   20 A8 E0   JSR &E0A8
+     C288   20 4A E0   JSR &E04A
 End macro PRT_MSG
 Macro PRT_MSG:
      C28B   A9 03      LDA #&03
      C28D   85 E0      STA &E0
      C28F   A9 C0      LDA #&C0
      C291   85 E1      STA &E1
-     C293   20 A8 E0   JSR &E0A8
+     C293   20 4A E0   JSR &E04A
 End macro PRT_MSG
      C296   20 83 E1   JSR &E183
      C299   9C 02 BF   STZ &BF02
@@ -4032,313 +4032,313 @@ End macro LOAD_MSG
      DF68   85 E5      STA &E5
 .extmem_readset_bank_end
      DF6A   60         RTS
-._OSDELAY
-.delay
-     DF6B   48         PHA
-     DF6C   9C 47 04   STZ &0447
-     DF6F   9C 48 04   STZ &0448
-     DF72   AD 0E A0   LDA &A00E
-     DF75   09 C0      ORA #&C0
-     DF77   8D 0E A0   STA &A00E
-     DF7A   A9 40      LDA #&40
-     DF7C   8D 0B A0   STA &A00B
-     DF7F   A9 E6      LDA #&E6
-     DF81   8D 04 A0   STA &A004
-     DF84   A9 03      LDA #&03
-     DF86   8D 05 A0   STA &A005
-.delay_loop
-     DF89   A9 64      LDA #&64
-.nop_loop
-     DF8B   EA         NOP
-     DF8C   3A         DEC A
-     DF8D   D0 FC      BNE &DF8B
-     DF8F   20 A4 DF   JSR &DFA4
-     DF92   A5 E4      LDA &E4
-     DF94   C9 00      CMP #&00
-     DF96   F0 F1      BEQ &DF89
-     DF98   AD 0E A0   LDA &A00E
-     DF9B   29 7F      AND #&7F
-     DF9D   8D 0E A0   STA &A00E
-     DFA0   68         PLA
-     DFA1   64 E4      STZ &E4
-     DFA3   60         RTS
-.delay_timer_chk
-     DFA4   78         SEI
-     DFA5   AD 48 04   LDA &0448
-     DFA8   CD 4A 04   CMP &044A
-     DFAB   90 11      BCC &DFBE
-     DFAD   D0 14      BNE &DFC3
-     DFAF   AD 47 04   LDA &0447
-     DFB2   CD 49 04   CMP &0449
-     DFB5   90 07      BCC &DFBE
-     DFB7   D0 0A      BNE &DFC3
-     DFB9   A9 01      LDA #&01
-     DFBB   4C C5 DF   JMP &DFC5
-.delay_timer_chk_less_than
-     DFBE   A9 00      LDA #&00
-     DFC0   4C C5 DF   JMP &DFC5
-.delay_timer_chk_more_than
-     DFC3   A9 02      LDA #&02
-.delay_timer_chk_end
-     DFC5   85 E4      STA &E4
-     DFC7   58         CLI
-     DFC8   60         RTS
 .lcd_clear_buf
-     DFC9   A0 00      LDY #&00
-     DFCB   A9 20      LDA #&20
+     DF6B   A0 00      LDY #&00
+     DF6D   A9 20      LDA #&20
 .lcd_clear_buf_next
-     DFCD   99 4B 04   STA &044B,Y
-     DFD0   C8         INY
-     DFD1   C0 54      CPY #&54
-     DFD3   D0 F8      BNE &DFCD
-     DFD5   60         RTS
+     DF6F   99 4B 04   STA &044B,Y
+     DF72   C8         INY
+     DF73   C0 54      CPY #&54
+     DF75   D0 F8      BNE &DF6F
+     DF77   60         RTS
 .lcd_clear_sig
-     DFD6   48         PHA
-     DFD7   AD 01 A0   LDA &A001
-     DFDA   29 1F      AND #&1F
-     DFDC   8D 01 A0   STA &A001
-     DFDF   68         PLA
-     DFE0   60         RTS
+     DF78   48         PHA
+     DF79   AD 01 A0   LDA &A001
+     DF7C   29 1F      AND #&1F
+     DF7E   8D 01 A0   STA &A001
+     DF81   68         PLA
+     DF82   60         RTS
 .lcd_cmd
-     DFE1   20 25 E0   JSR &E025
-     DFE4   8D 00 A0   STA &A000
-     DFE7   20 D6 DF   JSR &DFD6
+     DF83   20 C7 DF   JSR &DFC7
+     DF86   8D 00 A0   STA &A000
+     DF89   20 78 DF   JSR &DF78
 Macro LCD_SET_CTL:
-     DFEA   AD 01 A0   LDA &A001
-     DFED   29 1F      AND #&1F
-     DFEF   09 80      ORA #&80
-     DFF1   8D 01 A0   STA &A001
+     DF8C   AD 01 A0   LDA &A001
+     DF8F   29 1F      AND #&1F
+     DF91   09 80      ORA #&80
+     DF93   8D 01 A0   STA &A001
 End macro LCD_SET_CTL
-     DFF4   20 D6 DF   JSR &DFD6
-     DFF7   60         RTS
+     DF96   20 78 DF   JSR &DF78
+     DF99   60         RTS
 .lcd_prt_linebuf
-     DFF8   48         PHA
-     DFF9   DA         PHX
-     DFFA   5A         PHY
-     DFFB   A2 00      LDX #&00
-     DFFD   20 49 E1   JSR &E149
-     E000   A9 00      LDA #&00
+     DF9A   48         PHA
+     DF9B   DA         PHX
+     DF9C   5A         PHY
+     DF9D   A2 00      LDX #&00
+     DF9F   20 EB E0   JSR &E0EB
+     DFA2   A9 00      LDA #&00
 .lcd_prt_linebuf_set_offset
-     E002   C0 00      CPY #&00
-     E004   F0 07      BEQ &E00D
-     E006   18         CLC
-     E007   69 15      ADC #&15
-     E009   88         DEY
-     E00A   4C 02 E0   JMP &E002
+     DFA4   C0 00      CPY #&00
+     DFA6   F0 07      BEQ &DFAF
+     DFA8   18         CLC
+     DFA9   69 15      ADC #&15
+     DFAB   88         DEY
+     DFAC   4C A4 DF   JMP &DFA4
 .lcd_prt_linebuf_prt
-     E00D   A8         TAY
-     E00E   A2 00      LDX #&00
+     DFAF   A8         TAY
+     DFB0   A2 00      LDX #&00
 .lcd_prt_linebuf_prtchr
-     E010   B9 4B 04   LDA &044B,Y
-     E013   F0 0C      BEQ &E021
-     E015   20 0F E1   JSR &E10F
-     E018   C8         INY
-     E019   E8         INX
-     E01A   E0 15      CPX #&15
-     E01C   F0 03      BEQ &E021
-     E01E   4C 10 E0   JMP &E010
+     DFB2   B9 4B 04   LDA &044B,Y
+     DFB5   F0 0C      BEQ &DFC3
+     DFB7   20 B1 E0   JSR &E0B1
+     DFBA   C8         INY
+     DFBB   E8         INX
+     DFBC   E0 15      CPX #&15
+     DFBE   F0 03      BEQ &DFC3
+     DFC0   4C B2 DF   JMP &DFB2
 .lcd_prt_linebuf_end
-     E021   7A         PLY
-     E022   FA         PLX
-     E023   68         PLA
-     E024   60         RTS
+     DFC3   7A         PLY
+     DFC4   FA         PLX
+     DFC5   68         PLA
+     DFC6   60         RTS
 .lcd_wait
-     E025   48         PHA
-     E026   A9 00      LDA #&00
-     E028   8D 02 A0   STA &A002
+     DFC7   48         PHA
+     DFC8   A9 00      LDA #&00
+     DFCA   8D 02 A0   STA &A002
 .lcd_busy
 Macro LCD_SET_CTL:
-     E02B   AD 01 A0   LDA &A001
-     E02E   29 1F      AND #&1F
-     E030   09 40      ORA #&40
-     E032   8D 01 A0   STA &A001
+     DFCD   AD 01 A0   LDA &A001
+     DFD0   29 1F      AND #&1F
+     DFD2   09 40      ORA #&40
+     DFD4   8D 01 A0   STA &A001
 End macro LCD_SET_CTL
-     E035   09 C0      ORA #&C0
-     E037   8D 01 A0   STA &A001
-     E03A   AD 00 A0   LDA &A000
-     E03D   29 80      AND #&80
-     E03F   D0 EA      BNE &E02B
+     DFD7   09 C0      ORA #&C0
+     DFD9   8D 01 A0   STA &A001
+     DFDC   AD 00 A0   LDA &A000
+     DFDF   29 80      AND #&80
+     DFE1   D0 EA      BNE &DFCD
 Macro LCD_SET_CTL:
-     E041   AD 01 A0   LDA &A001
-     E044   29 1F      AND #&1F
-     E046   09 40      ORA #&40
-     E048   8D 01 A0   STA &A001
+     DFE3   AD 01 A0   LDA &A001
+     DFE6   29 1F      AND #&1F
+     DFE8   09 40      ORA #&40
+     DFEA   8D 01 A0   STA &A001
 End macro LCD_SET_CTL
-     E04B   A9 FF      LDA #&FF
-     E04D   8D 02 A0   STA &A002
-     E050   68         PLA
-     E051   60         RTS
+     DFED   A9 FF      LDA #&FF
+     DFEF   8D 02 A0   STA &A002
+     DFF2   68         PLA
+     DFF3   60         RTS
 ._OSLCDCLS
 .lcd_cls
-     E052   20 C9 DF   JSR &DFC9
-     E055   A9 01      LDA #&01
-     E057   20 E1 DF   JSR &DFE1
-     E05A   60         RTS
+     DFF4   20 6B DF   JSR &DF6B
+     DFF7   A9 01      LDA #&01
+     DFF9   20 83 DF   JSR &DF83
+     DFFC   60         RTS
 ._OSLCDINIT
 .lcd_init
-     E05B   A5 F5      LDA &F5
-     E05D   09 20      ORA #&20
-     E05F   85 F5      STA &F5
-     E061   A9 FF      LDA #&FF
-     E063   8D 02 A0   STA &A002
-     E066   8D 03 A0   STA &A003
-     E069   A9 38      LDA #&38
-     E06B   20 E1 DF   JSR &DFE1
-     E06E   A9 0C      LDA #&0C
-     E070   20 E1 DF   JSR &DFE1
-     E073   A9 01      LDA #&01
-     E075   20 E1 DF   JSR &DFE1
-     E078   20 52 E0   JSR &E052
-     E07B   60         RTS
+     DFFD   A5 F5      LDA &F5
+     DFFF   09 20      ORA #&20
+     E001   85 F5      STA &F5
+     E003   A9 FF      LDA #&FF
+     E005   8D 02 A0   STA &A002
+     E008   8D 03 A0   STA &A003
+     E00B   A9 38      LDA #&38
+     E00D   20 83 DF   JSR &DF83
+     E010   A9 0C      LDA #&0C
+     E012   20 83 DF   JSR &DF83
+     E015   A9 01      LDA #&01
+     E017   20 83 DF   JSR &DF83
+     E01A   20 F4 DF   JSR &DFF4
+     E01D   60         RTS
 ._OSLCDB2HEX
 .lcd_print_byte
-     E07C   20 35 DA   JSR &DA35
-     E07F   AD 0B 04   LDA &040B
-     E082   20 0F E1   JSR &E10F
-     E085   AD 0C 04   LDA &040C
-     E088   20 0F E1   JSR &E10F
-     E08B   60         RTS
+     E01E   20 35 DA   JSR &DA35
+     E021   AD 0B 04   LDA &040B
+     E024   20 B1 E0   JSR &E0B1
+     E027   AD 0C 04   LDA &040C
+     E02A   20 B1 E0   JSR &E0B1
+     E02D   60         RTS
 ._OSLCDWRBUF
 .lcd_prt_buf
-     E08C   48         PHA
-     E08D   A9 80      LDA #&80
-     E08F   85 E0      STA &E0
-     E091   A9 03      LDA #&03
-     E093   85 E1      STA &E1
-     E095   20 A8 E0   JSR &E0A8
-     E098   68         PLA
-     E099   60         RTS
+     E02E   48         PHA
+     E02F   A9 80      LDA #&80
+     E031   85 E0      STA &E0
+     E033   A9 03      LDA #&03
+     E035   85 E1      STA &E1
+     E037   20 4A E0   JSR &E04A
+     E03A   68         PLA
+     E03B   60         RTS
 ._OSLCDSBUF
 .lcd_prt_sbuf
-     E09A   48         PHA
-     E09B   A9 0B      LDA #&0B
-     E09D   85 E0      STA &E0
-     E09F   A9 04      LDA #&04
-     E0A1   85 E1      STA &E1
-     E0A3   20 A8 E0   JSR &E0A8
-     E0A6   68         PLA
-     E0A7   60         RTS
+     E03C   48         PHA
+     E03D   A9 0B      LDA #&0B
+     E03F   85 E0      STA &E0
+     E041   A9 04      LDA #&04
+     E043   85 E1      STA &E1
+     E045   20 4A E0   JSR &E04A
+     E048   68         PLA
+     E049   60         RTS
 ._OSLCDMSG
 .lcd_println
-     E0A8   48         PHA
-     E0A9   DA         PHX
-     E0AA   5A         PHY
-     E0AB   20 FE E0   JSR &E0FE
+     E04A   48         PHA
+     E04B   DA         PHX
+     E04C   5A         PHY
+     E04D   20 A0 E0   JSR &E0A0
 .lcd_println_newline
-     E0AE   98         TYA
-     E0AF   AA         TAX
-     E0B0   A0 00      LDY #&00
+     E050   98         TYA
+     E051   AA         TAX
+     E052   A0 00      LDY #&00
 .lcd_println_new_txt
-     E0B2   B1 E0      LDA (&E0),Y
-     E0B4   F0 1E      BEQ &E0D4
-     E0B6   C9 0A      CMP #&0A
-     E0B8   F0 0C      BEQ &E0C6
-     E0BA   9D 4B 04   STA &044B,X
-     E0BD   C8         INY
-     E0BE   E8         INX
-     E0BF   E0 54      CPX #&54
-     E0C1   F0 17      BEQ &E0DA
-     E0C3   4C B2 E0   JMP &E0B2
+     E054   B1 E0      LDA (&E0),Y
+     E056   F0 1E      BEQ &E076
+     E058   C9 0A      CMP #&0A
+     E05A   F0 0C      BEQ &E068
+     E05C   9D 4B 04   STA &044B,X
+     E05F   C8         INY
+     E060   E8         INX
+     E061   E0 54      CPX #&54
+     E063   F0 17      BEQ &E07C
+     E065   4C 54 E0   JMP &E054
 .lcd_println_addline
-     E0C6   C8         INY
-     E0C7   5A         PHY
-     E0C8   20 EC E0   JSR &E0EC
-     E0CB   20 FE E0   JSR &E0FE
-     E0CE   98         TYA
-     E0CF   AA         TAX
-     E0D0   7A         PLY
-     E0D1   4C B2 E0   JMP &E0B2
+     E068   C8         INY
+     E069   5A         PHY
+     E06A   20 8E E0   JSR &E08E
+     E06D   20 A0 E0   JSR &E0A0
+     E070   98         TYA
+     E071   AA         TAX
+     E072   7A         PLY
+     E073   4C 54 E0   JMP &E054
 .lcd_println_linedone
-     E0D4   20 EC E0   JSR &E0EC
-     E0D7   4C DE E0   JMP &E0DE
+     E076   20 8E E0   JSR &E08E
+     E079   4C 80 E0   JMP &E080
 .lcd_println_terminate
-     E0DA   CA         DEX
-     E0DB   9E 4B 04   STZ &044B,X
+     E07C   CA         DEX
+     E07D   9E 4B 04   STZ &044B,X
 .lcd_println_refresh
-     E0DE   A0 00      LDY #&00
+     E080   A0 00      LDY #&00
 .lcd_println_refresh_loop
-     E0E0   20 F8 DF   JSR &DFF8
-     E0E3   C8         INY
-     E0E4   C0 04      CPY #&04
-     E0E6   D0 F8      BNE &E0E0
-     E0E8   7A         PLY
-     E0E9   FA         PLX
-     E0EA   68         PLA
-     E0EB   60         RTS
+     E082   20 9A DF   JSR &DF9A
+     E085   C8         INY
+     E086   C0 04      CPY #&04
+     E088   D0 F8      BNE &E082
+     E08A   7A         PLY
+     E08B   FA         PLX
+     E08C   68         PLA
+     E08D   60         RTS
 .lcd_println_padline
-     E0EC   A9 20      LDA #&20
+     E08E   A9 20      LDA #&20
 .lcd_println_padline_next
-     E0EE   E0 54      CPX #&54
-     E0F0   F0 07      BEQ &E0F9
-     E0F2   9D 4B 04   STA &044B,X
-     E0F5   E8         INX
-     E0F6   4C EE E0   JMP &E0EE
+     E090   E0 54      CPX #&54
+     E092   F0 07      BEQ &E09B
+     E094   9D 4B 04   STA &044B,X
+     E097   E8         INX
+     E098   4C 90 E0   JMP &E090
 .lcd_println_padline_done
-     E0F9   CA         DEX
-     E0FA   9E 4B 04   STZ &044B,X
-     E0FD   60         RTS
+     E09B   CA         DEX
+     E09C   9E 4B 04   STZ &044B,X
+     E09F   60         RTS
 .lcd_println_shiftbuf
-     E0FE   A2 15      LDX #&15
-     E100   A0 00      LDY #&00
+     E0A0   A2 15      LDX #&15
+     E0A2   A0 00      LDY #&00
 .lcd_println_shiftbuf_loop
-     E102   BD 4B 04   LDA &044B,X
-     E105   99 4B 04   STA &044B,Y
-     E108   E8         INX
-     E109   C8         INY
-     E10A   E0 54      CPX #&54
-     E10C   D0 F4      BNE &E102
-     E10E   60         RTS
+     E0A4   BD 4B 04   LDA &044B,X
+     E0A7   99 4B 04   STA &044B,Y
+     E0AA   E8         INX
+     E0AB   C8         INY
+     E0AC   E0 54      CPX #&54
+     E0AE   D0 F4      BNE &E0A4
+     E0B0   60         RTS
 ._OSLCDCH
 .lcd_prt_chr
-     E10F   48         PHA
-     E110   20 25 E0   JSR &E025
-     E113   8D 00 A0   STA &A000
+     E0B1   48         PHA
+     E0B2   20 C7 DF   JSR &DFC7
+     E0B5   8D 00 A0   STA &A000
 Macro LCD_SET_CTL:
-     E116   AD 01 A0   LDA &A001
-     E119   29 1F      AND #&1F
-     E11B   09 20      ORA #&20
-     E11D   8D 01 A0   STA &A001
+     E0B8   AD 01 A0   LDA &A001
+     E0BB   29 1F      AND #&1F
+     E0BD   09 20      ORA #&20
+     E0BF   8D 01 A0   STA &A001
 End macro LCD_SET_CTL
 Macro LCD_SET_CTL:
-     E120   AD 01 A0   LDA &A001
-     E123   29 1F      AND #&1F
-     E125   09 A0      ORA #&A0
-     E127   8D 01 A0   STA &A001
+     E0C2   AD 01 A0   LDA &A001
+     E0C5   29 1F      AND #&1F
+     E0C7   09 A0      ORA #&A0
+     E0C9   8D 01 A0   STA &A001
 End macro LCD_SET_CTL
 Macro LCD_SET_CTL:
-     E12A   AD 01 A0   LDA &A001
-     E12D   29 1F      AND #&1F
-     E12F   09 20      ORA #&20
-     E131   8D 01 A0   STA &A001
+     E0CC   AD 01 A0   LDA &A001
+     E0CF   29 1F      AND #&1F
+     E0D1   09 20      ORA #&20
+     E0D3   8D 01 A0   STA &A001
 End macro LCD_SET_CTL
-     E134   68         PLA
-     E135   60         RTS
+     E0D6   68         PLA
+     E0D7   60         RTS
 ._OSLCDERR
 .lcd_prt_err
-     E136   A5 E5      LDA &E5
-     E138   3A         DEC A
-     E139   0A         ASL A
-     E13A   AA         TAX
-     E13B   BD F7 D0   LDA &D0F7,X
-     E13E   85 E0      STA &E0
-     E140   BD F8 D0   LDA &D0F8,X
-     E143   85 E1      STA &E1
-     E145   20 A8 E0   JSR &E0A8
-     E148   60         RTS
+     E0D8   A5 E5      LDA &E5
+     E0DA   3A         DEC A
+     E0DB   0A         ASL A
+     E0DC   AA         TAX
+     E0DD   BD F7 D0   LDA &D0F7,X
+     E0E0   85 E0      STA &E0
+     E0E2   BD F8 D0   LDA &D0F8,X
+     E0E5   85 E1      STA &E1
+     E0E7   20 4A E0   JSR &E04A
+     E0EA   60         RTS
 ._OSLCDSC
 .lcd_set_cursor
-     E149   8E 02 04   STX &0402
-     E14C   B9 59 E1   LDA &E159,Y
-     E14F   18         CLC
-     E150   6D 02 04   ADC &0402
-     E153   09 80      ORA #&80
-     E155   20 E1 DF   JSR &DFE1
-     E158   60         RTS
+     E0EB   8E 02 04   STX &0402
+     E0EE   B9 FB E0   LDA &E0FB,Y
+     E0F1   18         CLC
+     E0F2   6D 02 04   ADC &0402
+     E0F5   09 80      ORA #&80
+     E0F7   20 83 DF   JSR &DF83
+     E0FA   60         RTS
 .lcd_ln_base_addr
-     E159   00
-     E15A   40
-     E15B   14
-     E15C   54
+     E0FB   00
+     E0FC   40
+     E0FD   14
+     E0FE   54
+._OSDELAY
+.delay
+     E0FF   48         PHA
+     E100   9C 47 04   STZ &0447
+     E103   9C 48 04   STZ &0448
+     E106   AD 0E A0   LDA &A00E
+     E109   09 C0      ORA #&C0
+     E10B   8D 0E A0   STA &A00E
+     E10E   A9 40      LDA #&40
+     E110   8D 0B A0   STA &A00B
+     E113   A9 E6      LDA #&E6
+     E115   8D 04 A0   STA &A004
+     E118   A9 03      LDA #&03
+     E11A   8D 05 A0   STA &A005
+.delay_loop
+     E11D   A9 64      LDA #&64
+.nop_loop
+     E11F   EA         NOP
+     E120   3A         DEC A
+     E121   D0 FC      BNE &E11F
+     E123   20 38 E1   JSR &E138
+     E126   A5 E4      LDA &E4
+     E128   C9 00      CMP #&00
+     E12A   F0 F1      BEQ &E11D
+     E12C   AD 0E A0   LDA &A00E
+     E12F   29 7F      AND #&7F
+     E131   8D 0E A0   STA &A00E
+     E134   68         PLA
+     E135   64 E4      STZ &E4
+     E137   60         RTS
+.delay_timer_chk
+     E138   78         SEI
+     E139   AD 48 04   LDA &0448
+     E13C   CD 4A 04   CMP &044A
+     E13F   90 11      BCC &E152
+     E141   D0 14      BNE &E157
+     E143   AD 47 04   LDA &0447
+     E146   CD 49 04   CMP &0449
+     E149   90 07      BCC &E152
+     E14B   D0 0A      BNE &E157
+     E14D   A9 01      LDA #&01
+     E14F   4C 59 E1   JMP &E159
+.delay_timer_chk_less_than
+     E152   A9 00      LDA #&00
+     E154   4C 59 E1   JMP &E159
+.delay_timer_chk_more_than
+     E157   A9 02      LDA #&02
+.delay_timer_chk_end
+     E159   85 E4      STA &E4
+     E15B   58         CLI
+     E15C   60         RTS
 ._OSPRTCH
 .prt_char
 Macro LED_ON:
