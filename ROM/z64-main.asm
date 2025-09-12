@@ -40,10 +40,10 @@ INCLUDE "../LIB/cfg_spi_rtc_ds3234.asm"
 ORG $8000              ; Using only the top 16KB of a 32KB EEPROM. This is
                        ; where the bytes start for the ROM file, but...
 .startrom
-ORG ROM_START          ; This is where the actual code starts.
+ORG ROM_START               ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs VSTR, 0
+  equs VSTR, 0              ; VSTR gets inserted during assembly
 .startcode
   sei                       ; Don't interrupt me yet
   cld                       ; We don' need no steenkin' BCD
@@ -394,7 +394,7 @@ INCLUDE "include/funcs_rtc_core.asm"
 \ ---  NMI HANDLER
 \-------------------------------------------------------------------------------
 ALIGN &100                                        ; Start on new page
-.NMI_HANDLER                                      ; For future development
+.NMI_handler                                      ; For future development
 .exit_nmi
   rti
 
@@ -473,15 +473,17 @@ ORG $FF00                     ; Must match address at start of OS Function
   jmp (OSSPIEXCH_VEC)
   jmp (OSRDDATE_VEC)
   jmp (OSRDTIME_VEC)
+.OS_CALL_JUMP_TABLE_END
 
 ORG $FFF4
+.soft_reset
+  jmp SOFT_RESET                      ; $FFF4 - Print prompt, go to mainloop
 .reset
-  jmp SOFT_RESET                      ; Print prompt and go to start of mainloop
-  jmp MAIN                            ; Harder reset - go to start of ROM code
+  jmp MAIN                            ; $FFF7 - Harder reset
 .boot
-  equw NMI_HANDLER                          ; Vector for NMI
-  equw startcode                            ; Reset vector to start of ROM code
-  equw IRQ_handler                          ; Vector for ISR
+  equw NMI_handler                    ; $FFFA - Vector for NMI
+  equw startcode                      ; $FFFC - Reset vector
+  equw IRQ_handler                    ; $FFFE - Vector for ISR
 
 .endrom
 

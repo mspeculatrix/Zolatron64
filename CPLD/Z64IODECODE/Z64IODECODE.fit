@@ -1,7 +1,7 @@
-Atmel ATF1504AS Fitter Version 1.8.7.8 ,running Sat Sep 09 10:18:02 2023
+Atmel ATF1504AS Fitter Version 1.8.7.8 ,running Thu Aug 07 10:10:14 2025
 
 
-fit1504 E:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE.tt2 -CUPL -dev P1504C44 -JTAG ON -logic_doubling off
+fit1504 e:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE.tt2 -CUPL -dev P1504C44 -JTAG ON -logic_doubling off
 
 
 ****** Initial fitting strategy and property ******
@@ -48,7 +48,7 @@ fit1504 E:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE.tt2 -CUPL
  ITD2 = ON
  Fast_inlatch = off
  *******************************
-Info: E:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE uses 95% of the pins available in device PLCC44
+Info: e:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE uses 95% of the pins available in device PLCC44
   If you wish to have more pins available for future logic changes
   Atmel  recommends using a larger device
 ---------------------------------------------------------
@@ -216,7 +216,7 @@ IO_EN			(MC1	P)   : MUX 23		Ref (C33p)
 AEL			(MC2	FB)  : MUX 33		Ref (GCLK)
 A15			(MC8	P)   : MUX 37		Ref (D53p)
 
-Creating JEDEC file E:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE.jed ...
+Creating JEDEC file e:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE.jed ...
 
 PLCC44 programmed logic:
 -----------------------------------
@@ -401,7 +401,7 @@ Total cascade used 		0
 Total input pins 		17
 Total output pins 		19
 Total Pts 			19
-Creating pla file E:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE.tt3 with 0 inputs 0 outputs, 0 pins 0 nodes and 0 pterms...
+Creating pla file e:\NasSync\DEV\Dev-6502\Zolatron\CPLD\Z64IODECODE\\Z64IODECODE.tt3 with 0 inputs 0 outputs, 0 pins 0 nodes and 0 pterms...
 
 ----------------  End fitter, Design FITS
 $Device PLCC44 fits 
