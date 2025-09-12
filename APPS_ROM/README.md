@@ -1,6 +1,6 @@
 # ROMs for the Zolatron 64
 
-This folder will contain software designed to be run from ROMs sitting in the extended memory section starting at address $8000. They might be loaded into RAM in the extended memory, using the XLOAD command or might be burned into EEPROMs.
+This folder will contain software designed to be run from ROMs sitting in the extended memory section starting at address $8000. They are loaded into RAM in the extended memory, using the XLOAD command or might be burned into EEPROMs.
 
 The maximum size of each program is 8K.
 
