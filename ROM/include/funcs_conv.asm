@@ -8,6 +8,7 @@
 \ ON ENTRY: Byte to be converted must be in A.
 \ ON EXIT : Nul-terminated string STR_BUF. Byte 8 is null terminator.
 \ A - O     X - P     Y - P
+._OSB2BIN
 .byte_to_bin
   pha : phx : phy
   sta TMP_VAL
@@ -37,6 +38,7 @@
 \ ON EXIT : String in three bytes starting at STR_BUF. Third byte is a null
 \           terminator.
 \ A - O     X - P     Y - P
+._OSB2HEX
 .byte_to_hex_str
   phx : phy
   tax                           ; Keep a copy of A in X for later
@@ -65,6 +67,7 @@
 \ ON EXIT : - STR_BUF contains decimal string representation, nul-terminated.
 \           - FUNC_RESULT contains number of digits (not incl null terminator)
 \ A - O     X - P     Y - P
+._OSB2ISTR
 .byte_to_int_str
   pha : phx : phy
   stz TMP_IDX             ; Keep track of digits in buffer
@@ -108,6 +111,7 @@
 \ ON EXIT : - Byte value is in FUNC_RESULT.
 \           - Error in FUNC_ERR
 \ A - P     X - P     Y - n/a
+._OSHEX2B
 .hex_str_to_byte              ; assumes text is in BYTE_CONV_H and BYTE_CONV_L
   pha : phx
   stz FUNC_ERR                ; Zero out function error
@@ -145,6 +149,7 @@
 \ ON EXIT : - A contains corresponding numeric value
 \           - Error in FUNC_ERR
 \ A - n/a     X - P     Y - n/a
+._OSHEX2DEC
 .asc_hex_to_dec
   phx
   stz FUNC_ERR                          ; Zero-out error
@@ -171,6 +176,7 @@
 \ ON ENTRY: 16-bit value expected in TMP_ADDR_A/+1
 \ ON EXIT : Hex string in STR_BUF
 \ A - P     X - n/a     Y - n/a
+._OSU16HEX
 .uint16_to_hex_str
   pha
   lda TMP_ADDR_A_L
@@ -198,6 +204,7 @@
 \ ON ENTRY: - 16-bit value expected in MATH_TMP_A/+1
 \ ON EXIT : - String in STR_BUF
 \ A - P     X - P     Y - P
+._OSU16ISTR
 .uint16_intstr
   pha : phx : phy
   ; stz TMP_IDX             ; Keep track of digits in buffer

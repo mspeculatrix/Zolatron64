@@ -221,6 +221,7 @@
 \ ON EXIT : - Input text is in STDIN_BUF and STDIN_IDX is set.
 \           - STDIN_NUL_RCVD_FL is cleared.
 \ A - O     X - n/a     Y - n/a
+._OSGETINP
 .get_input
   stz STDIN_IDX                         ; Zero out input buffer
   stz STDIN_BUF
@@ -251,6 +252,7 @@
 \             pressed.
 \           - STDIN_IDX and STDIN_BUF are both reset.
 \ A - O     X - n/a     Y - n/a
+._OSGETKEY
 .getkey
   stz FUNC_RESULT
   stz STDIN_IDX                         ; Zero-out buffer
@@ -280,6 +282,7 @@
 \ ON EXIT : - Character code is in FUNC_RESULT
 \           - Error code in FUNC_ERR
 \ A - O     X - O     Y - n/a
+._OSRDASC
 .read_ascii
   jsr read_byte
   lda FUNC_ERR
@@ -309,6 +312,7 @@
 \           - Error code in FUNC_ERR
 \           - STDIN_IDX updated
 \ A - O     X - O     Y - n/a
+._OSRDBYTE
 .read_byte
   stz FUNC_RESULT
   stz FUNC_ERR
@@ -342,6 +346,7 @@
 \ ON EXIT : - Character code is in FUNC_RESULT
 \           - Error code in FUNC_ERR
 \ A - O     X - O     Y - n/a
+._OSRDCH
 .read_char
   jsr read_byte
   lda FUNC_ERR
@@ -365,6 +370,7 @@
 \ ON EXIT : - 16-bit number in FUNC_RES_L/H
 \           - Error in FUNC_ERR
 \ A - P     X - P     Y - P
+._OSRDINT16
 .read_int16
   pha : phx : phy
   stz FUNC_ERR
@@ -450,6 +456,7 @@
 \           - Error in FUNC_ERR
 \           - STDIN_IDX updated
 \ A - P     X - P     Y - P
+._OSRDFNAME
 .read_filename
   pha : phx : phy
   stz FUNC_ERR                ; Initialise to 0
@@ -538,6 +545,7 @@
 \           - FUNC_ERR contains error code (0 = success)
 \           - STDIN_IDX is updated
 \ A - P     X - P     Y - P
+._OSRDSTR
 .read_string
   pha : phx : phy
   stz FUNC_ERR                ; Initialise to 0
@@ -601,6 +609,7 @@
 \ ON EXIT : - 16-bit value in FUNC_RES_L/FUNC_RES_H.
 \           - FUNC_ERR contains error code.
 \ A - P     X - n/a     Y - P
+._OSRDHADDR
 .read_hex_addr
   pha : phy
   ldy #1                    ; Offset for where we're storing each byte from buf
@@ -657,6 +666,7 @@
 \ ON EXIT : - Value in FUNC_RESULT
 \           - Error in FUNC_ERR
 \ A - P     X - P     Y - P
+._OSRDHBYTE
 .read_hex_byte
   pha : phx : phy
   stz FUNC_ERR                ; Initialise to 0
@@ -698,6 +708,7 @@
 \ ------------------------------------------------------------------------------
 \ ON ENTRY: An error code is assumed to be in FUNC_ERR
 \ A - O     X - O     Y - n/a
+._OSWRERR
 .os_print_error
   lda FUNC_ERR
   dec A                   ; To get offset for table
@@ -719,6 +730,7 @@
 \ ON EXIT : - FUNC_ERR contains error code - 0 for success
 \           - STDOUT_IDX updated
 \ A - O     X - P     Y - P
+._OSSOCH
 .stdout_add_char
   phx
   stz FUNC_ERR
@@ -740,6 +752,7 @@
 \ ON EXIT : - FUNC_ERR contains error code - 0 for success
 \           - STDOUT_IDX updated
 \ A - O     X - P     Y - P
+._OSSOAPP
 .stdout_append
   phx : phy
   stz FUNC_ERR

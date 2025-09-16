@@ -6,70 +6,6 @@
 \ Line 2 : 20 ($14) -  39 ($27)
 \ Line 3 : 84 ($54) - 103 ($67)
 
-
-\ ------------------------------------------------------------------------------
-\ ---  DELAY
-\ ---  Implements: OSDELAY
-\ ------------------------------------------------------------------------------
-\ General-purpose delay function. Blocking.
-\ This isn't specific to the LCD, but we're using the LCD's VIA to provide
-\ the timer.
-\ ON ENTRY: - Assumes a 16-bit value in LCDV_TIMER_INTVL.
-\             This number should be the length of the desired delay
-\             in milliseconds.
-\ A - P     X - n/a     Y - n/a
-.delay
-  pha
-  stz LCDV_TIMER_COUNT		      ; Zero-out counter
-  stz LCDV_TIMER_COUNT + 1
-  lda LCDV_IER
-  ora #%11000000		            ; Bit 7 enables interrupts, b6 enables Timer 1
-  sta LCDV_IER
-  lda #%01000000                ; Set timer to free-run mode
-  sta LCDV_ACL
-  lda #$E6				  ; Going to use a base of 1ms. At 1MHz that's 1K cycles but,
-  sta LCDV_T1CL     ; allowing for other operations, it's actually 998 ($03E6)
-  lda #$03
-  sta LCDV_T1CH		              ; Starts timer running
-.delay_loop
-  lda #100
-.nop_loop                       ; Adding a small NOP loop to give the timer time
-  nop                           ; to increase the counter
-  dec A
-  bne nop_loop
-  jsr delay_timer_chk           ; Check how far our counter has got
-  lda FUNC_RESULT
-  cmp #LESS_THAN
-  beq delay_loop                ; If still less than our target, go around again
-  lda LCDV_IER
-  and #%01111111                ; Disable TIMER 1 interrupts
-  sta LCDV_IER
-  pla
-  stz FUNC_RESULT               ; Done with this, so zero out
-  rts
-
-.delay_timer_chk                ; Check to see if the counter has incremented
-  sei                           ; to the same value as the set delay.
-  lda LCDV_TIMER_COUNT+1        ; Compare the high bytes first as if they aren't
-  cmp LCDV_TIMER_INTVL+1        ; equal, we don't need to compare the low bytes
-  bcc delay_timer_chk_less_than ; Count is less than interval
-  bne delay_timer_chk_more_than ; Count is more than interval
-  lda LCDV_TIMER_COUNT          ; High bytes were equal - what about low bytes?
-  cmp LCDV_TIMER_INTVL
-  bcc delay_timer_chk_less_than
-  bne delay_timer_chk_more_than
-  lda #EQUAL				            ; COUNT = INTVL - this what we're looking for.
-  jmp delay_timer_chk_end
-.delay_timer_chk_less_than
-  lda #LESS_THAN			          ; COUNT < INTVL - counter isn't big enough yet
-  jmp delay_timer_chk_end       ; so let's bug out.
-.delay_timer_chk_more_than
-  lda #MORE_THAN			          ; COUNT > INTVL - shouldn't happen, but still...
-.delay_timer_chk_end
-  sta FUNC_RESULT
-  cli
-  rts
-
 \ ------------------------------------------------------------------------------
 \ ---  LCD_CLEAR_BUF
 \ ------------------------------------------------------------------------------
@@ -178,6 +114,7 @@
 \ ------------------------------------------------------------------------------
 \ Clear the LCD screen
 \ A - O     X - n/a     Y - n/a
+._OSLCDCLS
 .lcd_cls
   jsr lcd_clear_buf                       ; Overwrite LCD_BUF with spaces
   lda #LCD_CLS                            ; Clear display, reset display memory
@@ -190,6 +127,7 @@
 \ ------------------------------------------------------------------------------
 \ Initialise the LCD screen
 \ A - O     X - n/a     Y - n/a
+._OSLCDINIT
 .lcd_init
   lda SYS_REG
   ora #%00100000     ; Sets bit 5 showing we're using 20x4 display
@@ -213,6 +151,7 @@
 \ Prints an 8-bit value as a 2-char hex string
 \ ON ENTRY: - A must contain value of byte to be printed.
 \ A - O     X - n/a     Y - n/a
+._OSLCDB2HEX
 .lcd_print_byte
   jsr byte_to_hex_str               ; Results in three bytes starting at STR_BUF
   lda STR_BUF
@@ -228,6 +167,7 @@
 \ Prints the contents of STDOUT_BUF to LCD
 \ ON ENTRY: - Expects a nul-terminated string in STDOUT_BUF
 \ A - P     X - n/a     Y - n/a
+._OSLCDWRBUF
 .lcd_prt_buf
   pha
   lda #<STDOUT_BUF
@@ -245,6 +185,7 @@
 \ Prints the contents of STR_BUF to LCD
 \ ON ENTRY: - Expects a nul-terminated string in STR_BUF
 \ A - P     X - n/a     Y - n/a
+._OSLCDSBUF
 .lcd_prt_sbuf
   pha
   lda #<STR_BUF
@@ -262,6 +203,7 @@
 \ Prints text to the LCD.
 \ ON ENTRY: - MSG_VEC should point to location of text.
 \ A - P     X - P     Y - P
+._OSLCDMSG
 .lcd_println
   pha : phx : phy
   ; We start by moving all the text in the buffer up one line, effectively
@@ -354,6 +296,7 @@
 \ Print a character to the LCD.
 \ ON ENTRY: - A must contain ASCII code for character.
 \ A - P     X - n/a     Y - n/a
+._OSLCDCH
 .lcd_prt_chr
   pha
   jsr lcd_wait                      ; Check LCD is ready to receive
@@ -371,6 +314,7 @@
 \ Print an error message to the LCD.
 \ ON ENTRY: - Assumes error code in FUNC_ERR
 \ A - O     X - O     Y - n/a
+._OSLCDERR
 .lcd_prt_err
   lda FUNC_ERR
   dec A                   ; To get offset for table
@@ -392,6 +336,7 @@
 \               - X should contain the X param in range 0-19.
 \               - Y should be 0-3.
 \ A - O     X - O     Y - n/a
+._OSLCDSC
 .lcd_set_cursor
   stx TMP_VAL
   lda lcd_ln_base_addr,Y          ; Base address for line, from lookup table

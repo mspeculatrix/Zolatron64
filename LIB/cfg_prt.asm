@@ -35,8 +35,8 @@ PRT_STROBE_DELAY = $10            ; Length of strobe in ms
 
 MACRO PRT_PULSE_DELAY
   lda #PRT_STROBE_DELAY
-  sta LCDV_TIMER_INTVL
-  stz LCDV_TIMER_INTVL + 1
+  sta SYS_TIMER_INTVL
+  stz SYS_TIMER_INTVL + 1
   jsr OSDELAY
 ENDMACRO
 

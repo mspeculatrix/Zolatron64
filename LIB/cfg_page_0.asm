@@ -53,3 +53,7 @@ USRP_INT_CB1 = %00010000
 USRP_INT_TM2 = %00100000
 USRP_INT_TM1 = %01000000
 ZD_IRQ       = %10000000
+
+; Vectors for userland ISRs
+USRINT_VEC    = $FC   ; Vector for user interrupt service routines
+USRINTRTN_VEC = $FE  ; and for returning from these routines

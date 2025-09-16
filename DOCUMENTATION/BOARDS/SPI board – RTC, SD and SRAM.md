@@ -1,6 +1,6 @@
 # SPI BOARD – RTC, SD and SRAM
 
-This board adds an SDI interface to the Zolatron, based around Daryl Rictor's 65SPI project. This uses an addressable ATF1504 CPLD to provide the interface. I've put this interface at address $BF00.
+This board adds an SPI interface to the Zolatron, based around Daryl Rictor's 65SPI project. This uses an addressable ATF1504 CPLD to provide the interface. I've put this interface at address $BF00.
 
 The board also uses a new CPLD-based address decoding solution that was developed for a future, single-board version of the Zolatron but which I'm testing out here.
 

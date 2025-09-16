@@ -66,11 +66,11 @@
   lda #%11000000                    ; Setting bit 6 enables Timer 1
   ZD_SET_CO_ON                      ; Signal to server that Z64 is online.
   sta ZD_IER
-  LDA ZD_ACR
-  AND #%00111111                    ; Set timer to one-shot mode
+  lda ZD_ACR
+  and #%00111111                    ; Set timer to one-shot mode
   sta ZD_ACR
   stz ZD_TIMER_COUNT		            ; Zero-out counter
-  stz ZD_TIMER_COUNT + 1            ; "
+  stz ZD_TIMER_COUNT + 1            ;   "
   ; Initialise outputs
   ZD_SET_CA_OFF                     ; Takes line high
   ZD_SET_CR_OFF                     ; Takes line high
@@ -164,6 +164,7 @@
 \ ON ENTRY: STR_BUF must contain filename
 \ ON EXIT : FUNC_ERR contains error code - 0 for success
 \ A - O     X - n/a     Y - n/a
+._OSZDDEL
 .zd_delfile
   lda #ZD_OPCODE_DEL
   jsr zd_handshake
@@ -204,6 +205,7 @@
 \           - FILE_ADDR/+1 must contain address to which we wish to load file.
 \ ON EXIT : FUNC_ERR is 0 for success, something else for an error.
 \ A - O     X - n/a     Y - n/a
+._OSZDLOAD
 .zd_loadfile
   jsr zd_handshake            ; ----- INITIATE ---------------------------------
   lda FUNC_ERR
@@ -288,6 +290,7 @@
 \           - STR_BUF must contain nul-terminated filename string
 \ ON EXIT : FUNC_ERR contains error code
 \ A - O     X - n/a     Y - n/a
+._OSZDSAVE
 .zd_save_data
   jsr zd_handshake
   lda FUNC_ERR

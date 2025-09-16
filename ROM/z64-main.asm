@@ -25,8 +25,8 @@ INCLUDE "../LIB/cfg_page_7.asm"                   ; SPI
 
 INCLUDE "include/cfg_ROM.asm"
 INCLUDE "../LIB/cfg_uart_SC28L92.asm"
-; INCLUDE "../LIB/cfg_flash-io-snd.asm"
 INCLUDE "../LIB/cfg_4x20_lcd.asm"
+INCLUDE "../LIB/cfg_sys_via.asm"
 INCLUDE "../LIB/cfg_ZolaDOS.asm"
 INCLUDE "../LIB/cfg_user_port.asm"
 INCLUDE "../LIB/cfg_parallel.asm"
@@ -40,10 +40,10 @@ INCLUDE "../LIB/cfg_spi_rtc_ds3234.asm"
 ORG $8000              ; Using only the top 16KB of a 32KB EEPROM. This is
                        ; where the bytes start for the ROM file, but...
 .startrom
-ORG ROM_START          ; This is where the actual code starts.
+ORG ROM_START               ; This is where the actual code starts.
   jmp startcode
 .version_str
-  equs VSTR, 0
+  equs VSTR, 0              ; VSTR gets inserted during assembly
 .startcode
   sei                       ; Don't interrupt me yet
   cld                       ; We don' need no steenkin' BCD
@@ -187,9 +187,9 @@ INCLUDE "include/os_call_vectors.asm"
 
 ; SET UP DELAY TIMER
   lda #<500                             ; Interval for delay function - in ms
-  sta LCDV_TIMER_INTVL
+  sta SYS_TIMER_INTVL
   lda #>500
-  sta LCDV_TIMER_INTVL+1
+  sta SYS_TIMER_INTVL+1
 
 ; PARALLEL INTERFACE MESSAGE
   lda SYS_REG
@@ -229,9 +229,9 @@ INCLUDE "include/os_call_vectors.asm"
   sta USRP_IFR                    ; and clear flag register
 
   lda #<isr_usrint_rtn            ; Reset user interrupt vector
-  sta OSUSRINT_VEC
+  sta USRINT_VEC
   lda #>isr_usrint_rtn
-  sta OSUSRINT_VEC + 1
+  sta USRINT_VEC + 1
   cli
 
 ; BOOT ROM
@@ -384,6 +384,7 @@ INCLUDE "include/funcs_conv.asm"
 INCLUDE "include/funcs_io.asm"
 INCLUDE "include/funcs_ext_mem.asm"
 INCLUDE "include/funcs_4x20_lcd.asm"
+INCLUDE "include/funcs_timers.asm"
 INCLUDE "include/funcs_prt.asm"
 INCLUDE "include/funcs_isr.asm"
 INCLUDE "include/funcs_spi65.asm"
@@ -393,7 +394,7 @@ INCLUDE "include/funcs_rtc_core.asm"
 \ ---  NMI HANDLER
 \-------------------------------------------------------------------------------
 ALIGN &100                                        ; Start on new page
-.NMI_HANDLER                                      ; For future development
+.NMI_handler                                      ; For future development
 .exit_nmi
   rti
 
@@ -468,21 +469,21 @@ ORG $FF00                     ; Must match address at start of OS Function
   jmp (OSZDSAVE_VEC)
 
   jmp (OSDELAY_VEC)
-  jmp (OSUSRINT_VEC)
-  jmp (OSUSRINTRTN_VEC)
 
   jmp (OSSPIEXCH_VEC)
   jmp (OSRDDATE_VEC)
   jmp (OSRDTIME_VEC)
+.OS_CALL_JUMP_TABLE_END
 
 ORG $FFF4
+.soft_reset
+  jmp SOFT_RESET                      ; $FFF4 - Print prompt, go to mainloop
 .reset
-  jmp SOFT_RESET                      ; Print prompt and go to start of mainloop
-  jmp MAIN                            ; Harder reset - go to start of ROM code
+  jmp MAIN                            ; $FFF7 - Harder reset
 .boot
-  equw NMI_HANDLER                          ; Vector for NMI
-  equw startcode                            ; Reset vector to start of ROM code
-  equw IRQ_handler                          ; Vector for ISR
+  equw NMI_handler                    ; $FFFA - Vector for NMI
+  equw startcode                      ; $FFFC - Reset vector
+  equw IRQ_handler                    ; $FFFE - Vector for ISR
 
 .endrom
 

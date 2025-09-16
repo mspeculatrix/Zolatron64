@@ -11,6 +11,7 @@
 \ Print a character. Blocking.
 \ ON ENTRY: A contains ASCII char code
 \ A - O (via subr)     X - n/a     Y - n/a
+._OSPRTCH
 .prt_char
   LED_ON LED_BUSY
   pha
@@ -77,6 +78,7 @@
 \ ------------------------------------------------------------------------------
 \ ON EXIT : - FUNC_ERR contains error code - 0 = no error
 \ A - O     X - n/a     Y - P
+._OSPRTCHK
 .prt_check_state
   phy
   stz FUNC_ERR
@@ -110,6 +112,7 @@
 \ ------------------------------------------------------------------------------
 \ Set up the VIA and initialise the printer by sending an /INIT pulse.
 \ A - O     X - n/a     Y - n/a
+._OSPRTINIT
 .prt_init
   lda #PRT_CTRL_PT_DIR              ; Set pin directions for control port
   sta PRT_CTRL_DDR
@@ -169,6 +172,7 @@
 \ ------------------------------------------------------------------------------
 \ Prints STDOUT_BUF. Wrapper to OSPRTMSG
 \ A - O     X - n/a     Y - n/a
+._OSPRTBUF
 .prt_stdout_buf
   lda #<STDOUT_BUF                              ; LSB of message
   sta MSG_VEC
@@ -183,6 +187,7 @@
 \ ------------------------------------------------------------------------------
 \ Prints STR_BUF.  Wrapper to OSPRTMSG
 \ A - O     X - n/a     Y - n/a
+._OSPRTSBUF
 .prt_str_buf
   lda #<STR_BUF                              ; LSB of message
   sta MSG_VEC
@@ -225,8 +230,8 @@
   and #PRT_STRB_ON
   sta PRT_CTRL_PORT
   lda #PRT_STROBE_DELAY
-  sta LCDV_TIMER_INTVL
-  stz LCDV_TIMER_INTVL + 1
+  sta SYS_TIMER_INTVL
+  stz SYS_TIMER_INTVL + 1
   jsr OSDELAY
   lda PRT_CTRL_PORT
   ora #PRT_STRB_OFF

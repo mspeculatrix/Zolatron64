@@ -11,11 +11,11 @@
 
 \ --- READ ---------------------------------------------------------------------
 .OS_CALL_VECTORS
-  lda #<getkey                        ; OSRDASC
+  lda #<getkey                        ; OSGETKEY
   sta OSGETKEY_VEC
   lda #>getkey
   sta OSGETKEY_VEC + 1
-  lda #<get_input                        ; OSRDASC
+  lda #<get_input                        ; OSGETINP
   sta OSGETINP_VEC
   lda #>get_input
   sta OSGETINP_VEC + 1
@@ -72,7 +72,7 @@
   sta OSWROP_VEC
   lda #>duart_writeOP
   sta OSWROP_VEC + 1
-  lda #<duart_snd_strbuf              ; OSWRSBUF
+  lda #<duart_snd_strbuf              ; OSWRSBUF ***
   sta OSWRSBUF_VEC
   lda #>duart_snd_strbuf
   sta OSWRSBUF_VEC + 1
@@ -198,12 +198,6 @@
   sta OSDELAY_VEC
   lda #>delay
   sta OSDELAY_VEC + 1
-; OSUSRINT - This is configured by the soft reset routine and also by user s/w
-
-  lda #<isr_usrint_rtn
-  sta OSUSRINTRTN_VEC
-  lda #>isr_usrint_rtn
-  sta OSUSRINTRTN_VEC + 1
 
   lda #<spi_exchange_byte
   sta OSSPIEXCH_VEC
@@ -219,6 +213,12 @@
   sta OSRDTIME_VEC
   lda #>rtc_read_time
   sta OSRDTIME_VEC + 1
+
+; OSUSRINT - This is configured by the soft reset routine and also by user s/w
+  lda #<isr_usrint_rtn
+  sta USRINTRTN_VEC
+  lda #>isr_usrint_rtn
+  sta USRINTRTN_VEC + 1
 
 
 .os_call_vectors_end

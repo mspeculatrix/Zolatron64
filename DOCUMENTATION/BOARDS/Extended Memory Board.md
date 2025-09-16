@@ -6,7 +6,7 @@ It's that there was this 8KB blank space in the memory map that I'd originally l
 
 And then I got to thinking about the BBC Micro's shadow RAM and sideways ROMs. I'm not up to that kind of sophistication, but I thought some kind of banked memory would be within my grasp. Turned out to be one of the easiest things I've implemented on this machine.
 
-At the heart of it is an AS6C1008 128KB RAM chip. The contents of this chip get paged into the Zolatron's memory map starting at address $8000 and going up to $9FFF. That's an 8KB space, so the RAM chip effectively holds 16 'banks' of memory which can be used one at a time.
+At the heart of it is an AS6C1008 128KB RAM chip. The contents of this chip get paged into the Zolatron's memory map starting at address $8000 and going up to $9FFF. That's an 8KB space, so the RAM chip effectively holds 16 'banks' of memory that can be used one at a time.
 
 The decoding for all this chicanery is handled by a CPLD (an ATF1502AS). The code for this creates four latches that are connected to the top four address pins of the RAM chip. That allows us to set a four-bit value (0-15) which then selects which part of the chip's memory we're addressing.
 
