@@ -613,12 +613,14 @@ E484    rtc_read_reg
 E498    rtc_select
 E4AD    rtc_select_error
 E4B1    rtc_select_done
-E500    NMI_HANDLER
+E500    NMI_handler
 E500    exit_nmi
 FF00    OS_CALL_JUMP_TABLE
 FF06    OSRDASC_
 FF0C    OSRDCH_
 FF1E    OSWRBUF_
 FF21    OSWRCH_
-FFF4    reset
+FF8D    OS_CALL_JUMP_TABLE_END
+FFF4    soft_reset
+FFF7    reset
 FFFA    boot

@@ -4749,7 +4749,7 @@ End macro PRT_PULSE_DELAY
      E4AF   85 E5      STA &E5
 .rtc_select_done
      E4B1   60         RTS
-.NMI_HANDLER
+.NMI_handler
 .exit_nmi
      E500   40         RTI
 .OS_CALL_JUMP_TABLE
@@ -4804,8 +4804,10 @@ End macro PRT_PULSE_DELAY
      FF84   6C 58 02   JMP (&0258)
      FF87   6C 5A 02   JMP (&025A)
      FF8A   6C 5C 02   JMP (&025C)
-.reset
+.OS_CALL_JUMP_TABLE_END
+.soft_reset
      FFF4   4C 4D C3   JMP &C34D
+.reset
      FFF7   4C 20 C2   JMP &C220
 .boot
      FFFA   00 E5
