@@ -1,0 +1,330 @@
+Atmel ATF1502AS Fitter Version 1.8.7.8 ,running Wed Aug 17 20:12:18 2022
+
+
+fit1502 e:\NasSync\DEV\Dev-6502\Zolatron\CPLD\EXTMEMDECODE\\EXTMEMDECODE.tt2 -CUPL -dev P1502C44 -JTAG ON -open_collector CHIP_EN0,CHIP_EN1,CHIP_EN2,CHIP_EN3,CHIP_EN4,logic_doubling,off
+
+
+****** Initial fitting strategy and property ******
+ Pla_in_file = EXTMEMDECODE.tt2
+ Pla_out_file = EXTMEMDECODE.tt3
+ Jedec_file = EXTMEMDECODE.jed
+ Vector_file = EXTMEMDECODE.tmv
+ verilog_file = EXTMEMDECODE.vt
+ Time_file = 
+ Log_file = EXTMEMDECODE.fit
+ err_file = 
+ Device_name = PLCC44
+ Module_name = 
+ Package_type = PLCC
+ Preassign_file = 
+ Property_file = 
+ Sleep_mode = 
+ Preassignment = 
+ Security_mode = OFF
+ Pin_keep_mode = ON
+ Dedicated_input_clock = 
+ Dedicated_input_reset = 
+ Dedicated_input_oe = 
+ supporter = CUPL
+ optimize = ON
+ Soft_buffer = 
+ Xor_synthesis = OFF
+ Foldback_logic =  on
+ Expander = 
+ Cascade_logic = OFF
+ Dedicated_input = 
+ Output_fast = OFF
+ *******************************
+ Power down pin 1 = OFF
+ Power down pin 2 = OFF
+ power_reset = OFF
+ JTAG = ON
+ TDI pullup = OFF
+ TMS pullup = OFF
+ MC_power = OFF
+ Open_collector =  CHIP_EN0,  CHIP_EN1,  CHIP_EN2,  CHIP_EN3,  CHIP_EN4,  logic_doubling,  off, 
+ ITD0 = ON
+ ITD1 = ON
+ ITD2 = ON
+ Fast_inlatch = off
+ *******************************
+---------------------------------------------------------
+ Fitter_Pass 1, Preassign = KEEP, LOGIC_DOUBLING : OFF 
+ ... 
+
+Performing global Output Enable pin assignments ...
+
+Performing global pin assignments ...
+--------------------------------------
+
+
+
+Final global control pins assignment (if applicable)...
+-------------------------------------------------------
+CLK assigned to pin  43
+
+
+
+Performing input pin pre-assignments ...
+------------------------------------
+CLK assigned to pin  43
+
+Attempt to place floating signals ...
+------------------------------------
+D0 is placed at pin 4 (MC 1)
+D1 is placed at pin 5 (MC 2)
+D2 is placed at pin 6 (MC 3)
+TDI is placed at pin 7 (MC 4)
+D3 is placed at pin 8 (MC 5)
+A5 is placed at pin 9 (MC 6)
+A6 is placed at pin 11 (MC 7)
+A7 is placed at pin 12 (MC 8)
+TMS is placed at pin 13 (MC 9)
+A8 is placed at pin 14 (MC 10)
+A9 is placed at pin 16 (MC 11)
+A10 is placed at pin 17 (MC 12)
+A11 is placed at pin 18 (MC 13)
+A12 is placed at pin 19 (MC 14)
+A13 is placed at pin 20 (MC 15)
+A14 is placed at pin 21 (MC 16)
+RWB is placed at pin 41 (MC 17)
+CHIP_EN1 is placed at pin 40 (MC 18)
+CHIP_EN4 is placed at pin 39 (MC 19)
+TDO is placed at pin 38 (MC 20)
+BSEL0 is placed at pin 37 (MC 21)
+BSEL1 is placed at pin 36 (MC 22)
+BSEL2 is placed at pin 34 (MC 23)
+BSEL3 is placed at pin 33 (MC 24)
+TCK is placed at pin 32 (MC 25)
+CHIP_EN0 is placed at pin 31 (MC 26)
+CHIP_EN2 is placed at pin 28 (MC 28)
+CHIP_EN3 is placed at pin 27 (MC 29)
+A15 is placed at pin 24 (MC 32)
+CHIP_SEL4 is placed at foldback expander node 332 (MC 32)
+
+                                                                 
+                                                                 
+                                                                 
+                                                                 
+                                               C                 
+                                               H                 
+                                               I                 
+                                               P                 
+                                               _                 
+                           V          C  G  R  E                 
+                  D  D  D  C          L  N  W  N                 
+                  2  1  0  C          K  D  B  1                 
+               ____________________________________              
+              /   6  5  4  3  2  1 44 43 42 41 40  \             
+         TDI |  7                                39 | CHIP_EN4   
+          D3 |  8                                38 | TDO        
+          A5 |  9                                37 | BSEL0      
+         GND | 10                                36 | BSEL1      
+          A6 | 11                                35 | VCC        
+          A7 | 12            ATF1502             34 | BSEL2      
+         TMS | 13          44-Lead PLCC          33 | BSEL3      
+          A8 | 14                                32 | TCK        
+         VCC | 15                                31 | CHIP_EN0   
+          A9 | 16                                30 | GND        
+         A10 | 17                                29 |            
+             |   18 19 20 21 22 23 24 25 26 27 28   |            
+              \____________________________________/             
+                 A  A  A  A  G  V  A        C  C                 
+                 1  1  1  1  N  C  1        H  H                 
+                 1  2  3  4  D  C  5        I  I                 
+                                            P  P                 
+                                            _  _                 
+                                            E  E                 
+                                            N  N                 
+                                            3  2                 
+
+
+
+VCC = Supply Voltage pin which must be connected to (5.0V or 3.0V)
+
+GND = GND pin which must be connected to ground
+
+TMS,TDI,TDO,TDI = JTAG pins which must reserved for the JTAG interface
+
+NC = Unused I/O pins which must be unconnected on the board
+
+Universal-Interconnect-Multiplexer assignments
+------------------------------------------------
+FanIn assignment for block B [20]
+{
+A5,A7,A6,A13,A12,A15,A11,A14,A9,A10,A8,
+BSEL1,BSEL0,BSEL2,BSEL3,
+D3,D0,D1,D2,
+RWB,
+}
+Multiplexer assignment for block B
+BSEL1			(MC2	P)   : MUX 0		Ref (B22p)
+A5			(MC7	P)   : MUX 1		Ref (A6p)
+BSEL0			(MC1	P)   : MUX 3		Ref (B21p)
+BSEL2			(MC3	P)   : MUX 4		Ref (B23p)
+D3			(MC20	P)   : MUX 5		Ref (A5p)
+A7			(MC9	P)   : MUX 6		Ref (A8p)
+A6			(MC8	P)   : MUX 7		Ref (A7p)
+BSEL3			(MC4	P)   : MUX 8		Ref (B24p)
+D0			(MC5	P)   : MUX 12		Ref (A1p)
+D1			(MC18	P)   : MUX 13		Ref (A2p)
+D2			(MC19	P)   : MUX 14		Ref (A3p)
+RWB			(MC6	P)   : MUX 18		Ref (B17p)
+A13			(MC15	P)   : MUX 20		Ref (A15p)
+A12			(MC14	P)   : MUX 24		Ref (A14p)
+A15			(MC17	P)   : MUX 25		Ref (B32p)
+A11			(MC13	P)   : MUX 26		Ref (A13p)
+A14			(MC16	P)   : MUX 28		Ref (A16p)
+A9			(MC11	P)   : MUX 30		Ref (A11p)
+A10			(MC12	P)   : MUX 33		Ref (A12p)
+A8			(MC10	P)   : MUX 34		Ref (A10p)
+
+Creating JEDEC file e:\NasSync\DEV\Dev-6502\Zolatron\CPLD\EXTMEMDECODE\\EXTMEMDECODE.jed ...
+
+PLCC44 programmed logic:
+-----------------------------------
+BSEL0.D = D0;
+
+BSEL1.D = D1;
+
+BSEL2.D = D2;
+
+BSEL3.D = D3;
+
+!CHIP_SEL4 = (!BSEL2.Q & !BSEL3.Q);
+
+!CHIP_EN0 = (!A13 & !A14 & A15 & !BSEL0.Q & !BSEL1.Q & !BSEL2.Q & !BSEL3.Q);
+
+!CHIP_EN1 = (!A13 & !A14 & A15 & BSEL0.Q & !BSEL1.Q & !BSEL2.Q & !BSEL3.Q);
+
+!CHIP_EN2 = (!A13 & !A14 & A15 & !BSEL0.Q & BSEL1.Q & !BSEL2.Q & !BSEL3.Q);
+
+!CHIP_EN3 = (!A13 & !A14 & A15 & BSEL0.Q & BSEL1.Q & !BSEL2.Q & !BSEL3.Q);
+
+!CHIP_EN4 = (!A13 & !A14 & A15 & CHIP_SEL4);
+
+BSEL0.C = !CLK;
+
+BSEL0.CE = (!RWB & A5 & A6 & A7 & A8 & A9 & A10 & A11 & A12 & A13 & !A14 & A15);
+
+BSEL1.C = !CLK;
+
+BSEL1.CE = (!RWB & A5 & A6 & A7 & A8 & A9 & A10 & A11 & A12 & A13 & !A14 & A15);
+
+BSEL2.C = !CLK;
+
+BSEL2.CE = (!RWB & A5 & A6 & A7 & A8 & A9 & A10 & A11 & A12 & A13 & !A14 & A15);
+
+BSEL3.C = !CLK;
+
+BSEL3.CE = (!RWB & A5 & A6 & A7 & A8 & A9 & A10 & A11 & A12 & A13 & !A14 & A15);
+
+
+PLCC44 Pin/Node Placement:
+------------------------------------
+Pin 4  = D0; /* MC 1 */
+Pin 5  = D1; /* MC 2 */
+Pin 6  = D2; /* MC 3 */
+Pin 7  = TDI; /* MC 4 */
+Pin 8  = D3; /* MC 5 */
+Pin 9  = A5; /* MC 6 */
+Pin 11 = A6; /* MC  7 */
+Pin 12 = A7; /* MC  8 */
+Pin 13 = TMS; /* MC  9 */
+Pin 14 = A8; /* MC 10 */ 
+Pin 16 = A9; /* MC 11 */ 
+Pin 17 = A10; /* MC 12 */ 
+Pin 18 = A11; /* MC 13 */ 
+Pin 19 = A12; /* MC 14 */ 
+Pin 20 = A13; /* MC 15 */ 
+Pin 21 = A14; /* MC 16 */ 
+Pin 24 = A15; /* MC 32 */ 
+Pin 27 = CHIP_EN3; /* MC 29 */ 
+Pin 28 = CHIP_EN2; /* MC 28 */ 
+Pin 31 = CHIP_EN0; /* MC 26 */ 
+Pin 32 = TCK; /* MC 25 */ 
+Pin 33 = BSEL3; /* MC 24 */ 
+Pin 34 = BSEL2; /* MC 23 */ 
+Pin 36 = BSEL1; /* MC 22 */ 
+Pin 37 = BSEL0; /* MC 21 */ 
+Pin 38 = TDO; /* MC 20 */ 
+Pin 39 = CHIP_EN4; /* MC 19 */ 
+Pin 40 = CHIP_EN1; /* MC 18 */ 
+Pin 41 = RWB; /* MC 17 */ 
+Pin 43 = CLK;
+PINNODE 332 = CHIP_SEL4; /* MC 32 Foldback */
+
+** Resource Usage **
+
+
+DCERP Field = Summary of Allocations.
+|||||
+|||||_Preset [p,-]       ==  p = PT preset, - No Preset.
+||||
+||||__Reset [g,r,-]      ==  g= Global AR, r = PT reset, - No reset.
+|||
+|||___Clock Enable [e,-] ==  e = Product Term, - always enabled, - none.
+||
+||____Clock [c,g,-],     ==  c = Product term, g = Global term, - No Clock.
+|
+|_____Type [C,D,L,T],    ==  Register type C= combin, D=dff, L=latch, T=tff.
+
+For input only = INPUT.
+
+MCell Pin# Oe   PinDrive  DCERP  FBDrive  DCERP  Foldback  CascadeOut     TotPT output_slew
+MC1   4    --   D0        INPUT  --              --        --             0     slow
+MC2   5    --   D1        INPUT  --              --        --             0     slow
+MC3   6    --   D2        INPUT  --              --        --             0     slow
+MC4   7    --   TDI       INPUT  --              --        --             0     slow
+MC5   8    --   D3        INPUT  --              --        --             0     slow
+MC6   9    --   A5        INPUT  --              --        --             0     slow
+MC7   11   --   A6        INPUT  --              --        --             0     slow
+MC8   12   --   A7        INPUT  --              --        --             0     slow
+MC9   13   --   TMS       INPUT  --              --        --             0     slow
+MC10  14   --   A8        INPUT  --              --        --             0     slow
+MC11  16   --   A9        INPUT  --              --        --             0     slow
+MC12  17   --   A10       INPUT  --              --        --             0     slow
+MC13  18   --   A11       INPUT  --              --        --             0     slow
+MC14  19   --   A12       INPUT  --              --        --             0     slow
+MC15  20   --   A13       INPUT  --              --        --             0     slow
+MC16  21   --   A14       INPUT  --              --        --             0     slow
+MC17  41   --   RWB       INPUT  --              --        --             0     slow
+MC18  40   on   CHIP_EN1  C----  --              --        --             1     slow
+MC19  39   on   CHIP_EN4  C----  --              --        --             1     slow
+MC20  38   --   TDO       INPUT  --              --        --             0     slow
+MC21  37   on   BSEL0     Dge--  --              --        --             2     slow
+MC22  36   on   BSEL1     Dge--  --              --        --             2     slow
+MC23  34   on   BSEL2     Dge--  --              --        --             2     slow
+MC24  33   on   BSEL3     Dge--  --              --        --             2     slow
+MC25  32   --   TCK       INPUT  --              --        --             0     slow
+MC26  31   on   CHIP_EN0  C----  --              --        --             1     slow
+MC27  29        --               --              --        --             0     slow
+MC28  28   on   CHIP_EN2  C----  --              --        --             1     slow
+MC29  27   on   CHIP_EN3  C----  --              --        --             1     slow
+MC30  26        --               --              --        --             0     slow
+MC31  25        --               --              --        --             0     slow
+MC32  24   --   A15       INPUT  --              CHIP_SEL4 --             1     slow
+MC0   2         --               --              --        --             0     slow
+MC0   1         --               --              --        --             0     slow
+MC0   44        --               --              --        --             0     slow
+MC0   43        CLK       INPUT  --              --        --             0     slow
+
+Logic Array Block	Logic Cells	I/O Pins	Foldbacks	TotalPT		FanIN	Cascades
+A: LC1	- LC16		0/16(0%)	16/16(100%)	0/16(0%)	0/80(0%)	(20)	0
+B: LC17	- LC32		9/16(56%)	13/16(81%)	1/16(6%)	14/80(17%)	(20)	0
+
+Total dedicated input used:	1/4 	(25%)
+Total I/O pins used		29/32 	(90%)
+Total Logic cells used 		9/32 	(28%)
+Total Flip-Flop used 		4/32 	(12%)
+Total Foldback logic used 	1/32 	(3%)
+Total Nodes+FB/MCells 		10/32 	(31%)
+Total cascade used 		0
+Total input pins 		21
+Total output pins 		9
+Total Pts 			14
+Creating pla file e:\NasSync\DEV\Dev-6502\Zolatron\CPLD\EXTMEMDECODE\\EXTMEMDECODE.tt3 with 0 inputs 0 outputs, 0 pins 0 nodes and 0 pterms...
+
+----------------  End fitter, Design FITS
+$Device PLCC44 fits 
+FIT1502 completed in 0.00 seconds
