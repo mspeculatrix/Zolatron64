@@ -22,7 +22,7 @@ Currently, the modules are:
   - Battery-backed Serial RAM (64KB).
   - SD card drive.
 
-I'm using Beebasm as the assembler.
+I'm using [Beebasm](https://github.com/stardot/beebasm/) as the assembler.
 
 The branches are:
 
