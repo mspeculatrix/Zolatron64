@@ -1,0 +1,21 @@
+environments:
+  default:
+    shutdown_post_debug_session: true
+
+    tool:
+      name: 'atmel_ice'
+      # name: 'snap'
+
+    target:
+      name: 'atmega4809'
+      physical_interface: 'updi'
+      hardware_breakpoints: true
+
+    server:
+      name: 'avr_gdb_rsp'
+      ip_address: '127.0.0.1'
+      port: 1442
+      range_stepping: true
+
+insight:
+  activate_on_startup: false
