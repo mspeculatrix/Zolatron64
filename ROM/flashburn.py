@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
 """
-Script to upload a new ROM image to the flash chip on the Zolatron's CPU board.
+Script to upload a new ROM image to the flash chip on the Zolatron's version B1
+CPU board.
 
 Normally, this script is invoked from the ./_build shell script in the ROM
-directory, so you need to CD to this directory first.
+directory, so you need to CD to that directory first.
 """
 
 import os

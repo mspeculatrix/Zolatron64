@@ -1,6 +1,6 @@
-# FLASHZ
+# FLASHROM
 
-This is firmware for the ATmega4809 microcontroller on a version B CPU board for the Zolatron.
+This is firmware for the ATmega4809 microcontroller on a version B1 CPU board for the Zolatron.
 
 It is designed to be used with the `flashburn.py` Python program.
 
@@ -19,11 +19,3 @@ It is designed to be used with the `flashburn.py` Python program.
 | CPU_RWB                 | PORTA | 5      |
 | FL_WE                   | PORTA | 6      |
 | SYS_RES                 | PORTA | 7      |
-
-When we enable flash control, PHI2 gets set high and RWB gets set low, so that /READ_ENBLE to the flash chip is high.
-
-We need to set A14 and A15 as outputs and high so that /ROM_ENABLE is low.
-
-To disable, set A14 and A15 as inputs.
-
-To read from flash, set RWB high.

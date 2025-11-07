@@ -6,7 +6,7 @@ F_CPU = 20000000UL  	# Clock speed
 LIBCOMMON = $(HOME)/avrlib/avr-common
 LIBCPP = $(HOME)/avrlib/avr-c++
 
-TARGET = flashz
+TARGET = flashrom
 
 CPPSOURCES = $(wildcard *.cpp)
 CPPSOURCES += $(wildcard lib/*.cpp)
@@ -15,9 +15,9 @@ CPPHEADERS = $(CPPSOURCES:.cpp=.h)
 CPPSOURCES += $(wildcard lib/*.h)
 
 # PROGRAMMER_TYPE = serialupdi
-# PROGRAMMER_ARGS = -P /dev/ttyUSB0 -b 115200
-PROGRAMMER_TYPE = atmelice_updi
-PROGRAMMER_ARGS = -P usb -B 125kHz
+# PROGRAMMER_ARGS = -P usb -B 125kHz
+PROGRAMMER_TYPE = serialupdi
+PROGRAMMER_ARGS = -P /dev/ttyUSB0 -b 115200
 
 CXX = avr-g++
 OBJCOPY = avr-objcopy

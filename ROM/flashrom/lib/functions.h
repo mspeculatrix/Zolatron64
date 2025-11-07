@@ -20,7 +20,7 @@ void sendWord(uint16_t word);
 void setAddress(uint16_t addr);
 
 // Look for a specific incoming message. Wrapper to getCommand()
-// Returns flase if it doesn't get what it's looking for.
+// Returns false if it doesn't get what it's looking for.
 bool checkForMessage(const char* msg, char* buf) {
 	bool error = false;
 	getCommand(buf);
