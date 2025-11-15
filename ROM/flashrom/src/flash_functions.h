@@ -8,8 +8,8 @@
 #include "functions.h"
 
 #define FLASH_SECTOR_SIZE 4096
-#define FLASH_SECTOR_ERASE_DELAY 30 // ms originally 25
-#define FLASH_BYTE_DELAY 25         // us originally 20
+#define FLASH_SECTOR_ERASE_DELAY 40 // ms originally 25
+#define FLASH_BYTE_DELAY 50         // us originally 20
 
 // PROTOTYPES
 
@@ -83,10 +83,26 @@ void enableFlashControl(void) {
  */
 void flashByteWrite(uint16_t address, uint8_t value) {
 	FLASH_CE_ENABLE;
+	FLASH_OE_DISABLE; // ensure this is disabled
 	_flashWrite(0x5555, 0xAA);
 	_flashWrite(0x2AAA, 0x55);
 	_flashWrite(0x5555, 0xA0);
 	_flashWrite(address, value);
+	// CRITICAL: Wait for write to complete using Data Polling (DQ7)
+	DATA_PORT_INPUT;  // Switch to input to read back
+	setAddress(address);
+	uint8_t expectedBit7 = value & 0x80;
+	uint16_t timeout = 10000;  // Prevent infinite loop
+
+	while (timeout--) {
+		_delay_us(1);
+		uint8_t readVal = DATA_PORT.IN;
+		if ((readVal & 0x80) == expectedBit7) {
+			break;  // Write complete - DQ7 matches data
+		}
+	}
+
+	DATA_PORT_OUTPUT;  // Switch back to output
 	FLASH_CE_DISABLE;
 }
 
@@ -102,6 +118,7 @@ void _flashWrite(uint16_t address, uint8_t value) {
 	FLASH_WE_ENABLE;
 	_delay_us(FLASH_BYTE_DELAY); 	// pause for effect
 	FLASH_WE_DISABLE;
+	_delay_us(FLASH_BYTE_DELAY); 	// pause for effect
 }
 
 /**
@@ -130,13 +147,30 @@ uint8_t readFlash(uint16_t address) {
  */
 void sectorErase(uint16_t startAddress) {
 	FLASH_CE_ENABLE;
+	FLASH_OE_DISABLE;						// Ensure this is disabled
 	_flashWrite(0x5555, 0xAA);				// sector erase sequence
 	_flashWrite(0x2AAA, 0x55);
 	_flashWrite(0x5555, 0x80);
 	_flashWrite(0x5555, 0xAA);
 	_flashWrite(0x2AAA, 0x55);
 	_flashWrite(startAddress, 0x30);			// set sector address
-	_delay_ms(FLASH_SECTOR_ERASE_DELAY);	// allow the dust to settle
+	//_delay_ms(FLASH_SECTOR_ERASE_DELAY);	// allow the dust to settle
+
+	// CRITICAL: Wait for erase to complete using Toggle Bit (DQ6)
+	DATA_PORT_INPUT;  // Switch to input to read status
+	setAddress(startAddress);
+	uint32_t timeout = 100000;  // Longer timeout for erase
+
+	while (timeout--) {
+		_delay_us(10);
+		uint8_t read1 = DATA_PORT.IN;
+		uint8_t read2 = DATA_PORT.IN;
+		if ((read1 & 0x40) == (read2 & 0x40)) {
+			break;  // Toggle stopped, erase complete
+		}
+	}
+
+	DATA_PORT_OUTPUT;  // Switch back to output
 	FLASH_CE_DISABLE;
 }
 
