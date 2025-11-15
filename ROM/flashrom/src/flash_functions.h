@@ -83,26 +83,29 @@ void enableFlashControl(void) {
  */
 void flashByteWrite(uint16_t address, uint8_t value) {
 	FLASH_CE_ENABLE;
-	FLASH_OE_DISABLE; // ensure this is disabled
-	_flashWrite(0x5555, 0xAA);
-	_flashWrite(0x2AAA, 0x55);
-	_flashWrite(0x5555, 0xA0);
+	FLASH_OE_DISABLE;
+	// We're using aliased addresses for these commands, rather than the usual
+	// ones because my setAddress() function only works with 14-bit addresses
+	_flashWrite(0x1555, 0xAA);  // Changed from 0x5555
+	_flashWrite(0x0AAA, 0x55);  // Changed from 0x2AAA
+	_flashWrite(0x1555, 0xA0);  // Changed from 0x5555
 	_flashWrite(address, value);
-	// CRITICAL: Wait for write to complete using Data Polling (DQ7)
-	DATA_PORT_INPUT;  // Switch to input to read back
+
+	// Wait for write to complete
+	DATA_PORT_INPUT;
 	setAddress(address);
 	uint8_t expectedBit7 = value & 0x80;
-	uint16_t timeout = 10000;  // Prevent infinite loop
+	uint16_t timeout = 10000;
 
 	while (timeout--) {
 		_delay_us(1);
 		uint8_t readVal = DATA_PORT.IN;
 		if ((readVal & 0x80) == expectedBit7) {
-			break;  // Write complete - DQ7 matches data
+			break;
 		}
 	}
 
-	DATA_PORT_OUTPUT;  // Switch back to output
+	DATA_PORT_OUTPUT;
 	FLASH_CE_DISABLE;
 }
 
@@ -114,11 +117,11 @@ void flashByteWrite(uint16_t address, uint8_t value) {
 void _flashWrite(uint16_t address, uint8_t value) {
 	setAddress(address);
 	DATA_PORT.OUT = value;
-	_delay_us(FLASH_BYTE_DELAY); 	// make sure data is stable
+	_delay_us(1); 	// make sure data is stable
 	FLASH_WE_ENABLE;
-	_delay_us(FLASH_BYTE_DELAY); 	// pause for effect
+	_delay_us(1); 	// pause for effect
 	FLASH_WE_DISABLE;
-	_delay_us(FLASH_BYTE_DELAY); 	// pause for effect
+	_delay_us(1); 	// pause for effect
 }
 
 /**
