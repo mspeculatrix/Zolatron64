@@ -303,17 +303,27 @@ def main():
 				# Test string contains only hex digits
 				if all(c in string.hexdigits for c in addressStr):
 					address: int = int(addressStr, 16)
-					sendWord(address)
-					response: int = readWord()
-					if response == address:
-						for _ in range(0, 16):
-							data, _ = getTestData(16)
-							for b in data:
-								print(format(b[0], '02X'), end=' ')
-							print()
-
+					if address <= 0x3F00:
+						sendWord(address)
+						response: int = readWord()
+						if response == address:
+							print(
+								'addr | 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F'
+							)
+							print(
+								'-----+------------------------------------------------'
+							)
+							for offset in range(0, 16):
+								a = address + (offset * 16)
+								print(f'{a:04X} |', end=' ')
+								data, _ = getTestData(16)
+								for b in data:
+									print(format(b[0], '02X'), end=' ')
+								print()
+						else:
+							print("ERROR: addresses don't match!")
 					else:
-						print("ERROR: addresses don't match!")
+						print('ERROR: supplied address must in the range 0000-3F00')
 				else:
 					print('ERROR: invalid address.')
 			else:

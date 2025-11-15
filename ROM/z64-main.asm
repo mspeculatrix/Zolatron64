@@ -87,7 +87,6 @@ INCLUDE "include/os_call_vectors.asm"
 \ ----  SETUP LCD display & LEDs  ----------------------------------------------
   jsr OSLCDINIT
 
-
 \ ----  SETUP USER PORT  -------------------------------------------------------
   lda #$FF
   sta USRP_DDRA                         ; Set all lines on user ports as outputs

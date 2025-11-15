@@ -29,18 +29,20 @@ void disableFlashControl(void) {
 	ADDRL_PORT.DIR = 0;						// Set address lines as inputs
 	ADDRH_PORT.DIRCLR = ADDRH_MASK;
 	DATA_PORT.DIR = 0;						// Set data lines as inputs
-	FL_EN_PORT.OUTCLR = A14 | A15;			// Disable flash /CE
+	FL_EN_PORT.OUTCLR = A14 | A15;			// Disable flash /CE, take lines low
 	FL_EN_PORT.DIRCLR = A14 | A15;			// Set these as inputs
 	CTRL_PORT.OUTSET = CPU_RDY;				// Release CPU
-	CTRL_PORT.OUTSET = CPU_BE;
-	CTRL_PORT.OUTSET = CPU_RWB;
-	CTRL_PORT.OUTSET = SYS_RES;
-	CTRL_PORT.OUTSET = FL_WE;
+	CTRL_PORT.OUTSET = CPU_BE;				// Release buses
+	CTRL_PORT.OUTSET = CPU_RWB;				// Set R/W to read
+	CTRL_PORT.OUTSET = FL_WE;				// Disable flash writes
 	CTRL_PORT.OUTSET = CLK_CTRL;			// Release clock
-	CTRL_PORT.DIRCLR = CTRL_PORT_MASK;		// Set CTRL pins as inputs
 	resetSystem();
+	CTRL_PORT.DIRCLR = CTRL_PORT_MASK;		// Set CTRL pins as inputs
 }
 
+/**
+ * @brief Disable Software Data Protection
+ */
 void disableSDP(void) {
 	FLASH_CE_ENABLE;
 	FLASH_OE_DISABLE;
@@ -193,7 +195,8 @@ void sectorErase(uint16_t startAddress) {
   * A14-A16 are not connected to the system address bus, only to the flash chip.
 */
 void setFlashBank(uint8_t bank) {
-	FL_MEMBANK_PORT.OUT = (FL_MEMBANK_PORT.OUT & ~FL_MEMBANK_MASK) | (bank & FL_MEMBANK_MASK);
+	FL_MEMBANK_PORT.OUTCLR = FA14 | FA15 | FA16; // set to 0
+	// FL_MEMBANK_PORT.OUT = (FL_MEMBANK_PORT.OUT & ~FL_MEMBANK_MASK) | (bank & FL_MEMBANK_MASK);
 }
 
 void setFlashRW(uint8_t mode) {

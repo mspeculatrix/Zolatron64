@@ -83,7 +83,7 @@ uint16_t getWord(void) {
 void resetSystem(void) {
 	CTRL_PORT.DIRSET = SYS_RES; // set as output
 	CTRL_PORT.OUTCLR = SYS_RES; // Take low
-	_delay_ms(50);
+	_delay_ms(250);
 	CTRL_PORT.OUTSET = SYS_RES; // Take high
 	CTRL_PORT.DIRCLR = SYS_RES; // set as input
 }
