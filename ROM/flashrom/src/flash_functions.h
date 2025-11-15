@@ -133,18 +133,18 @@ void _flashWrite(uint16_t address, uint8_t value) {
  *
  * Assumes that /CE and /OE have been enabled on the flash chip.
  */
-void sectorErase(uint16_t startAddress) {
+uint8_t readFlash(uint16_t address) {
+	uint8_t value = 0;
+	DATA_PORT_INPUT;
+	setAddress(address);
 	FLASH_CE_ENABLE;
-
-	_flashWrite(0x1555, 0xAA);
-	_flashWrite(0x0AAA, 0x55);
-	_flashWrite(0x1555, 0x80);
-	_flashWrite(0x1555, 0xAA);
-	_flashWrite(0x0AAA, 0x55);
-	_flashWrite(startAddress, 0x30);
-
+	FLASH_OE_ENABLE;
+	_delay_us(1);
+	value = DATA_PORT.IN;
+	FLASH_OE_DISABLE;
 	FLASH_CE_DISABLE;
-	_delay_ms(25);  // SST39SF010 typical sector erase time
+	DATA_PORT_OUTPUT;
+	return value;
 }
 
 /**
