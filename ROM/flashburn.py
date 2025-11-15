@@ -5,7 +5,7 @@ Script to upload a new ROM image to the flash chip on the Zolatron's version B1
 CPU board.
 
 Normally, this script is invoked from the ./_build shell script in the ROM
-directory, so you need to CD to that directory first.
+directory, so you need to CD to the ROM directory first.
 """
 
 import os
@@ -18,7 +18,8 @@ import serial
 
 MAX_HANDSHAKES: int = 4
 VERSION: str = '1.6'
-SERIAL_PORT: str = '/dev/ttyUSB0'  # configure for your machine
+SERIAL_PORT: str = '/dev/ttyUSB1'  # configure for your machine
+# SERIAL_PORT: str = '/dev/cu.usbserial-FTFXZ7LX'
 BAUDRATE: int = 38400  # fast enough
 CHUNKSIZE: int = 64  # num bytes per chunk when sending data
 
@@ -130,10 +131,10 @@ def sendCommandWithAck(cmd: str, ack: str, verbose: bool) -> bool:
 		attempts += 1
 		msg_in: bytes = ser.read(4)
 		if msg_in == ack.encode('ascii'):
-			output(f'- received: {ack}', verbose)
+			output(f'- response: {ack}', verbose)
 			done = True
 		elif attempts == MAX_HANDSHAKES:
-			output(f'- got: {msg_in}', verbose)
+			output(f'Max handshake limit - received: {msg_in}', verbose)
 			error = True
 			done = True
 		else:
@@ -185,8 +186,8 @@ def output(msg: str, verbose: bool):
 
 
 def main():
-	filedir: str = 'files'
-	romfile: str = 'ROM.bin'
+	filedir: str = 'bin'
+	romfile: str = 'ROM-16K.bin'
 	verbose: bool = True
 	command: str = 'BURN'
 	addressStr: str = ''
@@ -225,6 +226,8 @@ def main():
 	# STEP 1: Handshake
 	if not fault:
 		fault = sendCommandWithAck(command, 'ACKN', verbose)
+	else:
+		output(f'ERR: command {command} failed', verbose)
 
 	if command == 'BURN':
 		# STEP 2: Transmit & agree on file size
@@ -244,9 +247,8 @@ def main():
 			while not done:
 				ser.write(fileBuf[byteIdx])
 				byteIdx += 1
-				if byteIdx % CHUNKSIZE == 0 or byteIdx == len(
-					fileBuf
-				):  # end of a chunk
+				if byteIdx % CHUNKSIZE == 0 or byteIdx == len(fileBuf):
+					# End of a chunk
 					# Wait for a response
 					response_ok = False
 					while not response_ok:

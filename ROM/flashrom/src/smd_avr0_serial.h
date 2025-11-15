@@ -65,23 +65,23 @@
 
 namespace smd_avr_serial {}
 
-class SMD_AVR_Serial4809 {
+class SMD_AVR0_Serial {
 public:
 	// Constructors
-	SMD_AVR_Serial4809();
-	SMD_AVR_Serial4809(uint32_t baudrate);
-	SMD_AVR_Serial4809(uint32_t baudrate, uint8_t dataBits, uint8_t stopBits);
+	SMD_AVR0_Serial(void);
+	SMD_AVR0_Serial(uint32_t baudrate);
+	SMD_AVR0_Serial(uint32_t baudrate, uint8_t dataBits, uint8_t stopBits);
 
 	// Methods
-	uint8_t begin();                // initialise
-	bool started();
-	void clearInputBuffer();
+	uint8_t begin(void);                // initialise
+	bool started(void);
+	void clearInputBuffer(void);
 	void useNullTerminator(bool sendNull) { _sendNullTerminator = sendNull; }
 	void addCarriageReturn(bool addCR) { _useCR = addCR; }
 
 	// Receiving
-	uint8_t getByte();              // read a byte
-	bool inWaiting();               // is there a byte waiting in the buffer?
+	uint8_t getByte(void);              // read a byte
+	bool inWaiting(void);               // is there a byte waiting in the buffer?
 	bool readByte(uint8_t* byteVal);             // read a byte from buffer
 	uint8_t readBytes(uint8_t* buf, uint8_t numToRead);
 	uint8_t readLine(char* buffer, size_t bufferSize, bool preserveNewline);

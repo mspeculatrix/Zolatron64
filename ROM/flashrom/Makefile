@@ -8,16 +8,16 @@ LIBCPP = $(HOME)/avrlib/avr-c++
 
 TARGET = flashrom
 
-CPPSOURCES = $(wildcard *.cpp)
-CPPSOURCES += $(wildcard lib/*.cpp)
+OBJ=obj
+SRC=src
+BINDIR=binfiles
 
-CPPHEADERS = $(CPPSOURCES:.cpp=.h)
-CPPSOURCES += $(wildcard lib/*.h)
+CPPSOURCES += $(wildcard $(SRC)/*.cpp)
+CPPHEADERS := $(wildcard $(SRC)/*.h)
 
-# PROGRAMMER_TYPE = serialupdi
-# PROGRAMMER_ARGS = -P usb -B 125kHz
 PROGRAMMER_TYPE = serialupdi
-PROGRAMMER_ARGS = -P /dev/ttyUSB0 -b 115200
+PROGRAMMER_ARGS = -P /dev/ttyUSB0 -b 115200   # Linux
+# PROGRAMMER_ARGS = -P /dev/cu.usbserial-1130  # Mac
 
 CXX = avr-g++
 OBJCOPY = avr-objcopy
@@ -25,27 +25,28 @@ OBJDUMP = avr-objdump
 AVRSIZE = avr-size
 AVRDUDE = avrdude
 
-OBJECTS = $(CPPSOURCES:.cpp=.o)
+OBJECTS = $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(CPPSOURCES))
+
 CPPFLAGS = -Os -DF_CPU=$(F_CPU) -I.     # Optimise, CPU
 CPPFLAGS += -I$(LIBCOMMON) -I$(LIBCPP)  # My libraries
 CPPFLAGS += -Wall # C++ standard, most warnings
 CPPFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 CPPFLAGS += -ffunction-sections -fdata-sections # Places each function/data object in its own section
 
-LDFLAGS = -DF_CPU=$(F_CPU) -Os -Wl,-Map,$(TARGET).map
+LDFLAGS = -DF_CPU=$(F_CPU) -Os -Wl,-Map,$(BINDIR)/$(TARGET).map
 LDFLAGS += -Wl,--gc-sections    # Can result in smaller code
 
 DEBUGFLAGS = -g -DDEBUG
 
 TARGET_ARCH = -mmcu=$(MCU)
 
-%.o: %.cpp $(CPPHEADERS) Makefile
-	$(CXX) $(CPPFLAGS) $(TARGET_ARCH) -c -o $@ $<;
+$(OBJ)/%.o: $(SRC)/%.cpp $(CPPHEADERS) Makefile
+	$(CXX) $(CPPFLAGS) $(TARGET_ARCH) -c -o $@ $<
 
-$(TARGET).elf: $(OBJECTS) # invokes the objects comiled above
+$(BINDIR)/$(TARGET).elf: $(OBJECTS) # invokes the objects comiled above
 	$(CXX) $(LDFLAGS) $(TARGET_ARCH) $^ $(LDLIBS) -o $@
 
-%.hex: %.elf  # invokes .elf target above
+$(BINDIR)/%.hex: $(BINDIR)/%.elf  # invokes .elf target above
 	 $(OBJCOPY) -j .text -j .data -j .rodata -O ihex $< $@
 
 %.eeprom: %.elf
@@ -56,7 +57,7 @@ $(TARGET).elf: $(OBJECTS) # invokes the objects comiled above
 
 .PHONY: all disassemble disasm eeprom size clean flash fuse_enable_reset
 
-all: $(TARGET).hex # invokes .hex targets
+all: $(BINDIR)/$(TARGET).hex # invokes .hex targets
 
 debug: CPPFLAGS += $(DEBUGFLAGS)
 debug: $(TARGET).hex
@@ -69,9 +70,9 @@ size:  $(TARGET).elf
 	$(AVRSIZE) -C --mcu=$(MCU) $(TARGET).elf
 
 clean:
-	rm -f *.elf *.hex *.obj *.o *.d *.eep *.lst *.lss *.sym *.map *~ *.eeprom lib/*.o
+	rm -f *.obj *.d *.eep *.lst *.lss *.sym *.map *~ *.eeprom $(BINDIR)/* $(OBJ)/*
 
-flash: $(TARGET).hex
+flash: $(BINDIR)/$(TARGET).hex
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$<
 
 flash_eeprom: $(TARGET).eeprom

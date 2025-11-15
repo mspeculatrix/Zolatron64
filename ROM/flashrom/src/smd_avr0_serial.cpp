@@ -1,4 +1,4 @@
-#include "smd_avr_serial4809.h"
+#include "smd_avr0_serial.h"
 
 using namespace smd_avr_serial;
 
@@ -26,22 +26,22 @@ ISR(USART0_RXC_vect) { // RX Complete
 // -------------------------------------------------------------------------
 // -----  CONSTRUCTORS                                                 -----
 // -------------------------------------------------------------------------
-SMD_AVR_Serial4809::SMD_AVR_Serial4809()  // instantiate with default baudrate,
+SMD_AVR0_Serial::SMD_AVR0_Serial(void)  // instantiate with default baudrate,
 {                                  // 8 data bits, 1 stop bit
 	_init(19200, SER_DATA_BITS8, SER_STOP_BITS1, SER_PARITY_NONE);
 }
 
-SMD_AVR_Serial4809::SMD_AVR_Serial4809(uint32_t baudrate)    // instantiate with definable
+SMD_AVR0_Serial::SMD_AVR0_Serial(uint32_t baudrate)    // instantiate with definable
 {                                           // baudrate, 8 data bits, 1 stop bit
 	_init(baudrate, SER_DATA_BITS8, SER_STOP_BITS1, SER_PARITY_NONE);
 }
 
-SMD_AVR_Serial4809::SMD_AVR_Serial4809(uint32_t baudrate, uint8_t dataBits, uint8_t stopBits) {
+SMD_AVR0_Serial::SMD_AVR0_Serial(uint32_t baudrate, uint8_t dataBits, uint8_t stopBits) {
 	_init(baudrate, dataBits, stopBits, SER_PARITY_NONE);
 }
 
 // This is the main constructor, called by all the others.
-void SMD_AVR_Serial4809::_init(uint32_t baudrate, uint8_t dataBits, uint8_t stopBits, uint8_t parity) {
+void SMD_AVR0_Serial::_init(uint32_t baudrate, uint8_t dataBits, uint8_t stopBits, uint8_t parity) {
 	_baud = baudrate;
 	_dataBits = dataBits;
 	_stopBits = stopBits;
@@ -54,7 +54,7 @@ void SMD_AVR_Serial4809::_init(uint32_t baudrate, uint8_t dataBits, uint8_t stop
 // -------------------------------------------------------------------------
 // -----  METHODS                                                      -----
 // -------------------------------------------------------------------------
-uint8_t SMD_AVR_Serial4809::begin() {
+uint8_t SMD_AVR0_Serial::begin(void) {
 	uint8_t error = 0;
 	cli();
 	uint16_t baud_setting = (64 * F_CPU + ((16UL * _baud) / 2)) / (16UL * _baud);
@@ -81,11 +81,11 @@ uint8_t SMD_AVR_Serial4809::begin() {
 	return error;
 }
 
-bool SMD_AVR_Serial4809::started(void) {
+bool SMD_AVR0_Serial::started(void) {
 	return _started;
 }
 
-void SMD_AVR_Serial4809::clearInputBuffer() {
+void SMD_AVR0_Serial::clearInputBuffer(void) {
 	recvbuf_read_idx = 0;
 	recvbuf_write_idx = 0;
 }
@@ -93,7 +93,7 @@ void SMD_AVR_Serial4809::clearInputBuffer() {
 // -------------------------------------------------------------------------
 // -----  RECEIVING                                                    -----
 // -------------------------------------------------------------------------
-uint8_t SMD_AVR_Serial4809::getByte() {
+uint8_t SMD_AVR0_Serial::getByte(void) {
 	// This doesn't test if there are unread bytes in the buffer.
 	// Always preceed by a test of inWaiting()
 	uint8_t byteVal = recvbuf[recvbuf_read_idx];
@@ -104,12 +104,12 @@ uint8_t SMD_AVR_Serial4809::getByte() {
 	return byteVal;
 }
 
-bool SMD_AVR_Serial4809::inWaiting() {
+bool SMD_AVR0_Serial::inWaiting(void) {
 	// return bit_is_set(UCSR0A, RXC0);
 	return recvbuf_write_idx != recvbuf_read_idx;
 }
 
-bool SMD_AVR_Serial4809::readByte(uint8_t* byteVal) {
+bool SMD_AVR0_Serial::readByte(uint8_t* byteVal) {
 	bool byteRead = false;
 	if (inWaiting()) {
 		byteRead = true;
@@ -125,7 +125,7 @@ bool SMD_AVR_Serial4809::readByte(uint8_t* byteVal) {
 // UNTESTED:
 // Assumes all the bytes are in the RX buffer. It doesn't wait around.
 // Returns number of bytes actually read.
-uint8_t SMD_AVR_Serial4809::readBytes(uint8_t* buf, uint8_t numToRead) {
+uint8_t SMD_AVR0_Serial::readBytes(uint8_t* buf, uint8_t numToRead) {
 	uint8_t counter = 0;
 	uint8_t inByte = 0;
 	while (readByte(&inByte) && counter < numToRead) {
@@ -135,7 +135,7 @@ uint8_t SMD_AVR_Serial4809::readBytes(uint8_t* buf, uint8_t numToRead) {
 	return counter;
 }
 
-uint8_t SMD_AVR_Serial4809::readLine(char* buffer, size_t bufferSize, bool preserveNewline = true) {
+uint8_t SMD_AVR0_Serial::readLine(char* buffer, size_t bufferSize, bool preserveNewline = true) {
 	// You must pass a buffer and the size of the buffer. Giving a buffer
 	// size larger than the size of the actual buffer will result in a buffer
 	// overflow and unpredictable results. The length of the string is
@@ -200,7 +200,7 @@ uint8_t SMD_AVR_Serial4809::readLine(char* buffer, size_t bufferSize, bool prese
 	not getting set anywhere, we're just returning default values meaning
 	success. They are in here for future development. **/
 
-bool SMD_AVR_Serial4809::sendByte(uint8_t byteVal) {
+bool SMD_AVR0_Serial::sendByte(uint8_t byteVal) {
 	bool error = false;
 	// Wait until data register empty
 	while (!(USART0.STATUS & USART_DREIF_bm)) {};
@@ -210,51 +210,51 @@ bool SMD_AVR_Serial4809::sendByte(uint8_t byteVal) {
 	return error;
 }
 
-uint8_t SMD_AVR_Serial4809::write(const char* string) {
+uint8_t SMD_AVR0_Serial::write(const char* string) {
 	uint8_t error = _writeStr(string, false);
 	return error;
 }
 
-uint8_t SMD_AVR_Serial4809::write(const double fnum) {
+uint8_t SMD_AVR0_Serial::write(const double fnum) {
 	uint8_t error = _writeDouble(fnum, false);
 	return error;
 }
 
-uint8_t SMD_AVR_Serial4809::write(const int twoByteInt) {
+uint8_t SMD_AVR0_Serial::write(const int twoByteInt) {
 	uint8_t error = _writeInt16(twoByteInt, false);
 	return error;
 }
 
-uint8_t SMD_AVR_Serial4809::write(const long longInt) {
+uint8_t SMD_AVR0_Serial::write(const long longInt) {
 	uint8_t error = _writeLongInt(longInt, false);
 	return error;
 }
 
-uint8_t SMD_AVR_Serial4809::writeChar(const char ch) {
+uint8_t SMD_AVR0_Serial::writeChar(const char ch) {
 	char sendChar[1 + sizeof(char)];
 	sprintf(sendChar, "%c", ch);
 	uint8_t error = _writeStr(sendChar, false);
 	return error;
 }
 
-uint8_t SMD_AVR_Serial4809::writeln(const char* string) {
+uint8_t SMD_AVR0_Serial::writeln(const char* string) {
 	return _writeStr(string, true);
 }
 
-uint8_t SMD_AVR_Serial4809::writeln(const int twoByteInt) {
+uint8_t SMD_AVR0_Serial::writeln(const int twoByteInt) {
 	return _writeInt16(twoByteInt, true);
 }
 
-uint8_t SMD_AVR_Serial4809::writeln(const long longInt) {
+uint8_t SMD_AVR0_Serial::writeln(const long longInt) {
 	return _writeLongInt(longInt, true);
 }
 
-uint8_t SMD_AVR_Serial4809::writeln(const double fnum) {
+uint8_t SMD_AVR0_Serial::writeln(const double fnum) {
 	return _writeDouble(fnum, true);
 }
 
 
-uint8_t SMD_AVR_Serial4809::_writeDouble(const double fnum, bool addReturn = false) {
+uint8_t SMD_AVR0_Serial::_writeDouble(const double fnum, bool addReturn = false) {
 	uint8_t resultCode = 0;
 	char numStr[30];
 	// see: http://www.atmel.com/webdoc/AVRLibcReferenceManual/group__avr__stdlib_1ga060c998e77fb5fc0d3168b3ce8771d42.html
@@ -263,7 +263,7 @@ uint8_t SMD_AVR_Serial4809::_writeDouble(const double fnum, bool addReturn = fal
 	return resultCode;
 }
 
-uint8_t SMD_AVR_Serial4809::_writeInt16(const int twoByteInt, bool addReturn = false) {
+uint8_t SMD_AVR0_Serial::_writeInt16(const int twoByteInt, bool addReturn = false) {
 	uint8_t resultCode = 0;
 	char numStr[20];
 	itoa(twoByteInt, numStr, 10);
@@ -272,7 +272,7 @@ uint8_t SMD_AVR_Serial4809::_writeInt16(const int twoByteInt, bool addReturn = f
 	return resultCode;
 }
 
-uint8_t SMD_AVR_Serial4809::_writeLongInt(const long longInt, bool addReturn = false) {
+uint8_t SMD_AVR0_Serial::_writeLongInt(const long longInt, bool addReturn = false) {
 	uint8_t resultCode = 0;
 	char numStr[30];
 	ltoa(longInt, numStr, 10);
@@ -281,7 +281,7 @@ uint8_t SMD_AVR_Serial4809::_writeLongInt(const long longInt, bool addReturn = f
 }
 
 // This is the main function used by the other write() and writeln() methods.
-uint8_t SMD_AVR_Serial4809::_writeStr(const char* string, bool addReturn) {
+uint8_t SMD_AVR0_Serial::_writeStr(const char* string, bool addReturn) {
 	uint8_t resultCode = 0;
 	if (strlen(string) > 0) {
 		uint8_t i = 0;
