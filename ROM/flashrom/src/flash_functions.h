@@ -14,6 +14,7 @@
 // PROTOTYPES
 
 void disableFlashControl(void);
+void disableSDP(void);
 void enableFlashControl(void);
 void flashByteWrite(uint16_t address, uint8_t value);
 void _flashWrite(uint16_t address, uint8_t value);
@@ -38,6 +39,21 @@ void disableFlashControl(void) {
 	CTRL_PORT.OUTSET = CLK_CTRL;			// Release clock
 	CTRL_PORT.DIRCLR = CTRL_PORT_MASK;		// Set CTRL pins as inputs
 	resetSystem();
+}
+
+void disableSDP(void) {
+	FLASH_CE_ENABLE;
+	FLASH_OE_DISABLE;
+
+	_flashWrite(0x1555, 0xAA);
+	_flashWrite(0x0AAA, 0x55);
+	_flashWrite(0x1555, 0x80);
+	_flashWrite(0x1555, 0xAA);
+	_flashWrite(0x0AAA, 0x55);
+	_flashWrite(0x1555, 0x20);  // Disable SDP command
+
+	_delay_ms(10);
+	FLASH_CE_DISABLE;
 }
 
 /**
@@ -82,31 +98,31 @@ void enableFlashControl(void) {
  * disabled. Makes multiple calls to flashWrite below.
  */
 void flashByteWrite(uint16_t address, uint8_t value) {
-	FLASH_CE_ENABLE;
+	FLASH_CE_ENABLE;  // Enable once
 	FLASH_OE_DISABLE;
-	// We're using aliased addresses for these commands, rather than the usual
-	// ones because my setAddress() function only works with 14-bit addresses
-	_flashWrite(0x1555, 0xAA);  // Changed from 0x5555
-	_flashWrite(0x0AAA, 0x55);  // Changed from 0x2AAA
-	_flashWrite(0x1555, 0xA0);  // Changed from 0x5555
+	disableSDP();
+	_flashWrite(0x1555, 0xAA);
+	_flashWrite(0x0AAA, 0x55);
+	_flashWrite(0x1555, 0xA0);
 	_flashWrite(address, value);
 
-	// Wait for write to complete
+	// Don't disable CE here! Keep it enabled for polling
 	DATA_PORT_INPUT;
 	setAddress(address);
-	uint8_t expectedBit7 = value & 0x80;
-	uint16_t timeout = 10000;
+	FLASH_OE_ENABLE;
 
-	while (timeout--) {
-		_delay_us(1);
+	uint8_t expectedBit7 = value & 0x80;
+	for (uint16_t i = 0; i < 1000; i++) {  // Shorter timeout for testing
 		uint8_t readVal = DATA_PORT.IN;
 		if ((readVal & 0x80) == expectedBit7) {
 			break;
 		}
+		_delay_us(1);
 	}
 
+	FLASH_OE_DISABLE;
 	DATA_PORT_OUTPUT;
-	FLASH_CE_DISABLE;
+	FLASH_CE_DISABLE;  // Disable CE only after everything is done
 }
 
 /**
@@ -149,19 +165,22 @@ uint8_t readFlash(uint16_t address) {
  * disabled.
  */
 void sectorErase(uint16_t startAddress) {
+	disableSDP();
 	FLASH_CE_ENABLE;
 	FLASH_OE_DISABLE;
 
-	_flashWrite(0x1555, 0xAA);  // Changed from 0x5555
-	_flashWrite(0x0AAA, 0x55);  // Changed from 0x2AAA
-	_flashWrite(0x1555, 0x80);  // Changed from 0x5555
-	_flashWrite(0x1555, 0xAA);  // Changed from 0x5555
-	_flashWrite(0x0AAA, 0x55);  // Changed from 0x2AAA
+	_flashWrite(0x1555, 0xAA);
+	_flashWrite(0x0AAA, 0x55);
+	_flashWrite(0x1555, 0x80);
+	_flashWrite(0x1555, 0xAA);
+	_flashWrite(0x0AAA, 0x55);
 	_flashWrite(startAddress, 0x30);
 
-	// Wait for erase to complete
+	// Poll for completion
 	DATA_PORT_INPUT;
 	setAddress(startAddress);
+	FLASH_OE_ENABLE;  // ← ADD THIS!
+
 	uint32_t timeout = 100000;
 
 	while (timeout--) {
@@ -173,6 +192,7 @@ void sectorErase(uint16_t startAddress) {
 		}
 	}
 
+	FLASH_OE_DISABLE;
 	DATA_PORT_OUTPUT;
 	FLASH_CE_DISABLE;
 }

@@ -60,6 +60,7 @@ int main(void) {
 		if (cmdRecvd) {
 			serial.clearInputBuffer();
 			enableFlashControl();
+			disableSDP();
 			if (strcmp(cmdBuf, "BURN") == 0) {
 				// -------------------------------------------------------------
 				// ----- BURN - Download data & write to Flash -----------------
