@@ -98,21 +98,23 @@ void enableFlashControl(void) {
  * disabled. Makes multiple calls to flashWrite below.
  */
 void flashByteWrite(uint16_t address, uint8_t value) {
-	FLASH_CE_ENABLE;  // Enable once
+	FLASH_CE_ENABLE;
 	FLASH_OE_DISABLE;
-	disableSDP();
+
 	_flashWrite(0x1555, 0xAA);
 	_flashWrite(0x0AAA, 0x55);
 	_flashWrite(0x1555, 0xA0);
 	_flashWrite(address, value);
 
-	// Don't disable CE here! Keep it enabled for polling
+	// Poll for completion
 	DATA_PORT_INPUT;
 	setAddress(address);
 	FLASH_OE_ENABLE;
 
 	uint8_t expectedBit7 = value & 0x80;
-	for (uint16_t i = 0; i < 1000; i++) {  // Shorter timeout for testing
+	uint16_t timeout = 10000;
+
+	while (timeout--) {
 		uint8_t readVal = DATA_PORT.IN;
 		if ((readVal & 0x80) == expectedBit7) {
 			break;
@@ -122,7 +124,7 @@ void flashByteWrite(uint16_t address, uint8_t value) {
 
 	FLASH_OE_DISABLE;
 	DATA_PORT_OUTPUT;
-	FLASH_CE_DISABLE;  // Disable CE only after everything is done
+	FLASH_CE_DISABLE;
 }
 
 /**
@@ -149,11 +151,15 @@ void _flashWrite(uint16_t address, uint8_t value) {
  */
 uint8_t readFlash(uint16_t address) {
 	uint8_t value = 0;
-	setAddress(address); 					// set address bus
+	DATA_PORT_INPUT;           // Set to input
+	setAddress(address);
 	FLASH_CE_ENABLE;
-	_delay_us(FLASH_BYTE_DELAY);
-	value = DATA_PORT.IN;					// read data
+	FLASH_OE_ENABLE;           // Enable /OE to read
+	_delay_us(1);              // Wait for data
+	value = DATA_PORT.IN;
+	FLASH_OE_DISABLE;
 	FLASH_CE_DISABLE;
+	DATA_PORT_OUTPUT;          // Set back to output
 	return value;
 }
 
@@ -165,7 +171,6 @@ uint8_t readFlash(uint16_t address) {
  * disabled.
  */
 void sectorErase(uint16_t startAddress) {
-	disableSDP();
 	FLASH_CE_ENABLE;
 	FLASH_OE_DISABLE;
 
@@ -179,7 +184,7 @@ void sectorErase(uint16_t startAddress) {
 	// Poll for completion
 	DATA_PORT_INPUT;
 	setAddress(startAddress);
-	FLASH_OE_ENABLE;  // ← ADD THIS!
+	FLASH_OE_ENABLE;
 
 	uint32_t timeout = 100000;
 
