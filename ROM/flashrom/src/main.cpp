@@ -60,7 +60,6 @@ int main(void) {
 		if (cmdRecvd) {
 			serial.clearInputBuffer();
 			enableFlashControl();
-			disableSDP();
 			if (strcmp(cmdBuf, "BURN") == 0) {
 				// -------------------------------------------------------------
 				// ----- BURN - Download data & write to Flash -----------------
@@ -85,6 +84,7 @@ int main(void) {
 						uint16_t byteIdx = 0; // for writing to Flash
 						uint16_t fileIdx = 0;
 						uint8_t chunkIdx = 0;
+						disableSDP();
 						setFlashRW(FLASH_WRITE);
 						while (byteIdx < dataSize) {
 							bool gotChunk = false;

@@ -99,32 +99,14 @@ void enableFlashControl(void) {
  */
 void flashByteWrite(uint16_t address, uint8_t value) {
 	FLASH_CE_ENABLE;
-	FLASH_OE_DISABLE;
 
 	_flashWrite(0x1555, 0xAA);
 	_flashWrite(0x0AAA, 0x55);
 	_flashWrite(0x1555, 0xA0);
 	_flashWrite(address, value);
 
-	// Poll for completion
-	DATA_PORT_INPUT;
-	setAddress(address);
-	FLASH_OE_ENABLE;
-
-	uint8_t expectedBit7 = value & 0x80;
-	uint16_t timeout = 10000;
-
-	while (timeout--) {
-		uint8_t readVal = DATA_PORT.IN;
-		if ((readVal & 0x80) == expectedBit7) {
-			break;
-		}
-		_delay_us(1);
-	}
-
-	FLASH_OE_DISABLE;
-	DATA_PORT_OUTPUT;
 	FLASH_CE_DISABLE;
+	_delay_us(20);  // SST39SF010 max byte program time is 20us
 }
 
 /**
@@ -133,13 +115,15 @@ void flashByteWrite(uint16_t address, uint8_t value) {
  * @param uint8_t byte value to write
  */
 void _flashWrite(uint16_t address, uint8_t value) {
+	// Ensure data port is output and /OE is disabled
+	DATA_PORT_OUTPUT;
 	setAddress(address);
 	DATA_PORT.OUT = value;
-	_delay_us(1); 	// make sure data is stable
+	_delay_us(1);
 	FLASH_WE_ENABLE;
-	_delay_us(1); 	// pause for effect
+	_delay_us(1);
 	FLASH_WE_DISABLE;
-	_delay_us(1); 	// pause for effect
+	_delay_us(1);
 }
 
 /**
@@ -149,18 +133,18 @@ void _flashWrite(uint16_t address, uint8_t value) {
  *
  * Assumes that /CE and /OE have been enabled on the flash chip.
  */
-uint8_t readFlash(uint16_t address) {
-	uint8_t value = 0;
-	DATA_PORT_INPUT;           // Set to input
-	setAddress(address);
+void sectorErase(uint16_t startAddress) {
 	FLASH_CE_ENABLE;
-	FLASH_OE_ENABLE;           // Enable /OE to read
-	_delay_us(1);              // Wait for data
-	value = DATA_PORT.IN;
-	FLASH_OE_DISABLE;
+
+	_flashWrite(0x1555, 0xAA);
+	_flashWrite(0x0AAA, 0x55);
+	_flashWrite(0x1555, 0x80);
+	_flashWrite(0x1555, 0xAA);
+	_flashWrite(0x0AAA, 0x55);
+	_flashWrite(startAddress, 0x30);
+
 	FLASH_CE_DISABLE;
-	DATA_PORT_OUTPUT;          // Set back to output
-	return value;
+	_delay_ms(25);  // SST39SF010 typical sector erase time
 }
 
 /**
