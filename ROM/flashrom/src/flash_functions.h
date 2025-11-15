@@ -150,30 +150,30 @@ uint8_t readFlash(uint16_t address) {
  */
 void sectorErase(uint16_t startAddress) {
 	FLASH_CE_ENABLE;
-	FLASH_OE_DISABLE;						// Ensure this is disabled
-	_flashWrite(0x5555, 0xAA);				// sector erase sequence
-	_flashWrite(0x2AAA, 0x55);
-	_flashWrite(0x5555, 0x80);
-	_flashWrite(0x5555, 0xAA);
-	_flashWrite(0x2AAA, 0x55);
-	_flashWrite(startAddress, 0x30);			// set sector address
-	//_delay_ms(FLASH_SECTOR_ERASE_DELAY);	// allow the dust to settle
+	FLASH_OE_DISABLE;
 
-	// CRITICAL: Wait for erase to complete using Toggle Bit (DQ6)
-	DATA_PORT_INPUT;  // Switch to input to read status
+	_flashWrite(0x1555, 0xAA);  // Changed from 0x5555
+	_flashWrite(0x0AAA, 0x55);  // Changed from 0x2AAA
+	_flashWrite(0x1555, 0x80);  // Changed from 0x5555
+	_flashWrite(0x1555, 0xAA);  // Changed from 0x5555
+	_flashWrite(0x0AAA, 0x55);  // Changed from 0x2AAA
+	_flashWrite(startAddress, 0x30);
+
+	// Wait for erase to complete
+	DATA_PORT_INPUT;
 	setAddress(startAddress);
-	uint32_t timeout = 100000;  // Longer timeout for erase
+	uint32_t timeout = 100000;
 
 	while (timeout--) {
 		_delay_us(10);
 		uint8_t read1 = DATA_PORT.IN;
 		uint8_t read2 = DATA_PORT.IN;
 		if ((read1 & 0x40) == (read2 & 0x40)) {
-			break;  // Toggle stopped, erase complete
+			break;
 		}
 	}
 
-	DATA_PORT_OUTPUT;  // Switch back to output
+	DATA_PORT_OUTPUT;
 	FLASH_CE_DISABLE;
 }
 
