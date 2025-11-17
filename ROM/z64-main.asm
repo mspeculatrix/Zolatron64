@@ -10,6 +10,7 @@
 
 CPU 1                   ; Use 65C02 instruction set
 VSTR =? "0.0.0"         ; Version string. Will be overwritten with the -S option
+IMGFILE =? "EEPROM"
 
 ; Include our setup files. These contain address designations and constant
 ; definitions.
@@ -37,10 +38,14 @@ INCLUDE "../LIB/cfg_spi_rtc_ds3234.asm"
 \ ------------------------------------------------------------------------------
 \ ----    INITIALISATION                                                    ----
 \ ------------------------------------------------------------------------------
-ORG $8000              ; Using only the top 16KB of a 32KB EEPROM. This is
-                       ; where the bytes start for the ROM file, but...
+IF IMGFILE = "EEPROM"
+  ORG $8000            ; Using only the top 16KB of a 32KB EEPROM. This is
+                       ; where the bytes start for the EEPROM file, but...
+ELSE
+  ORG ROM_START        ; This is where the actual code starts.
+ENDIF
 .startrom
-ORG ROM_START               ; This is where the actual code starts.
+ORG ROM_START          ; Still needed if assembling for EEPROM
   jmp startcode
 .version_str
   equs VSTR, 0              ; VSTR gets inserted during assembly
@@ -81,7 +86,6 @@ INCLUDE "include/os_call_vectors.asm"
 
 \ ----  SETUP LCD display & LEDs  ----------------------------------------------
   jsr OSLCDINIT
-
 
 \ ----  SETUP USER PORT  -------------------------------------------------------
   lda #$FF

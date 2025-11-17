@@ -1,7 +1,7 @@
 .startrom
      C000   4C 09 C0   JMP &C009
 .version_str
-     C003   35 2E 32 ...
+     C003   35 2E 33 ...
      C008   00
 .startcode
      C009   78         SEI
@@ -4814,4 +4814,4 @@ End macro PRT_PULSE_DELAY
      FFFC   09 C0
      FFFE   00 E3
 .endrom
-Saving file 'bin/z64-ROM-5.2.0.bin'
+Saving file 'bin/z64-ROM-5.3.2-16K.bin'

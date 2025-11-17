@@ -1,5 +1,11 @@
 # Zolatron 64 OS ROM
 
+The ROM code was initially intended to be flashed to an AT28C256 EEPROM. And it still works that way.
+
+The default binary file produced is 32KB in size but the ROM code lives in the top 16KB. That's to do with the fact that the EEPROM chip I'm using is 32KB in size and it's also connected with the Zolatron's decoding logic.
+
+However, I'm also developing a new CPU/RAM/ROM board that uses flash memory for the ROM. For this, the `_build` script for the ROM also has the option to output a 16KB file.
+
 ## CHANGELOG
 
 ### 5.2.0 In progress
