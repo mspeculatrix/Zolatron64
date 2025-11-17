@@ -1,0 +1,119 @@
+/* McROM */
+
+#ifndef __AVR_ATmega4809__
+#define __AVR_ATmega4809__
+#endif
+
+#ifndef F_CPU
+#define F_CPU 20000000UL // 20 MHz unsigned long
+#endif
+
+#include <avr/io.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+#include <avr/pgmspace.h>
+// #include <string.h>
+// #include "lib/defines.h"
+// #include "lib/functions.h"
+
+#define RST_PORT PORTA
+#define RST PIN4_bm
+#define RST_CTRL PIN4CTRL
+
+
+#define CTRL_PORT PORTE
+#define CTRL_PORT_INT_VEC PORTE_PORT_vect
+#define CE PIN3_bm
+#define CE_CTRL PIN3CTRL
+#define OE PIN2_bm
+#define OE_CTRL PIN2CTRL
+
+#define DATA_PORT PORTD
+#define ADDR_PORTL PORTA
+#define ADDR_PORTH PORTF
+
+/*******************************************************************************
+*****   GLOBALS                                                            *****
+*******************************************************************************/
+
+bool readRequest = false; // Flag for setting within ISR
+extern const uint16_t _rom_data_start;
+const uint16_t* data_ptr = (const uint16_t*)&_rom_data_start;
+
+// Interrupt service routine - invoked when /OE is pulled low
+ISR(CTRL_PORT_INT_VEC) {
+	if (CTRL_PORT.INTFLAGS & OE) {		// Check if OE triggered
+		CTRL_PORT.INTFLAGS = OE;		// Clear interrupt flag for CE
+		while (CTRL_PORT.IN && CE) {};	// Ensure CE is also active
+		readRequest = true;				// Set event flag
+	}
+}
+
+
+/*******************************************************************************
+*****   MAIN                                                               *****
+*******************************************************************************/
+int main(void) {
+
+	//--------------------------------------------------------------------------
+	//-----   SETUP                                                        -----
+	//--------------------------------------------------------------------------
+
+	CCP = CCP_IOREG_gc;		// Unlock protected registers
+	CLKCTRL.MCLKCTRLB = 0;  // No prescaling, full main clock frequency
+
+	// We're using the 40-pin DIP version of the 4809, so need to configure
+	// the non-existent pins, PB0..5, PC6, PC7.
+	PORTB.PIN0CTRL = PORT_PULLUPEN_bm;
+	PORTB.PIN1CTRL = PORT_PULLUPEN_bm;
+	PORTB.PIN2CTRL = PORT_PULLUPEN_bm;
+	PORTB.PIN3CTRL = PORT_PULLUPEN_bm;
+	PORTB.PIN4CTRL = PORT_PULLUPEN_bm;
+	PORTB.PIN5CTRL = PORT_PULLUPEN_bm;
+	PORTC.PIN6CTRL = PORT_PULLUPEN_bm;
+	PORTC.PIN7CTRL = PORT_PULLUPEN_bm;
+
+	RST_PORT.DIRCLR = RST;			// Set as input (tristate)
+	CTRL_PORT.DIRCLR = CE | OE; 	// Set these pins as inputs (tristate)
+	// The /READ_EN signal on the Zolatron is clock-qualified.
+	// This is connected to the ROM's OE pin, so we're going to use that
+	// for interrupts.
+	// Set OE pin as interrupt-enabled on falling edge, and with pullup.
+	CTRL_PORT.OE_CTRL = PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc;
+
+	DATA_PORT.DIR = 0;				// Set initially as input (tristate)
+	ADDR_PORTL.DIR = 0;				// Set Address ports as inputs
+	ADDR_PORTH.DIR = 0;				// (this won't change)
+
+	// As we're starting up, assume there has been a ROM code update, so reset
+	RST_PORT.OUTSET = RST;			// Set RST pin high
+	RST_PORT.DIRSET = RST;			// Set it as an output
+	RST_PORT.OUTCLR = RST;			// Set RST pin low
+	_delay_ms(500);					// Wait a 'mo
+	RST_PORT.OUTSET = RST;			// Bring RST pin high again
+	RST_PORT.DIRCLR = RST;			// Set pin back to input
+
+	/***************************************************************************
+	******   MAIN LOOP													   *****
+	***************************************************************************/
+
+	while (1) {
+		if (readRequest) {
+			// Read the address on the address pins
+			uint16_t address = ADDR_PORTH.IN << 8 | ADDR_PORTL.IN;
+			// Find the appropriate value
+			uint8_t value = pgm_read_byte(&data_ptr[address]);
+			// - set the value - do this before setting the port as an output
+			DATA_PORT.OUT = value;
+			// - set data port as output
+			DATA_PORT.DIR = 0xFF;
+			// - Wait for CE to go high
+			while (!(CTRL_PORT.IN && CE)) {};
+			//   - set data port as input
+			DATA_PORT.DIR = 0;
+			readRequest = false;
+		}
+	}
+}
