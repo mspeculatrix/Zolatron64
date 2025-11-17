@@ -8,32 +8,29 @@
 #define SERIAL_BAUDRATE 38400UL
 
 #define DATA_PORT  PORTD				// Port for data bus
-#define ADDRL_PORT PORTC
-#define ADDRH_PORT PORTF
-#define ADDRH_MASK 0b00111111
+#define ADDRL_PORT PORTC				// Low address byte port
+#define ADDRH_PORT PORTF				// High address byte port
+#define ADDRH_MASK 0b00111111			// Not using all of port so need a mask
 
 #define CTRL_PORT  PORTA				// Port for control signals
 // NB: Pins 0 and 1 of PORTA are used for the serial port
 #define CTRL_PORT_MASK 0b11111100
-#define CPU_RDY        PIN2_bm
-#define CPU_BE         PIN3_bm
-#define CLK_CTRL       PIN4_bm
-#define CPU_RWB        PIN5_bm
-#define FL_WE          PIN6_bm
-#define SYS_RES        PIN7_bm
+#define CPU_RDY        PIN2_bm			// Connects to CPU's RDY pin
+#define CPU_BE         PIN3_bm			// Connects to CPU's BE pin
+#define CLK_CTRL       PIN4_bm			// Connects to clock circuit
+#define CPU_RWB        PIN5_bm			// Connects to CPU's RWB pin
+#define FL_WE          PIN6_bm 			// Connects to flash /WE pin
+#define SYS_RES        PIN7_bm			// Connects to system RESET line
 
-#define FLASH_READ 1
-#define FLASH_WRITE 0
-
-#define FL_MEMBANK_PORT PORTE
-#define FA14 PIN0_bm
-#define FA15 PIN1_bm
+#define FL_MEMBANK_PORT PORTE			// For controlling flash memory banks
+#define FA14 PIN0_bm					// Three pins connect to the flash's
+#define FA15 PIN1_bm					// A14, A15 and A16 inputs
 #define FA16 PIN2_bm
-#define FL_MEMBANK_MASK 0b00000111
+#define FL_MEMBANK_MASK 0b00000111		// Only using three pins in port
 
-#define FL_EN_PORT PORTB
-#define A14 PIN0_bm
-#define A15 PIN1_bm
+#define FL_EN_PORT PORTB				// These outputs connect to the system
+#define A14 PIN0_bm						// address bus A14 & A15 lines & are
+#define A15 PIN1_bm						// used to select the flash via decoding
 
 // Handy macros
 #define FLASH_CE_ENABLE  FL_EN_PORT.OUTSET = A14 | A15
@@ -49,7 +46,8 @@
 #define CR 13
 
 #define CHUNKSIZE 64 				// Size of each chunk when sending data
-#define CMD_BUF_LEN 4
-#define MAX_MSG_TRIES 4
+#define CMD_BUF_LEN 4 				// Number of chars in a command message
+#define MAX_MSG_TRIES 4 			// How many attempts to get a message
+#define SECTORS_PER_IMG 4 			// number of flash sectors in a ROM image
 
 #endif

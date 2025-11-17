@@ -17,8 +17,15 @@ void resetSystem(void);
 void sendWord(uint16_t word);
 void setAddress(uint16_t addr);
 
-// Look for a specific incoming message. Wrapper to getCommand()
-// Returns false if it doesn't get what it's looking for.
+/**
+ * @brief Check a buffer for presence of a string
+ * @param char* msg - pointer to string containing msg we're exoecting
+ * @param char* buf - buffer that should contain the message
+ * @retval bool - whether we received the message
+ *
+ * Look for a specific incoming message. Wrapper to getCommand().
+ * Returns false if it doesn't get what it's looking for.
+ */
 bool checkForMessage(const char* msg, char* buf) {
 	bool error = false;
 	getCommand(buf);
@@ -28,7 +35,11 @@ bool checkForMessage(const char* msg, char* buf) {
 	return error;
 }
 
-// Clear any buffer you like by writing zeros to it.
+/**
+ * @brief Clear any buffer you like by writing zeros to it.
+ * @param char* buf - pointer to buffer to clear
+ * @param uint8_t len - length of buffer
+ */
 void clearBuf(char* buf, uint8_t len) {
 	for (uint8_t i = 0; i < len; i++) {
 		buf[i] = 0;
@@ -36,11 +47,17 @@ void clearBuf(char* buf, uint8_t len) {
 }
 
 
-// Checks for characters coming in over serial and adds them to the given
-// command buffer. It's used for commands only.
-// Returns the number of chars received, although I don't think I do anything
-// with that information right now.
-// Returns when it encounters a linefeed or the buffer is full.
+/**
+ * @brief Adds any chars coming in over serial & adds them to a buffer
+ * @param char* pointer to a buffer to contain incoming characters
+ * @retval uint8_t number of chars received
+ *
+ * Checks for characters coming in over serial and adds them to the given
+ * command buffer. It's used for commands only.
+ * Returns the number of chars received, although I don't think I do anything
+ * with that information right now.
+ * Returns when it encounters a linefeed or the buffer is full.
+ */
 uint8_t getCommand(char* buf) {
 	clearBuf(buf, CMD_BUF_LEN);
 	bool recvd = false;
@@ -62,8 +79,12 @@ uint8_t getCommand(char* buf) {
 	return idx;
 }
 
-// Retrieve two bytes from the serial input and return as uint16_t integer.
-// Blocking. It won't return until it has received two bytes.
+/**
+ * @brief Retrieve two bytes from the serial input and return as uint16_t integer.
+ * @retval uint16_t 16-bit integer
+ *
+ * Blocking. It won't return until it has received two bytes.
+ */
 uint16_t getWord(void) {
 	uint16_t word = 0;
 	uint8_t byteCount = 2; // because MSB first
@@ -78,8 +99,12 @@ uint16_t getWord(void) {
 	return word;
 }
 
-// Strobe the reset pin (which is attached to the Zolatron's system
-// reset line) low.
+/**
+ * @brief Perform a system reset
+ *
+ * Strobe the reset pin (which is attached to the Zolatron's system
+ * reset line) low.
+ */
 void resetSystem(void) {
 	CTRL_PORT.DIRSET = SYS_RES; // set as output
 	CTRL_PORT.OUTCLR = SYS_RES; // Take low
@@ -88,27 +113,24 @@ void resetSystem(void) {
 	CTRL_PORT.DIRCLR = SYS_RES; // set as input
 }
 
-// Set a 14-bit address on the address pins.
-// We're only using 14-bit addresses because we're
-// only writing 16KB images.
+/**
+ * @brief Set a 14-bit address on the address pins.
+ * @param uint16_t addr - the address to be set on the pins
+ *
+ * We're using 14-bit addresses because we're only writing 16KB images.
+ */
 void setAddress(uint16_t addr) {
 	ADDRL_PORT.OUT = (uint8_t)(addr & 0x00FF);
 	ADDRH_PORT.OUT = ADDRH_MASK & (uint8_t)(addr >> 8);
 }
 
-// Send a 16-bit integer, MSB-first.
+/**
+ * @brief Send a 16-bit integer, MSB-first, over the serial connection.
+ * @param uint16_t word - the 16-bit value to be sent.
+*/
 void sendWord(uint16_t word) {
 	serial.sendByte((uint8_t)(word >> 8));		// MSB
 	serial.sendByte((uint8_t)(word & 0x00FF));	// LSB
 }
 
-// void setAddrPortDir(uint8_t dir) {
-// 	if (dir == ADDR_PORT_INPUT) {			// INPUT
-// 		ADDRL_PORT.DIR = 0;
-// 		ADDRH_PORT.DIRCLR = ADDRH_MASK;
-// 	} else {								// OUTPUT
-// 		ADDRL_PORT.DIR = 0xFF;
-// 		ADDRH_PORT.DIRSET = ADDRH_MASK;
-// 	}
-// }
 #endif

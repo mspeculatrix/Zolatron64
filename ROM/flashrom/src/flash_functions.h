@@ -8,19 +8,44 @@
 #include "functions.h"
 
 #define FLASH_SECTOR_SIZE 4096
-#define FLASH_SECTOR_ERASE_DELAY 40 // ms originally 25
-#define FLASH_BYTE_DELAY 50         // us originally 20
+#define FLASH_SECTOR_ERASE_DELAY 25 // ms - MAX is 25ms
+#define FLASH_BYTE_DELAY 15         // us - MAX byte program time is 20us
+#define FLASH_READ 1
+#define FLASH_WRITE 0
+
 
 // PROTOTYPES
-
+uint16_t addrSet(uint16_t addr);
 void disableFlashControl(void);
-void disableSDP(void);
+// void disableSDP(void);
 void enableFlashControl(void);
 void flashByteWrite(uint16_t address, uint8_t value);
 void _flashWrite(uint16_t address, uint8_t value);
 uint8_t readFlash(uint16_t address);
 void sectorErase(uint16_t startAddress);
 void setFlashBank(uint8_t bank);
+
+/**
+ * @brief set the FA14 signal according to the address selected.
+ * @param uint16_t addr - the address desired
+ * @retval uint16_t just returns the parameter value.
+ *
+ * The main address bus connection between the MCU and the flash ROM is
+ * 14-bit (A0-A13). But when we're writing commands to the flash chip, such
+ * as 0x5555, we need to be able to set a 15-bit address. So this function
+ * decides whether we need to set the FA14 output on the MCU, which connects
+ * to A14 on the flash chip.
+ * NB: This can leave the FA14 output set high. You may need to ensure it's
+ * reset low at some point after this function is called.
+ */
+uint16_t addrSet(uint16_t addr) {
+	if (addr & (1 << 14)) { 	// Check if the desired address has bit 14 set
+		FL_MEMBANK_PORT.OUTSET = FA14; 		// If so, set A14 on the flash chip
+	} else {
+		FL_MEMBANK_PORT.OUTCLR = FA14; 		// Otherwise ensure it's unset.
+	}
+	return addr;
+}
 
 /**
  * @brief Stop management mode of flash & return to normal operations.
@@ -36,31 +61,30 @@ void disableFlashControl(void) {
 	CTRL_PORT.OUTSET = CPU_RWB;				// Set R/W to read
 	CTRL_PORT.OUTSET = FL_WE;				// Disable flash writes
 	CTRL_PORT.OUTSET = CLK_CTRL;			// Release clock
-	resetSystem();
 	CTRL_PORT.DIRCLR = CTRL_PORT_MASK;		// Set CTRL pins as inputs
 }
 
 /**
  * @brief Disable Software Data Protection
  */
-void disableSDP(void) {
-	FLASH_CE_ENABLE;
-	FLASH_OE_DISABLE;
+ // void disableSDP(void) {
+ // 	FLASH_CE_ENABLE;
+ // 	FLASH_OE_DISABLE;
 
-	_flashWrite(0x1555, 0xAA);
-	_flashWrite(0x0AAA, 0x55);
-	_flashWrite(0x1555, 0x80);
-	_flashWrite(0x1555, 0xAA);
-	_flashWrite(0x0AAA, 0x55);
-	_flashWrite(0x1555, 0x20);  // Disable SDP command
+ // 	_flashWrite(0x1555, 0xAA);
+ // 	_flashWrite(0x0AAA, 0x55);
+ // 	_flashWrite(0x1555, 0x80);
+ // 	_flashWrite(0x1555, 0xAA);
+ // 	_flashWrite(0x0AAA, 0x55);
+ // 	_flashWrite(0x1555, 0x20);  // Disable SDP command
 
-	_delay_ms(10);
-	FLASH_CE_DISABLE;
-}
+ // 	_delay_ms(10);
+ // 	FLASH_CE_DISABLE;
+ // }
 
-/**
- * @brief Halt computer & setup flash for management operations.
- */
+ /**
+  * @brief Halt computer & setup flash for management operations.
+  */
 void enableFlashControl(void) {
 	CTRL_PORT.DIRSET = CTRL_PORT_MASK;	// Set CTRL pins as outputs
 	// Set initial states for control pins
@@ -85,8 +109,10 @@ void enableFlashControl(void) {
 	DATA_PORT.OUT = 0;					// set low
 
 	// A14 & A15 are used for ROM decoding. We set them both high to select
-	// the ROM (via its /CE). But for now, we'll set them low and do the
-	// chip enabling closer to the actual operations.
+	// /ROM_ENABLE via the system's ROM/RAM decoding chip. This signal is
+	// connected to the ROM via its /CE pin.
+	// Initially, we'll set these signals (so the flash ROM isn't enabled) and
+	// do the chip enabling closer to the read & write actual operations.
 	FL_EN_PORT.OUTCLR = A14 | A15;	// Set them high to enable /CE on flash
 	FL_EN_PORT.DIRSET = A14 | A15;	// Set these as outputs
 }
@@ -97,18 +123,17 @@ void enableFlashControl(void) {
  * @param uint8_t value of byte to store
  *
  * Assumes that /CE has been enabled on the flash chip and that /OE is
- * disabled. Makes multiple calls to flashWrite below.
+ * disabled. Makes multiple calls to _flashWrite below.
  */
 void flashByteWrite(uint16_t address, uint8_t value) {
 	FLASH_CE_ENABLE;
-
-	_flashWrite(0x1555, 0xAA);
-	_flashWrite(0x0AAA, 0x55);
-	_flashWrite(0x1555, 0xA0);
+	_flashWrite(addrSet(0x5555), 0xAA);
+	_flashWrite(addrSet(0x2AAA), 0x55);
+	_flashWrite(addrSet(0x5555), 0xA0);
+	FL_MEMBANK_PORT.OUTCLR = FA14; 	// ensure this is off after using addrSet()
 	_flashWrite(address, value);
-
+	_delay_us(FLASH_BYTE_DELAY);
 	FLASH_CE_DISABLE;
-	_delay_us(20);  // SST39SF010 max byte program time is 20us
 }
 
 /**
@@ -121,11 +146,11 @@ void _flashWrite(uint16_t address, uint8_t value) {
 	DATA_PORT_OUTPUT;
 	setAddress(address);
 	DATA_PORT.OUT = value;
-	_delay_us(1);
+	_delay_us(1); // tried 1, 10 - not helping
 	FLASH_WE_ENABLE;
-	_delay_us(1);
+	_delay_us(10); // tried 1, 10, 20
 	FLASH_WE_DISABLE;
-	_delay_us(1);
+	_delay_us(10);
 }
 
 /**
@@ -157,34 +182,32 @@ uint8_t readFlash(uint16_t address) {
  * disabled.
  */
 void sectorErase(uint16_t startAddress) {
+	FLASH_OE_DISABLE;
 	FLASH_CE_ENABLE;
-	FLASH_OE_DISABLE;
-
-	_flashWrite(0x1555, 0xAA);
-	_flashWrite(0x0AAA, 0x55);
-	_flashWrite(0x1555, 0x80);
-	_flashWrite(0x1555, 0xAA);
-	_flashWrite(0x0AAA, 0x55);
+	_flashWrite(addrSet(0x5555), 0xAA);
+	_flashWrite(addrSet(0x2AAA), 0x55);
+	_flashWrite(addrSet(0x5555), 0x80);
+	_flashWrite(addrSet(0x5555), 0xAA);
+	_flashWrite(addrSet(0x2AAA), 0x55);
+	FL_MEMBANK_PORT.OUTCLR = FA14; 	// ensure this is off after using addrSet()
 	_flashWrite(startAddress, 0x30);
+	_delay_ms(FLASH_SECTOR_ERASE_DELAY);
+	// // Poll for completion
+	// DATA_PORT_INPUT;
+	// setAddress(startAddress);
+	// FLASH_OE_ENABLE;
+	// uint32_t timeout = 100000;
+	// while (timeout--) {
+	// 	_delay_us(10);
+	// 	uint8_t read1 = DATA_PORT.IN;
+	// 	uint8_t read2 = DATA_PORT.IN;
+	// 	if ((read1 & 0x40) == (read2 & 0x40)) {
+	// 		break;
+	// 	}
+	// }
+	// FLASH_OE_DISABLE;
+	// DATA_PORT_OUTPUT;
 
-	// Poll for completion
-	DATA_PORT_INPUT;
-	setAddress(startAddress);
-	FLASH_OE_ENABLE;
-
-	uint32_t timeout = 100000;
-
-	while (timeout--) {
-		_delay_us(10);
-		uint8_t read1 = DATA_PORT.IN;
-		uint8_t read2 = DATA_PORT.IN;
-		if ((read1 & 0x40) == (read2 & 0x40)) {
-			break;
-		}
-	}
-
-	FLASH_OE_DISABLE;
-	DATA_PORT_OUTPUT;
 	FLASH_CE_DISABLE;
 }
 
@@ -199,6 +222,10 @@ void setFlashBank(uint8_t bank) {
 	// FL_MEMBANK_PORT.OUT = (FL_MEMBANK_PORT.OUT & ~FL_MEMBANK_MASK) | (bank & FL_MEMBANK_MASK);
 }
 
+/**
+ * @brief Set input signals on flash ROM to select either READ or WRITE mode
+ * @param uint_t mode - FLASH_READ or FLASH_WRITE
+ */
 void setFlashRW(uint8_t mode) {
 	if (mode == FLASH_READ) {			// READ mode
 		CTRL_PORT.OUTSET = FL_WE;		// Disable /WE
@@ -212,8 +239,5 @@ void setFlashRW(uint8_t mode) {
 	}
 	_delay_us(100);	// Don't think this is necessary - for testing
 }
-
-
-
 
 #endif

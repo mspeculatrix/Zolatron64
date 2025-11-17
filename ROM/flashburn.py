@@ -55,13 +55,13 @@ def getTestData(
 	buffer (a list of bytes) for any discrepancies.
 	"""
 	mismatch = False
-	dataItems: list[bytes] = []
+	flashTestData: list[bytes] = []
 	for i in range(0, numBytes):
 		testByte = ser.read(1)  # blocks until byte is read
 		if checkBuf is not None and checkBuf[i] != testByte:
 			mismatch = True
-		dataItems.append(testByte)
-	return dataItems, mismatch
+		flashTestData.append(testByte)
+	return flashTestData, mismatch
 
 
 def hexStr(value, length=2) -> str:
@@ -121,6 +121,11 @@ def readWord() -> int:
 
 
 def sendCommandWithAck(cmd: str, ack: str, verbose: bool) -> bool:
+	"""
+	Send a command across the serial connection and wait for an acknowledgement
+	message.
+	Return a boolean indicating if there was an error.
+	"""
 	error: bool = False
 	clearSerial()
 	output(f'Sending command: {cmd}', verbose)
@@ -144,6 +149,13 @@ def sendCommandWithAck(cmd: str, ack: str, verbose: bool) -> bool:
 
 
 def sendSizeInfo(file_size: int, verbose: bool) -> bool:
+	"""
+	Send the size of the file over the serial port. Expects the Zolatron MCU
+	to reply with a 'SIZE' message and send back the size of the file for
+	checking.
+	Returns a bool indicating whether there was an error, either in receiving
+	the 'SIZE' message or the correct file size.
+	"""
 	error: bool = False
 	output('Sending SIZE', verbose)
 	ser.write(b'SIZE')
@@ -176,6 +188,9 @@ def sendWord(word: int):
 
 
 def output(msg: str, verbose: bool):
+	"""
+	Print a string to the screen if in verbose mode (primarily for debugging)
+	"""
 	if verbose:
 		print(msg)
 
@@ -186,11 +201,11 @@ def output(msg: str, verbose: bool):
 
 
 def main():
-	filedir: str = 'bin'
-	romfile: str = 'ROM-16K.bin'
-	verbose: bool = True
-	command: str = 'BURN'
-	addressStr: str = ''
+	filedir: str = 'bin'  # relative path for dir with image file
+	romfile: str = 'ROM-16K.bin'  # default image filename
+	verbose: bool = True  # change to False for production use
+	command: str = 'BURN'  # default expected command
+	addressStr: str = '0000'  # default hex address for READ operations
 
 	# COMMAND LINE FLAGS
 	if len(sys.argv) > 1:  # We have some command line args
@@ -211,7 +226,7 @@ def main():
 
 	clearSerial()
 
-	output(f'ROM image file: {romfile}', verbose)
+	output(f'ROM image file: {filedir}/{romfile}', verbose)
 
 	fileBuf: list[bytes] = []
 	fault: bool = False
@@ -270,9 +285,11 @@ def main():
 				output('Performing data check...', verbose)
 				mismatch: bool = False
 				# Expect 16 bytes back from client containing test data
-				dataItems, mismatch = getTestData(16, fileBuf)
+				flashTestData, mismatch = getTestData(16, fileBuf)
+				print('file :', end=' ')
 				printBuf(fileBuf, 16, verbose)
-				printBuf(dataItems, 16, verbose)
+				print('flash:', end=' ')
+				printBuf(flashTestData, 16, verbose)
 				if mismatch:
 					output('- ERR: data mismatch', verbose)
 					# ser.write(b'*ERR\n')

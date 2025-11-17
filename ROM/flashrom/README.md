@@ -22,14 +22,6 @@ It is designed to be used with the `flashburn.py` Python program.
 
 ## PROBLEMS
 
-- The BE, RDY and CLK signals are working as expected.
-- The /READ_EN (/OE on the flash chip) is also acting as expected, so decoding logic is working.
+Not writing to flash. Fuck it.
 
-What I don't know is if the flash chip's /WE and /CE are being set correctly.
-
-During the write operation, the /WE signal seems to be low the whole time. Surely if should be low only briefly, as each byte is written?
-
-- /CE depends on the state of A14 & A15, so should check those.
-- /WE is pulled low directly by an MCU pin. The flash chip's /WE pin is not connected to anything else in the system, so have to think that this is working okay.
-
-Soldered leads directly to the flash /CE and /WE pins.
+Swapped in new chip that had been used previously on my flash dev board, which already had ROM image code on it. So the chip had been successfully written to before. But now it's not working.
