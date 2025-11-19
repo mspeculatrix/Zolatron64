@@ -176,6 +176,7 @@ int main(void) {
 			clearBuf(cmdBuf, CMD_BUF_LEN);
 			serial.clearInputBuffer();
 			disableFlashControl();
+			resetSystem();
 		} else {
 			getCommand(cmdBuf); // don't come back until you've got a message
 			cmdRecvd = true;

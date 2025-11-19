@@ -13,6 +13,7 @@
 #define FLASH_READ 1
 #define FLASH_WRITE 0
 
+extern uint8_t flashBank;
 
 // PROTOTYPES
 uint16_t addrSet(uint16_t addr);
@@ -93,7 +94,6 @@ void enableFlashControl(void) {
 	CTRL_PORT.OUTCLR = CPU_RWB;			// Disable /OE
 	CTRL_PORT.OUTSET = SYS_RES;			// Ensure reset high
 	CTRL_PORT.OUTSET = FL_WE;			// Disable /WE
-
 	CTRL_PORT.OUTCLR = CPU_BE;			// Pull low to free buses
 	CTRL_PORT.OUTCLR = CPU_RDY; 		// Take RDY low - stops CPU
 	_delay_ms(100);
@@ -130,7 +130,8 @@ void flashByteWrite(uint16_t address, uint8_t value) {
 	_flashWrite(addrSet(0x5555), 0xAA);
 	_flashWrite(addrSet(0x2AAA), 0x55);
 	_flashWrite(addrSet(0x5555), 0xA0);
-	FL_MEMBANK_PORT.OUTCLR = FA14; 	// ensure this is off after using addrSet()
+	setFlashBank(flashBank); 		// because we messed with FA14
+	// FL_MEMBANK_PORT.OUTCLR = FA14; 	// ensure this is off after using addrSet()
 	_flashWrite(address, value);
 	_delay_us(FLASH_BYTE_DELAY);
 	FLASH_CE_DISABLE;
@@ -189,7 +190,8 @@ void sectorErase(uint16_t startAddress) {
 	_flashWrite(addrSet(0x5555), 0x80);
 	_flashWrite(addrSet(0x5555), 0xAA);
 	_flashWrite(addrSet(0x2AAA), 0x55);
-	FL_MEMBANK_PORT.OUTCLR = FA14; 	// ensure this is off after using addrSet()
+	// FL_MEMBANK_PORT.OUTCLR = FA14; 	// ensure this is off after using addrSet()
+	setFlashBank(flashBank); 		// because we messed with FA14
 	_flashWrite(startAddress, 0x30);
 	_delay_ms(FLASH_SECTOR_ERASE_DELAY);
 	// // Poll for completion
@@ -215,11 +217,16 @@ void sectorErase(uint16_t startAddress) {
   * @brief Set the values of A14-A16 to select a 16K bank
   * @param uint8_t number (0-7) of bank
   *
-  * A14-A16 are not connected to the system address bus, only to the flash chip.
+  * FA14-FA16 are not connected to the system address bus, only to the
+  * flash chip.
+  * This code works because the three pins are the lowest three in the port
+  * (ie, 0, 1 and 2). If pins higher up in the port are used, it will need
+  * amending.
 */
 void setFlashBank(uint8_t bank) {
-	FL_MEMBANK_PORT.OUTCLR = FA14 | FA15 | FA16; // set to 0
-	// FL_MEMBANK_PORT.OUT = (FL_MEMBANK_PORT.OUT & ~FL_MEMBANK_MASK) | (bank & FL_MEMBANK_MASK);
+	const uint8_t pin_mask = FA14 | FA15 | FA16;
+	FL_MEMBANK_PORT.OUTCLR = pin_mask; // set to 0
+	FL_MEMBANK_PORT.OUT |= bank & pin_mask;
 }
 
 /**
