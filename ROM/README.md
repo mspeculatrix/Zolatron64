@@ -8,7 +8,11 @@ However, I'm also developing a new CPU/RAM/ROM board that uses flash memory for 
 
 ## CHANGELOG
 
-### 5.2.0 In progress
+### 5.3.1 19/11/2025
+
+- Working versions of `flashrom` and `flashburn.py`. Prior to switching to `flashz`.
+
+### 5.2.0
 
 - Moved stuff in zero page to the high part of the page, starting at $E0.
 - Added OS labels in code & Python script to output lists.

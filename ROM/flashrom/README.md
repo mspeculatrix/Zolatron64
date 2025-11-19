@@ -1,12 +1,12 @@
 # FLASHROM
 
-This is firmware for the ATmega4809 microcontroller on a version B1 CPU board for the Zolatron.
+This is firmware for the ATmega4809 microcontroller on a version B CPU board for the Zolatron.
 
-It is designed to be used with the `flashburn.py` Python program.
+It is designed to be used in conjunction with the `flashburn.py` Python program.
 
 ## ATmega4809-A PIN ASSIGNMENTS
 
-| Signal                  | Port  | Pin    |
+| Signal                  | Port  | Pin(s) |
 |------------------------:|:-----:|--------|
 | Address bus    A0 .. A7 | PORTC | 0 .. 7 |
 |               A8 .. A13 | PORTF | 0 .. 5 |
@@ -20,8 +20,11 @@ It is designed to be used with the `flashburn.py` Python program.
 | FL_WE                   | PORTA | 6      |
 | SYS_RES                 | PORTA | 7      |
 
-## PROBLEMS
+## Banking
 
-Not writing to flash. Fuck it.
+The SST39SF010 is a 1Mbit (128KB) memory. As the ROM images for the Zolatron are 16KB each, that means the flash can hold up to 8 ROM images.
 
-Swapped in new chip that had been used previously on my flash dev board, which already had ROM image code on it. So the chip had been successfully written to before. But now it's not working.
+## TO DO
+
+- Implement banking properly with a command to select a bank.
+  - Is there any way we could have the bank selected from the 6502 side?
