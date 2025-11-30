@@ -103,7 +103,9 @@ def readFile(filedir: str, filename: str) -> tuple[list[bytes], int, str | None]
 					size += 1
 		except IOError:
 			# print('Cannot open file:', filepath, ' : ', e)
-			error = 'Cannot open file:' + filename
+			error = 'Cannot open file: ' + filename
+	else:
+		error = 'File not found: ' + filename
 	return buffer, size, error
 
 
@@ -241,14 +243,16 @@ def main():
 	fileBuf, file_size, error = readFile(filedir, romfile)
 	if error is None:
 		output(f'- filesize: 0x{hexStr(file_size, 2)}', verbose)
+		if file_size < (16 * 1024):
+			output(f'ERROR: Bad file size: {file_size}', verbose)
+			fault = True
 	else:
+		output(f'ERROR: {error}', verbose)
 		fault = True
 
 	# STEP 1: Handshake
 	if not fault:
 		fault = sendCommandWithAck(command, 'ACKN', verbose)
-	else:
-		output(f'ERR: command {command} failed', verbose)
 
 	if command == 'BURN':
 		# STEP 2: Transmit & agree on file size

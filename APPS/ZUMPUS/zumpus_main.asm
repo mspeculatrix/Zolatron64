@@ -30,14 +30,14 @@
   stz STDIN_BUF               ; Clear input buffer
   stz STDIN_IDX
 
-\ SET UP DATA SECTION
+\ INITIALISE DATA SECTION
   lda #$FF                    ; Header
   sta DATA_START              ;   "
-  lda #<DATA_START            ; Load address
-  sta DATA_START + 1          ;   "
-  lda #>DATA_START            ;   "
+  lda #<DATA_START            ; Load address - saved to file to tell program
+  sta DATA_START + 1          ;   "          - where this data should go
+  lda #>DATA_START            ;   "          - when reloaded
   sta DATA_START + 2          ;   "
-  lda #'D'                    ; File type indicator
+  lda #'D'                    ; File type indicator - ie, data
   sta DATA_START + 3          ;   "
   ldx #4                      ; Zero-out data section
 .main_data_clr_loop
@@ -47,7 +47,7 @@
   beq main_data_clr_end
   jmp main_data_clr_loop
 .main_data_clr_end
-  stz DATA_END                ; End of file marker
+  stz DATA_END                ; End of file/data marker
 
   NEWLINE
   LOAD_MSG game_title
@@ -60,8 +60,8 @@
   jsr OSWRBUF
   NEWLINE
   NEWLINE
-  jsr read_gamedata
-  NEWLINE
+  jsr read_gamedata ; think this is working, but problem occurs here
+  NEWLINE           ; so might be a ZolaDOS issue????
   jsr show_stats
   NEWLINE
 

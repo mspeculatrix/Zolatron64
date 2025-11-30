@@ -1,9 +1,11 @@
 ; Main configuration file
 
+; PAGE 3 is used for I/O buffering
 STDIN_BUF      = $0300 ; Input buffer start address
 STDOUT_BUF     = $0380 ; Output buffer start address
 STDIN_IDX      = $037F ; Location of input buffer index
 STDOUT_IDX     = $03FF ; Location of output buffer index
+
 STR_BUF_LEN    = 120   ; size of buffers. We actually have 127 bytes available
 STR_BUF_MAX    = 127   ; but this leaves some headroom.
 
