@@ -1,6 +1,8 @@
 # ZolOS OS Function Calls
 
-JSR addresses are the locations of the jump instructions. To call an OS function, you JSR to this address.
+## Jump table
+
+We access these functions calls indirectly. The JSR addresses are the locations of the jump instructions. To call an OS function, you JSR to this address.
 
 FUNC ADDR addresses are the start addressed of the actual function code.
 

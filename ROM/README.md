@@ -1,12 +1,36 @@
 # Zolatron 64 OS ROM
 
-The ROM code was initially intended to be flashed to an AT28C256 EEPROM. And it still works that way.
+The ROM code was initially intended to be flashed to an AT28C256 EEPROM. And it still works that way with the Model A CPU board.
 
 The default binary file produced is 32KB in size but the ROM code lives in the top 16KB. That's to do with the fact that the EEPROM chip I'm using is 32KB in size and it's also connected with the Zolatron's decoding logic.
 
-However, I'm also developing a new CPU/RAM/ROM board that uses flash memory for the ROM. For this, the `_build` script for the ROM also has the option to output a 16KB file.
+The Model B CPU board uses flash memory in place of the EEPROM. For this, the `build` script for the ROM also has the option to output a 16KB file.
+
+## FLASH PROGRAMS
+
+### FLASHPROG
+
+Firmware for ATmega4809 on the B model CPU board with flash.
+
+### FLASHZ.PY
+
+Python code to run on dev machine to talk to MCU on CPU board. Developed from `flashburn.py`.
+
+### FLASHBURN.PY (discontinued)
+
+Python code to run on dev machine to talk to MCU on CPU board. Working but discontinued in favour of `flashz.py`.
+
+## BUILD SCRIPT
+
+The build script calls Beebasm to assemble the code into a binary and then invokes either miinipro to write the binary to EEPROM or `flashz.py` to write it to flash memory, depending on the CPU board in use.
+
+The script is **heavily** geared to my dev environment and almost certainly won't work for you.
 
 ## CHANGELOG
+
+### 5.3.2 in progress
+
+- Created `flashz.py` to succeed `flashburn.py`.
 
 ### 5.3.1 19/11/2025
 
@@ -101,13 +125,3 @@ I'm using a 32KB EEPROM chip, the AT28C256. So the code needs to sit in the top 
 Communication with the Zolatron is via serial at 9600 baud 8N1. As we're not using any form of flow control (yet) any terminal that connects to the Zolatron needs to have a slight delay after sending each character. I'm currently using 30ms, but will experiment with that. Data sent to the Zolatron should be terminated with a null character (ASCII 0) to mark end of transmission.
 
 The output-nn.txt files in the _output_ folder are the output from Beebasm when the code is assembled. Just in case.
-
-_\_build_ is just a small Bash script I use to save typing (and remembering) the commands to assemble the code and write it to the EEPROM. Documentation is in the script itself, but buse is:
-
-- `./build` to just asssemble the code.
-- `./_build -w` to assemble and burn to EEPROM.
-
-The assembled code is saved as `z64-ROM-<version>.bin` in the `bin` folder. Then two copies are made:
-
-- `bin/ROM.bin` - so we always have the latest version in a file that I might want to use in scripts.
-- `~/NasSync/DEV/Dev-C/Zem/Zem/ROM/ROM.bin` - for use with my Zolatron emulator, Zem.

@@ -24,7 +24,7 @@ void flashByteWrite(uint16_t address, uint8_t value);
 void _flashWrite(uint16_t address, uint8_t value);
 uint8_t readFlash(uint16_t address);
 void sectorErase(uint16_t startAddress);
-void setFlashBank(uint8_t bank);
+void setFlashBank(void);
 
 /**
  * @brief set the FA14 signal according to the address selected.
@@ -130,7 +130,7 @@ void flashByteWrite(uint16_t address, uint8_t value) {
 	_flashWrite(addrSet(0x5555), 0xAA);
 	_flashWrite(addrSet(0x2AAA), 0x55);
 	_flashWrite(addrSet(0x5555), 0xA0);
-	setFlashBank(flashBank); 		// because we messed with FA14
+	setFlashBank(); 		// because we messed with FA14
 	// FL_MEMBANK_PORT.OUTCLR = FA14; 	// ensure this is off after using addrSet()
 	_flashWrite(address, value);
 	_delay_us(FLASH_BYTE_DELAY);
@@ -191,7 +191,7 @@ void sectorErase(uint16_t startAddress) {
 	_flashWrite(addrSet(0x5555), 0xAA);
 	_flashWrite(addrSet(0x2AAA), 0x55);
 	// FL_MEMBANK_PORT.OUTCLR = FA14; 	// ensure this is off after using addrSet()
-	setFlashBank(flashBank); 		// because we messed with FA14
+	setFlashBank(); 		// because we messed with FA14
 	_flashWrite(startAddress, 0x30);
 	_delay_ms(FLASH_SECTOR_ERASE_DELAY);
 	// // Poll for completion
@@ -223,10 +223,10 @@ void sectorErase(uint16_t startAddress) {
   * (ie, 0, 1 and 2). If pins higher up in the port are used, it will need
   * amending.
 */
-void setFlashBank(uint8_t bank) {
+void setFlashBank(void) {
 	const uint8_t pin_mask = FA14 | FA15 | FA16;
 	FL_MEMBANK_PORT.OUTCLR = pin_mask; // set to 0
-	FL_MEMBANK_PORT.OUT |= bank & pin_mask;
+	FL_MEMBANK_PORT.OUT |= flashBank & pin_mask;
 }
 
 /**

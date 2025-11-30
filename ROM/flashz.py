@@ -18,7 +18,8 @@ import serial
 
 MAX_HANDSHAKES: int = 4
 VERSION: str = '1.6'
-SERIAL_PORT: str = '/dev/ttyUSB1'  # configure for your machine
+SERIAL_PORT: str = '/dev/ttyUSB0'  # zd0
+# SERIAL_PORT: str = '/dev/ttyUSB1'  # mx
 # SERIAL_PORT: str = '/dev/cu.usbserial-FTFXZ7LX'
 BAUDRATE: int = 38400  # fast enough
 CHUNKSIZE: int = 64  # num bytes per chunk when sending data
@@ -203,6 +204,7 @@ def output(msg: str, verbose: bool):
 def main():
 	filedir: str = 'bin'  # relative path for dir with image file
 	romfile: str = 'ROM-16K.bin'  # default image filename
+	bank: int = 0  # default memory bank
 	verbose: bool = True  # change to False for production use
 	command: str = 'BURN'  # default expected command
 	addressStr: str = '0000'  # default hex address for READ operations
@@ -212,21 +214,25 @@ def main():
 		sys.argv.pop(0)  # we don't need the prog name, get rid of it
 		while len(sys.argv) > 0:  # process other arguments, if any
 			nextArg: str = sys.argv.pop(0)
-			if nextArg == '-e':
+			if nextArg == '-b':
+				command = 'BANK'
+				bank = int(sys.argv.pop(0))
+			elif nextArg == '-e':
 				command = 'CLRF'
-			if nextArg == '-f':
+			elif nextArg == '-f':
 				romfile = sys.argv.pop(0)
-			if nextArg == '-q':
+			elif nextArg == '-q':
 				verbose = False
-			if nextArg == '-r':
+			elif nextArg == '-r':
 				command = 'READ'
 				addressStr: str = sys.argv.pop(0)
-			if nextArg == '-v':
+			elif nextArg == '-v':
 				verbose = True
 
 	clearSerial()
 
 	output(f'ROM image file: {filedir}/{romfile}', verbose)
+	output(f'port: {SERIAL_PORT}', verbose)
 
 	fileBuf: list[bytes] = []
 	fault: bool = False
@@ -297,6 +303,14 @@ def main():
 					output('- data check OK', verbose)
 					# ser.write(b'CONF\n')
 			output('FINISHED', verbose)
+	elif command == 'BANK':
+		if not fault:
+			ser.write(bank)
+			msg_in: bytes = ser.read(4)
+			if msg_in == b'BSET':
+				output('Bank set', verbose)
+			else:
+				output(f'ERROR: {msg_in}', verbose)
 	elif command == 'CLRF':
 		if not fault:
 			done: bool = False

@@ -11,6 +11,7 @@ extern SMD_AVR0_Serial serial;
 // PROTOTYPES
 bool checkForMessage(const char* msg, char* buf);
 void clearBuf(char* buf, uint8_t len);
+bool getByte(uint8_t* inByte);
 uint8_t getCommand(char* buf);
 uint16_t getWord(void);
 void resetSystem(void);
@@ -46,7 +47,6 @@ void clearBuf(char* buf, uint8_t len) {
 	}
 }
 
-
 /**
  * @brief Adds any chars coming in over serial & adds them to a buffer
  * @param char* pointer to a buffer to contain incoming characters
@@ -80,7 +80,30 @@ uint8_t getCommand(char* buf) {
 }
 
 /**
- * @brief Retrieve two bytes from the serial input and return as uint16_t integer.
+ * @brief Get a single byte from the serial port.
+ * @param uint8_t* Pointer to an int variable to return the value.
+ * @retval bool Whether a byte was successfully received.
+ */
+bool getByte(uint8_t* inByte) {
+	bool received = false;
+	bool done = false;
+	uint16_t counter = 0; 		// Needs a timeout. A simple counter will do
+	while (!done) {
+		if (serial.inWaiting()) {
+			*inByte = serial.getByte();
+			done = true;
+			received = true;
+		} else {
+			_delay_us(1);
+			counter++;
+			if (counter >= 10000) done = true;
+		}
+	}
+	return received;
+}
+
+/**
+ * @brief Get two bytes from the serial input (LSB first), return as 16-bit int
  * @retval uint16_t 16-bit integer
  *
  * Blocking. It won't return until it has received two bytes.
@@ -100,7 +123,7 @@ uint16_t getWord(void) {
 }
 
 /**
- * @brief Perform a system reset
+ * @brief Perform a system reset.
  *
  * Strobe the reset pin (which is attached to the Zolatron's system
  * reset line) low.

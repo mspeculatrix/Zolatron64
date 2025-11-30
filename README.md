@@ -47,5 +47,3 @@ The branches are:
 - $8000 - $9FFF - Banked ROM/RAM 8x 8KB banks
 - $0000 - $7FFF - Main RAM 32KB
   - $00E0 - $00FF - Zero-page addresses used by OS
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B312WQJV)

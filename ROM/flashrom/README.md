@@ -2,7 +2,7 @@
 
 This is firmware for the ATmega4809 microcontroller on a version B CPU board for the Zolatron.
 
-It is designed to be used in conjunction with the `flashburn.py` Python program.
+It is designed to be used in conjunction with the `flashz.py` Python program.
 
 ## ATmega4809-A PIN ASSIGNMENTS
 

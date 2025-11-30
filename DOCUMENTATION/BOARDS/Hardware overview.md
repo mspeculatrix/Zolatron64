@@ -42,7 +42,7 @@ Apart from that, I added power input (not regulated, so a clean +5V input is req
 
 ## PLUGIN BOARDS
 
-I chose a size of just a hair under 100x100mm for the boards in order to get the cheapest pricing for PCBs. I'm very happy with this decision.
+I chose a size of just a hair under 100x100mm for the boards in order to get the cheapest pricing for PCBs.
 
 I also adopted a standard layout for the boards which includes four M3 mounting holes. This allows me to join the boards together with standoffs for greater rigidity.
 
@@ -50,14 +50,17 @@ Selecting an I/O board's address is as simple as placing a jumper.
 
 Each I/O board (except for the SPI one) carries its own decoding, mostly in the form of a 74HCT1G00 single NAND gate and a 74HC138 three-to-eight line decoder. (The extended memory board is an exception – it uses a CPLD.) The outputs from the 138 go through a double row of header pins. Selecting the address for the board is a matter of placing one jumper.
 
-I could have done this once on the main CPU board and carried the chip enable signals from the 138 over the backplane (this is why the backplane connector has lines USR0-USR7). That would have saved me a bunch of ICs. But doing the decoding on each board allows me to easily change the address of an I/O interface, and I count this as one of my good decisions. (They are few, so I'll take the win where I can.)
+I could have done this once on the main CPU board and carried the chip enable signals from the 138 over the backplane (this is why the backplane connector has lines USR0-USR7). That would have saved me a bunch of ICs. But doing the decoding on each board allows me to easily change the address of an I/O interface, and I count this as one of my good decisions.
 
-### Boards
+### Boards in use
 
-- **CPU board** - Carries the 6502 CPU, main ROM and RAM.
-- **Dual serial board** - provides two TTL-level serial ports.
-- **Parallel board** - uses a 6522 VIA to provide an 8-bit parallel port intended for connecting to a printer.
-- **65C22 VIA board** - has a VIA to provide two 8-bit I/O ports. One is used to drive the LCD panel and status LEDs. The other is available as GPIO pins.
-- **SPI board** – RTC, SD card and SRAM. SPI interface with real-time clock, SD card and battery-backed serial RAM, plis five connections for SPI devices.
-- **Raspberry Pi board** - The Pi's main purpose is to provide persistent storage and a serial terminal.
-- **Extended memory board** - Provides banked RAM and ROM.
+| BOARD         | Vers | Description                                           |
+|---------------|:----:|-------------------------------------------------------|
+|**CPU A**      | A5   | 65C02 CPU, main ROM (EEPROM), RAM and clock           |
+|**CPU B**      | B1   | 65C02 CPU, main ROM (flash), RAM and clock            |
+|**Dual Serial**| A1b  | SC28L92 dual 5V UART                                  |
+|**Parallel**   | A2   | 65C22-based 8-bit printer port                        |
+|**User Ports** | A2   | 65C22 VIA providing two 8-bit I/O ports               |
+|**SPI**        | A1   | RTC, SD card, battery-backed Serial RAM, SPI ports    |
+|**RPi**        | A4   | Storage & serial terminal                             |
+|**Ext Memory** | A2   | Provides banked RAM and ROM                           |

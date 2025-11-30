@@ -13,7 +13,7 @@
   lda #%00000001      ; Enable RX
   sta SC28L92_CRA
   ; TRY COMBINING THE ABOVE COMMANDS/SETTINGS
-  lda #%10011000      ; RX watchdog on, 1-byte fill level for RX interrupts,
+  lda #%10111000      ; RX watchdog on, 1-byte fill level for RX interrupts,
   sta SC28L92_MRA     ; 16 bytes for TX int, 16-byte FIFO, baudrate mode normal.
   lda #%00010000      ; To set MR pointer to MR1A
   sta SC28L92_CRA
@@ -23,12 +23,9 @@
   sta SC28L92_MRA
   \\ Set baud rate. Not using extended modes
   lda SC28L92_ACR
-  ;and #%01111111                  ; Set baud rate generator select bit (7) to 0
   ora #%10000000                  ; Set baud rate generator select bit (7) to 1
   sta SC28L92_ACR
-  ;lda #DUART_BAUD_4800            ; Receive and transmit rate
   lda #DUART_BAUD_9600            ; Receive and transmit rate
-  ;lda #DUART_BAUD_19200            ; Receive and transmit rate
   sta SC28L92_CSRA
   \\ Set interrupt mask register. Determines which events produce interrupts
   lda #%00000010                  ; Enable interrupts on RX on port A
@@ -83,7 +80,7 @@
 \ ---  DUART_SND_STRBUF
 \ ---  Implements: OSWRSBUF
 \ ------------------------------------------------------------------------------
-\ ON ENTRY: Text to be send must be in STR_BUF and nul-terminated.
+\ ON ENTRY: Text to send must be in STR_BUF and be null-terminated.
 \ A - P     X - n/a     Y - n/a
 ._OSWRSBUF
 .duart_snd_strbuf
