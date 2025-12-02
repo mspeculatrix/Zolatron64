@@ -21,7 +21,7 @@ INCLUDE "../LIB/cfg_page_2.asm"                   ; OS Indirection Table
 ; PAGE 3 is used for I/O buffers, plus indexes, defined in cfg_main.asm
 INCLUDE "../LIB/cfg_page_4.asm"                   ; Misc buffers etc
 ; PAGE 5 - Reserved for user program workspace
-; PAGE 6 - ZolaDOS workspace
+; PAGE 6 - ZolaDOS workspace - see: LIB/cfg_ZolaDOS.asm
 INCLUDE "../LIB/cfg_page_7.asm"                   ; SPI
 
 INCLUDE "include/cfg_ROM.asm"

@@ -60,9 +60,9 @@
   jsr OSWRBUF
   NEWLINE
   NEWLINE
-  jsr read_gamedata ; think this is working, but problem occurs here
-  NEWLINE           ; so might be a ZolaDOS issue????
-  jsr show_stats
+  jsr read_gamedata ; COMMENTED OUT FOR DEBUGGING
+  NEWLINE
+  jsr show_stats ; COMMENTED OUT FOR DEBUGGING
   NEWLINE
 
 .instruction_prompt
@@ -101,7 +101,6 @@
   ldy #0                          ; Counter for number of locs we've set
 .init_loop
   jsr prng_rand8                  ; Puts result in RAND_SEED and A
-  ;ldx #NUM_ROOMS                  ; Divisor for MOD
   jsr uint8_div
   lda FUNC_RESULT                 ; Get the result of the MODding
   sta RANDOM_LOCS,Y

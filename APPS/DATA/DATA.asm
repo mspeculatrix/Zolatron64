@@ -101,7 +101,7 @@ ORG USR_START
   lda #>DATA_END
   sta TMP_ADDR_B + 1
   jsr set_datafile                    ; Set data filename
-  lda #ZD_OPCODE_SAVE_DAT0            ; Set opcode for saving data
+  lda #ZD_OPCODE_SAVE_DATO            ; Set opcode for saving data
   jsr OSZDSAVE                        ; Save data
   lda FUNC_ERR
   beq write_success

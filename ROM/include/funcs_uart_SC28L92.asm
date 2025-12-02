@@ -13,7 +13,7 @@
   lda #%00000001      ; Enable RX
   sta SC28L92_CRA
   ; TRY COMBINING THE ABOVE COMMANDS/SETTINGS
-  lda #%10111000      ; RX watchdog on, 1-byte fill level for RX interrupts,
+  lda #%10011000      ; RX watchdog on, 1-byte fill level for RX interrupts,
   sta SC28L92_MRA     ; 16 bytes for TX int, 16-byte FIFO, baudrate mode normal.
   lda #%00010000      ; To set MR pointer to MR1A
   sta SC28L92_CRA

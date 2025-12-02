@@ -10,10 +10,10 @@
 .uint16_add
   clc
   lda MATH_TMP_A
-  adc MATH_TMP_A
+  adc MATH_TMP_B
   sta FUNC_RES_L
   lda MATH_TMP_A + 1
-  adc MATH_TMP_A + 1
+  adc MATH_TMP_B + 1
   sta FUNC_RES_H
   rts
 
