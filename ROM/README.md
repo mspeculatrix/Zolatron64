@@ -28,8 +28,11 @@ The script is **heavily** geared to my dev environment and almost certainly won'
 
 ## CHANGELOG
 
-### 5.3.2 in progress
+### 5.3.4 in progress
 
+### 5.3.3 02/12/2025
+
+- Fixed some problems with maths operations.
 - Created `flashz.py` to succeed `flashburn.py`.
 
 ### 5.3.1 19/11/2025
