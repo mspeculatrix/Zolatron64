@@ -30,14 +30,14 @@
   stz STDIN_BUF               ; Clear input buffer
   stz STDIN_IDX
 
-\ SET UP DATA SECTION
+\ INITIALISE DATA SECTION
   lda #$FF                    ; Header
   sta DATA_START              ;   "
-  lda #<DATA_START            ; Load address
-  sta DATA_START + 1          ;   "
-  lda #>DATA_START            ;   "
+  lda #<DATA_START            ; Load address - saved to file to tell program
+  sta DATA_START + 1          ;   "          - where this data should go
+  lda #>DATA_START            ;   "          - when reloaded
   sta DATA_START + 2          ;   "
-  lda #'D'                    ; File type indicator
+  lda #'D'                    ; File type indicator - ie, data
   sta DATA_START + 3          ;   "
   ldx #4                      ; Zero-out data section
 .main_data_clr_loop
@@ -47,7 +47,7 @@
   beq main_data_clr_end
   jmp main_data_clr_loop
 .main_data_clr_end
-  stz DATA_END                ; End of file marker
+  stz DATA_END                ; End of file/data marker
 
   NEWLINE
   LOAD_MSG game_title
@@ -60,9 +60,9 @@
   jsr OSWRBUF
   NEWLINE
   NEWLINE
-  jsr read_gamedata
+  jsr read_gamedata ; COMMENTED OUT FOR DEBUGGING
   NEWLINE
-  jsr show_stats
+  jsr show_stats ; COMMENTED OUT FOR DEBUGGING
   NEWLINE
 
 .instruction_prompt
@@ -101,7 +101,6 @@
   ldy #0                          ; Counter for number of locs we've set
 .init_loop
   jsr prng_rand8                  ; Puts result in RAND_SEED and A
-  ;ldx #NUM_ROOMS                  ; Divisor for MOD
   jsr uint8_div
   lda FUNC_RESULT                 ; Get the result of the MODding
   sta RANDOM_LOCS,Y

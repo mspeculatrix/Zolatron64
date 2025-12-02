@@ -1,4 +1,4 @@
-## ZUMPUS
+# ZUMPUS
 
 A 6502 assembly version of the classic Hunt the Wumpus game, somewhat modified.
 
@@ -25,6 +25,30 @@ Eg,
 m 11 - to move into room 11
 s 8 3 - to shoot into room 8 with a range of 3 rooms
 
-### Status
+## Status
 
 Version 1.0.0 - 14/06/2022 - Completed.
+
+## CURRENT ISSUE
+
+The subroutine `.show_stats` in `zumpus_funcs` was causing a problem. But other issues persist with that commented out, so the problem goes deeper. Probably in one of the subroutines called from there or a macro. This is use are:
+
+- OSSOAPP
+- OSSOCH
+- OSB2ISTR
+- OSWRBUF
+
+macros
+
+- LOAD_MSG
+- STR_BUF_TO_MSG_VEC
+
+The room numbers are fucked. The subroutines called in the status display are:
+
+- show_current_room
+- set_player_connecting_rooms
+- show_connecting_rooms
+- staple_count
+
+- OSWRMSG
+- print_room_num

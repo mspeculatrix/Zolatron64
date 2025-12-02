@@ -29,20 +29,20 @@ BAT2_LOC     = BAT1_LOC + 1         ; 0503    "        "     "    "     "
 PIT1_LOC     = BAT2_LOC + 1         ; 0504    "        "     "    "     "
 PIT2_LOC     = PIT1_LOC + 1         ; 0505    "        "     "    "     "
 STAPLE_COUNT = PIT2_LOC + 1         ; 0506
-P_CONN_ROOMS = STAPLE_COUNT + 1     ; 0507-0590
-Z_CONN_ROOMS = P_CONN_ROOMS + 3     ; 050A-050C
-R_CONN_ROOMS = Z_CONN_ROOMS + 3     ; 050D-050F
+P_CONN_ROOMS = STAPLE_COUNT + 1     ; 0507-0509 player's connecting rooms
+Z_CONN_ROOMS = P_CONN_ROOMS + 3     ; 050A-050C zumpus' connecting rooms
+R_CONN_ROOMS = Z_CONN_ROOMS + 3     ; 050D-050F random connecting rooms
 FLAGS        = R_CONN_ROOMS + 3     ; 0510
 INPUT_NUM    = FLAGS + 1            ; 0511, 0512
-ROOM_NUM     = INPUT_NUM + 1        ; 0513        For temp holding of a room num
-P_CONDITION  = ROOM_NUM + 1         ; 0514        Player's condition
+ROOM_NUM     = INPUT_NUM + 1        ; 0513       For temp holding of a room num
+P_CONDITION  = ROOM_NUM + 1         ; 0514       Player's condition
 STAPLE_RANGE = P_CONDITION + 1      ; 0515
-Z_STATE      = STAPLE_RANGE + 1     ; 0516        Zumpus awake or asleep
+Z_STATE      = STAPLE_RANGE + 1     ; 0516       Zumpus awake or asleep
 
-DATA_START   = $7000				; There will be 4 bytes of header
-GAMES_PLAYED = DATA_START + 4		; 8-bit number
-GAMES_WON    = GAMES_PLAYED + 1     ; 8-bit number
-DATA_END     = GAMES_WON + 1        ; For null EOF marker
+DATA_START   = $7000				; 7000 There will be 4 bytes of header
+GAMES_PLAYED = DATA_START + 4		; 7004 8-bit number
+GAMES_WON    = GAMES_PLAYED + 1     ; 7005 8-bit number
+DATA_END     = GAMES_WON + 1        ; 7006 For null EOF marker
 DATA_SIZE    = DATA_END - DATA_START
 
 ; ERROR CODES --- should be sequential, starting at 1 (0 means no error)

@@ -66,7 +66,7 @@
   lda #%11000000                    ; Setting bit 6 enables Timer 1
   ZD_SET_CO_ON                      ; Signal to server that Z64 is online.
   sta ZD_IER
-  lda ZD_ACR
+  lda ZD_ACR ; previously I just stored 0 to ZD_ACR
   and #%00111111                    ; Set timer to one-shot mode
   sta ZD_ACR
   stz ZD_TIMER_COUNT		            ; Zero-out counter
@@ -387,8 +387,8 @@
 .zd_signalDelay
   lda #%11000000		; Setting bit 7 enables interrupts and bit 6 enables Timer 1
   sta ZD_IER
-  LDA ZD_ACR
-  LDA #%00111111                    ; set timer to one-shot mode
+  lda ZD_ACR
+  and #%00111111                    ; set timer to one-shot mode
   sta ZD_ACR
   lda #<ZD_SIGNALDELAY              ; Set timer delay
   sta ZD_T1CL
@@ -439,8 +439,8 @@
   sta ZD_STATE_REG
   lda #%11000000		                ; Setting bit 6 enables Timer 1
   sta ZD_IER
-  LDA ZD_ACR
-  AND #%00111111                    ; Set timer to one-shot mode
+  lda ZD_ACR
+  and #%00111111                    ; Set timer to one-shot mode
   sta ZD_ACR
   lda #<ZD_STROBETIME               ; Set timer delay
   sta ZD_T1CL
@@ -522,7 +522,7 @@
 \ Stop timer running
 \ A - O     X - n/a     Y - n/a
 .zd_timer1_stop
-  LDA #%01000000  ; This unsets bit 6, leaves others unaffected
+  lda #%01000000  ; This unsets bit 6, leaves others unaffected
   sta ZD_IER
   rts
 
@@ -533,9 +533,9 @@
   stz ZD_TIMER_COUNT + 1
   lda #%11000000		                ; Bit 6 enables Timer 1
   sta ZD_IER
-  LDA ZD_ACR
-  AND #%01111111                    ; set timer to free-run mode
-  ORA #%01000000
+  lda ZD_ACR
+  and #%01111111                    ; set timer to free-run mode
+  ora #%01000000
   sta ZD_ACR
   lda #>ZD_TIMEOUT_INTVL
   sta ZD_T1CL

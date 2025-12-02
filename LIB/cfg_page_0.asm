@@ -9,13 +9,13 @@ FUNC_ERR      = FUNC_RESULT + 1	    ; $E5 Store an error code for functions
 TBL_VEC_L     = FUNC_ERR + 1        ; $E6 Table vector - for searching tables
 TBL_VEC_H     = TBL_VEC_L + 1       ; $E7
 TMP_ADDR_A    = TBL_VEC_H + 1       ; $E8 Temp 2-byte vector/store for address
-TMP_ADDR_A_L  = TMP_ADDR_A	        ; $E8 - Alias -
+TMP_ADDR_A_L  = TMP_ADDR_A	        ; - Alias -
 TMP_ADDR_A_H  = TMP_ADDR_A + 1      ; $E9
 TMP_ADDR_B    = TMP_ADDR_A_H + 1    ; $EA Temp 2-byte vector/store for address
-TMP_ADDR_B_L  = TMP_ADDR_B	        ; $EA - Alias -
+TMP_ADDR_B_L  = TMP_ADDR_B	        ; - Alias -
 TMP_ADDR_B_H  = TMP_ADDR_B + 1      ; $EB
 TMP_ADDR_C    = TMP_ADDR_B_H + 1    ; $EC
-TMP_ADDR_C_L  = TMP_ADDR_C	        ; $EC - Alias -
+TMP_ADDR_C_L  = TMP_ADDR_C	        ; - Alias -
 TMP_ADDR_C_H  = TMP_ADDR_C_L + 1	; $ED
 
 FILE_ADDR     = TMP_ADDR_C_H + 1    ; $EE
@@ -24,6 +24,13 @@ LOMEM         = PROG_END + 2        ; $F2 First available byte after user prog
 
 STDIN_STATUS_REG = LOMEM + 2	    ; $F4 STDIN flags - see: cfg_main.asm
 SYS_REG = STDIN_STATUS_REG + 1      ; $F5 System Register
+
+; $00F6 - $00FB are free (6 bytes)
+
+; Vectors for userland ISRs
+USRINT_VEC    = $FC   ; Vector for user interrupt service routines
+USRINTRTN_VEC = $FE  ; and for returning from these routines
+
 ; SYSTEM REGISTER
 ; The SYS_EXMEM and SYS_PARALELL must be in bits 0 and 1.
 ; Bit     Flag name            Function
@@ -53,7 +60,3 @@ USRP_INT_CB1 = %00010000
 USRP_INT_TM2 = %00100000
 USRP_INT_TM1 = %01000000
 ZD_IRQ       = %10000000
-
-; Vectors for userland ISRs
-USRINT_VEC    = $FC   ; Vector for user interrupt service routines
-USRINTRTN_VEC = $FE  ; and for returning from these routines

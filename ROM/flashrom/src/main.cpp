@@ -44,7 +44,7 @@ int main(void) {
 	disableFlashControl();
 	FL_MEMBANK_PORT.DIRSET = FA14 | FA15 | FA16; // Bank memory controls
 	FL_MEMBANK_PORT.OUTCLR = FA14 | FA15 | FA16; // Set low by default
-	setFlashBank(0);
+	setFlashBank();
 
 	serial.begin();
 
@@ -139,6 +139,21 @@ int main(void) {
 					}
 				} else {
 					serial.write("SERR");
+				}
+			} else if (strcmp(cmdBuf, "BANK") == 0) {
+				// -------------------------------------------------------------
+				// ----- BANK - Set memory bank            ---------------------
+				// -------------------------------------------------------------
+				serial.write("ACKN");
+				// Get the bank number
+				uint8_t bank = 0;
+				bool recvd = getByte(&bank);
+				if (recvd) {
+					serial.write("BSET");
+					flashBank = bank;
+					setFlashBank();
+				} else {
+					serial.write("*ERR");
 				}
 			} else if (strcmp(cmdBuf, "CLRF") == 0) {
 				// -------------------------------------------------------------

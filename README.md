@@ -44,8 +44,14 @@ The branches are:
   - $A800 - $ABFF - VIA C - User ports, user timer
   - $A400 - $A7FF - VIA B - RPi, ZolaDOS
   - $A000 - $A3FF - VIA A - LCD, Delay timer
-- $8000 - $9FFF - Banked ROM/RAM 8x 8KB banks
+- $8000 - $9FFF - Banked ROM/RAM - 8x 8KB banks
 - $0000 - $7FFF - Main RAM 32KB
-  - $00E0 - $00FF - Zero-page addresses used by OS
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B312WQJV)
+  - $0800 - $7FFF - User program space
+  - $0700 - $07FF - PAGE 7 - SPI config
+  - $0600 - $06FF - PAGE 6 - ZolaDOS workspace
+  - $0500 - $05FF - PAGE 5 - User program workspace
+  - $0400 - $04FF - PAGE 4 - Misc buffers & system variables
+  - $0300 - $03FF - PAGE 3 - I/O buffers & indices
+  - $0200 - $02FF - PAGE 2 - OS vectors
+  - $0100 - $01FF - PAGE 1 - used by 6502 for stack
+  - $00E0 - $00FF - PAGE 0 - Zero-page addresses used by OS
