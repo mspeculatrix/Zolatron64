@@ -46,7 +46,7 @@
 #define CR 13
 
 #define CHUNKSIZE 64 				// Size of each chunk when sending data
-#define CMD_BUF_LEN 4 				// Number of chars in a command message
+#define CMD_BUF_LEN 5 				// Num chars in command message plus null
 #define MAX_MSG_TRIES 4 			// How many attempts to get a message
 #define SECTORS_PER_IMG 4 			// number of flash sectors in a ROM image
 

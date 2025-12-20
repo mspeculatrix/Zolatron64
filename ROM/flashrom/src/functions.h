@@ -56,17 +56,18 @@ void clearBuf(char* buf, uint8_t len) {
  * command buffer. It's used for commands only.
  * Returns the number of chars received, although I don't think I do anything
  * with that information right now.
- * Returns when it encounters a linefeed or the buffer is full.
+ * Returns when it encounters a linefeed or the buffer is full. Otherwise,
+ * it's blocking.
  */
 uint8_t getCommand(char* buf) {
 	clearBuf(buf, CMD_BUF_LEN);
 	bool recvd = false;
 	uint8_t idx = 0;
 	uint8_t inChar = 0;
-	while (!recvd && idx < CMD_BUF_LEN) {
+	while (!recvd && (idx < CMD_BUF_LEN - 1)) {
 		if (serial.readByte(&inChar)) {
 			if (inChar == NEWLINE && idx > 0) {
-				buf[idx] = 0;	// terminate
+				buf[idx] = '\0';	// terminate
 				recvd = true;
 			} else if (inChar == CR) {
 				// ignore carriage returns
@@ -74,8 +75,11 @@ uint8_t getCommand(char* buf) {
 				buf[idx] = inChar;
 				idx++;
 			}
+		} else {
+			_delay_ms(1);
 		}
 	}
+	buf[4] = '\0'; // terminate
 	return idx;
 }
 

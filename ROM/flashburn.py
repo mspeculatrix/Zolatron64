@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 """
+
+*** DEPRECATED: USE FLASHZ.PY ***
+
 Script to upload a new ROM image to the flash chip on the Zolatron's version B1
 CPU board.
 

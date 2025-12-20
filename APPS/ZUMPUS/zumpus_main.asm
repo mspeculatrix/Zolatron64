@@ -60,9 +60,9 @@
   jsr OSWRBUF
   NEWLINE
   NEWLINE
-  jsr read_gamedata ; COMMENTED OUT FOR DEBUGGING
+  jsr read_gamedata
   NEWLINE
-  jsr show_stats ; COMMENTED OUT FOR DEBUGGING
+  jsr show_stats
   NEWLINE
 
 .instruction_prompt

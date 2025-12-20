@@ -42,7 +42,7 @@ int main(void) {
 
 	// Set up control pins
 	disableFlashControl();
-	FL_MEMBANK_PORT.DIRSET = FA14 | FA15 | FA16; // Bank memory controls
+	FL_MEMBANK_PORT.DIRSET = FA14 | FA15 | FA16; // Bank memory pins as outputs
 	FL_MEMBANK_PORT.OUTCLR = FA14 | FA15 | FA16; // Set low by default
 	setFlashBank();
 
@@ -62,6 +62,7 @@ int main(void) {
 		if (cmdRecvd) {
 			serial.clearInputBuffer();
 			enableFlashControl();
+			// serial.write("ACKN");
 			if (strcmp(cmdBuf, "BURN") == 0) {
 				// -------------------------------------------------------------
 				// ----- BURN - Download data & write to Flash -----------------
@@ -78,7 +79,7 @@ int main(void) {
 					if (!error) {
 						serial.write("WFLS"); 		// Send back as confirmation
 					} else {
-						serial.write("*ERR");
+						serial.write("EB01");
 					}
 					// RECEIVE DATA
 					if (!error) {
@@ -183,8 +184,33 @@ int main(void) {
 					serial.sendByte(byteVal);
 				}
 				FLASH_OE_DISABLE;						// disable output
+			} else if (strcmp(cmdBuf, "CHKR") == 0) {
+				// -------------------------------------------------------------
+				// ----- VRFY - verify Flash memory ----------------------------
+				// -------------------------------------------------------------
+				uint16_t addrIdx = 0;
+				bool error = false;
+				serial.write("ACKN");
+				while (addrIdx < 0x4000) {
+					serial.write("PCKG");
+					for (uint8_t i = 0; i < 64; i++) {
+						uint8_t byteVal = readFlash(addrIdx);
+						serial.sendByte(byteVal);
+						addrIdx++;
+					}
+					// wait for acknowledgement
+					error = checkForMessage("ACKN", cmdBuf);
+					if (error) {
+						break;
+					}
+				}
+				if (error) {
+					serial.write("EC01");
+				} else {
+					serial.write("EODT");
+				}
 			} else {
-				serial.write("*ERR");
+				serial.write("ECMD");
 			}
 			// When done, reset
 			cmdRecvd = false;

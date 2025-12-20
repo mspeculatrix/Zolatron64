@@ -49,7 +49,7 @@ def clearSerial() -> None:
 
 
 def getTestData(
-	numBytes: int, checkBuf: list[bytes] | None = None
+	numBytes: int, checkBuf: list[bytes] | None = None, offset: int = 0
 ) -> tuple[list[bytes], bool]:
 	"""
 	Get numBytes bytes from the serial port. If desired, check these against a
@@ -59,8 +59,9 @@ def getTestData(
 	flashTestData: list[bytes] = []
 	for i in range(0, numBytes):
 		testByte = ser.read(1)  # blocks until byte is read
-		if checkBuf is not None and checkBuf[i] != testByte:
-			mismatch = True
+		if checkBuf is not None and checkBuf:
+			if checkBuf[offset + i] != testByte:
+				mismatch = True
 		flashTestData.append(testByte)
 	return flashTestData, mismatch
 
@@ -73,12 +74,14 @@ def hexStr(value, length=2) -> str:
 	return fmt.format(value)
 
 
-def printBuf(buffer: list[bytes], num: int, verbose: bool) -> None:
+def printBuf(buffer: list[bytes], num: int, offset: int, verbose: bool) -> None:
 	"""
 	Take a list of bytes and print as a string of space-separated hex values.
 	"""
 	items = []
 	for i in range(0, num):
+		if i % 16 == 0:
+			items.append('\n')
 		items.append(hexStr(buffer[i][0]))
 	output(' '.join(items), verbose)
 
@@ -219,40 +222,47 @@ def main():
 			if nextArg == '-b':
 				command = 'BANK'
 				bank = int(sys.argv.pop(0))
-			elif nextArg == '-e':
+			elif nextArg == '-c':  # Check ROM code
+				command = 'CHKR'
+			elif nextArg == '-e':  # Erase flash
 				command = 'CLRF'
-			elif nextArg == '-f':
+			elif nextArg == '-f':  # Use specific ROM file
 				romfile = sys.argv.pop(0)
-			elif nextArg == '-q':
+			elif nextArg == '-q':  # Set quiet mode
 				verbose = False
 			elif nextArg == '-r':
 				command = 'READ'
 				addressStr: str = sys.argv.pop(0)
-			elif nextArg == '-v':
+			elif nextArg == '-v':  # Set verbose mode
 				verbose = True
 
 	clearSerial()
 
 	output(f'ROM image file: {filedir}/{romfile}', verbose)
-	output(f'port: {SERIAL_PORT}', verbose)
+	output(f'Port          : {SERIAL_PORT}', verbose)
 
 	fileBuf: list[bytes] = []
+	file_size: int = 0
 	fault: bool = False
 
 	# file_size, _ = readFile(fileBuf, romfile)
-	fileBuf, file_size, error = readFile(filedir, romfile)
-	if error is None:
-		output(f'- filesize: 0x{hexStr(file_size, 2)}', verbose)
-		if file_size < (16 * 1024):
-			output(f'ERROR: Bad file size: {file_size}', verbose)
+	if command in ['BURN', 'CHKR']:
+		output(f'- reading file: {romfile}', verbose)
+		fileBuf, file_size, error = readFile(filedir, romfile)
+		if error is None:
+			output(f'- filesize: 0x{hexStr(file_size, 2)}', verbose)
+			if file_size < (16 * 1024):
+				output(f'ERROR: Bad file size: {file_size}', verbose)
+				fault = True
+		else:
+			output(f'ERROR: {error}', verbose)
 			fault = True
-	else:
-		output(f'ERROR: {error}', verbose)
-		fault = True
 
 	# STEP 1: Handshake
 	if not fault:
 		fault = sendCommandWithAck(command, 'ACKN', verbose)
+		if fault:
+			output(f'- command {command} did not get ACKN', verbose)
 
 	if command == 'BURN':
 		# STEP 2: Transmit & agree on file size
@@ -297,9 +307,9 @@ def main():
 				# Expect 16 bytes back from client containing test data
 				flashTestData, mismatch = getTestData(16, fileBuf)
 				print('file :', end=' ')
-				printBuf(fileBuf, 16, verbose)
+				printBuf(fileBuf, 16, 0, verbose)
 				print('flash:', end=' ')
-				printBuf(flashTestData, 16, verbose)
+				printBuf(flashTestData, 16, 0, verbose)
 				if mismatch:
 					output('- ERR: data mismatch', verbose)
 					# ser.write(b'*ERR\n')
@@ -307,6 +317,37 @@ def main():
 					output('- data check OK', verbose)
 					# ser.write(b'CONF\n')
 			output('FINISHED', verbose)
+
+	elif command == 'CHKR':
+		if not fault:
+			output('Checking ROM contents', verbose)
+			getting_data: bool = True
+			data_idx: int = 0
+			while getting_data:
+				# Zolatron will send a 'PCKG' message followed by CHUNKSIZE
+				# bytes of data.
+				# When it has done, it will send an 'EODT' message.
+				msg_in: bytes = ser.read(4)
+				if msg_in == b'PCKG':
+					print(f'\b\b\b\b\b{data_idx:04X}', end=' ', flush=True)
+					flashTestData, mismatch = getTestData(CHUNKSIZE, fileBuf, data_idx)
+					if mismatch:
+						output(f'ERROR: data mismatch at index: {data_idx}', verbose)
+						output('ROM:', verbose)
+						printBuf(flashTestData, CHUNKSIZE, 0, verbose)
+						output('FILE:', verbose)
+						printBuf(fileBuf, CHUNKSIZE, data_idx, verbose)
+						getting_data = False
+						fault = True
+					else:
+						# Send back an acknowledgement
+						ser.write('ACKN'.encode('ascii'))
+						data_idx += CHUNKSIZE
+
+				elif msg_in == b'EODT':
+					getting_data = False
+					output('\n- got EODT - ROM looks good', verbose)
+
 	elif command == 'BANK':
 		if not fault:
 			ser.write(bank)

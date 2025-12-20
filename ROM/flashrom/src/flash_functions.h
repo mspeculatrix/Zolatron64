@@ -57,12 +57,12 @@ void disableFlashControl(void) {
 	DATA_PORT.DIR = 0;						// Set data lines as inputs
 	FL_EN_PORT.OUTCLR = A14 | A15;			// Disable flash /CE, take lines low
 	FL_EN_PORT.DIRCLR = A14 | A15;			// Set these as inputs
+	CTRL_PORT.DIRCLR = CTRL_PORT_MASK;		// Set CTRL pins as inputs
 	CTRL_PORT.OUTSET = CPU_RDY;				// Release CPU
 	CTRL_PORT.OUTSET = CPU_BE;				// Release buses
 	CTRL_PORT.OUTSET = CPU_RWB;				// Set R/W to read
 	CTRL_PORT.OUTSET = FL_WE;				// Disable flash writes
 	CTRL_PORT.OUTSET = CLK_CTRL;			// Release clock
-	CTRL_PORT.DIRCLR = CTRL_PORT_MASK;		// Set CTRL pins as inputs
 }
 
 /**
@@ -111,9 +111,9 @@ void enableFlashControl(void) {
 	// A14 & A15 are used for ROM decoding. We set them both high to select
 	// /ROM_ENABLE via the system's ROM/RAM decoding chip. This signal is
 	// connected to the ROM via its /CE pin.
-	// Initially, we'll set these signals (so the flash ROM isn't enabled) and
+	// Initially, we'll set these signals low (so flash ROM isn't enabled) and
 	// do the chip enabling closer to the read & write actual operations.
-	FL_EN_PORT.OUTCLR = A14 | A15;	// Set them high to enable /CE on flash
+	FL_EN_PORT.OUTCLR = A14 | A15;	// Set them low to disable /CE on flash
 	FL_EN_PORT.DIRSET = A14 | A15;	// Set these as outputs
 }
 
