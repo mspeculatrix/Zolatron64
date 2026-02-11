@@ -4,6 +4,8 @@ This is firmware for the ATmega4809 microcontroller on a version B CPU board for
 
 It is designed to be used in conjunction with the `flashz.py` Python program.
 
+This code depends on a number of my libaries, which you can find [on GitHub](https://github.com/mspeculatrix/avrlib).
+
 ## ATmega4809-A PIN ASSIGNMENTS
 
 | Signal                  | Port  | Pin(s) |

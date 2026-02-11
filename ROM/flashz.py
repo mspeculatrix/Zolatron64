@@ -24,6 +24,7 @@ SERIAL_PORT: str = '/dev/ttyUSB0'  # zd0
 BAUDRATE: int = 38400  # fast enough
 CHUNKSIZE: int = 64  # num bytes per chunk when sending data
 
+
 ser = serial.Serial(
 	SERIAL_PORT,
 	BAUDRATE,
@@ -288,10 +289,10 @@ def main():
 					response_ok = False
 					while not response_ok:
 						msg_in: bytes = ser.read(4)
-						if msg_in == b'EODT':  # we've sent all data
+						if msg_in == b'FEOD':  # we've sent all data
 							done = True
 							response_ok = True
-							output('\n- received: EODT', verbose)
+							output('\n- received: FEOD', verbose)
 						elif msg_in == b'ACKN':  # sent after each chunk by MCU
 							response_ok = True
 							if verbose:
@@ -326,7 +327,7 @@ def main():
 			while getting_data:
 				# Zolatron will send a 'PCKG' message followed by CHUNKSIZE
 				# bytes of data.
-				# When it has done, it will send an 'EODT' message.
+				# When it has done, it will send an 'FEOD' message.
 				msg_in: bytes = ser.read(4)
 				if msg_in == b'PCKG':
 					print(f'\b\b\b\b\b{data_idx:04X}', end=' ', flush=True)
@@ -344,9 +345,9 @@ def main():
 						ser.write('ACKN'.encode('ascii'))
 						data_idx += CHUNKSIZE
 
-				elif msg_in == b'EODT':
+				elif msg_in == b'FEOD':
 					getting_data = False
-					output('\n- got EODT - ROM looks good', verbose)
+					output('\n- got FEOD - ROM looks good', verbose)
 
 	elif command == 'BANK':
 		if not fault:

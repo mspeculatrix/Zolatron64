@@ -13,3 +13,24 @@ On this board, I've broken out the port pins, plus +5V and GND pins, to header p
 In the Zolatron, one of these boards is being used to manage a 20x4 character LCD display and five status LEDs. Its main timer is employed to implement a delay function.
 
 A second board is intended as a general-purpose 'user port' and its timers are available for user programs.
+
+## LCD Board
+
+The copy of the board used for the LCD panel has the following connections:
+
+### PORT A
+
+| PIN | FRONT PANEL              |
+|-----|--------------------------|
+| PA0 | LED_ERR                  |
+| PA1 | LED_BUSY                 |
+| PA2 | LED_OK                   |
+| PA3 | LED_FILE_ACT             |
+| PA4 | LED_DEBUG                |
+| PA5 | LCD RS - Register select |
+| PA6 | LCD RW - Read/Write      |
+| PA7 | LCD E  - Execute         |
+
+### PORT B
+
+Pins PB0-7 connect to the LCD's Data pins 0-7.

@@ -50,4 +50,17 @@
 #define MAX_MSG_TRIES 4 			// How many attempts to get a message
 #define SECTORS_PER_IMG 4 			// number of flash sectors in a ROM image
 
+#define MSG_ACKNOWLEDGE "ACKN"
+#define MSG_END_OF_DATA "FEOD"
+#define MSG_FILE_SIZE   "SIZE"
+#define MSG_WRITE_FLASH "WFLS"
+
+// ERROR CODES
+
+#define ERR_COMMAND   "ECMD"	// no recognised command received
+#define ERR_NO_ACKN   "EACK"	// expected 'ACKN' message not received
+#define ERR_BYTE_READ "EBTR"
+#define ERR_NO_WFLS   "EWFL"	// expected 'WFLS' message not received
+#define ERR_NO_SIZE   "ESIZ"	// expected 'SIZE' message not received
+
 #endif

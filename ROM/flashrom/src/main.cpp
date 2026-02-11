@@ -62,24 +62,24 @@ int main(void) {
 		if (cmdRecvd) {
 			serial.clearInputBuffer();
 			enableFlashControl();
-			// serial.write("ACKN");
+			// serial.write(MSG_ACKNOWLEDGE);
 			if (strcmp(cmdBuf, "BURN") == 0) {
 				// -------------------------------------------------------------
 				// ----- BURN - Download data & write to Flash -----------------
 				// -------------------------------------------------------------
-				serial.write("ACKN");
+				serial.write(MSG_ACKNOWLEDGE);
 				dataSize = 0; 				// reset
 				bool error = false;
-				error = checkForMessage("SIZE", cmdBuf);
+				error = checkForMessage(MSG_FILE_SIZE, cmdBuf);
 				if (!error) {
-					serial.write("SIZE"); 	// Send back 'SIZE' to confirm
+					serial.write(MSG_FILE_SIZE); 	// Send back 'SIZE' to confirm
 					dataSize = getWord();	// Get two bytes with the data size
 					sendWord(dataSize);		// Send back as confirmation
-					error = checkForMessage("WFLS", cmdBuf);
+					error = checkForMessage(MSG_WRITE_FLASH, cmdBuf);
 					if (!error) {
-						serial.write("WFLS"); 		// Send back as confirmation
+						serial.write(MSG_WRITE_FLASH); 		// Send back as confirmation
 					} else {
-						serial.write("EB01");
+						serial.write(ERR_NO_WFLS);
 					}
 					// RECEIVE DATA
 					if (!error) {
@@ -122,9 +122,9 @@ int main(void) {
 							}
 							chunkIdx = 0;
 							if (bytesWritten == dataSize) {
-								serial.write("EODT"); // all bytes received
+								serial.write(MSG_END_OF_DATA); // all bytes received
 							} else {
-								serial.write("ACKN"); // prompt sending of next chunk
+								serial.write(MSG_ACKNOWLEDGE); // prompt sending of next chunk
 							}
 						}
 						// CHECK DATA
@@ -139,13 +139,13 @@ int main(void) {
 						FLASH_OE_DISABLE;					// disable output
 					}
 				} else {
-					serial.write("SERR");
+					serial.write(ERR_NO_SIZE);
 				}
 			} else if (strcmp(cmdBuf, "BANK") == 0) {
 				// -------------------------------------------------------------
 				// ----- BANK - Set memory bank            ---------------------
 				// -------------------------------------------------------------
-				serial.write("ACKN");
+				serial.write(MSG_ACKNOWLEDGE);
 				// Get the bank number
 				uint8_t bank = 0;
 				bool recvd = getByte(&bank);
@@ -154,14 +154,14 @@ int main(void) {
 					flashBank = bank;
 					setFlashBank();
 				} else {
-					serial.write("*ERR");
+					serial.write(ERR_BYTE_READ);
 				}
 			} else if (strcmp(cmdBuf, "CLRF") == 0) {
 				// -------------------------------------------------------------
 				// ----- CLRF - Clear flash                ---------------------
 				// -------------------------------------------------------------
 				// Clear the Flash memory.
-				serial.write("ACKN");
+				serial.write(MSG_ACKNOWLEDGE);
 				for (uint8_t sector = 0; sector < SECTORS_PER_IMG; sector++) {
 					uint16_t addr = sector * FLASH_SECTOR_SIZE;
 					sectorErase(addr);
@@ -174,7 +174,7 @@ int main(void) {
 				// -------------------------------------------------------------
 				// Read 256 values from Flash memory, starting at a given
 				// address.
-				serial.write("ACKN");			// Confirm command received
+				serial.write(MSG_ACKNOWLEDGE);			// Confirm command received
 				// Get address (two bytes) & relay it back.
 				uint16_t address = getWord();
 				sendWord(address);
@@ -190,7 +190,7 @@ int main(void) {
 				// -------------------------------------------------------------
 				uint16_t addrIdx = 0;
 				bool error = false;
-				serial.write("ACKN");
+				serial.write(MSG_ACKNOWLEDGE);
 				while (addrIdx < 0x4000) {
 					serial.write("PCKG");
 					for (uint8_t i = 0; i < 64; i++) {
@@ -199,18 +199,18 @@ int main(void) {
 						addrIdx++;
 					}
 					// wait for acknowledgement
-					error = checkForMessage("ACKN", cmdBuf);
+					error = checkForMessage(MSG_ACKNOWLEDGE, cmdBuf);
 					if (error) {
 						break;
 					}
 				}
 				if (error) {
-					serial.write("EC01");
+					serial.write(ERR_NO_ACKN);
 				} else {
-					serial.write("EODT");
+					serial.write(MSG_END_OF_DATA);
 				}
 			} else {
-				serial.write("ECMD");
+				serial.write(ERR_COMMAND);
 			}
 			// When done, reset
 			cmdRecvd = false;
