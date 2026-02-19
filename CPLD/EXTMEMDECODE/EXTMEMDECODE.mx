@@ -9,10 +9,31 @@ Location ;
 Device   f1502ispplcc44 ;
 
 /*
+*** Working Version ***
+
 This provides decoding for extended memory on the Zolatron 64.
+
+The memory sits at address $8000. The decoding allows us to select one of 16
+8K banks at this address.
+
+The bank is selected by writing the value 0-15 to the address $BFE0. This
+CPLD provides the decoding for that address as well as a register (BSEL) of four
+D flip-flops that hold the selected value.
+
+This register connects to address lines A13-A16 of the RAM, thus
+selecting the effective address of the bank.
+
+The BSEL register is also used to select among five chip enable signals -
+four for the RAM chips and one for the RAM. If the BSEL value is 0-3
+then the appropriate CHIP_EN line 0-3 is selected. If BSEL is 4-15 then
+CHIP_EN4 is selected.
+
+On the board itself, four jumpers individually select whether CHIP_EN lines
+0-3 go to their respective ROMs or to the RAM.
 
 NB: The build script has been modified to make the chip enable outputs
 open-collector.
+
 */
 
 /* --------------- INPUTS --------------------------------------------------- */
@@ -25,8 +46,8 @@ PIN [24,21..16,14,12,11,9] = [A15..5];     /* Address bus                     */
 PIN [33,34,36,37] = [BSEL3..0] ;           /* Bank select register            */
 PIN [39,27,28,40,31] = ![CHIP_EN4..0];     /* Chip enable reg - active low    */
 
-PINNODE = [CHIP_SEL4..0];                  /* Internal chip select register   */
-PINNODE = BSEL_EN;                         /* Enable latching for bank select */
+PINNODE [0..0] = [CHIP_SEL4..0];                  /* Internal chip select register   */
+PINNODE  0  = BSEL_EN;                         /* Enable latching for bank select */
 
 
 /* --------------- BANK SELECTION ------------------------------------------- */
@@ -35,6 +56,18 @@ we're writing a value to select the memory bank. */
 
 BSEL_EN = A15 & !A14 & [A13..5]:& ;      /* Decodes for 32-bit block at $BFE0 */
 
+/* The four D flip-flops in the BSEL register have their clocks enabled.
+The flip-flop is set to the appropriate value when CLK transitions low - ie, on
+the falling edge. The flip-flop is also enabled only when RWB is low (ie doing
+write operations) BSEL_EN is active.
+
+The flip-flops will set according to the inputs on D0-D3.
+When the clock goes high again, these values are latched. When we no longer
+have $BFE0 as the address, the values will remain latched.
+
+These four flip-flops are connected to A13-A16 on the RAM chip. They're
+not attached to the address bus - so they don't interfere with anything else.
+*/
 BSEL3.d = D3;                     /* Value from data bus                      */
 BSEL3.ck = !CLK;                  /* Act on falling edge of clock             */
 BSEL3.ce = !RWB & BSEL_EN;        /* Only during writes & with $BFE0 selected */
